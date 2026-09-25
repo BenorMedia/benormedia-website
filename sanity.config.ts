@@ -1,13 +1,11 @@
 import { defineConfig } from 'sanity';
 import { structureTool } from 'sanity/structure';
+import { table } from '@sanity/table';
 
-import { schemaTypes } from './sanity/schemaTypes';
+import { schemaTypes, SINGLETON_TYPES } from './sanity/schemaTypes';
+import { structure } from './sanity/structure';
 
 // Studio config for the embedded Sanity Studio at /studio.
-//
-// Phase 0 scope: minimal stub so `/studio` boots and `pnpm build` succeeds.
-// Real desk structure, vision tool, and schemas land in Phase 2 per
-// docs/SCHEMAS.md.
 //
 // projectId + dataset are read from environment (never hardcoded) so the
 // same config works in local, preview, and production. `basePath` must match
@@ -18,8 +16,28 @@ export default defineConfig({
   basePath: '/studio',
   projectId: import.meta.env.PUBLIC_SANITY_PROJECT_ID,
   dataset: import.meta.env.PUBLIC_SANITY_DATASET,
-  plugins: [structureTool()],
+  plugins: [structureTool({ structure }), table()],
   schema: {
     types: schemaTypes,
+  },
+  document: {
+    // Prevent duplicating or deleting singletons (see SINGLETON_TYPES in schemaTypes/index.ts).
+    actions: (prev, context) => {
+      if (SINGLETON_TYPES.has(context.schemaType)) {
+        return prev.filter(
+          (action) => !['duplicate', 'delete'].includes(action.action ?? ''),
+        );
+      }
+      return prev;
+    },
+    // Prevent editors from creating another instance of a singleton from the "+ New" menu.
+    newDocumentOptions: (prev, { creationContext }) => {
+      if (creationContext.type === 'global') {
+        return prev.filter(
+          (template) => !SINGLETON_TYPES.has(template.templateId),
+        );
+      }
+      return prev;
+    },
   },
 });

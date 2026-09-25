@@ -33,6 +33,13 @@ Format: date · decision · reason · approved by.
 | 2026-09-25 | CORS: no wildcard `vercel.app`; only `http://localhost:4321`, the `dev` branch preview URL, and the production domain (once known) | Least-privilege; wildcard preview URLs expose Studio to any Vercel deploy | Lead |
 | 2026-09-25 | Local `benorSanityAliasFix` Vite plugin in `astro.config.mjs` to work around `@sanity/astro@3.5.1` Windows path-strip bug in `sanity:module-dedupe` | Studio unusable in dev on Windows without it; remove when upstream fix ships | Lead |
 | 2026-09-25 | Handoff gates: `pnpm build`, `pnpm check` AND `pnpm lint` must pass | Lint now part of pre-handoff green bar | Lead |
+| 2026-09-25 | Sanity schemas v0.4 approved | `author` promoted to its own document (single source of truth for bio/photo/LinkedIn); FAQ sections group their questions (`faqSections[].faqs[]`) — no dynamic "FAQ type" dropdown; testimonial `kpis` = array (max 2); `category` = shared document across `client` and `post`, seeded with the 22 canonical values | Lead |
+| 2026-09-25 | Blog article body = Portable Text + `@sanity/table` | Native Sanity block content covers everything we need; table plugin fills PT's tables gap. Explicitly excludes embeds, videos, code blocks and CTA blocks | Lead |
+| 2026-09-25 | `siteSettings` = single doc with tabs (General, SEO & Meta, Organization, Navigation, Footer, Global sections); every page/routable doc has Content + SEO tabs | Editors group related fields without splitting into multiple singletons; SEO always separated from content so it can't be forgotten | Lead |
+| 2026-09-25 | Staging noindex handled via env var in code (BaseLayout), not a CMS toggle | Prevents accidental de-indexing of production from Studio; env-driven means preview deploys are noindex by construction | Lead |
+| 2026-09-25 | Sanity schemas v0.5 — page singletons are SEO-only; page copy lives in Astro components | Site is small, copy is stable; removing per-section CMS fields eliminates schema drift and simplifies the editor UX. Every page singleton (`homePage`, `workPage`, `pricingPage`, `testimonialsPage`, `blogPage`) now holds just a `seo` object | Lead |
+| 2026-09-25 | Removed `service` and `technology` document types | Services are handled as static Astro pages; the `technology` doc had no confirmed use case | Lead |
+| 2026-09-25 | Removed `Navigation` and `Footer` tabs from `siteSettings` | Site chrome (nav + footer) is authored directly in the Astro components. `siteSettings` keeps only General, SEO & Meta, Organization and Global sections | Lead |
 
 ## Pending
 | Topic | Status |
