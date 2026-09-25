@@ -1,5 +1,16 @@
 {
   "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:docs.astro.build)",
+      "WebFetch(domain:www.sanity.io)",
+      "WebFetch(domain:vercel.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:gsap.com)",
+      "WebFetch(domain:developer.mozilla.org)",
+      "WebFetch(domain:docs.claude.com)"
+    ],
     "deny": [
       "Bash(vercel --prod:*)",
       "Bash(vercel deploy --prod:*)",

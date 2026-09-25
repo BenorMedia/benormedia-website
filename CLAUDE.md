@@ -10,7 +10,7 @@ Design is approved in Figma. Build it faithfully. Never redesign, never prototyp
 - Astro (static output) + TypeScript (strict)
 - Sanity (Studio embedded in this repo at `/studio`)
 - Vanilla CSS (native nesting + custom properties). No Tailwind, no SASS.
-- GSAP + ScrollTrigger via npm
+- GSAP + ScrollTrigger via pnpm
 - Vercel hosting. Sanity publish webhook → Vercel rebuild.
 - Forms: Vercel serverless endpoint → Make webhook (PENDING CEO confirmation)
 
@@ -40,7 +40,7 @@ If code and docs disagree, docs win. If docs are missing a value: STOP, log it i
 6. Never commit secrets. Env vars live in `.env` (gitignored) and in Vercel.
 7. Check for an existing component, class or token before creating a new one.
 8. No shadows on any element (design rule).
-9. `npm run build` and `npm run check` must pass before any handoff.
+9. `pnpm run build`, `pnpm run check` and `pnpm run lint` must pass before any handoff.
 
 ## Class naming convention
 - `c-` component: `c-hero`, `c-nav`
@@ -95,4 +95,4 @@ If code and docs disagree, docs win. If docs are missing a value: STOP, log it i
 When a subagent finishes a task, it writes `docs/handoffs/YYYY-MM-DD_<agent>_<task>.md` from `docs/handoffs/_TEMPLATE.md`. The orchestrator reads it, sends it to `qa` if needed, updates `BUILD_PLAN.md`, and reports to the project lead.
 
 ## Commands
-`npm run dev` · `npm run build` · `npm run check` (astro check) · `npm run lint`
+`pnpm run dev` · `pnpm run build` · `pnpm run check` (astro check) · `pnpm run lint`
