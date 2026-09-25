@@ -119,7 +119,16 @@ Font assignment assumption: `c-text_*` = Brulia Display, `c-paragraph_*` + `c-bu
 Global defaults: `body` uses `c-paragraph` values + `--color-text`; `h1–h6` use `--font-heading`, weight 400, `--color-heading`, margin 0.
 
 ### 3.3 Eyebrow / label pattern
-Small uppercase label with border ("CASE STUDIES", "SERVICES"). TODO: text class, tracking, radius, padding.
+Small uppercase label with border ("CASE STUDIES", "SERVICES"). Two variants: `is-default` and `is-accent`. Locked 2026-09-25.
+
+Shared box: `padding: 0.5em 1.05em` (project-lead adjustment 2026-09-25 from Figma 10/16/8/16 px), `border-radius: 3px`, `border: 0.5px solid`, `font-family: var(--font-body)`, `font-size: 0.9375rem` (15 px), `line-height: normal`, `letter-spacing: 0.064em` (0.96 px), `text-transform: uppercase`, `display: inline-flex; align-items: center`.
+
+| Variant | Border | Background | Text | Weight | Squares |
+|---|---|---|---|---|---|
+| `is-default` | `var(--color-gray)` | none | `var(--color-text)` | 400 | Yes, both sides |
+| `is-accent` | `var(--color-accent)` | `color-mix(in srgb, var(--color-accent) 8%, transparent)` | `var(--color-accent)` | 600 | No |
+
+Default squares (`::before` left, `::after` right): 0.625rem × 0.625rem, `background: var(--color-white)`, `border: 0.5px solid var(--color-gray)`, `border-radius: 1.5px`, `position: absolute`, vertically centered via `top: 50%; transform: translateY(-50%)`, `left: -0.344rem` / `right: -0.281rem`.
 
 ---
 

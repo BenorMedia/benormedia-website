@@ -1,0 +1,99 @@
+/* ==========================================================================
+   BenorMedia — Design Tokens
+   Source of truth: docs/DESIGN_SYSTEM.md (v0.3 DRAFT)
+   Do not add hardcoded values elsewhere; reference these tokens via var().
+   No shadows anywhere.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Fonts — §2
+   -------------------------------------------------------------------------- */
+@font-face {
+  font-family: "Brulia Display";
+  src: url("/fonts/brulia-display.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Font families — §4 */
+  --font-heading: "Brulia Display", sans-serif;
+  --font-body: "acumin-pro", ui-sans-serif, system-ui, sans-serif;
+  /* TODO: FONTS Adobe kit <link> pending kit ID */
+
+  /* --------------------------------------------------------------------------
+     Colors — §4
+     -------------------------------------------------------------------------- */
+
+  /* Base */
+  --color-white: #FFFFFF;
+
+  /* Text (light bg) */
+  --color-text: #5B6170;
+  --color-heading: #12142B;
+  --color-black-secondary: #212427;
+  --color-text-secondary: #4F4F4F;
+
+  /* Brand */
+  --color-accent: #3467E5;
+  --color-blue: #6275F6;
+  --color-blue-light: #6BB0F7;
+  --gradient-primary: linear-gradient(106deg, #6275F6 2.88%, #6BB0F7 96.84%);
+
+  /* Neutrals */
+  --color-gray: #C9CEDA;
+  --color-gray-light: #F0F0F0;
+
+  /* Borders */
+  --color-border: #E4E6EA;
+  --border-default: 1px solid var(--color-border);
+
+  /* --------------------------------------------------------------------------
+     Type scale — §3.2 (Desktop)
+     -------------------------------------------------------------------------- */
+  --fs-text-xxl: 5.5rem;
+  --fs-text-xl: 3.91rem;
+  --fs-text-l: 2.34rem;
+  --fs-text-m: 1.85rem;
+  --fs-text: 1.3rem;
+  --fs-text-s: 1.04rem;
+  --fs-text-xs: 0.78rem;
+
+  --fs-p-xl: 3rem;
+  --fs-p-l: 1.67rem;
+  --fs-p-m: 1.3rem;
+  --fs-p: 1.04rem;
+  --fs-p-s: 0.9rem;
+
+  --fs-button: 1.3rem;
+
+  /* --------------------------------------------------------------------------
+     Motion — §6
+     -------------------------------------------------------------------------- */
+  --duration-hover: 800ms;
+  --ease-smooth: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* --------------------------------------------------------------------------
+   Type scale — Mobile overrides (≤767px) — §3.2
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  :root {
+    --fs-text-xxl: 4rem;
+    --fs-text-xl: 3.9rem;
+    --fs-text-l: 2.7rem;
+    --fs-text-m: 2.5rem;
+    --fs-text: 1.8rem;
+    --fs-text-s: 1.7rem;
+    --fs-text-xs: 1.352rem;
+
+    --fs-p-xl: 3rem;
+    --fs-p-l: 2rem;
+    --fs-p-m: 1.8rem;
+    --fs-p: 1.352rem;
+    --fs-p-s: 1.2rem;
+
+    --fs-button: 1.6rem;
+  }
+}

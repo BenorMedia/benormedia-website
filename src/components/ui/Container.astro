@@ -1,0 +1,10 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+const classList = ["c-container", className].filter(Boolean).join(" ");
+---
+
+<div class={classList}><slot /></div>

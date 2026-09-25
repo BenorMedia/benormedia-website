@@ -1,0 +1,312 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Button from "../../components/ui/Button.astro";
+import Eyebrow from "../../components/ui/Eyebrow.astro";
+import Tag from "../../components/ui/Tag.astro";
+import Container from "../../components/ui/Container.astro";
+
+// Full color token inventory — must stay in sync with DESIGN_SYSTEM §4.
+const colors = [
+  { name: "White",             hex: "#FFFFFF", var: "--color-white" },
+  { name: "Text",              hex: "#5B6170", var: "--color-text" },
+  { name: "Heading",           hex: "#12142B", var: "--color-heading" },
+  { name: "Black secondary",   hex: "#212427", var: "--color-black-secondary" },
+  { name: "Text secondary",    hex: "#4F4F4F", var: "--color-text-secondary" },
+  { name: "Accent",            hex: "#3467E5", var: "--color-accent" },
+  { name: "Blue",              hex: "#6275F6", var: "--color-blue" },
+  { name: "Blue light",        hex: "#6BB0F7", var: "--color-blue-light" },
+  { name: "Gray",              hex: "#C9CEDA", var: "--color-gray" },
+  { name: "Gray light",        hex: "#F0F0F0", var: "--color-gray-light" },
+  { name: "Border",            hex: "#E4E6EA", var: "--color-border" },
+];
+
+const textClasses = [
+  "c-text_xxl",
+  "c-text_xl",
+  "c-text_l",
+  "c-text_m",
+  "c-text",
+  "c-text_s",
+  "c-text_xs",
+];
+
+const paragraphClasses = [
+  "c-paragraph_xl",
+  "c-paragraph_l",
+  "c-paragraph_m",
+  "c-paragraph",
+  "c-paragraph_s",
+];
+
+const pangram = "The quick brown fox jumps over the lazy dog";
+
+const buttonVariants = ["gradient", "gradient-outline", "white", "glass"] as const;
+---
+
+<BaseLayout title="Style guide" noindex={true}>
+  <Container>
+    <header class="sg-header">
+      <p class="c-text_xs sg-kicker">/dev/styleguide</p>
+      <h1 class="c-text_xl">BenorMedia — Design System</h1>
+      <p class="c-paragraph sg-lead">
+        Every token, text class, button variant and primitive rendered from the
+        global CSS. Source of truth: <code>docs/DESIGN_SYSTEM.md</code>.
+      </p>
+    </header>
+
+    <!-- ================================================================== -->
+    <!-- 1. Colors                                                          -->
+    <!-- ================================================================== -->
+    <section class="sg-section">
+      <h2 class="c-text_l">1. Colors</h2>
+      <div class="sg-swatches">
+        {colors.map((c) => (
+          <div class="sg-swatch">
+            <div class="sg-swatch__chip" style={`background-color: ${c.hex};`}></div>
+            <div class="sg-swatch__meta">
+              <p class="c-paragraph_s sg-swatch__name">{c.name}</p>
+              <p class="c-paragraph_s sg-mono">{c.hex}</p>
+              <p class="c-paragraph_s sg-mono sg-muted">{c.var}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div class="sg-gradient-bar" aria-label="Primary gradient">
+        <p class="c-paragraph_s sg-mono sg-on-dark">--gradient-primary</p>
+      </div>
+    </section>
+
+    <!-- ================================================================== -->
+    <!-- 2. Typography                                                      -->
+    <!-- ================================================================== -->
+    <section class="sg-section">
+      <h2 class="c-text_l">2. Typography</h2>
+
+      <h3 class="c-text_m sg-subhead">Heading scale (c-text_*)</h3>
+      <div class="sg-type-stack">
+        {textClasses.map((cls) => (
+          <div class="sg-type-row">
+            <p class="c-paragraph_s sg-mono sg-muted">.{cls}</p>
+            <p class={cls}>{pangram}</p>
+          </div>
+        ))}
+      </div>
+
+      <h3 class="c-text_m sg-subhead">Paragraph scale (c-paragraph_*)</h3>
+      <div class="sg-type-stack">
+        {paragraphClasses.map((cls) => (
+          <div class="sg-type-row">
+            <p class="c-paragraph_s sg-mono sg-muted">.{cls}</p>
+            <p class={cls}>{pangram}</p>
+          </div>
+        ))}
+      </div>
+
+      <h3 class="c-text_m sg-subhead">Button text class (c-button)</h3>
+      <div class="sg-type-row">
+        <p class="c-paragraph_s sg-mono sg-muted">.c-button</p>
+        <p class="c-button" style="color: var(--color-heading);">{pangram}</p>
+      </div>
+    </section>
+
+    <!-- ================================================================== -->
+    <!-- 3. Buttons                                                         -->
+    <!-- ================================================================== -->
+    <section class="sg-section">
+      <h2 class="c-text_l">3. Buttons</h2>
+
+      <h3 class="c-text_m sg-subhead">On white background</h3>
+      <div class="sg-btn-panel sg-btn-panel--light">
+        {buttonVariants.map((v) => (
+          <Button variant={v} href="#">is-{v}</Button>
+        ))}
+        <Button variant="gradient" type="button">is-gradient (button)</Button>
+      </div>
+
+      <h3 class="c-text_m sg-subhead">On dark gradient background</h3>
+      <div class="sg-btn-panel sg-btn-panel--dark">
+        {buttonVariants.map((v) => (
+          <Button variant={v} href="#">is-{v}</Button>
+        ))}
+        <Button variant="glass" type="button">is-glass (button)</Button>
+      </div>
+    </section>
+
+    <!-- ================================================================== -->
+    <!-- 4. Primitives                                                      -->
+    <!-- ================================================================== -->
+    <section class="sg-section">
+      <h2 class="c-text_l">4. Primitives</h2>
+
+      <h3 class="c-text_m sg-subhead">Eyebrow — default (is-default)</h3>
+      <p class="c-paragraph_s sg-muted">
+        Two decorative squares hug the outer edges. Border, text and squares share <code>--color-gray</code>.
+      </p>
+      <div class="sg-inline-row">
+        <Eyebrow>Trusted by 100+ B2B teams</Eyebrow>
+        <Eyebrow>Case studies</Eyebrow>
+        <Eyebrow>Services</Eyebrow>
+      </div>
+
+      <h3 class="c-text_m sg-subhead">Eyebrow — accent (is-accent)</h3>
+      <p class="c-paragraph_s sg-muted">
+        No squares. Accent border, tinted accent background (8%), weight 600.
+      </p>
+      <div class="sg-inline-row">
+        <Eyebrow variant="accent">New</Eyebrow>
+        <Eyebrow variant="accent">Featured</Eyebrow>
+        <Eyebrow variant="accent">Case studies</Eyebrow>
+      </div>
+
+      <h3 class="c-text_m sg-subhead">Tag</h3>
+      <div class="sg-inline-row">
+        <Tag>SaaS</Tag>
+        <Tag>Sales tech</Tag>
+        <Tag>Fintech</Tag>
+      </div>
+
+      <h3 class="c-text_m sg-subhead">Container</h3>
+      <p class="c-paragraph_s sg-muted">
+        Max-width 1440px, centered, padding 5rem 3rem (5rem vertical is a placeholder — see TODO).
+      </p>
+      <div class="sg-container-outer">
+        <Container>
+          <div class="sg-container-inner">
+            <p class="c-paragraph">.c-container content area</p>
+          </div>
+        </Container>
+      </div>
+    </section>
+  </Container>
+</BaseLayout>
+
+<style>
+  /* Styleguide-only styles. Not part of the DS. */
+
+  .sg-header {
+    margin-bottom: 4rem;
+  }
+  .sg-kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--color-text-secondary);
+    margin-bottom: 1rem;
+  }
+  .sg-lead {
+    margin-top: 1rem;
+    max-width: 60ch;
+  }
+
+  .sg-section {
+    padding: 4rem 0;
+    border-top: var(--border-default);
+  }
+
+  .sg-subhead {
+    margin-top: 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  /* Colors */
+  .sg-swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .sg-swatch {
+    border: var(--border-default);
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--color-white);
+  }
+  .sg-swatch__chip {
+    height: 6rem;
+    border-bottom: var(--border-default);
+  }
+  .sg-swatch__meta {
+    padding: 0.75rem 1rem;
+  }
+  .sg-swatch__name {
+    color: var(--color-heading);
+    margin-bottom: 0.25rem;
+  }
+  .sg-mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .sg-muted {
+    color: var(--color-text-secondary);
+    opacity: 0.85;
+  }
+  .sg-on-dark {
+    color: var(--color-white);
+  }
+
+  .sg-gradient-bar {
+    margin-top: 2rem;
+    height: 6rem;
+    border-radius: 6px;
+    background: var(--gradient-primary);
+    display: flex;
+    align-items: flex-end;
+    padding: 1rem 1.25rem;
+  }
+
+  /* Typography */
+  .sg-type-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 1rem;
+  }
+  .sg-type-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: var(--border-default);
+  }
+  .sg-type-row:last-child {
+    border-bottom: 0;
+  }
+
+  /* Buttons */
+  .sg-btn-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    padding: 2rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+  }
+  .sg-btn-panel--light {
+    background: var(--color-white);
+    border: var(--border-default);
+  }
+  .sg-btn-panel--dark {
+    background: var(--gradient-primary);
+  }
+
+  /* Primitives */
+  .sg-inline-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .sg-container-outer {
+    margin-top: 1.5rem;
+    background: var(--color-gray-light);
+    border-radius: 6px;
+    /* Reset the outer padding so we can see .c-container's own edges */
+  }
+  .sg-container-inner {
+    outline: 1px dashed var(--color-gray);
+    outline-offset: -1px;
+    padding: 2rem;
+    background: var(--color-white);
+    border-radius: 3px;
+  }
+</style>

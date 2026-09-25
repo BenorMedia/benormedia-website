@@ -1,0 +1,78 @@
+/* ==========================================================================
+   BenorMedia — Buttons
+   Source: docs/DESIGN_SYSTEM.md §7.3
+   One base class + 4 `is-*` variants.
+   ========================================================================== */
+
+/* Base: link block */
+.c-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8em 1.5em;          /* em on purpose: follows button font-size */
+  border: 0;
+  border-radius: 3px;
+  font-family: var(--font-body);
+  font-size: var(--fs-button);
+  font-weight: 400;
+  line-height: 1.5;
+  text-decoration: none;
+  cursor: pointer;
+  background: transparent;
+  transition: transform var(--duration-hover) var(--ease-smooth);
+}
+
+.c-button:hover {
+  transform: translateY(-7%);
+}
+
+.c-button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* Text: color only */
+.c-button__text {
+  color: var(--color-white);
+}
+
+/* 1. Gradient Solid */
+.c-button.is-gradient {
+  background: var(--gradient-primary);
+}
+
+/* 2 + 3. Gradient 1px border via masked pseudo-element */
+.c-button.is-gradient-outline::before,
+.c-button.is-white::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--gradient-primary);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  pointer-events: none;
+}
+.c-button.is-gradient-outline { background: transparent; }
+.c-button.is-white            { background: var(--color-white); }
+
+/* 2 + 3. Gradient text */
+.c-button.is-gradient-outline .c-button__text,
+.c-button.is-white .c-button__text {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+          background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* 4. White Transparent (glass) */
+.c-button.is-glass {
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid var(--color-white);
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+}

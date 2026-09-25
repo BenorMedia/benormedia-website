@@ -1,0 +1,23 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+const classList = ["c-tag", "c-text_xs", className].filter(Boolean).join(" ");
+---
+
+<span class={classList}><slot /></span>
+
+<style>
+  /* TODO: DS tag specs (radius, padding, colors) */
+  .c-tag {
+    display: inline-block;
+    text-transform: uppercase;
+    border: var(--border-default);
+    border-radius: 999px;
+    padding: 0.35em 0.9em;
+    color: var(--color-text);
+    letter-spacing: 0.08em;
+  }
+</style>
