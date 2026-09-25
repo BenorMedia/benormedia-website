@@ -1,0 +1,53 @@
+---
+interface Props {
+  variant?: "default" | "accent";
+  class?: string;
+}
+
+const { variant = "default", class: className } = Astro.props;
+const classList = ["c-eyebrow", `is-${variant}`, className].filter(Boolean).join(" ");
+---
+
+<span class={classList}><slot /></span>
+
+<style>
+  .c-eyebrow {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5em 1.05em;
+    border: 0.5px solid var(--color-gray);
+    border-radius: 3px;
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: 0.064em;
+    text-transform: uppercase;
+  }
+
+  /* Default: decorative squares on both outer edges. */
+  .c-eyebrow.is-default::before,
+  .c-eyebrow.is-default::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0.625rem;
+    height: 0.625rem;
+    background: var(--color-white);
+    border: 0.5px solid var(--color-gray);
+    border-radius: 1.5px;
+  }
+  .c-eyebrow.is-default::before { left: -0.344rem; }
+  .c-eyebrow.is-default::after  { right: -0.281rem; }
+
+  /* Accent: no squares, accent border + tinted bg + heavier weight. */
+  .c-eyebrow.is-accent {
+    border: 0.5px solid var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+</style>

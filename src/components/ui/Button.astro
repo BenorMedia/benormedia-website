@@ -1,0 +1,27 @@
+---
+type Variant = "gradient" | "gradient-outline" | "white" | "glass";
+type ButtonType = "button" | "submit" | "reset";
+
+interface Props {
+  variant: Variant;
+  href?: string;
+  type?: ButtonType;
+  class?: string;
+}
+
+const { variant, href, type, class: className } = Astro.props;
+
+const classList = ["c-button", `is-${variant}`, className].filter(Boolean).join(" ");
+---
+
+{
+  href ? (
+    <a href={href} class={classList}>
+      <span class="c-button__text"><slot /></span>
+    </a>
+  ) : (
+    <button type={type ?? "button"} class={classList}>
+      <span class="c-button__text"><slot /></span>
+    </button>
+  )
+}

@@ -47,3 +47,11 @@ Format: date · decision · reason · approved by.
 - Production domain — required for Sanity CORS allow-list and Adobe Fonts kit whitelist.
 - File upstream fix for `@sanity/astro` Windows path-strip bug (one-line regex `/[\\/]package\.json$/`); remove `benorSanityAliasFix` workaround from `astro.config.mjs` once a fixed release ships.
 - Revisit `typescript` pin (`^6.0.0`) once Astro supports TS 7 via `@astrojs/ts-content-mapper`.
+
+### Raised in Phase 1 (UI — Design System)
+- **Adobe Fonts kit ID** — Acumin Pro `<link>` cannot be added to `BaseLayout.astro` until the kit is provisioned and the ID is provided. Kit must also whitelist localhost + Vercel preview + production domains. Placeholder HTML comment in place.
+- ~~**Eyebrow specs**~~ — RESOLVED 2026-09-25 by project lead. Two variants shipped: `is-default` (15px Acumin 400, 10/16/8/16px padding, 0.5px `--color-gray` border, 3px radius, 0.96px tracking, two 10×10 decorative squares on outer edges) and `is-accent` (same box but `--color-accent` border, 8% accent tint bg, 600 weight, no squares). Implemented in `src/components/ui/Eyebrow.astro`; TODO marker removed.
+- **Tag specs** — §9 flags this. Placeholder implemented in `src/components/ui/Tag.astro` (pill: `c-text_xs`, radius 999px, 0.35em/0.9em padding, 0.08em tracking). Marked `/* TODO: DS tag specs */`.
+- **Section vertical spacing** — §8.1 uses `padding: 5rem 3rem` on `.c-container`. Confirm whether 5rem is the intended section rhythm or if a separate section token is needed. Marked `/* TODO: DS section vertical spacing */` in `utilities.css`.
+- **Text color on dark / gradient backgrounds** — §4 assumes `--color-white`; needs confirmation for hero, CTA banner and any gradient-backed surfaces.
+- **Sitemap `/dev/*` exclusion** — `/dev/styleguide` uses `<meta name="robots" content="noindex, nofollow">`. Once a sitemap integration is added (Phase 2+), exclude `/dev/*` from the generated sitemap as well.
