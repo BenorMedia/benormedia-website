@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(vercel --prod:*)",
+      "Bash(vercel deploy --prod:*)",
+      "Bash(git push origin main:*)",
+      "Bash(git push -f:*)",
+      "Bash(git push --force:*)",
+      "Bash(sanity dataset delete:*)",
+      "Read(./.env)",
+      "Read(./.env.*)"
+    ]
+  }
+}
