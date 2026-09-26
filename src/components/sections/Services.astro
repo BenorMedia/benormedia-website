@@ -1,0 +1,312 @@
+---
+/**
+ * Services — 3 static service cards + illustration + 2 CTAs.
+ *
+ * Each card is a click target. The active card:
+ *   - gets a blue border + soft shadow (approved by CEO 2026-09-26; this is
+ *     the sole exception to the "no shadows" rule — see docs/DECISIONS.md).
+ *   - swaps the left illustration to that item's image via `data-image`.
+ *   - shows the trigger icon in the primary gradient and rotates it -25deg.
+ *
+ * Body copy is always visible on all three cards (no accordion hide).
+ *
+ * `.js-open-contact` on the "Get in Touch" button wires it to the shared
+ * ContactModal — see HomeHero for the same pattern.
+ */
+import Container from "../ui/Container.astro";
+import SectionHeader from "../ui/SectionHeader.astro";
+import Button from "../ui/Button.astro";
+
+interface Item {
+  title: string;
+  body: string;
+  image: string;
+}
+
+const items: [Item, Item, Item] = [
+  {
+    title: "Web Design",
+    body:
+      "We work as an extension of your company’s marketing team to build a website driven by intuitive UX and engaging UI.",
+    image: "/images/home/services.png",
+  },
+  {
+    title: "Web Development",
+    body:
+      "Through our custom development systems, we build secure, scalable, conversion-optimized websites using the right technologies for your business.",
+    image: "/images/home/services-2.png",
+  },
+  {
+    title: "Web Growth (SEO + GEO + CRO)",
+    body:
+      "We turn your website into a revenue engine through CRO, A/B testing, SEO, and AI search optimization.",
+    image: "/images/home/services.png",
+  },
+];
+---
+
+<section class="c-services" data-c-services>
+  <Container>
+    <SectionHeader
+      eyebrow="Services"
+      title="From site launch to closed deal."
+      description="We work closely with B2B companies to strategize, design, develop and grow scalable and easy-to-maintain websites."
+      class="c-services__header"
+    />
+
+    <div class="c-services__grid">
+      <div class="c-services__col-left">
+        <img
+          class="c-services__image"
+          src={items[0].image}
+          alt=""
+          aria-hidden="true"
+          data-anim="services-image"
+          data-c-services-image
+          loading="lazy"
+          decoding="async"
+        />
+
+        <div class="c-services__buttons">
+          <Button variant="gradient" class="js-open-contact">Get in Touch</Button>
+          <Button variant="gradient-outline" href="/pricing">See Pricing</Button>
+        </div>
+      </div>
+
+      <div class="c-services__col-right">
+        <div class="c-services__accordion">
+          {items.map((item, i) => (
+            <button
+              class:list={["c-services__item", { "is-active": i === 0 }]}
+              type="button"
+              data-index={i}
+              data-image={item.image}
+              aria-pressed={i === 0 ? "true" : "false"}
+            >
+              <h3 class="c-services__heading">
+                <span class="c-services__trigger">
+                  <span class="c-services__trigger-label">{item.title}</span>
+                  <span class="c-services__trigger-icon" aria-hidden="true"></span>
+                </span>
+              </h3>
+              <div class="c-services__panel">
+                <p class="c-paragraph">{item.body}</p>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .c-services {
+    background: var(--color-white);
+  }
+
+  /* Subtitle constraint — only on the Services header. */
+  .c-services :global(.c-services__header .c-section-header__description) {
+    max-width: 60%;
+  }
+
+  @media (max-width: 767px) {
+    .c-services :global(.c-services__header .c-section-header__description) {
+      max-width: 100%;
+    }
+  }
+
+  .c-services__grid {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: 1rem;
+    align-items: stretch;
+    /* TODO: DS space between section header and grid. */
+    margin-top: 3rem;
+  }
+
+  @media (max-width: 991px) {
+    .c-services__grid {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+  }
+
+  /* --- Left column (image + absolute buttons) -------------------------- */
+  .c-services__col-left {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .c-services__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+  }
+
+  /* --- Right column (service cards) ------------------------------------ */
+  .c-services__col-right {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .c-services__accordion {
+    height: 100%;
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
+    /* TODO: DS gap between service cards. */
+    gap: 1rem;
+  }
+
+  .c-services__item {
+    display: flex;
+    padding: 1.3125rem; /* 21px */
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+    align-self: stretch;
+    min-height: 10.625rem; /* 170px */
+    border-radius: 0.5rem; /* 8px */
+    border: 1px solid var(--color-border);
+    background: var(--color-white);
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    transition:
+      border-color var(--duration-hover) var(--ease-smooth),
+      box-shadow var(--duration-hover) var(--ease-smooth);
+  }
+
+  .c-services__item:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* Active card — CEO-approved shadow exception, see DECISIONS.md */
+  .c-services__item.is-active {
+    border: 1px solid var(--color-blue);
+    background: var(--color-white);
+    box-shadow: 0 0 1.25rem 0 rgba(0, 0, 0, 0.05); /* 20px blur */
+  }
+
+  .c-services__heading {
+    margin: 0;
+    width: 100%;
+  }
+
+  .c-services__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    text-align: left;
+    color: var(--color-heading);
+  }
+
+  .c-services__trigger-label {
+    color: var(--color-black-secondary);
+    font-family: var(--font-heading);
+    font-size: 1.8rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.4;
+  }
+
+  /* Arrow glyph — solid gray by default. Uses CSS mask so we can paint it
+     with the primary gradient in the active state. */
+  .c-services__trigger-icon {
+    display: inline-block;
+    width: 1rem; /* 16px */
+    height: 1rem; /* 16px */
+    flex: 0 0 auto;
+    background: var(--color-text);
+    -webkit-mask: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15 15'%3E%3Cpath d='M0.000296913 6.53401H11.6643C10.0983 5.20201 7.2543 2.52001 5.4903 0.918009L6.3543 8.58307e-06L14.0583 7.16401V7.21801L6.3543 14.472L5.4903 13.536C7.2723 11.898 10.0803 9.28801 11.6643 7.84801H0.000296913V6.53401Z'/%3E%3C/svg%3E") no-repeat center / contain;
+    mask: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15 15'%3E%3Cpath d='M0.000296913 6.53401H11.6643C10.0983 5.20201 7.2543 2.52001 5.4903 0.918009L6.3543 8.58307e-06L14.0583 7.16401V7.21801L6.3543 14.472L5.4903 13.536C7.2723 11.898 10.0803 9.28801 11.6643 7.84801H0.000296913V6.53401Z'/%3E%3C/svg%3E") no-repeat center / contain;
+    transition:
+      background var(--duration-hover) var(--ease-smooth),
+      transform var(--duration-hover) var(--ease-smooth);
+  }
+
+  .c-services__item.is-active .c-services__trigger-icon {
+    background: var(--gradient-primary);
+    transform: rotate(-25deg);
+  }
+
+  .c-services__panel {
+    color: var(--color-text);
+  }
+  .c-services__panel > p {
+    margin: 0;
+  }
+
+  /* --- Buttons — absolute at bottom center of left column -------------- */
+  .c-services__buttons {
+    position: absolute;
+    left: 50%;
+    bottom: 1rem;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    /* TODO: DS gap between service CTAs. */
+    gap: 1rem;
+    z-index: 1;
+  }
+
+  @media (max-width: 991px) {
+    .c-services__buttons {
+      position: static;
+      transform: none;
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+      margin-top: 1.5rem;
+    }
+    .c-services__buttons :global(.c-button) {
+      width: 100%;
+    }
+    .c-services__col-left {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<script>
+  // Click-to-activate service cards. Swaps the left illustration and toggles
+  // the active state on the clicked card. Scoped to each `[data-c-services]`
+  // root so multiple instances on the page stay independent.
+  const roots = document.querySelectorAll<HTMLElement>("[data-c-services]");
+
+  roots.forEach((root) => {
+    const items = Array.from(
+      root.querySelectorAll<HTMLButtonElement>(".c-services__item"),
+    );
+    const image = root.querySelector<HTMLImageElement>("[data-c-services-image]");
+    if (items.length === 0 || !image) return;
+
+    const activate = (index: number) => {
+      items.forEach((item, i) => {
+        const isActive = i === index;
+        item.classList.toggle("is-active", isActive);
+        item.setAttribute("aria-pressed", isActive ? "true" : "false");
+        if (isActive) {
+          const nextSrc = item.dataset.image;
+          if (nextSrc && nextSrc !== image.getAttribute("src")) {
+            image.setAttribute("src", nextSrc);
+          }
+        }
+      });
+    };
+
+    items.forEach((item, i) => {
+      item.addEventListener("click", () => activate(i));
+    });
+  });
+</script>

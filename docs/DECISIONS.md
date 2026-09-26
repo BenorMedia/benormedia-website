@@ -28,6 +28,7 @@ Format: date · decision · reason · approved by.
 | 2026-09-25 | TypeScript preset `astro/tsconfigs/strictest` | Stronger safety net than plain `strict` | Lead |
 | 2026-09-25 | Vercel adapter included with `output: 'static'` + `imageService: true` | Vercel Image Optimization for Sanity images | Lead |
 | 2026-09-25 | Sanity Studio routing: hash-based (default under static output) | Avoids `vercel.json` rewrite and 404-on-refresh | Lead |
+| 2026-09-26 | Shadow exception on active Services card only (`0 0 20px rgba(0,0,0,0.05)`) | CEO-approved deviation from the DS "no shadows" rule to signal the selected service | Lead |
 | 2026-09-25 | Sanity `apiVersion` pinned to `2026-09-25` | Predictable behavior across upgrades | Lead |
 | 2026-09-25 | Visual Editing deferred to post-launch; would require on-demand preview routes | Static output only; publish webhook rebuild is sufficient for launch | Lead |
 | 2026-09-25 | CORS: no wildcard `vercel.app`; only `http://localhost:4321`, the `dev` branch preview URL, and the production domain (once known) | Least-privilege; wildcard preview URLs expose Studio to any Vercel deploy | Lead |

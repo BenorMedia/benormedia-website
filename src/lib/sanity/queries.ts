@@ -16,7 +16,7 @@
  * has its own queries when a page needs it — those live in later phases.
  */
 import { sanityClient } from './client';
-import type { HomePage, SiteSettings } from './types';
+import type { Client, HomePage, SiteSettings } from './types';
 
 // ---------------------------------------------------------------------------
 // Fragments — assembled into the full queries below.
@@ -129,6 +129,67 @@ export const SITE_SETTINGS_QUERY = /* groq */ `
 `;
 
 // ---------------------------------------------------------------------------
+// CLIENTS_BY_IDS
+// ---------------------------------------------------------------------------
+
+/**
+ * Returns published clients whose `_id` is in `$ids`. Used by Home sections
+ * (LogoStrip, FeaturedWork) which pin the clients they render by hardcoded
+ * document IDs — see `getClientsByIds` below for the order-preserving fetcher.
+ *
+ * Client documents are seeded with deterministic IDs of the form
+ * `client-<slug>` (see `scripts/seed-categories.mjs` and
+ * `scripts/sanity/import-client-assets.ts`). The client schema has no `slug`
+ * field, so `_id` is the stable handle.
+ *
+ * Note: GROQ does not preserve the order of `$ids` in the result — the
+ * fetcher re-orders client-side.
+ */
+export const CLIENTS_BY_IDS = /* groq */ `
+*[_type == "client" && _id in $ids]{
+  _id,
+  _type,
+  name,
+  "logo": logo${IMAGE},
+  "icon": icon${IMAGE},
+  "websiteScreenshot": websiteScreenshot${IMAGE},
+  fundsRaised,
+  websiteUrl,
+  "category": category->{
+    _id,
+    _type,
+    title,
+    "slug": slug
+  },
+  "testimonial": testimonial->{
+    _id,
+    _type,
+    quote,
+    authorName,
+    authorRole,
+    "authorPhoto": authorPhoto${IMAGE},
+    "companyLogo": companyLogo${IMAGE},
+    kpis[]{ value, description }
+  }
+}
+`;
+
+// ---------------------------------------------------------------------------
+// ALL_CLIENTS_WITH_LOGO — the LogoStrip marquee (Home) reads the entire
+// roster, filtered to clients that have a logo asset. Sorted alphabetically
+// so the loop looks deliberate rather than random.
+// ---------------------------------------------------------------------------
+
+export const ALL_CLIENTS_WITH_LOGO = /* groq */ `
+*[_type == "client" && defined(logo.asset)] | order(name asc){
+  _id,
+  _type,
+  name,
+  "logo": logo${IMAGE}
+}
+`;
+
+// ---------------------------------------------------------------------------
 // Fetchers
 // ---------------------------------------------------------------------------
 
@@ -152,4 +213,51 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
     SITE_SETTINGS_QUERY,
   );
   return result ?? null;
+}
+
+/**
+ * Fetch clients by their document `_id` and return them in the same order as
+ * `ids`. Missing IDs (unpublished, typo'd, or deleted) are dropped and logged
+ * so a broken pin surfaces in build logs rather than silently reordering the
+ * remaining clients.
+ *
+ * Returns `[]` immediately when called with no IDs so callers can safely
+ * forward variables that may be empty in early development.
+ */
+export async function getClientsByIds(ids: string[]): Promise<Client[]> {
+  if (ids.length === 0) return [];
+
+  const result = await sanityClient.fetch<Client[]>(CLIENTS_BY_IDS, { ids });
+
+  const byId = new Map<string, Client>();
+  for (const client of result) {
+    byId.set(client._id, client);
+  }
+
+  const ordered: Client[] = [];
+  const missing: string[] = [];
+  for (const id of ids) {
+    const client = byId.get(id);
+    if (client) {
+      ordered.push(client);
+    } else {
+      missing.push(id);
+    }
+  }
+
+  if (missing.length > 0) {
+    console.warn(
+      `[sanity] getClientsByIds: ${missing.length} client(s) not found: ${missing.join(', ')}`,
+    );
+  }
+
+  return ordered;
+}
+
+/**
+ * Fetch every published client that has a logo asset, alphabetical by name.
+ * Consumed by the Home LogoStrip marquee.
+ */
+export async function getAllClientsWithLogo(): Promise<Client[]> {
+  return await sanityClient.fetch<Client[]>(ALL_CLIENTS_WITH_LOGO);
 }
