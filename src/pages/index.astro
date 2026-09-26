@@ -1,17 +1,35 @@
 ---
+/**
+ * Home page — Phase 4 part 1.
+ *
+ * All Home copy is static in the section components. Sanity only feeds the
+ * two client-driven sections (LogoStrip, FeaturedWork) with clients pinned
+ * by document `_id`. See `getClientsByIds` in `src/lib/sanity/queries.ts`.
+ *
+ * BaseLayout owns Nav, Footer, CtaBanner and ContactModal — do not repeat
+ * them here.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import {
+  getHome,
+  getClientsByIds,
+  getAllClientsWithLogo,
+} from "../lib/sanity/queries";
+import HomeHero from "../components/sections/HomeHero.astro";
+import LogoStrip from "../components/sections/LogoStrip.astro";
+import FeaturedWork from "../components/sections/FeaturedWork.astro";
+import Services from "../components/sections/Services.astro";
 
+const home = await getHome();
+const [logoClients, featuredClients] = await Promise.all([
+  getAllClientsWithLogo(),
+  getClientsByIds(["client-surfe", "client-puzzle"]),
+]);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout pageSeo={home?.seo ?? null}>
+  <HomeHero />
+  <LogoStrip clients={logoClients} />
+  <FeaturedWork clients={featuredClients} />
+  <Services />
+</BaseLayout>

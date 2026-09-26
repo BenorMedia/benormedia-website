@@ -1,0 +1,76 @@
+---
+/**
+ * FeaturedWork — Home "Featured Work" section.
+ *
+ * Renders one `ClientCard` per client passed in. Order is preserved by the
+ * `getClientsByIds` fetcher in `src/pages/index.astro`.
+ */
+import Container from "../ui/Container.astro";
+import SectionHeader from "../ui/SectionHeader.astro";
+import ClientCard from "../ui/ClientCard.astro";
+import type { Client } from "../../lib/sanity/types";
+
+interface Props {
+  clients: Client[];
+}
+
+const { clients } = Astro.props;
+---
+
+<section class="c-featured">
+  <Container>
+    <SectionHeader
+      eyebrow="Case Studies"
+      title="Featured Work"
+      description="We work closely with B2B companies to strategize, design, and develop scalable and easy-to-maintain websites."
+    />
+
+    <div class="c-featured__stack">
+      {clients.map((client) => (
+        <ClientCard variant="featured" client={client} />
+      ))}
+    </div>
+  </Container>
+</section>
+
+<style>
+  .c-featured {
+    background: var(--color-white);
+  }
+
+  .c-featured__stack {
+    display: flex;
+    flex-direction: column;
+    /* TODO: DS spacing between featured cards. */
+    gap: 1.3rem;
+    margin-top: 3rem;
+  }
+
+  /* Default: screenshot left, body right. */
+  .c-featured__stack :global(.c-client-card) {
+    grid-template-columns: 1fr .65fr;
+  }
+
+  /* Second card: body left, screenshot right — swap via `order` since the
+     screenshot is always first in the DOM. */
+  .c-featured__stack :global(.c-client-card:last-child) {
+    grid-template-columns: .65fr 1fr;
+  }
+  .c-featured__stack :global(.c-client-card:last-child .c-client-card__body) {
+    order: 1;
+  }
+  .c-featured__stack :global(.c-client-card:last-child .c-client-card__screenshot) {
+    order: 2;
+  }
+
+  @media (max-width: 991px) {
+    .c-featured__stack :global(.c-client-card),
+    .c-featured__stack :global(.c-client-card:last-child) {
+      grid-template-columns: 1fr;
+    }
+    .c-featured__stack :global(.c-client-card:last-child .c-client-card__body),
+    .c-featured__stack :global(.c-client-card:last-child .c-client-card__screenshot) {
+      order: initial;
+    }
+  }
+</style>

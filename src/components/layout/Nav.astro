@@ -173,6 +173,17 @@ const primaryLinks = [
     });
   }
 
+  // --- Scroll state (toggles the underline border) ------------------------
+  const nav = document.querySelector<HTMLElement>(".c-nav");
+  if (nav) {
+    const SCROLL_THRESHOLD = 4;
+    const updateScrolled = () => {
+      nav.classList.toggle("is-scrolled", window.scrollY > SCROLL_THRESHOLD);
+    };
+    updateScrolled();
+    window.addEventListener("scroll", updateScrolled, { passive: true });
+  }
+
   // --- Mobile off-canvas panel --------------------------------------------
   const burger = document.querySelector<HTMLButtonElement>(".c-nav__burger");
   const mobile = document.querySelector<HTMLElement>("#nav-mobile-panel");
@@ -222,7 +233,11 @@ const primaryLinks = [
     top: 0;
     z-index: 100;
     background: var(--color-white);
-    border-bottom: var(--border-default);
+    border-bottom: 1px solid transparent;
+    transition: border-color var(--duration-hover) var(--ease-smooth);
+  }
+  .c-nav.is-scrolled {
+    border-bottom-color: var(--color-border);
   }
   .c-nav__inner {
     max-width: 1440px;

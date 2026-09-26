@@ -1,0 +1,82 @@
+---
+/**
+ * SectionHeader — eyebrow + heading + optional description.
+ *
+ * Always center-aligned by project rule: no left-aligned section headers.
+ */
+import Eyebrow from "./Eyebrow.astro";
+
+type HeadingTag = "h1" | "h2" | "h3";
+type EyebrowVariant = "default" | "accent";
+
+interface Props {
+  eyebrow?: string;
+  eyebrowVariant?: EyebrowVariant;
+  title: string;
+  description?: string;
+  titleClass?: string;
+  as?: HeadingTag;
+  class?: string;
+}
+
+const {
+  eyebrow,
+  eyebrowVariant = "default",
+  title,
+  description,
+  titleClass = "c-text_xl",
+  as = "h2",
+  class: className,
+} = Astro.props;
+
+const HeadingTag = as;
+const rootClass = ["c-section-header", className].filter(Boolean).join(" ");
+const titleClassList = ["c-section-header__title", titleClass]
+  .filter(Boolean)
+  .join(" ");
+---
+
+<header class={rootClass}>
+  {eyebrow && <Eyebrow variant={eyebrowVariant}>{eyebrow}</Eyebrow>}
+  <div class="c-section-header__text">
+    <HeadingTag class={titleClassList}>{title}</HeadingTag>
+    {description && (
+      <p class="c-section-header__description c-paragraph_m">{description}</p>
+    )}
+  </div>
+</header>
+
+<style is:global>
+  .c-section-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    gap: 1.714rem; /* 24px between eyebrow and text block */
+  }
+
+  .c-section-header__text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    gap: 0.714rem; /* 10px between title and description */
+  }
+
+  .c-section-header__title {
+    color: var(--color-heading);
+    text-align: center;
+    margin: 0 auto;
+  }
+
+  .c-section-header__description {
+    color: var(--color-text);
+    max-width: 42rem;
+    text-align: center;
+    margin: 0 auto;
+  }
+</style>

@@ -1,0 +1,145 @@
+---
+/**
+ * LogoStrip — infinite marquee of client logos.
+ *
+ * Receives every published client that has a logo (via
+ * `getAllClientsWithLogo`). Renders a horizontal marquee that scrolls right→
+ * left with a 120s loop. The item list is duplicated in the DOM so the
+ * animation can wrap seamlessly (translateX 0 → -50%). Duplicates are
+ * `aria-hidden` so screen readers only announce the roster once.
+ *
+ * Section is edge-to-edge with top/bottom borders. The marquee escapes the
+ * horizontal container padding via negative inline margins so the track
+ * runs across the full viewport width. The section's `overflow-x: hidden`
+ * clips whatever falls outside.
+ */
+import Eyebrow from "../ui/Eyebrow.astro";
+import type { Client } from "../../lib/sanity/types";
+import { urlFor, type Source } from "../../lib/sanity/image";
+
+interface Props {
+  clients: Client[];
+}
+
+const { clients } = Astro.props;
+const track = [...clients, ...clients];
+---
+
+<section class="c-logos">
+  <div class="c-logos__container">
+    <div class="c-logos__title-wrap">
+      <Eyebrow variant="default" class="c-logos__title">
+        trusted by 100+ b2b teams
+      </Eyebrow>
+    </div>
+
+    <div class="c-logos__marquee">
+      <ul class="c-logos__track" data-anim="logos-marquee">
+        {track.map((client, i) => {
+          const dup = i >= clients.length;
+          return (
+            <li class="c-logos__item" aria-hidden={dup ? "true" : undefined}>
+              {client.logo?.asset ? (
+                <img
+                  class="c-logos__img"
+                  src={urlFor(client.logo as Source).auto("format").height(60).url()}
+                  alt={dup ? "" : (client.logo.alt ?? client.name)}
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <span class="c-paragraph c-logos__fallback">{client.name}</span>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .c-logos {
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-white);
+    overflow-x: hidden; /* clip the marquee track */
+  }
+
+  /* Scoped container — mirrors .c-container's horizontal padding, no max-width,
+     vertical padding tuned for this section. */
+  .c-logos__container {
+    padding: 4.286rem 7.5rem 5.714rem; /* 60px / 120px / 80px */
+  }
+
+  @media (max-width: 767px) {
+    .c-logos__container {
+      padding-inline: 2rem;
+    }
+  }
+
+  .c-logos__title-wrap {
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    margin-bottom: 4rem; /* 56px */
+  }
+
+  /* Escape parent horizontal padding so the marquee runs full-bleed. */
+  .c-logos__marquee {
+    margin-inline: -7.5rem;
+  }
+  @media (max-width: 767px) {
+    .c-logos__marquee {
+      margin-inline: -2rem;
+    }
+  }
+
+  /* --- Marquee track ---------------------------------------------------- */
+  .c-logos__track {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 7.143rem; /* 100px */
+    width: max-content;
+    animation: c-logos-scroll 270s linear infinite;
+  }
+
+  @keyframes c-logos-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* Pause continuous motion when the user prefers reduced motion. */
+  @media (prefers-reduced-motion: reduce) {
+    .c-logos__track { animation: none; }
+  }
+
+  /* --- Logo items ------------------------------------------------------- */
+  .c-logos__item {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* Explicit height so the img's `height: 100%` resolves. `max-height` alone
+       doesn't establish a base for percentage heights in the child. */
+    height: 2.143rem; /* 30px */
+    width: auto;
+  }
+
+  .c-logos__img {
+    display: block;
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+  }
+
+  .c-logos__fallback {
+    color: var(--color-text);
+    white-space: nowrap;
+  }
+</style>

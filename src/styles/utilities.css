@@ -8,7 +8,7 @@
 .c-container {
   max-width: 1440px;
   margin-inline: auto;
-  padding: 5rem 7.5rem; /* TODO: DS section vertical spacing (5rem placeholder) */
+  padding: 6rem 7.5rem;
 }
 @media (max-width: 767px) {
   .c-container {

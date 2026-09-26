@@ -1,0 +1,339 @@
+---
+/**
+ * ClientCard — Home Featured Work card.
+ *
+ * Phase 4 part 1 exposes a single `variant: 'featured'`. The variant slot
+ * lets us add `'grid' | 'list'` later without changing the caller API.
+ *
+ * Featured layout (≥992):
+ *   [ screenshot ][ testimonial block ]
+ *
+ * Testimonial block: quote → author row (photo + name + role) → up to 2 KPIs.
+ * Any missing field degrades gracefully (see fallbacks below).
+ *
+ * Motion is deferred: root gets `data-anim="card-reveal"` only.
+ */
+import type { Client, Kpi } from "../../lib/sanity/types";
+import { urlFor, type Source } from "../../lib/sanity/image";
+
+type Variant = "featured";
+
+interface Props {
+  client: Client;
+  variant: Variant;
+  class?: string;
+}
+
+const { client, variant, class: className } = Astro.props;
+
+const rootClass = ["c-client-card", `is-${variant}`, className]
+  .filter(Boolean)
+  .join(" ");
+
+const testimonial = client.testimonial;
+const kpis: Kpi[] = (testimonial?.kpis ?? []).slice(0, 2);
+
+// Screenshot URL (desktop). Falls through to the empty state when the asset is missing.
+const screenshotAsset = client.websiteScreenshot?.asset;
+const screenshotUrl = screenshotAsset
+  ? urlFor(client.websiteScreenshot as Source).width(960).auto("format").url()
+  : undefined;
+const screenshotAlt = client.websiteScreenshot?.alt ?? client.name;
+
+// Author avatar (96px). If missing we render the first initial in a circle.
+const authorPhotoAsset = testimonial?.authorPhoto?.asset;
+const authorPhotoUrl = authorPhotoAsset
+  ? urlFor(testimonial!.authorPhoto as Source)
+      .width(96)
+      .height(96)
+      .fit("crop")
+      .auto("format")
+      .url()
+  : undefined;
+const authorInitial = testimonial?.authorName?.trim().charAt(0).toUpperCase() ?? "";
+
+// Header logo — the card head shows the client's full logo, not their name.
+const headLogoAsset = client.logo?.asset;
+const headLogoUrl = headLogoAsset
+  ? urlFor(client.logo as Source).height(100).auto("format").url()
+  : undefined;
+const headLogoAlt = client.logo?.alt ?? client.name;
+---
+
+<article class={rootClass} data-anim="card-reveal">
+  {
+    screenshotUrl ? (
+      <div class="c-client-card__screenshot">
+        <img src={screenshotUrl} alt={screenshotAlt} loading="lazy" decoding="async" />
+      </div>
+    ) : (
+      <div class="c-client-card__screenshot is-empty" aria-hidden="true" />
+    )
+  }
+
+  {
+    testimonial ? (
+      <div class="c-client-card__body">
+        <div class="c-client-card__intro">
+          <header class="c-client-card__head">
+            {headLogoUrl ? (
+              <img
+                class="c-client-card__name"
+                src={headLogoUrl}
+                alt={headLogoAlt}
+                loading="lazy"
+                decoding="async"
+              />
+            ) : (
+              <span class="c-client-card__name c-text_m">{client.name}</span>
+            )}
+            <svg
+              class="c-client-card__arrow"
+              aria-hidden="true"
+              width="15"
+              height="15"
+              viewBox="0 0 15 15"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M0.000296913 6.53399H11.6643C10.0983 5.20199 7.2543 2.51999 5.4903 0.917993L6.3543 -6.67572e-06L14.0583 7.16399V7.21799L6.3543 14.472L5.4903 13.536C7.2723 11.898 10.0803 9.28799 11.6643 7.84799H0.000296913V6.53399Z" fill="var(--color-text)" />
+            </svg>
+          </header>
+
+          <blockquote class="c-client-card__quote c-paragraph">
+            &ldquo;{testimonial.quote}&rdquo;
+          </blockquote>
+
+          <div class="c-client-card__author">
+            {
+              authorPhotoUrl ? (
+                <img
+                  class="c-client-card__author-photo"
+                  src={authorPhotoUrl}
+                  alt={testimonial.authorPhoto?.alt ?? testimonial.authorName}
+                  loading="lazy"
+                  decoding="async"
+                  width="48"
+                  height="48"
+                />
+              ) : (
+                <span class="c-client-card__author-photo is-empty" aria-hidden="true">
+                  {authorInitial}
+                </span>
+              )
+            }
+            <span class="c-client-card__author-meta">
+              <span class="c-client-card__author-name c-text_s">
+                {testimonial.authorName}
+              </span>
+              {testimonial.authorRole && (
+                <span class="c-client-card__author-role c-paragraph_s">
+                  {testimonial.authorRole}
+                </span>
+              )}
+            </span>
+          </div>
+        </div>
+
+        {
+          kpis.length > 0 && (
+            <ul class="c-client-card__kpis">
+              {kpis.map((kpi) => (
+                <li class="c-client-card__kpi">
+                  <span class="c-client-card__kpi-value c-text_l">{kpi.value}</span>
+                  <span class="c-client-card__kpi-desc c-paragraph_s">
+                    {kpi.description}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
+    ) : (
+      // TODO: COPY testimonial missing — card renders without quote/author/kpi block.
+      <div class="c-client-card__body is-empty">
+        <span class="c-client-card__name c-text_m">{client.name}</span>
+      </div>
+    )
+  }
+</article>
+
+<style>
+  .c-client-card {
+    display: grid;
+    /* Column ratio is set by the parent section (FeaturedWork) since it
+       differs per card. Default falls back to 1fr 1fr. */
+    grid-template-columns: 1fr 1fr;
+    gap: 1.3rem;
+  }
+
+  
+
+  @media (max-width: 991px) {
+    .c-client-card {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* --- Screenshot ------------------------------------------------------ */
+  .c-client-card__screenshot {
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+    background: var(--color-gray-light);
+    height: 32.5rem;
+  }
+
+  @media (max-width: 991px) {
+    .c-client-card__screenshot {
+      height: auto;
+      aspect-ratio: 4 / 3;
+    }
+  }
+
+  .c-client-card__screenshot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .c-client-card__screenshot.is-empty {
+    background: var(--color-gray-light);
+  }
+
+  /* --- Body (the real visible card) ----------------------------------- */
+  .c-client-card__body {
+    display: flex;
+    width: 100%;
+    padding: 1.714rem; /* 24px */
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    align-self: stretch;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+    background: var(--color-white);
+    height: 100%;
+    /* TODO: DS body internal spacing between quote / author / KPIs. */
+    gap: 1.25rem;
+  }
+
+
+  /* Intro block wraps head / quote / author so the body's space-between
+     pushes the KPIs to the bottom. Internal 24px rhythm. */
+  .c-client-card__intro {
+    display: flex;
+    flex-direction: column;
+    gap: 1.714rem; /* 24px */
+    width: 100%;
+  }
+
+  .c-client-card__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .c-client-card__name {
+    color: var(--color-heading);
+  }
+  /* When the head renders the client logo image (default), constrain it. */
+  img.c-client-card__name {
+    display: block;
+    max-height: 2.25rem;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .c-client-card__arrow {
+    width: 1.143rem; /* 16px */
+    height: 1.143rem;
+    flex: 0 0 auto;
+    display: block;
+  }
+
+  .c-client-card__quote {
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  /* --- Author ---------------------------------------------------------- */
+  .c-client-card__author {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .c-client-card__author-photo {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 999px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .c-client-card__author-photo.is-empty {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-gray-light);
+    color: var(--color-heading);
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  .c-client-card__author-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .c-client-card__author-name {
+    color: var(--color-heading);
+  }
+
+  .c-client-card__author-role {
+    color: var(--color-text);
+  }
+
+  /* --- KPIs ------------------------------------------------------------ */
+  .c-client-card__kpis {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    /* TODO: DS gap between KPIs — matches featured-work ref spacing. */
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    width: 100%;
+  }
+
+  .c-client-card__kpi {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    /* KPI description sits inside a faint bordered pill in the ref. */
+    text-align: center;
+  }
+
+  .c-client-card__kpi-value {
+    color: var(--color-blue);
+  }
+
+  .c-client-card__kpi-desc {
+    color: var(--color-text);
+    text-transform: uppercase;
+    letter-spacing: 0.064em;
+    border: var(--border-default);
+    border-radius: 3px;
+    padding: 0.35em 0.9em;
+    width: 100%;
+  }
+</style>

@@ -1,0 +1,44 @@
+---
+/**
+ * Stat — a single value/label pair.
+ *
+ * Value renders in `c-text_l` (Brulia). Label renders in `c-paragraph_s`
+ * (Acumin) beneath it. Used by Home Hero (2×) and Testimonial KPIs.
+ *
+ * `animate` toggles a `data-anim="counter"` hook on the value; no actual
+ * animation is wired in Phase 4 part 1.
+ */
+interface Props {
+  value: string;
+  label: string;
+  animate?: boolean;
+  class?: string;
+}
+
+const { value, label, animate = false, class: className } = Astro.props;
+const rootClass = ["c-stat", className].filter(Boolean).join(" ");
+---
+
+<div class={rootClass}>
+  <span class="c-stat__value c-text_l" data-anim={animate ? "counter" : undefined}>{value}</span>
+  <span class="c-stat__label c-paragraph_s">{label}</span>
+</div>
+
+<style>
+  .c-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* TODO: DS exact gap between value and label — closest neutral small gap. */
+    gap: 0.25rem;
+  }
+
+  .c-stat__value {
+    color: var(--color-heading);
+    line-height: 1.2;
+  }
+
+  .c-stat__label {
+    color: var(--color-text);
+  }
+</style>
