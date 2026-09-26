@@ -16,6 +16,7 @@
     "format": "prettier --write .",
     "astro": "astro",
     "seed:categories": "node scripts/seed-categories.mjs",
+    "import:clients": "tsx scripts/sanity/import-client-assets.ts",
     "schema:deploy": "sanity schema deploy"
   },
   "dependencies": {
@@ -39,6 +40,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@types/node": "^26.6.3",
     "@typescript-eslint/eslint-plugin": "^8.70.1",
     "@typescript-eslint/parser": "^8.70.1",
     "dotenv": "^18.0.3",
@@ -46,6 +48,7 @@
     "eslint-plugin-astro": "^3.2.1",
     "prettier": "^3.9.9",
     "prettier-plugin-astro": "^1.1.0",
+    "tsx": "^4.23.15",
     "typescript": "^6.0.0",
     "vite": "^8.3.1"
   }

@@ -18,15 +18,18 @@ Approach: **repeatable data lives in Sanity documents; page copy is authored dir
 ### `client` — Clients (no detail page)
 | Field | Name | Type | Rules |
 |---|---|---|---|
-| Name | `name` | string | required |
-| Logo | `logo` | image (SVG preferred) | required. Alt auto = client name |
-| Icon | `icon` | image (SVG preferred) | used in Home work list rows. Alt auto = client name |
-| Card Thumbnail | `cardThumbnail` | image (hotspot) | used in Home work cards. Alt required |
-| Website Screenshot | `websiteScreenshot` | image (hotspot) | alt required. Used in multiple components across the site |
+| Name | `name` | string | optional |
+| Logo | `logo` | image (SVG preferred) | optional. Alt auto = client name |
+| Icon | `icon` | image (SVG preferred) | optional. Alt auto = client name |
+| Badge | `badge` | image (no hotspot) | optional. Alt auto = "<name> badge" (required if image is set and alt blank) |
+| Card Thumbnail | `cardThumbnail` | image (hotspot) | optional. Alt required if image is set |
+| Website Screenshot | `websiteScreenshot` | image (hotspot) | optional. Alt required if image is set |
 | Testimonial | `testimonial` | reference → `testimonial` | optional |
-| Funds Raised | `fundsRaised` | string | e.g. `$25.0M`. Template appends "Raised" |
-| Category | `category` | reference → `category` | required, exactly one |
+| Funds Raised | `fundsRaised` | string | optional. e.g. `$25.0M`. Template appends "Raised" |
+| Category | `category` | reference → `category` | optional |
 | Website URL | `websiteUrl` | url | optional |
+
+All fields are optional so clients can be bulk-created and published without waiting on assets. Enforce presence at query/render time (skip incomplete clients in listings) rather than at Studio level.
 
 Preview: name · category · logo.
 

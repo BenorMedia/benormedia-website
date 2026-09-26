@@ -29,3 +29,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# content import staging (raw assets to be renamed then imported)
+docs/content-import/

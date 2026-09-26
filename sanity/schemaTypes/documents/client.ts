@@ -17,7 +17,6 @@ export const client = defineType({
       title: 'Name',
       description: 'The client\'s company name.',
       type: 'string',
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'logo',
@@ -34,7 +33,6 @@ export const client = defineType({
           type: 'string',
         }),
       ],
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'icon',
@@ -54,6 +52,29 @@ export const client = defineType({
       ],
     }),
     defineField({
+      name: 'badge',
+      title: 'Badge',
+      description:
+        'Small circular badge shown on the client card. Transparent PNG or SVG.',
+      type: 'image',
+      options: { hotspot: false },
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alt text',
+          description:
+            'Describe the badge for screen readers. If left blank, \'<client name> badge\' is used automatically. Required if a badge image is set.',
+          type: 'string',
+          validation: (Rule) =>
+            Rule.custom((alt, ctx) => {
+              const parent = ctx.parent as { asset?: unknown } | undefined;
+              if (parent?.asset && !alt) return 'Alt text is required when an image is set.';
+              return true;
+            }),
+        }),
+      ],
+    }),
+    defineField({
       name: 'cardThumbnail',
       title: 'Card thumbnail',
       description: 'Image used in the Home work cards. Drag the dot to control the crop.',
@@ -63,12 +84,17 @@ export const client = defineType({
         defineField({
           name: 'alt',
           title: 'Alt text',
-          description: 'Describe the image for screen readers. Required.',
+          description:
+            'Describe the image for screen readers. Required only if the image is set.',
           type: 'string',
-          validation: (Rule) => Rule.required(),
+          validation: (Rule) =>
+            Rule.custom((alt, ctx) => {
+              const parent = ctx.parent as { asset?: unknown } | undefined;
+              if (parent?.asset && !alt) return 'Alt text is required when an image is set.';
+              return true;
+            }),
         }),
       ],
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'websiteScreenshot',
@@ -81,12 +107,17 @@ export const client = defineType({
         defineField({
           name: 'alt',
           title: 'Alt text',
-          description: 'Describe the screenshot for screen readers. Required.',
+          description:
+            'Describe the screenshot for screen readers. Required only if the image is set.',
           type: 'string',
-          validation: (Rule) => Rule.required(),
+          validation: (Rule) =>
+            Rule.custom((alt, ctx) => {
+              const parent = ctx.parent as { asset?: unknown } | undefined;
+              if (parent?.asset && !alt) return 'Alt text is required when an image is set.';
+              return true;
+            }),
         }),
       ],
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'testimonial',
@@ -108,7 +139,6 @@ export const client = defineType({
       description: 'The industry this client belongs to. Pick exactly one.',
       type: 'reference',
       to: [{ type: 'category' }],
-      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'websiteUrl',
