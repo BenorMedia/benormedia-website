@@ -1,0 +1,46 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Eyebrow from "../components/ui/Eyebrow.astro";
+import Button from "../components/ui/Button.astro";
+---
+
+<BaseLayout title="Page not found" noIndex={true} showCtaBanner={false}>
+  <section class="c-notfound">
+    <div class="c-notfound__inner">
+      <Eyebrow variant="default">404</Eyebrow>
+      <h1 class="c-text_xl">Page not found</h1>
+      <p class="c-paragraph_l">
+        The page you're looking for doesn't exist or has moved.
+      </p>
+      <div class="c-notfound__cta">
+        <Button href="/" variant="gradient">Back to home</Button>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .c-notfound {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+  }
+  .c-notfound__inner {
+    max-width: 1440px;
+    margin-inline: auto;
+    padding: 8rem 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+  }
+  .c-notfound__cta {
+    margin-top: 1rem;
+  }
+  @media (max-width: 767px) {
+    /* TODO: DS mobile — no dedicated design provided; built functional with DS tokens. */
+    .c-notfound__inner { padding: 5rem 1.5rem; }
+  }
+</style>

@@ -15,7 +15,8 @@
     "lint": "eslint . --ext .js,.ts,.astro",
     "format": "prettier --write .",
     "astro": "astro",
-    "seed:categories": "node scripts/seed-categories.mjs"
+    "seed:categories": "node scripts/seed-categories.mjs",
+    "schema:deploy": "sanity schema deploy"
   },
   "dependencies": {
     "@astrojs/react": "^7.0.0",

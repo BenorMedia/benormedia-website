@@ -1,0 +1,167 @@
+---
+/**
+ * CtaBanner — c-cta
+ * Global gradient CTA rendered above the footer.
+ * Content is authored in siteSettings.ctaBanner. Component hides itself
+ * cleanly if the banner (or its title) is missing.
+ *
+ * Eyebrow needs an on-dark override — the default eyebrow has a gray
+ * border + dark text that are unreadable on the gradient. Overridden
+ * scoped to `.c-cta` here; flagged in DECISIONS as a possible DS gap.
+ */
+import type { SiteSettings, Link, Button as ButtonType } from "../../lib/sanity/types";
+import Button from "../ui/Button.astro";
+import Eyebrow from "../ui/Eyebrow.astro";
+
+interface Props {
+  siteSettings?: SiteSettings | null | undefined;
+}
+
+const { siteSettings } = Astro.props;
+const cta = siteSettings?.ctaBanner;
+const shouldRender = !!(cta && cta.title);
+
+// --- Helpers --------------------------------------------------------------
+const pageTypeToPath: Record<string, string> = {
+  homePage: "/",
+  workPage: "/work",
+  pricingPage: "/pricing",
+  testimonialsPage: "/testimonials",
+  blogPage: "/blog",
+};
+
+function hrefFromLink(link: Link | undefined): string | undefined {
+  if (!link) return undefined;
+  if (link.type === "external") return link.externalUrl;
+  if (link.type === "contact") return "#";
+  if (link.type === "internal" && link.internalRef) {
+    const ref = link.internalRef;
+    if (ref._type === "post" && ref.slug?.current) return `/blog/${ref.slug.current}`;
+    return pageTypeToPath[ref._type];
+  }
+  return undefined;
+}
+
+const buttons = cta?.buttons ?? [];
+---
+
+{shouldRender && cta && (
+<section class="c-container" aria-labelledby="cta-banner-title">
+  <div class="c-cta">
+    <div class="c-cta__inner">
+      <Eyebrow variant="default" class="c-cta__eyebrow">GET IN TOUCH</Eyebrow>
+      <h2 id="cta-banner-title" class="c-text_xl c-cta__title">{cta.title}</h2>
+
+      {buttons.length > 0 && (
+        <div class="c-cta__buttons">
+          {buttons.map((b: ButtonType) => {
+            const href = hrefFromLink(b.link);
+            const isContact = b.link?.type === "contact";
+            const target = b.link?.openInNewTab ? "_blank" : undefined;
+            return isContact ? (
+              <Button variant={b.variant} class="js-open-contact">{b.link.label}</Button>
+            ) : (
+              <a
+                href={href ?? "#"}
+                class={`c-button is-${b.variant}`}
+                target={target}
+                rel={target === "_blank" ? "noopener" : undefined}
+              >
+                <span class="c-button__text">{b.link?.label}</span>
+              </a>
+            );
+          })}
+        </div>
+      )}
+
+      <div class="c-cta__pill" aria-hidden="true"></div>
+    </div>
+
+    <img
+      src="/images/cta-banner-vector.svg"
+      alt=""
+      aria-hidden="true"
+      class="c-cta__vector"
+    />
+  </div>
+</section>
+)}
+
+<style>
+  .c-cta {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.455rem;
+    background: linear-gradient(290deg, #6BB0F7 8.49%, #6275F6 91.51%);
+    color: var(--color-white);
+    display: flex;
+    padding: 5rem 2.625rem 0 2.625rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.875rem;
+    align-self: stretch;
+  }
+  .c-cta__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+  }
+  .c-cta__title {
+    color: var(--color-white);
+    max-width: 60%;
+  }
+  .c-cta__buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 0.5rem;
+  }
+
+  /* Trusted-companies placeholder block. Empty on purpose — content wired later. */
+  .c-cta__pill {
+    display: flex;
+    padding: 0.4946rem 0.8902rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 0.5341rem;
+  }
+
+  /* Decorative vector */
+  .c-cta__vector {
+    position: relative;
+    z-index: 0;
+    width: min(60rem, 90%);
+    height: auto;
+    pointer-events: none;
+    display: block;
+  }
+
+  /* --- Eyebrow on-dark override -----------------------------------------
+     TODO: DS eyebrow on-dark variant — default eyebrow uses --color-gray border
+     + --color-text; unreadable on gradient. Scoped override until DS confirms. */
+  .c-cta :global(.c-eyebrow.is-default) {
+    border-color: rgba(255, 255, 255, 0.4);
+    color: var(--color-white);
+  }
+  .c-cta :global(.c-eyebrow.is-default::before),
+  .c-cta :global(.c-eyebrow.is-default::after) {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(255, 255, 255, 0.6);
+  }
+
+  @media (max-width: 991px) {
+    .c-cta { padding: 4rem 2rem 0; }
+  }
+  @media (max-width: 767px) {
+    .c-cta { padding: 3rem 1.25rem 0; }
+    .c-cta__inner { gap: 1.25rem; }
+    .c-cta__title { max-width: 100%; }
+  }
+</style>

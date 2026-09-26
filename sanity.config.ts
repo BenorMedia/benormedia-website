@@ -10,12 +10,26 @@ import { structure } from './sanity/structure';
 // projectId + dataset are read from environment (never hardcoded) so the
 // same config works in local, preview, and production. `basePath` must match
 // `studioBasePath` in astro.config.mjs.
+//
+// Dual-runtime env lookup:
+//   - Vite (Studio bundle) exposes PUBLIC_* via `import.meta.env`.
+//   - Node (Sanity CLI, e.g. `sanity schema deploy`) exposes them via
+//     `process.env` after `sanity.cli.ts` loads `.env` via dotenv.
+declare const process: { env: Record<string, string | undefined> } | undefined;
+
+const projectId =
+  import.meta.env.PUBLIC_SANITY_PROJECT_ID ??
+  (typeof process !== 'undefined' ? process.env.PUBLIC_SANITY_PROJECT_ID : undefined);
+const dataset =
+  import.meta.env.PUBLIC_SANITY_DATASET ??
+  (typeof process !== 'undefined' ? process.env.PUBLIC_SANITY_DATASET : undefined);
+
 export default defineConfig({
   name: 'default',
   title: 'BenorMedia',
   basePath: '/studio',
-  projectId: import.meta.env.PUBLIC_SANITY_PROJECT_ID,
-  dataset: import.meta.env.PUBLIC_SANITY_DATASET,
+  projectId,
+  dataset,
   plugins: [structureTool({ structure }), table()],
   schema: {
     types: schemaTypes,

@@ -1,0 +1,95 @@
+---
+/**
+ * Seo — resolves meta from (pageSeo) → (component props) → (siteSettings defaults).
+ * Applies siteSettings.titleTemplate to the resolved title unless the title
+ * equals defaultMetaTitle (avoids double-templating the site name on Home).
+ * Emits robots noindex when noIndex OR pageSeo.noIndex OR PUBLIC_SITE_ENV !== 'production'.
+ */
+import type { Seo, SiteSettings, SanityImage } from "../../lib/sanity/types";
+import { urlFor } from "../../lib/sanity/image";
+
+type OgImage = SanityImage | string;
+
+interface Props {
+  title?: string | undefined;
+  description?: string | undefined;
+  ogImage?: OgImage | undefined;
+  noIndex?: boolean | undefined;
+  canonicalUrl?: string | undefined;
+  pageSeo?: Seo | null | undefined;
+  siteSettings?: SiteSettings | null | undefined;
+}
+
+const {
+  title: titleProp,
+  description: descriptionProp,
+  ogImage: ogImageProp,
+  noIndex: noIndexProp = false,
+  canonicalUrl: canonicalUrlProp,
+  pageSeo,
+  siteSettings,
+} = Astro.props;
+
+// --- Resolution chain -------------------------------------------------------
+const rawTitle =
+  pageSeo?.metaTitle ?? titleProp ?? siteSettings?.defaultMetaTitle ?? siteSettings?.siteName ?? "BenorMedia";
+
+const description =
+  pageSeo?.metaDescription ?? descriptionProp ?? siteSettings?.defaultMetaDescription ?? undefined;
+
+const ogImageResolved: OgImage | undefined =
+  pageSeo?.ogImage ?? ogImageProp ?? siteSettings?.defaultOgImage ?? undefined;
+
+// Title template ------------------------------------------------------------
+const template = siteSettings?.titleTemplate ?? "%s | BenorMedia";
+const isDefaultTitle =
+  !!siteSettings?.defaultMetaTitle && rawTitle === siteSettings.defaultMetaTitle;
+const title = isDefaultTitle ? rawTitle : template.replace("%s", rawTitle);
+
+// Robots --------------------------------------------------------------------
+const envIsProd = import.meta.env["PUBLIC_SITE_ENV"] === "production";
+const shouldNoIndex = noIndexProp || pageSeo?.noIndex === true || !envIsProd;
+const robots = shouldNoIndex ? "noindex, nofollow" : "index, follow";
+
+// Canonical URL -------------------------------------------------------------
+const siteUrl = siteSettings?.siteUrl?.replace(/\/$/, "");
+const canonical = canonicalUrlProp
+  ?? pageSeo?.canonicalUrl
+  ?? (siteUrl ? `${siteUrl}${Astro.url.pathname}` : new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString());
+
+// OG image URL --------------------------------------------------------------
+function resolveOgImage(img: OgImage | undefined): string | undefined {
+  if (!img) return undefined;
+  if (typeof img === "string") return img;
+  if (!img.asset) return undefined;
+  return urlFor(img).width(1200).height(630).fit("crop").url();
+}
+const ogImageUrl = resolveOgImage(ogImageResolved);
+
+const ogType = "website";
+const siteName = siteSettings?.siteName ?? "BenorMedia";
+const twitterHandle = siteSettings?.twitterHandle;
+const googleSiteVerification = siteSettings?.googleSiteVerification;
+---
+
+<title>{title}</title>
+{description && <meta name="description" content={description} />}
+<link rel="canonical" href={canonical} />
+<meta name="robots" content={robots} />
+
+<meta property="og:title" content={title} />
+{description && <meta property="og:description" content={description} />}
+{ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
+<meta property="og:url" content={canonical} />
+<meta property="og:type" content={ogType} />
+<meta property="og:site_name" content={siteName} />
+
+<meta name="twitter:card" content="summary_large_image" />
+{twitterHandle && <meta name="twitter:site" content={twitterHandle} />}
+<meta name="twitter:title" content={title} />
+{description && <meta name="twitter:description" content={description} />}
+{ogImageUrl && <meta name="twitter:image" content={ogImageUrl} />}
+
+{googleSiteVerification && (
+  <meta name="google-site-verification" content={googleSiteVerification} />
+)}

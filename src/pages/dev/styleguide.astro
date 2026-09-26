@@ -4,6 +4,31 @@ import Button from "../../components/ui/Button.astro";
 import Eyebrow from "../../components/ui/Eyebrow.astro";
 import Tag from "../../components/ui/Tag.astro";
 import Container from "../../components/ui/Container.astro";
+import CtaBanner from "../../components/layout/CtaBanner.astro";
+import type { SiteSettings } from "../../lib/sanity/types";
+
+// Mock siteSettings shape used only to preview the CTA banner on the styleguide.
+// The banner reads `.ctaBanner` — everything else is unused by this preview.
+const demoSiteSettings = {
+  _id: "styleguide-demo",
+  _type: "siteSettings",
+  siteName: "BenorMedia",
+  siteUrl: "https://example.com",
+  ctaBanner: {
+    title: "Ready to build your website? Let's chat.",
+    buttons: [
+      {
+        variant: "white",
+        link: { label: "Get in Touch", type: "contact" },
+      },
+      {
+        variant: "glass",
+        link: { label: "See Pricing", type: "internal" },
+      },
+    ],
+    socialProofText: "Trusted by +100 companies",
+  },
+} satisfies Partial<SiteSettings> as unknown as SiteSettings;
 
 // Full color token inventory — must stay in sync with DESIGN_SYSTEM §4.
 const colors = [
@@ -168,7 +193,8 @@ const buttonVariants = ["gradient", "gradient-outline", "white", "glass"] as con
 
       <h3 class="c-text_m sg-subhead">Container</h3>
       <p class="c-paragraph_s sg-muted">
-        Max-width 1440px, centered, padding 5rem 3rem (5rem vertical is a placeholder — see TODO).
+        Max-width 1440px, centered, padding 5rem 7.5rem desktop / 5rem 2rem mobile
+        (5rem vertical is a placeholder — see TODO).
       </p>
       <div class="sg-container-outer">
         <Container>
@@ -176,6 +202,39 @@ const buttonVariants = ["gradient", "gradient-outline", "white", "glass"] as con
             <p class="c-paragraph">.c-container content area</p>
           </div>
         </Container>
+      </div>
+    </section>
+  </Container>
+
+  <!-- ================================================================== -->
+  <!-- 5. Layout components                                               -->
+  <!-- ================================================================== -->
+  <Container>
+    <section class="sg-section">
+      <h2 class="c-text_l">5. Layout components</h2>
+      <p class="c-paragraph_s sg-muted">
+        <strong>Nav</strong> is rendered at the top of this page and <strong>Footer</strong>
+        at the bottom (both from <code>BaseLayout</code>). Below: <strong>CTA banner</strong>
+        with mock content, and a trigger for the <strong>contact modal</strong>.
+      </p>
+
+      <h3 class="c-text_m sg-subhead">CTA banner (with mock content)</h3>
+      <p class="c-paragraph_s sg-muted">
+        Reads content from <code>siteSettings.ctaBanner</code>. Hides itself entirely when
+        <code>title</code> is missing. Demo below uses a hardcoded mock.
+      </p>
+    </section>
+  </Container>
+  <CtaBanner siteSettings={demoSiteSettings} />
+  <Container>
+    <section class="sg-section">
+      <h3 class="c-text_m sg-subhead">Contact modal</h3>
+      <p class="c-paragraph_s sg-muted">
+        Modal is mounted once by <code>BaseLayout</code>. Any element with
+        <code>[data-open-contact]</code> or <code>.js-open-contact</code> opens it.
+      </p>
+      <div class="sg-inline-row">
+        <Button variant="gradient" class="js-open-contact">Open contact modal</Button>
       </div>
     </section>
   </Container>

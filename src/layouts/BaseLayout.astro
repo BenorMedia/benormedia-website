@@ -1,19 +1,106 @@
 ---
-// BaseLayout — minimal shell (Phase 1). Day 3 will extend with Nav/Footer.
+/**
+ * BaseLayout — global shell for every page.
+ * Fetches siteSettings once via cache and threads it into Nav, Footer,
+ * CtaBanner and ContactModal. Seo renders <head> meta with fallback chain
+ * pageSeo → props → siteSettings defaults.
+ */
 import "../styles/tokens.css";
 import "../styles/base.css";
 import "../styles/typography.css";
 import "../styles/buttons.css";
 import "../styles/utilities.css";
 
+import type { Seo as SeoData, SanityImage, SiteSettings } from "../lib/sanity/types";
+import { getSiteSettingsCached } from "../lib/sanity/site";
+import { urlFor } from "../lib/sanity/image";
+
+import Seo from "../components/layout/Seo.astro";
+import Nav from "../components/layout/Nav.astro";
+import Footer from "../components/layout/Footer.astro";
+import CtaBanner from "../components/layout/CtaBanner.astro";
+import ContactModal from "../components/layout/ContactModal.astro";
+
+type OgImage = SanityImage | string;
+
 interface Props {
-  title: string;
+  title?: string;
   description?: string;
+  ogImage?: OgImage;
+  noIndex?: boolean;
+  /** Legacy alias — accept lowercase form to stay compatible with earlier pages. */
   noindex?: boolean;
+  pageSeo?: SeoData | null;
+  showCtaBanner?: boolean;
 }
 
-const { title, description, noindex = false } = Astro.props;
-const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString();
+const {
+  title,
+  description,
+  ogImage,
+  noIndex,
+  noindex,
+  pageSeo,
+  showCtaBanner = true,
+} = Astro.props;
+
+const noIndexResolved = noIndex ?? noindex ?? false;
+
+const siteSettings: SiteSettings | null = await getSiteSettingsCached();
+
+// --- Organization JSON-LD --------------------------------------------------
+type OrganizationLd = {
+  "@context": "https://schema.org";
+  "@type": "Organization";
+  name: string;
+  url?: string;
+  logo?: string;
+  description?: string;
+  sameAs?: string[];
+  foundingDate?: string;
+  address?: {
+    "@type": "PostalAddress";
+    streetAddress?: string;
+    addressLocality?: string;
+    addressRegion?: string;
+    postalCode?: string;
+    addressCountry?: string;
+  };
+};
+
+let orgLd: OrganizationLd | null = null;
+if (siteSettings) {
+  const orgName = siteSettings.legalName ?? siteSettings.siteName;
+  if (orgName) {
+    const ld: OrganizationLd = {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: orgName,
+    };
+    if (siteSettings.siteUrl) ld.url = siteSettings.siteUrl;
+    if (siteSettings.orgLogo?.asset) {
+      ld.logo = urlFor(siteSettings.orgLogo).width(512).height(512).fit("crop").url();
+    }
+    if (siteSettings.orgDescription) ld.description = siteSettings.orgDescription;
+    if (siteSettings.sameAs && siteSettings.sameAs.length > 0) ld.sameAs = siteSettings.sameAs;
+    if (siteSettings.foundingYear) ld.foundingDate = String(siteSettings.foundingYear);
+    if (siteSettings.address) {
+      const a = siteSettings.address;
+      const hasAny = a.street || a.city || a.region || a.postalCode || a.country;
+      if (hasAny) {
+        ld.address = {
+          "@type": "PostalAddress",
+          ...(a.street && { streetAddress: a.street }),
+          ...(a.city && { addressLocality: a.city }),
+          ...(a.region && { addressRegion: a.region }),
+          ...(a.postalCode && { postalCode: a.postalCode }),
+          ...(a.country && { addressCountry: a.country }),
+        };
+      }
+    }
+    orgLd = ld;
+  }
+}
 ---
 
 <!doctype html>
@@ -24,11 +111,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString(
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
 
-    <title>{title}</title>
-    {description && <meta name="description" content={description} />}
-    <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
-
     <link
       rel="preload"
       href="/fonts/brulia-display.woff2"
@@ -38,9 +120,26 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString(
     />
     <!-- TODO: FONTS Adobe kit <link> pending kit ID -->
 
+    <Seo
+      title={title}
+      description={description}
+      ogImage={ogImage}
+      noIndex={noIndexResolved}
+      pageSeo={pageSeo}
+      siteSettings={siteSettings}
+    />
+
+    {orgLd && (
+      <script type="application/ld+json" set:html={JSON.stringify(orgLd)} />
+    )}
+
     <meta name="generator" content={Astro.generator} />
   </head>
   <body>
-    <slot />
+    <Nav siteSettings={siteSettings} />
+    <main><slot /></main>
+    {showCtaBanner && <CtaBanner siteSettings={siteSettings} />}
+    <Footer siteSettings={siteSettings} />
+    <ContactModal siteSettings={siteSettings} />
   </body>
 </html>

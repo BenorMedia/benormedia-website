@@ -91,9 +91,9 @@ Same result on the page (questions grouped by type), no dynamic dropdown needed,
 | Title | `title` | string | required, unique |
 | Slug | `slug` | slug | required (used by blog filter `?category=`) |
 
-Document (not a hardcoded list) so the blog filter dropdown and editors can manage it. Seeded with the 22 values below. Display is uppercased with CSS; stored in the casing below.
+Document (not a hardcoded list) so the blog filter dropdown and editors can manage it. Seeded with the 23 values below. Display is uppercased with CSS; stored in the casing below.
 
-Seed: Fintech · SaaS · HR Tech · Cleantech · Venture Capital · E-Commerce · Marketing · Recruiting · Consumer · Design Studio · AI & Technology · SaaS / B2B Tech · Sales Tech · Cybersecurity · Marketing Tech · Professional Services · Agency · Nonprofit · Hospitality · Energy · Media & Entertainment · Education
+Seed: Fintech · SaaS · HR Tech · Cleantech · Venture Capital · E-Commerce · Marketing · Recruiting · Consumer · Design Studio · AI & Technology · SaaS / B2B Tech · Sales Tech · Cybersecurity · Marketing Tech · Professional Services · Agency · Nonprofit · Hospitality · Energy · Media & Entertainment · Education · Healthcare
 
 ---
 

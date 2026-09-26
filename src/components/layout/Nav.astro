@@ -1,0 +1,468 @@
+---
+/**
+ * Nav — sticky top navigation with Services dropdown + mobile off-canvas menu.
+ *
+ * - Nav labels + Services dropdown items are hardcoded (per approved plan).
+ * - Logo: siteSettings.logo overrides the static /images/Logo.svg fallback.
+ * - "Get in Touch" is a <button> (no href), fires the ContactModal via
+ *   [data-open-contact] — wired globally in ContactModal.astro.
+ * - Services dropdown: hover on hover-capable devices; click toggle for touch;
+ *   Esc closes and restores focus; outside click closes.
+ * - Mobile (≤767): hamburger opens full-height off-canvas panel. body scroll
+ *   is locked while open. Close via X, Esc, or backdrop click.
+ */
+import type { SiteSettings } from "../../lib/sanity/types";
+import { urlFor } from "../../lib/sanity/image";
+import Button from "../ui/Button.astro";
+
+interface Props {
+  siteSettings?: SiteSettings | null | undefined;
+}
+
+const { siteSettings } = Astro.props;
+
+const logoUrl = siteSettings?.logo?.asset
+  ? urlFor(siteSettings.logo).width(504).auto("format").url()
+  : "/images/Logo.svg";
+const logoAlt = siteSettings?.logo?.alt ?? siteSettings?.siteName ?? "BenorMedia";
+
+const services = [
+  { label: "Custom Websites & Migrations", href: "/custom-websites-migrations" },
+  { label: "Growth (AEO / SEO / CRO)", href: "/growth" },
+  { label: "Ongoing Website Support", href: "/ongoing-website-support" },
+];
+
+const primaryLinks = [
+  { label: "Work", href: "/work" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "Testimonials", href: "/testimonials" },
+];
+---
+
+<header class="c-nav">
+  <div class="c-nav__inner">
+    <a href="/" class="c-nav__logo" aria-label="BenorMedia home">
+      <img src={logoUrl} alt={logoAlt} width="252" height="50" />
+    </a>
+
+    <nav class="c-nav__primary" aria-label="Primary">
+      <ul class="c-nav__list">
+        <li class="c-nav__item is-has-menu">
+          <button
+            type="button"
+            class="c-nav__services"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="nav-services-panel"
+          >
+            Services
+            <svg
+              class="c-nav__caret"
+              aria-hidden="true"
+              viewBox="0 0 12 8"
+              width="12"
+              height="8"
+            >
+              <path d="M1 1.5L6 6.5L11 1.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <div
+            id="nav-services-panel"
+            class="c-nav__panel"
+            role="menu"
+          >
+            {services.map((s) => (
+              <a href={s.href} role="menuitem" class="c-nav__panel-link">
+                {s.label}
+              </a>
+            ))}
+          </div>
+        </li>
+        {primaryLinks.map((link) => (
+          <li class="c-nav__item">
+            <a href={link.href} class="c-nav__link">{link.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="c-nav__cta">
+      <Button variant="gradient" class="c-nav__cta-button js-open-contact">Get in Touch</Button>
+    </div>
+
+    <button
+      type="button"
+      class="c-nav__burger"
+      aria-label="Open menu"
+      aria-expanded="false"
+      aria-controls="nav-mobile-panel"
+    >
+      <span class="c-nav__burger-line"></span>
+      <span class="c-nav__burger-line"></span>
+      <span class="c-nav__burger-line"></span>
+    </button>
+  </div>
+
+  <div id="nav-mobile-panel" class="c-nav__mobile" hidden>
+    <div class="c-nav__mobile-inner">
+      <button
+        type="button"
+        class="c-nav__mobile-close"
+        aria-label="Close menu"
+      >
+        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+          <path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+        </svg>
+      </button>
+
+      <ul class="c-nav__mobile-list">
+        <li class="c-nav__mobile-group">
+          <div class="c-nav__mobile-group-label">Services</div>
+          <ul class="c-nav__mobile-sublist">
+            {services.map((s) => (
+              <li><a href={s.href} class="c-nav__mobile-sublink">{s.label}</a></li>
+            ))}
+          </ul>
+        </li>
+        {primaryLinks.map((link) => (
+          <li><a href={link.href} class="c-nav__mobile-link">{link.label}</a></li>
+        ))}
+      </ul>
+
+      <div class="c-nav__mobile-cta">
+        <Button variant="gradient" class="js-open-contact">Get in Touch</Button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<script>
+  // --- Services dropdown (desktop, click/tap fallback) ---------------------
+  const services = document.querySelector<HTMLElement>(".c-nav__item.is-has-menu");
+  const trigger = services?.querySelector<HTMLButtonElement>(".c-nav__services");
+  const panel = services?.querySelector<HTMLElement>(".c-nav__panel");
+
+  function closeServices() {
+    if (!services || !trigger) return;
+    services.classList.remove("is-open");
+    trigger.setAttribute("aria-expanded", "false");
+  }
+  function openServices() {
+    if (!services || !trigger) return;
+    services.classList.add("is-open");
+    trigger.setAttribute("aria-expanded", "true");
+  }
+
+  if (trigger && services && panel) {
+    trigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = services.classList.contains("is-open");
+      if (isOpen) closeServices();
+      else openServices();
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!services.contains(e.target as Node)) closeServices();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && services.classList.contains("is-open")) {
+        closeServices();
+        trigger.focus();
+      }
+    });
+  }
+
+  // --- Mobile off-canvas panel --------------------------------------------
+  const burger = document.querySelector<HTMLButtonElement>(".c-nav__burger");
+  const mobile = document.querySelector<HTMLElement>("#nav-mobile-panel");
+  const mobileClose = document.querySelector<HTMLButtonElement>(".c-nav__mobile-close");
+
+  function openMobile() {
+    if (!mobile || !burger) return;
+    mobile.hidden = false;
+    // Allow next paint to apply the transition
+    requestAnimationFrame(() => mobile.classList.add("is-open"));
+    burger.setAttribute("aria-expanded", "true");
+    document.body.style.overflow = "hidden";
+  }
+  function closeMobile() {
+    if (!mobile || !burger) return;
+    mobile.classList.remove("is-open");
+    burger.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+    // Hide after transition; keep simple + immediate for reduced motion
+    window.setTimeout(() => {
+      if (mobile && !mobile.classList.contains("is-open")) mobile.hidden = true;
+    }, 250);
+  }
+
+  if (burger && mobile) {
+    burger.addEventListener("click", () => {
+      if (mobile.classList.contains("is-open")) closeMobile();
+      else openMobile();
+    });
+    mobileClose?.addEventListener("click", closeMobile);
+    mobile.addEventListener("click", (e) => {
+      if (e.target === mobile) closeMobile();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && mobile.classList.contains("is-open")) closeMobile();
+    });
+    // Close on nav link click (so anchor navigation shows the destination page cleanly)
+    mobile.querySelectorAll("a").forEach((a) => {
+      a.addEventListener("click", () => closeMobile());
+    });
+  }
+</script>
+
+<style>
+  .c-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--color-white);
+    border-bottom: var(--border-default);
+  }
+  .c-nav__inner {
+    max-width: 1440px;
+    margin-inline: auto;
+    /* Figma parity: 16px vertical, 120px horizontal — matches .c-container */
+    padding: 1rem 7.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+  .c-nav__logo {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+  }
+  .c-nav__logo img {
+    display: block;
+    /* Figma spec: 251.906 × 50 px */
+    width: 15.744rem;
+    height: auto;
+    max-width: 100%;
+  }
+
+  .c-nav__primary {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+  .c-nav__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+  }
+  .c-nav__item {
+    position: relative;
+  }
+  .c-nav__link,
+  .c-nav__services {
+    background: none;
+    border: 0;
+    padding: 0.5rem 0;
+    color: var(--color-heading);
+    font-family: var(--font-body);
+    /* Figma parity: 18px → 1.125rem, "Text S" */
+    font-size: 1.125rem;
+    font-weight: 400;
+    line-height: normal;
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color var(--duration-hover) var(--ease-smooth);
+  }
+  .c-nav__link:hover,
+  .c-nav__services:hover {
+    color: var(--color-accent);
+  }
+  .c-nav__caret {
+    transition: transform var(--duration-hover) var(--ease-smooth);
+  }
+  .c-nav__item.is-open .c-nav__caret {
+    transform: rotate(180deg);
+  }
+
+  /* --- Services dropdown panel ------------------------------------------- */
+  .c-nav__panel {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 18rem;
+    background: var(--color-white);
+    border: var(--border-default);
+    border-radius: 6px;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 200ms var(--ease-smooth), visibility 200ms var(--ease-smooth);
+  }
+  /* Invisible bridge that spans the visual 0.5rem gap between trigger and
+     panel — keeps :hover on the parent li active while the cursor crosses. */
+  .c-nav__panel::before {
+    content: "";
+    position: absolute;
+    top: -0.5rem;
+    left: 0;
+    right: 0;
+    height: 0.5rem;
+  }
+  .c-nav__item.is-open > .c-nav__panel {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  /* Hover open on hover-capable devices */
+  @media (hover: hover) {
+    .c-nav__item.is-has-menu:hover > .c-nav__panel,
+    .c-nav__item.is-has-menu:focus-within > .c-nav__panel {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+    .c-nav__item.is-has-menu:hover .c-nav__caret,
+    .c-nav__item.is-has-menu:focus-within .c-nav__caret {
+      transform: rotate(180deg);
+    }
+  }
+  .c-nav__panel-link {
+    display: block;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    color: var(--color-heading);
+    font-family: var(--font-body);
+    font-size: var(--fs-p);
+    text-decoration: none;
+    white-space: nowrap;
+    text-align: center;
+    transition: background-color var(--duration-hover) var(--ease-smooth), color var(--duration-hover) var(--ease-smooth);
+  }
+  .c-nav__panel-link:hover {
+    background: var(--color-gray-light);
+    color: var(--color-accent);
+  }
+
+  /* --- Mobile burger + panel --------------------------------------------- */
+  /* TODO: DS mobile — no dedicated mobile nav design provided; built functional with DS tokens. */
+  .c-nav__burger {
+    display: none;
+    background: none;
+    border: 0;
+    padding: 0.5rem;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .c-nav__burger-line {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--color-heading);
+    border-radius: 1px;
+  }
+  .c-nav__mobile {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: var(--color-white);
+    opacity: 0;
+    transition: opacity 200ms var(--ease-smooth);
+    overflow-y: auto;
+  }
+  .c-nav__mobile.is-open {
+    opacity: 1;
+  }
+  .c-nav__mobile-inner {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    min-height: 100%;
+  }
+  .c-nav__mobile-close {
+    align-self: flex-end;
+    background: none;
+    border: 0;
+    padding: 0.5rem;
+    color: var(--color-heading);
+    cursor: pointer;
+  }
+  .c-nav__mobile-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .c-nav__mobile-link,
+  .c-nav__mobile-sublink {
+    display: block;
+    color: var(--color-heading);
+    font-family: var(--font-body);
+    font-size: var(--fs-p-m);
+    text-decoration: none;
+    padding: 0.5rem 0;
+  }
+  .c-nav__mobile-group-label {
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--fs-p-s);
+    text-transform: uppercase;
+    letter-spacing: 0.064em;
+    margin-bottom: 0.75rem;
+  }
+  .c-nav__mobile-sublist {
+    list-style: none;
+    padding: 0 0 0 1rem;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .c-nav__mobile-sublink {
+    font-size: var(--fs-p);
+  }
+  .c-nav__mobile-cta {
+    margin-top: auto;
+    padding-top: 2rem;
+  }
+
+  /* --- Nav CTA button ----------------------------------------------------- */
+  /* Scoped override of .c-button padding for the Get in Touch CTA per Figma:
+     16 / 30 / 14 / 30 px. Uses :global because Astro's per-file scoping
+     doesn't reach into the <Button> component's rendered element. */
+  :global(.c-nav__cta-button) {
+    padding: 0.7rem 1.875rem;
+    gap: 0.5rem;
+  }
+
+  /* --- Breakpoints -------------------------------------------------------- */
+  @media (max-width: 991px) {
+    .c-nav__list { gap: 1.5rem; }
+  }
+  @media (max-width: 767px) {
+    /* TODO: DS mobile — see note above */
+    .c-nav__inner { padding: 1rem 2rem; }
+    .c-nav__primary,
+    .c-nav__cta { display: none; }
+    .c-nav__burger { display: inline-flex; }
+  }
+  @media (min-width: 768px) {
+    .c-nav__mobile { display: none !important; }
+  }
+</style>

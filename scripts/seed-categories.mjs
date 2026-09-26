@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Seed the 22 canonical categories into Sanity.
+ * Seed the 23 canonical categories into Sanity.
  *
  * Idempotent — safe to re-run. Uses createOrReplace with deterministic IDs
  * derived from the slug (`category-<slug>`), so titles/slug tweaks in this
@@ -32,7 +32,7 @@ if (!token) {
   process.exit(1);
 }
 
-// Canonical 22 titles from docs/SCHEMAS.md v0.4 — do not reorder, do not
+// Canonical 23 titles from docs/SCHEMAS.md — do not reorder, do not
 // re-case. Slugs are generated deterministically below.
 const TITLES = [
   'Fintech',
@@ -57,6 +57,7 @@ const TITLES = [
   'Energy',
   'Media & Entertainment',
   'Education',
+  'Healthcare',
 ];
 
 function slugify(input) {
