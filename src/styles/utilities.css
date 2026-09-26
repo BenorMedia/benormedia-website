@@ -3,11 +3,17 @@
    Keep minimal: only what the styleguide uses today.
    ========================================================================== */
 
-/* Container — §8.1 */
+/* Container — §8.1
+   Horizontal padding locked 2026-09-25 (Figma parity): 120px desktop, 2rem mobile. */
 .c-container {
   max-width: 1440px;
   margin-inline: auto;
-  padding: 5rem 3rem; /* TODO: DS section vertical spacing (5rem placeholder) */
+  padding: 5rem 7.5rem; /* TODO: DS section vertical spacing (5rem placeholder) */
+}
+@media (max-width: 767px) {
+  .c-container {
+    padding: 5rem 2rem;
+  }
 }
 
 /* Visibility */

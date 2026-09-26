@@ -40,6 +40,18 @@ Format: date · decision · reason · approved by.
 | 2026-09-25 | Sanity schemas v0.5 — page singletons are SEO-only; page copy lives in Astro components | Site is small, copy is stable; removing per-section CMS fields eliminates schema drift and simplifies the editor UX. Every page singleton (`homePage`, `workPage`, `pricingPage`, `testimonialsPage`, `blogPage`) now holds just a `seo` object | Lead |
 | 2026-09-25 | Removed `service` and `technology` document types | Services are handled as static Astro pages; the `technology` doc had no confirmed use case | Lead |
 | 2026-09-25 | Removed `Navigation` and `Footer` tabs from `siteSettings` | Site chrome (nav + footer) is authored directly in the Astro components. `siteSettings` keeps only General, SEO & Meta, Organization and Global sections | Lead |
+| 2026-09-25 | `PUBLIC_SITE_ENV` env var drives Seo noindex | Set to `production` only on the production Vercel deployment; preview/dev deployments render `noindex, nofollow` by construction. Prevents accidental de-indexing via CMS toggle | Lead |
+| 2026-09-25 | Nav labels + Services dropdown items + footer link columns are hardcoded in Astro components (confirms SCHEMAS v0.5) | Editing labels/routes is a code change, not a CMS change | Lead |
+| 2026-09-25 | Services dropdown routes aligned to `docs/SITEMAP.md`: `/custom-websites-migrations`, `/growth`, `/ongoing-website-support` | SITEMAP.md is the canonical route source; Nav + Footer + service pages must use these exact slugs | Lead |
+| 2026-09-25 | Mobile nav / mobile menu design not provided → built functional with DS tokens; visual polish deferred to Phase F | Do not block Phase 3 on missing design | Proposed |
+| 2026-09-25 | CTA banner eyebrow on gradient background overrides default `--color-gray` border and `--color-text` to translucent white / white | Default eyebrow variants are only readable on light bg; on-dark reuse needed here. Potential DS gap for an `is-on-dark` eyebrow variant — flagged in Open questions | Proposed |
+| 2026-09-25 | Added `Healthcare` as the 23rd canonical category | Requested during Phase 3 content-entry prep; slug `healthcare` | Lead |
+| 2026-09-25 | Added `pnpm schema:deploy` script (`sanity schema deploy`) | Keeps the remote Sanity schema in sync with the code so future MCP/content work can validate against it | Lead |
+| 2026-09-25 | `.c-container` horizontal padding = 120 px desktop, 2 rem (32 px) mobile | Figma parity (Phase 3 nav sync); the Nav uses the same horizontal padding with 16 px vertical to match the frame | Lead |
+| 2026-09-25 | Contact modal rebuilt as a right-side slide-in `<dialog>` (753 px panel, blur backdrop) — replaced the initial centered-modal draft | Matches the approved Figma design; earlier draft was structural only | Lead |
+| 2026-09-25 | Footer legal links moved to the bottom **credit strip** (Privacy Policy · Terms & Conditions · Cookie Policy). Middle-columns legal was already hidden | Bottom strip is a separate context from the mid-footer columns; routes `/privacy-policy` etc. are placeholders until pages exist | Lead |
+| 2026-09-25 | Footer wordmark sits in a **full-width strip** (258 px tall, border top + bottom) outside `.c-container`; credit strip stays inside the container with 30 px vertical padding | Wordmark spans viewport width regardless of container max; credit stays aligned with the rest of the site | Lead |
+| 2026-09-25 | Partner-badge artwork landed as PNG in `/public/images/` (`webflow-partner.png`, `claude-partner.png`, width 216 px each) | Replaces the placeholder bordered text boxes; retires the `TODO: assets partner-badges` marker | Lead |
 
 ## Pending
 | Topic | Status |
@@ -54,6 +66,12 @@ Format: date · decision · reason · approved by.
 - Production domain — required for Sanity CORS allow-list and Adobe Fonts kit whitelist.
 - File upstream fix for `@sanity/astro` Windows path-strip bug (one-line regex `/[\\/]package\.json$/`); remove `benorSanityAliasFix` workaround from `astro.config.mjs` once a fixed release ships.
 - Revisit `typescript` pin (`^6.0.0`) once Astro supports TS 7 via `@astrojs/ts-content-mapper`.
+
+### Raised in Phase 3 (Astro — Layout Shell)
+- **Eyebrow on-dark variant** — the two shipped eyebrow variants (`is-default`, `is-accent`) only read on light backgrounds. CTA banner (gradient bg) needs on-dark colors; currently overridden scoped to `.c-cta`. Consider a third variant `is-on-dark` in the DS, or a per-instance color override contract.
+- **On-dark surface tokens** — DS has no translucent-white or scrim tokens. `CtaBanner.astro` uses `rgba(255,255,255,α)` literals for the social-proof pill background, border and avatar placeholder, and for the eyebrow on-dark override; `ContactModal.astro` uses `rgba(0,0,0,0.5)` for the `::backdrop` scrim. Consider adding `--color-white-10`, `--color-white-15`, `--color-white-35`, `--color-white-40`, `--color-white-60`, `--color-white-90`, and `--color-scrim` tokens (or a smaller opinionated set) so these components can drop the literals.
+- **Partner-badge assets** — Webflow Partner + Claude Partner Network artwork not delivered; footer uses bordered text boxes as placeholders (`TODO: assets partner-badges`).
+- **Mobile nav / menu / modal designs** — no dedicated mobile designs provided; built functional with DS tokens. Flagged with `/* TODO: DS mobile */` in each component.
 
 ### Raised in Phase 1 (UI — Design System)
 - **Adobe Fonts kit ID** — Acumin Pro `<link>` cannot be added to `BaseLayout.astro` until the kit is provisioned and the ID is provided. Kit must also whitelist localhost + Vercel preview + production domains. Placeholder HTML comment in place.

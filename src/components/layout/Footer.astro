@@ -1,0 +1,369 @@
+---
+/**
+ * Footer — c-footer
+ *
+ * Layout:
+ *   1. .c-footer__inner  — max-width container with the top row:
+ *      - Barcelona card (image + tint overlay + city/address text)
+ *      - SERVICES + ABOUT link columns (Eyebrow labels)
+ *      - Partner badges (images) + socials
+ *   2. .c-footer__wordmark-strip — FULL-WIDTH strip, height 258px,
+ *      border top + bottom, containing the wordmark image.
+ *   3. .c-footer__credit-strip — full-width strip with a .c-container
+ *      inside; 30px vertical padding; legal links (left) + copyright (right).
+ *
+ * Content sourcing:
+ *   - Address = hardcoded (fixed office).
+ *   - Social links currently placeholder hrefs — real URLs wired later.
+ *   - Everything else hardcoded per v0.5 (nav/footer content lives in code).
+ */
+import type { SiteSettings } from "../../lib/sanity/types";
+import Eyebrow from "../ui/Eyebrow.astro";
+
+interface Props {
+  siteSettings?: SiteSettings | null | undefined;
+}
+
+// --- Link columns ---------------------------------------------------------
+const servicesLinks = [
+  { label: "Custom Websites & Migrations", href: "/custom-websites-migrations" },
+  { label: "Growth (AEO / SEO / CRO)", href: "/growth" },
+  { label: "Ongoing Website Support", href: "/ongoing-website-support" },
+];
+const aboutLinks: Array<{ label: string; href: string; openContact?: boolean }> = [
+  { label: "Our Work", href: "/work" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "Contact", href: "#", openContact: true },
+  { label: "Testimonials", href: "/testimonials" },
+  { label: "Blog", href: "/blog" },
+];
+
+// --- Legal links (bottom strip) -------------------------------------------
+// Placeholder routes; pages don't exist yet. Lead confirms slugs in Phase 7.
+const legalLinks = [
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms & Conditions", href: "/terms-conditions" },
+  { label: "Cookie Policy", href: "/cookie-policy" },
+];
+---
+
+<footer class="c-footer">
+  <div class="c-footer__inner">
+    <div class="c-footer__top">
+      <div class="c-footer__card">
+        <img src="/images/barcelona.png" alt="Barcelona office" class="c-footer__card-img" width="480" height="300" />
+        <div class="c-footer__card-tint" aria-hidden="true"></div>
+        <div class="c-footer__card-overlay">
+          <div class="c-footer__card-city">Barcelona</div>
+          <div class="c-footer__card-address">
+            C/ Dos de Maig<br />
+            E1 6D, (08013)<br />
+            Barcelona, Spain.
+          </div>
+        </div>
+      </div>
+
+      <div class="c-footer__cols">
+        <div class="c-footer__col">
+          <Eyebrow class="c-footer__col-label">SERVICES</Eyebrow>
+          <ul class="c-footer__col-list">
+            {servicesLinks.map((l) => (
+              <li><a href={l.href} class="c-footer__col-link">{l.label}</a></li>
+            ))}
+          </ul>
+        </div>
+        <div class="c-footer__col">
+          <Eyebrow class="c-footer__col-label">ABOUT</Eyebrow>
+          <ul class="c-footer__col-list">
+            {aboutLinks.map((l) => (
+              <li>
+                {l.openContact ? (
+                  <button type="button" class="c-footer__col-link is-button" data-open-contact>{l.label}</button>
+                ) : (
+                  <a href={l.href} class="c-footer__col-link">{l.label}</a>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <div class="c-footer__side">
+        <div class="c-footer__badges">
+          <img src="/images/webflow-partner.png" alt="Official Webflow Partner" class="c-footer__badge-img" />
+          <img src="/images/claude-partner.png" alt="Claude Partner Network" class="c-footer__badge-img" />
+        </div>
+        <div class="c-footer__socials">
+          <a href="" class="c-footer__social" aria-label="LinkedIn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 29 29" fill="none" aria-hidden="true">
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M0 2.3894C0.00068821 1.75591 0.252649 1.14855 0.700599 0.700602C1.14855 0.252652 1.7559 0.000691396 2.3894 3.18541e-06H26.208C26.522 -0.000509732 26.8331 0.060925 27.1234 0.18079C27.4137 0.300655 27.6774 0.476596 27.8996 0.69854C28.1218 0.920485 28.298 1.18407 28.4182 1.47422C28.5384 1.76436 28.6002 2.07536 28.6 2.3894V26.208C28.6 26.8422 28.3482 27.4504 27.8999 27.8989C27.4516 28.3475 26.8435 28.5997 26.2093 28.6H2.3894C1.75568 28.5993 1.14813 28.3472 0.70014 27.8989C0.252153 27.4507 0.00034404 26.843 0 26.2093V2.3894ZM11.3204 10.9044H15.1931V12.8492C15.7521 11.7312 17.1821 10.725 19.331 10.725C23.4507 10.725 24.427 12.9519 24.427 17.0378V24.6064H20.2579V17.9686C20.2579 15.6416 19.6989 14.3286 18.2793 14.3286C16.3098 14.3286 15.4908 15.7443 15.4908 17.9686V24.6064H11.3204V10.9044ZM4.1704 24.4283H8.3408V10.725H4.1704V24.4283ZM8.9375 6.2556C8.94536 6.61268 8.88182 6.96773 8.75061 7.29991C8.6194 7.6321 8.42316 7.93473 8.1734 8.19004C7.92365 8.44536 7.62541 8.64822 7.29619 8.78671C6.96698 8.92521 6.61341 8.99654 6.25625 8.99654C5.89909 8.99654 5.54553 8.92521 5.21631 8.78671C4.88709 8.64822 4.58885 8.44536 4.3391 8.19004C4.08934 7.93473 3.8931 7.6321 3.76189 7.29991C3.63068 6.96773 3.56714 6.61268 3.575 6.2556C3.59043 5.55471 3.8797 4.88773 4.38085 4.39749C4.882 3.90726 5.55519 3.63275 6.25625 3.63275C6.95731 3.63275 7.6305 3.90726 8.13165 4.39749C8.6328 4.88773 8.92207 5.55471 8.9375 6.2556Z" fill="currentColor"/>
+            </svg>
+          </a>
+          <a href="" class="c-footer__social" aria-label="X (Twitter)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 29 29" fill="none" aria-hidden="true">
+              <path d="M4.08571 0C1.83219 0 0 1.83219 0 4.08571V24.5143C0 26.7678 1.83219 28.6 4.08571 28.6H24.5143C26.7678 28.6 28.6 26.7678 28.6 24.5143V4.08571C28.6 1.83219 26.7678 0 24.5143 0H4.08571ZM23.0524 5.3625L16.4258 12.9338L24.2206 23.2375H18.1176L13.3424 16.9876L7.87138 23.2375H4.83902L11.9252 15.1363L4.4496 5.3625H10.7058L15.0278 11.0761L20.02 5.3625H23.0524ZM20.6392 21.4245L9.79295 7.07978H7.98629L18.9539 21.4245H20.6329H20.6392Z" fill="currentColor"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="c-footer__wordmark-strip">
+    <img src="/images/benormedia-footer.png" alt="BenorMedia" class="c-footer__wordmark" />
+  </div>
+
+  <div class="c-footer__credit-strip">
+    <div class="c-container c-footer__credit">
+      <ul class="c-footer__legal">
+        {legalLinks.map((l) => (
+          <li><a href={l.href} class="c-footer__legal-link">{l.label}</a></li>
+        ))}
+      </ul>
+      <span class="c-footer__copyright">All rights reserved. BenorMedia.</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .c-footer {
+    background: var(--color-white);
+    border-top: var(--border-default);
+  }
+  .c-footer__inner {
+    max-width: 1440px;
+    margin-inline: auto;
+    padding: 6.875rem 7.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  /* --- Top row: 3 columns ------------------------------------------------ */
+  .c-footer__top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 0.6fr);
+    gap: 3rem;
+    align-items: start;
+  }
+
+  /* Barcelona card */
+  .c-footer__card {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .c-footer__card-img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  /* Dark tint overlay (Figma: black-500 at 30% opacity) */
+  .c-footer__card-tint {
+    position: absolute;
+    inset: 0;
+    background: var(--color-black-secondary);
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  .c-footer__card-overlay {
+    position: absolute;
+    left: 1.25rem;
+    bottom: 1.25rem;
+    color: var(--color-white);
+  }
+  .c-footer__card-city {
+    color: var(--color-white);
+    font-family: var(--font-heading); /* Brulia */
+    /* Figma: 26.208 / 36.691 (~140%) */
+    font-size: 1.638rem;
+    font-weight: 400;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+  }
+  .c-footer__card-address {
+    font-family: var(--font-body);
+    font-size: var(--fs-p-s);
+    line-height: 1.5;
+  }
+
+  /* Link columns */
+  .c-footer__cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    /* Center content so Eyebrow (inline-flex, fit-content) and centered
+       links share the same axis. */
+    text-align: center;
+    justify-items: center;
+  }
+  .c-footer__col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+    text-align: center;
+  }
+  /* Eyebrow used as the col-label — width fits text automatically (inline-flex). */
+  .c-footer__col-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: left;
+  }
+  .c-footer__col-list li {
+    text-align: left;
+    display: flex;
+  }
+  .c-footer__col-link {
+    color: var(--color-text); /* Figma spec: #5B6170 */
+    font-family: var(--font-body);
+    font-size: var(--fs-p);
+    text-align: left;
+    text-decoration: none;
+    transition: color var(--duration-hover) var(--ease-smooth);
+  }
+  .c-footer__col-link:hover {
+    color: var(--color-accent);
+  }
+  .c-footer__col-link.is-button {
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+  }
+
+  /* Side column: badges + socials */
+  .c-footer__side {
+    display: flex;
+    flex-direction: column;
+    gap: 9.5em;
+    align-items: flex-end;
+  }
+  .c-footer__badges {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-width: 15rem;
+  }
+  .c-footer__badge-img {
+    /* Figma spec: 216px width */
+    width: 13.5rem;
+    height: auto;
+    display: block;
+  }
+  .c-footer__socials {
+    display: flex;
+    gap: 0.75rem;
+  }
+  .c-footer__social {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.875rem;
+    height: 1.875rem;
+    color: var(--color-heading);
+    transition: color var(--duration-hover) var(--ease-smooth);
+  }
+  .c-footer__social svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .c-footer__social:hover {
+    color: var(--color-accent);
+  }
+
+  /* --- Wordmark strip (full-width, outside .c-container) ---------------- */
+  .c-footer__wordmark-strip {
+    /* Figma spec: 258px height, top + bottom border */
+    position: relative;
+    height: 14rem;
+    border-top: var(--border-default);
+    border-bottom: var(--border-default);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .c-footer__wordmark {
+    width: 100%;
+    height: 100%;
+    margin-top: 1.2rem;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* --- Credit strip (inside .c-container with 30px vertical padding) ---- */
+  .c-footer__credit-strip .c-container {
+    /* Override .c-container's 5rem vertical padding for this strip.
+       Horizontal 7.5rem stays. */
+    padding-top: 1.875rem;
+    padding-bottom: 1.875rem;
+  }
+  .c-footer__credit {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .c-footer__legal {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    gap: 1.5rem;
+  }
+  .c-footer__legal-link,
+  .c-footer__copyright {
+    color: var(--color-text); /* Figma spec: #5B6170 */
+    font-family: var(--font-body);
+    font-size: var(--fs-p);
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    text-decoration: none;
+    transition: color var(--duration-hover) var(--ease-smooth);
+  }
+  .c-footer__legal-link:hover {
+    color: var(--color-accent);
+  }
+
+  /* --- Breakpoints ------------------------------------------------------- */
+  @media (max-width: 991px) {
+    .c-footer__inner { padding: 3rem 2rem 2rem; gap: 2rem; }
+    .c-footer__top {
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+    .c-footer__side {
+      grid-column: 1 / -1;
+      align-items: flex-start;
+    }
+    .c-footer__wordmark-strip { height: 12rem; }
+  }
+  @media (max-width: 767px) {
+    /* TODO: DS mobile — no dedicated design; built functional with DS tokens. */
+    .c-footer__inner { padding: 2.5rem 2rem 2rem; }
+    .c-footer__top {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    .c-footer__cols {
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+    .c-footer__wordmark-strip { height: 8rem; }
+    .c-footer__credit {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+  }
+</style>
