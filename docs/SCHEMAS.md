@@ -1,13 +1,8 @@
-# Sanity ↔ Astro Data Contract (v0.7, approved)
+# Sanity ↔ Astro Data Contract (v0.6, approved)
 
-Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) approved 2026-09-29. v0.7 (`client.orderRank`) requested by the lead 2026-09-29.
+Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) approved 2026-09-29.
 
 Approach: **repeatable data lives in Sanity documents; page copy is authored directly in Astro components.** Page singletons exist only to hold per-page SEO metadata. Global chrome (nav, footer) is authored in Astro components too.
-
-### v0.7 changes vs v0.6 (2026-09-29)
-- **`client.orderRank`** (hidden, read-only string) from `@sanity/orderable-document-list`: Studio → Clients is now a drag-and-drop list. New clients go to the end. Initial order = the Work page reference (`docs/refs/work/work-list.jpg`), seeded with `pnpm seed:client-order`.
-- Only the Work page listing (`ALL_CLIENTS`) sorts by it: `order(orderRank asc, name asc)`. Home, Pricing and service pages keep their own order (`CLIENTS_BY_IDS` = pinned ID order, `ALL_CLIENTS_WITH_LOGO` = name).
-- `workPage` singleton: kept in the schema, but there will be no document (lead). `/work` SEO lives in code.
 
 ### v0.6 changes vs v0.5 (2026-09-29)
 - **`service` document reinstated** (supersedes the v0.5 removal) with the lead-approved field list: one Studio tab per page section (Overview, Hero, Problem, Process, FAQs) + SEO. Routable at `/<slug>` via `src/pages/[service].astro`.
@@ -39,7 +34,6 @@ Approach: **repeatable data lives in Sanity documents; page copy is authored dir
 | Funds Raised | `fundsRaised` | string | optional. e.g. `$25.0M`. Template appends "Raised" |
 | Category | `category` | reference → `category` | optional |
 | Website URL | `websiteUrl` | url | optional |
-| Order Rank | `orderRank` | string (LexoRank) | hidden, read-only. Set by the Studio drag-and-drop list (`@sanity/orderable-document-list`). Only the Work page listing sorts by it |
 
 All fields are optional so clients can be bulk-created and published without waiting on assets. Enforce presence at query/render time (skip incomplete clients in listings) rather than at Studio level.
 
