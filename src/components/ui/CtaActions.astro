@@ -1,0 +1,212 @@
+---
+/**
+ * CtaActions — c-cta__actions
+ * The CTA button row + the "Trusted by" badge with the rotating client
+ * circles. Extracted from `CtaBanner` (Phase 5) so the service hero can reuse
+ * it; CtaBanner renders it unchanged (same classes, same markup).
+ *
+ * Layout: buttons and badge share one width. The wrapper shrinks to its
+ * widest child (the badge) and the buttons stretch to fill it in equal
+ * columns.
+ *
+ * Trusted badge (docs/refs/trusted-badge.png): text left, circles right =
+ * the first 6 URLs of `badges` + the static "+" circle. Every URL ships in
+ * `data-cta-badges`; `src/scripts/animations/cta-badges.ts` (initialized
+ * from BaseLayout) rotates the 6 client circles every 5s in every
+ * `[data-cta-badges]` on the page. No JS / reduced motion: the first 6 stay.
+ *
+ * `tone`:
+ *   - `dark` (default): on the gradient CTA banner (translucent white badge,
+ *     white text).
+ *   - `light`: on a white section (service hero, `services-hero.jpg`): white
+ *     badge with a 1px brand-gradient border and gradient text.
+ *     TODO: DS badge on-light spec (built from the ref).
+ *
+ * `buttons` are Sanity `button` objects: `contact` links render a
+ * `<button class="js-open-contact">` (opens the ContactModal), the rest an
+ * `<a class="c-button">` via `hrefFromLink`.
+ */
+import type { Button as ButtonType } from "../../lib/sanity/types";
+import { hrefFromLink } from "../../lib/sanity/links";
+import Button from "./Button.astro";
+
+interface Props {
+  buttons: readonly ButtonType[];
+  /** Every client badge URL (rotation pool); the first 6 render server-side. */
+  badges: readonly string[];
+  /** Badge copy. Default "Trusted by +100 companies". */
+  trustedText?: string | undefined;
+  tone?: "dark" | "light";
+  class?: string;
+}
+
+const {
+  buttons,
+  badges,
+  trustedText = "Trusted by +100 companies",
+  tone = "dark",
+  class: className,
+} = Astro.props;
+
+const BADGES_SHOWN = 6;
+const badgesInitial = badges.slice(0, BADGES_SHOWN);
+const rootClass = ["c-cta__actions", tone === "light" && "is-light", className]
+  .filter(Boolean)
+  .join(" ");
+---
+
+<div class={rootClass}>
+{buttons.length > 0 && (
+  <div class="c-cta__buttons">
+    {buttons.map((b: ButtonType) => {
+      const href = hrefFromLink(b.link);
+      const isContact = b.link?.type === "contact";
+      const target = b.link?.openInNewTab ? "_blank" : undefined;
+      return isContact ? (
+        <Button variant={b.variant} class="js-open-contact">{b.link.label}</Button>
+      ) : (
+        <a
+          href={href ?? "#"}
+          class={`c-button is-${b.variant}`}
+          target={target}
+          rel={target === "_blank" ? "noopener" : undefined}
+        >
+          <span class="c-button__text">{b.link?.label}</span>
+        </a>
+      );
+    })}
+  </div>
+)}
+
+<div class="c-cta__badge" data-cta-badges={JSON.stringify(badges)}>
+  <div class="c-cta__badge-row">
+    <p class="c-cta__badge-text c-paragraph">
+      <span class="c-cta__badge-star" aria-hidden="true">★</span>{" "}{trustedText}
+    </p>
+    <span class="c-cta__badge-circles" aria-hidden="true">
+      {badgesInitial.length > 0 && (
+        <span class="c-cta__badge-group" data-cta-badges-group>
+          {badgesInitial.map((src) => (
+            <img class="c-cta__badge-circle" src={src} alt="" width="32" height="32" loading="lazy" decoding="async" data-cta-badge />
+          ))}
+        </span>
+      )}
+      <img class="c-cta__badge-circle" src="/images/more-badge.png" alt="" width="32" height="32" loading="lazy" decoding="async" />
+    </span>
+  </div>
+</div>
+</div>
+
+<style>
+  /* Buttons + trusted badge share one width: the wrapper shrinks to its
+     widest child (the badge) and the buttons stretch to fill it. */
+  .c-cta__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: fit-content;
+    max-width: 100%;
+    gap: 1.5rem; /* same spacing as before (c-cta__inner gap) */
+    margin-top: 0.5rem;
+  }
+  /* Equal-width columns (one per button, however many Sanity sends),
+     stretched to the wrapper width. Grid keeps them identical even when
+     only one variant has a border. */
+  .c-cta__buttons {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* --- Trusted badge (docs/refs/trusted-badge.png) ------------------- */
+  .c-cta__badge {
+    display: flex;
+    padding: 0.4946rem 0.8902rem; /* 7.913px 14.243px */
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 0.5341rem; /* 8.546px */
+    border-radius: 0.2576rem; /* 4.121px */
+    /* rgba(255,255,255,0.10) expressed from the white token. */
+    background: color-mix(in srgb, var(--color-white) 10%, transparent);
+    /* Lead-approved shadow exception (2026-09-28), see DECISIONS.md.
+       7.121px 2.849px 28.486px 0 rgba(0,0,0,0.05) */
+    box-shadow: 0.445rem 0.178rem 1.7804rem 0 rgba(0, 0, 0, 0.05);
+  }
+
+  .c-cta__badge-row {
+    display: flex;
+    align-items: center;
+    /* TODO: DS gap text → circles (ref ≈ 14px). */
+    gap: 0.875rem;
+  }
+
+  .c-cta__badge-text {
+    margin: 0;
+    color: var(--color-white);
+    white-space: nowrap;
+  }
+
+  .c-cta__badge-star {
+    font-size: 0.75em;
+    vertical-align: 0.1em;
+  }
+
+  .c-cta__badge-circles,
+  .c-cta__badge-group {
+    display: flex;
+    align-items: center;
+  }
+
+  .c-cta__badge-group {
+    opacity: 1;
+    transition: opacity var(--duration-hover) var(--ease-smooth);
+  }
+
+  /* Set by cta-badges.ts while the 6 client circles are swapped. */
+  .c-cta__badge-group.is-fading {
+    opacity: 0;
+  }
+
+  .c-cta__badge-circle {
+    flex: 0 0 auto;
+    display: block;
+    width: 1.98rem; /* 31.68px */
+    height: 1.98rem;
+    border-radius: 999px;
+    object-fit: cover;
+  }
+
+  /* Circles overlap like a stack. TODO: DS overlap (ref ≈ 20%). */
+  .c-cta__badge-circle + .c-cta__badge-circle,
+  .c-cta__badge-group + .c-cta__badge-circle {
+    margin-left: -0.4rem;
+  }
+
+  /* --- Light tone (white sections, services-hero.jpg) -------------------
+     TODO: DS badge on-light spec: white fill + 1px brand-gradient border +
+     gradient text, read from the ref. Same (approved) shadow as dark. */
+  .c-cta__actions.is-light .c-cta__badge {
+    border: 1px solid transparent;
+    background:
+      linear-gradient(var(--color-white), var(--color-white)) padding-box,
+      var(--gradient-primary) border-box;
+  }
+  .c-cta__actions.is-light .c-cta__badge-text {
+    color: var(--color-blue); /* fallback without background-clip: text */
+  }
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .c-cta__actions.is-light .c-cta__badge-text {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+              background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .c-cta__actions { gap: 1.25rem; }
+  }
+</style>

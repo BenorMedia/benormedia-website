@@ -16,7 +16,15 @@
  * has its own queries when a page needs it — those live in later phases.
  */
 import { sanityClient } from './client';
-import type { Client, HomePage, SiteSettings, Testimonial } from './types';
+import type {
+  Client,
+  HomePage,
+  PageSeoDoc,
+  PageSingletonType,
+  Service,
+  SiteSettings,
+  Testimonial,
+} from './types';
 
 // ---------------------------------------------------------------------------
 // Fragments — assembled into the full queries below.
@@ -44,7 +52,7 @@ const LINK_INTERNAL_REF = /* groq */ `internalRef->{
   _id,
   _type,
   "slug": slug,
-  title
+  "title": coalesce(title, name)
 }`;
 
 /** A `link` object in full (all three types: internal, external, contact). */
@@ -76,6 +84,24 @@ const BUTTON = /* groq */ `{
  */
 export const HOME_QUERY = /* groq */ `
 *[_type == "homePage"][0]{
+  _id,
+  _type,
+  "seo": seo${SEO}
+}
+`;
+
+// ---------------------------------------------------------------------------
+// PAGE_SEO — SEO-only page singletons (Work, Pricing, Testimonials, Blog)
+// ---------------------------------------------------------------------------
+
+/**
+ * Singletons are pinned to `_id == <type name>` by the desk structure
+ * (`sanity/structure.ts` → `S.editor().documentId(typeName)`), so matching the
+ * exact `_id` also excludes drafts (`drafts.<type>`). `_type` is matched too so
+ * a stray document with that id can never leak in.
+ */
+export const PAGE_SEO = /* groq */ `
+*[_id == $type && _type == $type][0]{
   _id,
   _type,
   "seo": seo${SEO}
@@ -133,6 +159,27 @@ export const SITE_SETTINGS_QUERY = /* groq */ `
 // ---------------------------------------------------------------------------
 
 /**
+ * Fields the shared `ClientList` rows render (icon, name, funds tag, category
+ * tag, website link, hover screenshot). Shared by CLIENTS_BY_IDS and
+ * ALL_CLIENTS so the list projection is defined once.
+ */
+const CLIENT_LIST_FIELDS = /* groq */ `
+  _id,
+  _type,
+  name,
+  "icon": icon${IMAGE},
+  "websiteScreenshot": websiteScreenshot${IMAGE},
+  fundsRaised,
+  websiteUrl,
+  "category": category->{
+    _id,
+    _type,
+    title,
+    "slug": slug
+  }
+`;
+
+/**
  * Returns published clients whose `_id` is in `$ids`. Used by Home sections
  * (FeaturedWork, OurWork) which pin the clients they render by hardcoded
  * document IDs — see `getClientsByIds` below for the order-preserving fetcher.
@@ -147,21 +194,9 @@ export const SITE_SETTINGS_QUERY = /* groq */ `
  */
 export const CLIENTS_BY_IDS = /* groq */ `
 *[_type == "client" && _id in $ids]{
-  _id,
-  _type,
-  name,
+  ${CLIENT_LIST_FIELDS},
   "logo": logo${IMAGE},
-  "icon": icon${IMAGE},
   "cardThumbnail": cardThumbnail${IMAGE},
-  "websiteScreenshot": websiteScreenshot${IMAGE},
-  fundsRaised,
-  websiteUrl,
-  "category": category->{
-    _id,
-    _type,
-    title,
-    "slug": slug
-  },
   "testimonial": testimonial->{
     _id,
     _type,
@@ -172,6 +207,20 @@ export const CLIENTS_BY_IDS = /* groq */ `
     "companyLogo": companyLogo${IMAGE},
     kpis[]{ value, description }
   }
+}
+`;
+
+// ---------------------------------------------------------------------------
+// ALL_CLIENTS — the Work page listing. Every published client that has a
+// name (incomplete clients are skipped at query time, SCHEMAS.md), with only
+// the fields `ClientList` renders. Ordered by category title, then name
+// (Proposed default; the lead may prefer a pinned order).
+// ---------------------------------------------------------------------------
+
+export const ALL_CLIENTS = /* groq */ `
+*[_type == "client" && defined(name) && !(_id in path("drafts.**"))]
+  | order(category->title asc, name asc){
+  ${CLIENT_LIST_FIELDS}
 }
 `;
 
@@ -228,6 +277,61 @@ export const CLIENT_BADGES = /* groq */ `
 `;
 
 // ---------------------------------------------------------------------------
+// SERVICE_SLUGS / SERVICE_BY_SLUG — the service template (`src/pages/[service].astro`)
+// ---------------------------------------------------------------------------
+
+/** A one-block `accentTitle` (spans may carry `marks: ["accent"]`; `\n` = line break). */
+const ACCENT_TITLE = /* groq */ `[]{
+  _key,
+  _type,
+  style,
+  children[]{ _key, _type, text, marks }
+}`;
+
+export const SERVICE_SLUGS = /* groq */ `
+*[_type == "service" && defined(slug.current) && !(_id in path("drafts.**"))].slug.current
+`;
+
+/**
+ * One published service. Related clients only project what the Problem
+ * carousels render (name + website screenshot). FAQ answers are Portable
+ * Text (same shape as `post` FAQs).
+ */
+export const SERVICE_BY_SLUG = /* groq */ `
+*[_type == "service" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
+  _id,
+  _type,
+  name,
+  "slug": slug.current,
+  "clients": clients[]->{
+    _id,
+    _type,
+    name,
+    "websiteScreenshot": websiteScreenshot${IMAGE}
+  },
+  "headline": headline${ACCENT_TITLE},
+  subtitle,
+  "problemTitle": problemTitle${ACCENT_TITLE},
+  problemDescription,
+  "processTitle": processTitle${ACCENT_TITLE},
+  processDescription,
+  steps[]{
+    _key,
+    name,
+    description,
+    features,
+    "image": image${IMAGE}
+  },
+  faqSections[]{
+    _key,
+    title,
+    faqs[]{ _key, question, answer }
+  },
+  "seo": seo${SEO}
+}
+`;
+
+// ---------------------------------------------------------------------------
 // Fetchers
 // ---------------------------------------------------------------------------
 
@@ -262,7 +366,7 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
  * Returns `[]` immediately when called with no IDs so callers can safely
  * forward variables that may be empty in early development.
  */
-export async function getClientsByIds(ids: string[]): Promise<Client[]> {
+export async function getClientsByIds(ids: readonly string[]): Promise<Client[]> {
   if (ids.length === 0) return [];
 
   const result = await sanityClient.fetch<Client[]>(CLIENTS_BY_IDS, { ids });
@@ -312,4 +416,38 @@ export async function getTestimonials(): Promise<Testimonial[]> {
  */
 export async function getAllClientsWithLogo(): Promise<Client[]> {
   return await sanityClient.fetch<Client[]>(ALL_CLIENTS_WITH_LOGO);
+}
+
+/**
+ * Fetch every published, named client for the Work page listing, ordered by
+ * category title then name.
+ */
+export async function getAllClients(): Promise<Client[]> {
+  return await sanityClient.fetch<Client[]>(ALL_CLIENTS);
+}
+
+/** Slugs of every published service (the template's `getStaticPaths`). */
+export async function getServiceSlugs(): Promise<string[]> {
+  const result = await sanityClient.fetch<(string | null)[]>(SERVICE_SLUGS);
+  return result.filter((slug): slug is string => typeof slug === 'string' && slug.length > 0);
+}
+
+/** One published service by slug, or `null`. */
+export async function getServiceBySlug(slug: string): Promise<Service | null> {
+  const result = await sanityClient.fetch<Service | null>(SERVICE_BY_SLUG, { slug });
+  return result ?? null;
+}
+
+/**
+ * Fetch an SEO-only page singleton. Returns `null` when the document hasn't
+ * been created in Sanity yet; callers fall back to their own title/description
+ * props, then to siteSettings defaults.
+ */
+export async function getPageSeo<T extends PageSingletonType>(
+  type: T,
+): Promise<PageSeoDoc<T> | null> {
+  const result = await sanityClient.fetch<PageSeoDoc<T> | null>(PAGE_SEO, {
+    type,
+  });
+  return result ?? null;
 }

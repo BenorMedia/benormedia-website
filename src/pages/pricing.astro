@@ -1,0 +1,59 @@
+---
+/**
+ * Pricing page — Phase 5. Refs: `docs/refs/pricing/` (`pricing-preview.png`).
+ *
+ * All page copy is static (`src/lib/content/pricing.ts`, `faqs.ts`). Sanity
+ * supplies the logo strip clients, the testimonials, the Our Work clients
+ * (same pins as Home, `src/lib/content/our-work.ts`) and the `pricingPage`
+ * SEO singleton (null until the document is created: the title/description
+ * props below are the fallback).
+ *
+ * BaseLayout owns Nav, CtaBanner, Footer and ContactModal.
+ *
+ * TODO: COPY — fallback meta title / description until pricingPage.seo is
+ * filled in Sanity (kept here, not as an HTML comment, so it doesn't ship).
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import {
+  getAllClientsWithLogo,
+  getClientsByIds,
+  getPageSeo,
+  getTestimonials,
+} from "../lib/sanity/queries";
+import { OUR_WORK_GRID_IDS, OUR_WORK_LIST_IDS } from "../lib/content/our-work";
+import { PRICING_PLANS } from "../lib/content/pricing";
+import { PRICING_FAQ_GROUPS } from "../lib/content/faqs";
+import PageHero from "../components/sections/PageHero.astro";
+import PricingPlans from "../components/sections/PricingPlans.astro";
+import LogoStrip from "../components/sections/LogoStrip.astro";
+import FaqSection from "../components/sections/FaqSection.astro";
+import Testimonials from "../components/sections/Testimonials.astro";
+import OurWork from "../components/sections/OurWork.astro";
+
+const [pricingPage, logoClients, testimonials, workClients, workListClients] = await Promise.all([
+  getPageSeo("pricingPage"),
+  getAllClientsWithLogo(),
+  getTestimonials(),
+  getClientsByIds(OUR_WORK_GRID_IDS),
+  getClientsByIds(OUR_WORK_LIST_IDS),
+]);
+
+// 156 characters (keep ≤160).
+const metaDescription =
+  "Simple, transparent pricing for B2B websites: monthly design and development, AEO/GEO growth plans, or one-off projects. Unlimited requests, cancel anytime.";
+---
+
+<BaseLayout pageSeo={pricingPage?.seo ?? null} title="Pricing" description={metaDescription}>
+  <PageHero
+    eyebrow="Pricing"
+    title={"Simple and transparent\npricing that meets your needs."}
+    accent="that meets your needs."
+  />
+  <PricingPlans plans={PRICING_PLANS} />
+  {logoClients.length > 0 && <LogoStrip clients={logoClients} />}
+  <FaqSection title="Frequently asked questions." groups={PRICING_FAQ_GROUPS} />
+  <Testimonials testimonials={testimonials} />
+  {(workClients.length > 0 || workListClients.length > 0) && (
+    <OurWork clients={workClients} listClients={workListClients} />
+  )}
+</BaseLayout>

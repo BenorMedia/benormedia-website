@@ -11,6 +11,10 @@
  * Rows overlap by their extra bottom padding (30px bottom vs 14px top) so the
  * list reads as a stacked deck; later rows paint over earlier ones.
  *
+ * Filtering hook: each `<li>` carries `data-category="<category slug>"` when
+ * the client has a category. A page script can set `hidden` on rows; the
+ * overlap only applies after a visible row, so hidden rows leave no gap.
+ *
  * Fallbacks:
  *   - Missing icon → client initial inside the icon box.
  *   - Funds tag only when `fundsRaised` is set; category tag only when set.
@@ -59,6 +63,7 @@ const rows = (limit === undefined ? clients : clients.slice(0, limit)).map(
         ? `${client.fundsRaised.trim()} Raised`
         : undefined,
       categoryLabel: client.category?.title,
+      categorySlug: client.category?.slug?.current,
       // Height only (≈249px preview at 2x density) — no width, so the
       // builder never crops; the full screenshot is always shown.
       previewUrl: client.websiteScreenshot?.asset
@@ -85,7 +90,7 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
       ? { href: row.href, target: "_blank", rel: "noopener noreferrer" }
       : {};
     return (
-      <li class="c-client-list__item">
+      <li class="c-client-list__item" data-category={row.categorySlug}>
         <RowTag class="c-client-list__row" {...linkAttrs}>
           <span class="c-client-list__client">
             <span class="c-client-list__icon">
@@ -172,8 +177,14 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
 
   /* Stacked deck: each row covers the previous row's extra bottom padding
      (30px − 14px top → 14px overlap), so visible padding reads balanced. */
-  .c-client-list__item + .c-client-list__item {
+  .c-client-list__item:not([hidden]) ~ .c-client-list__item {
     margin-top: -0.875rem; /* 14px */
+  }
+
+  /* Filtered-out rows (Work page). Explicit so no future `display` rule on
+     the item can override the `hidden` attribute. */
+  .c-client-list__item[hidden] {
+    display: none;
   }
 
   .c-client-list__row {

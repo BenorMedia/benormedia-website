@@ -1,0 +1,98 @@
+---
+/**
+ * PricingPlans — Pricing page: the plan cards under the hero.
+ * Ref: `docs/refs/pricing/pricing-cards.jpg` (1920 frame, 1 ref px = 1/14 rem).
+ *
+ * Data: `PRICING_PLANS` (`src/lib/content/pricing.ts`), passed in by the page.
+ *
+ * Layout: every `PricingCard` is a DIRECT child of the grid, so the card's
+ * subgrid lines up the prices, feature lists and buttons across cards
+ * (see `PricingCard.astro`). 3 columns, 1 column at ≤991.
+ *
+ * Each card's "Get In Touch" button carries `.js-open-contact` (contact modal).
+ * The section has a visually hidden `<h2>` (plan names are `<h3>`).
+ * Hides entirely when there are no plans.
+ */
+import Container from "../ui/Container.astro";
+import PricingCard from "../ui/PricingCard.astro";
+import type { PricingPlan } from "../../lib/content/pricing";
+
+interface Props {
+  plans: readonly PricingPlan[];
+}
+
+const { plans } = Astro.props;
+const headingId = "pricing-plans-title";
+---
+
+{plans.length > 0 && (
+  <section class="c-pricing-plans" aria-labelledby={headingId}>
+    <Container>
+      {/* TODO: COPY — section heading (visually hidden; keeps the outline h1 → h2 → h3). */}
+      <h2 id={headingId} class="c-pricing-plans__sr-only">Plans</h2>
+
+      <div class="c-pricing-plans__grid" data-anim="pricing-plans">
+        {plans.map((plan) => (
+          <PricingCard
+            name={plan.name}
+            description={plan.description}
+            features={plan.features}
+            {...(plan.price !== undefined && { price: plan.price })}
+            {...(plan.period !== undefined && { period: plan.period })}
+            {...(plan.priceLabel !== undefined && { priceLabel: plan.priceLabel })}
+          />
+        ))}
+      </div>
+    </Container>
+  </section>
+)}
+
+<style>
+  .c-pricing-plans {
+    background: var(--color-white);
+    /* TODO: DS — the ref also shows faint line-art arcs left and right of the
+       cards and a lavender glow on cards 1 and 3 (section background asset,
+       not delivered). Not built. */
+  }
+
+  .c-pricing-plans :global(.c-container) {
+    /* Hero title → cards ≈ 103px, cards → logo strip ≈ 61px in the ref.
+       TODO: DS. */
+    padding-top: 7.357rem;
+    padding-bottom: 4.357rem;
+  }
+
+  .c-pricing-plans__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.071rem; /* ≈15px between cards — TODO: DS */
+  }
+
+  @media (max-width: 991px) {
+    .c-pricing-plans__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* TODO: DS mobile — no mobile ref. */
+  @media (max-width: 767px) {
+    .c-pricing-plans :global(.c-container) {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
+  }
+
+  /* Visually hidden, still read by screen readers. TODO: switch to a global
+     `cc-sr-only` utility (G-14, @ui). */
+  .c-pricing-plans__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

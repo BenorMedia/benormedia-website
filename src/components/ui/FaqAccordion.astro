@@ -1,0 +1,136 @@
+---
+/**
+ * FaqAccordion — bordered question rows with a blue + / × icon; the open
+ * answer sits below its row as a gray paragraph. Ref: `docs/refs/pricing/FAQs.jpg`.
+ *
+ * Native `<details name>` + `<summary>`: exclusive (one open at a time in
+ * supporting browsers), keyboard accessible and fully working without JS.
+ *
+ * `answer` is plain text; a blank line (`\n\n`) starts a new paragraph.
+ * Empty `items` → renders nothing.
+ */
+interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+interface Props {
+  items: FaqItem[];
+  /** Group name shared by the `<details>` elements (exclusive accordion). Unique per accordion. */
+  name: string;
+  /** Open the first item on load. Default: all closed. */
+  openFirst?: boolean;
+  class?: string;
+}
+
+const { items, name, openFirst = false, class: className } = Astro.props;
+
+const rootClass = ["c-faq", className].filter(Boolean).join(" ");
+const toParagraphs = (text: string): string[] =>
+  text
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+---
+
+{
+  items.length > 0 && (
+    <div class={rootClass}>
+      {items.map((item, i) => (
+        <details class="c-faq__item" name={name} open={openFirst && i === 0} data-anim="faq-item">
+          <summary class="c-faq__summary">
+            <span class="c-faq__question c-paragraph_m">{item.question}</span>
+            <span class="c-faq__icon" aria-hidden="true">
+              <svg viewBox="0 0 12 12" width="12" height="12" fill="none">
+                <path d="M6 0.75v10.5M0.75 6h10.5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" />
+              </svg>
+            </span>
+          </summary>
+          <div class="c-faq__answer" data-anim="faq-answer">
+            {toParagraphs(item.answer).map((p) => (
+              <p class="c-paragraph_m">{p}</p>
+            ))}
+          </div>
+        </details>
+      ))}
+    </div>
+  )
+}
+
+<style>
+  /* Measured from the ref (1920 frame, 1 ref px = 1/14 rem at the ≥1440 root).
+     TODO: DS — width, paddings, gaps, radius and icon size are not in DESIGN_SYSTEM. */
+  .c-faq {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem; /* ≈10.5px between rows — TODO: DS */
+    width: 100%;
+    max-width: 68.571rem; /* 960px — TODO: DS */
+    margin-inline: auto;
+  }
+
+  .c-faq__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.714rem;
+    padding: 1.607rem 2.286rem; /* 76px row, 32px sides — TODO: DS */
+    border: var(--border-default);
+    border-radius: 6px; /* TODO: DS */
+    background: var(--color-white);
+    list-style: none;
+    cursor: pointer;
+  }
+  .c-faq__summary::-webkit-details-marker {
+    display: none;
+  }
+  .c-faq__summary:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .c-faq__question {
+    color: var(--color-heading);
+    text-align: left;
+  }
+
+  .c-faq__icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    width: 0.857rem; /* 12px — TODO: DS icon sizes (§9) */
+    height: 0.857rem;
+    color: var(--color-accent);
+  }
+  .c-faq__icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Open: the + turns into × (static swap; motion pending the animation spec). */
+  .c-faq__item[open] .c-faq__icon {
+    transform: rotate(45deg);
+  }
+
+  .c-faq__answer {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* between paragraphs — TODO: DS */
+    padding: 2.643rem 2.286rem 1.857rem; /* ≈37 / 32 / 26px — TODO: DS */
+    color: var(--color-text);
+  }
+
+  /* TODO: DS mobile — no mobile refs; tighter side padding. */
+  @media (max-width: 767px) {
+    .c-faq__summary {
+      padding: 1.607rem 1.714rem;
+    }
+    .c-faq__answer {
+      padding: 1.714rem 1.714rem 1.143rem;
+    }
+    /* 12px at the 9px mobile root (desktop size would render at ≈7.7px). */
+    .c-faq__icon {
+      width: 1.3333rem;
+      height: 1.3333rem;
+    }
+  }
+</style>

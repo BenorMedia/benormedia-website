@@ -102,6 +102,24 @@
 | 2026-09-28 | `CtaBanner` trusted badge (replaces the empty `c-cta__pill`, below the buttons, every page): padding 0.4946rem 0.8902rem, gap 0.5341rem, radius 0.2576rem, white 10% bg, shadow `0.445rem 0.178rem 1.7804rem 0 rgba(0,0,0,0.05)` — **third approved shadow exception**. Text = `siteSettings.ctaBanner.socialProofText` or "Trusted by +100 companies"; circles 1.98rem = 6 client `badge` images + `/images/more-badge.png` | Lead spec (`docs/refs/trusted-badge.png`) | Lead |
 | 2026-09-28 | Badge rotation: all client badges (new `CLIENT_BADGES` query, cached once per build in `site.ts`) ship as JSON in `data-cta-badges`; `src/scripts/animations/cta-badges.ts` (first file in that folder, initialized from BaseLayout) fades the 6 client circles every 5s and swaps in the next 6 from a shuffled deck, so every badge shows before any repeats. No JS / reduced motion: first 6 stay static | Lead: "show all badges while rotating" | Lead |
 | 2026-09-28 | `CtaBanner`: buttons + trusted badge wrapped in `.c-cta__actions` (column, `width: fit-content`) so both share the badge's width; `.c-cta__buttons` is a grid of equal `1fr` columns (one per button) stretched to that width | Lead: buttons and badge must be the same width | Lead |
+| 2026-09-29 | Phase 5 builds every remaining page on one branch (`feat/phase5-secondary-pages`), order Work → Pricing → Service template → Testimonials → Blog decision, lead checkpoint per page | Lead: "we will build the whole site pages on this phase" | Lead |
+| 2026-09-29 | Secondary page singletons (`workPage`, `pricingPage`, `testimonialsPage`, `blogPage`) stay SEO-only; all other page content (heroes, pricing plans, FAQs, Work filter tabs) is static in Astro for now | Confirms SCHEMAS v0.5 for Phase 5 | Lead |
+| 2026-09-29 | `service` document reinstated for the `/[service]` template (supersedes the 2026-09-25 removal). Its fields are proposed in `SCHEMAS.md` and approved by the lead when the service template starts | Three pages share one template; content for two of them is not designed yet | Lead |
+| 2026-09-29 | Blog listing + article are optional in Phase 5: production can launch without a blog (no content yet). Decide at the end of Phase 5, after all other pages, whether to build them or keep them out | Agency has no blog content; other phases may be more urgent | Lead |
+| 2026-09-29 | `SectionHeader` gained an optional `accent` prop: the matching substring of `title` is wrapped in `.c-section-header__accent` (`--gradient-primary` clipped to text, `box-decoration-break: clone`). Whitespace in `accent` matches a `\n` break in `title`; no match → plain title | Pricing hero ("that meets your needs.") and service hero ("marketing / ambition") refs | Proposed |
+| 2026-09-29 | Shared `SegmentedControl` (`src/components/ui/`): `mode="toggle"` (`role="group"` + `aria-pressed`, Work filters) or `mode="tabs"` (`role="tablist"`, FAQ tabs), optional `squares` (Eyebrow corner squares, Work filters only). Tabs behavior in `src/scripts/ui/tabs.ts` → `initTabs(root)` (WAI-ARIA, roving tabindex, hides inactive panels on init) | Work filters and FAQ tabs are the same switcher in the refs | Proposed |
+| 2026-09-29 | Shared `FaqAccordion`: native `<details name>` + `<summary>` (exclusive, works without JS), border on the question row only, answer below it unbordered, + rotates to × on `[open]` | Matches `FAQs.jpg` | Proposed |
+| 2026-09-29 | Shared `PricingCard`: CSS subgrid (4 rows: header, price, features, CTA) so prices and buttons line up across cards; parent must be a grid. CTA = full-width `Button is-gradient` + `.js-open-contact`. The lavender glow in the ref is not built | Matches `pricing-cards.jpg`; the glow is only on the outer cards, so it reads as a section background | Proposed |
+| 2026-09-29 | Shared `PageHero` section (`src/components/sections/`): white hero for secondary pages = `SectionHeader as="h1"` + `titleClass="c-text_xxl"`, optional `accent`, top padding 7.857rem (5rem ≤767), no bottom padding (the next section owns it) | Work hero ref; Pricing / Testimonials / Blog heroes follow the same pattern | Proposed |
+| 2026-09-29 | `ClientList`: every `<li>` emits `data-category="<category slug>"` (when set) as a filter hook; the stacked-deck overlap now applies only after a visible row (`.c-client-list__item:not([hidden]) ~ .c-client-list__item`) and `[hidden]` rows are `display: none`. Home renders the same | Work filters hide rows; the first visible row must not keep the −14px overlap | Proposed |
+| 2026-09-29 | `SegmentedControl mode="tabs"` renders its tablist `hidden`; `initTabs` removes `hidden` on init (cleanup restores it and shows every panel). Toggle mode unchanged | QA G-2: no dead tabs without JS; panels stay visible | Proposed |
+| 2026-09-29 | Shared `FaqSection` (`src/components/sections/`): props `title`, `groups: { label, value, items: {question, answer}[] }[]`, `jsonLd` (default true), `background` (default true), `id` prefix. 2+ groups → tabs + one `FaqAccordion` per group (`initTabs` in the component script); 1 group → accordion only; empty groups dropped, nothing left → no section. No JS: tablist hidden, every panel shown under an `<h3>` with its group label (hidden once tabs work). Emits FAQPage JSON-LD (answered questions only) | Pricing FAQ now, service template later | Proposed |
+| 2026-09-29 | Static page copy that more than one page uses lives in `src/lib/content/` (`our-work.ts` Our Work pinned IDs, shared by Home + Pricing; `faqs.ts` FAQ groups; `pricing.ts` plans) | One place to edit shared copy; Home output unchanged | Proposed |
+| 2026-09-29 | Testimonials page grid reuses the shared marquee `TestimonialCard` unchanged; only `.c-testimonial-card { width: 100% }` on that page (scoped in `TestimonialsGrid.astro`). The proposed `fluid` prop was dropped; the shared card is untouched | Lead: "only on this page" | Lead |
+| 2026-09-29 | Shared `CtaActions` (`src/components/ui/`): the CTA banner's buttons + "Trusted by" badge with rotating client circles, extracted from `CtaBanner` (same classes and markup; other pages' HTML unchanged apart from scope hashes / CSS chunks). Props `buttons` (Sanity `button[]`), `badges` (URL pool, from `getCtaBadgeUrlsCached()`), `trustedText`, `tone="dark"` (banner) or `"light"` (white bg: white badge, 1px gradient border, gradient text) | Lead: service hero reuses the CTA actions incl. the badge animation | Proposed |
+| 2026-09-29 | `SectionHeader` gained optional `titleSegments` (`{ text, accent? }[]`, several gradient runs, e.g. Sanity `accentTitle`; overrides `accent` when set) and `description` now renders `\n` as `<br />`. `PageHero` forwards `titleSegments` and has an optional `top` slot (above the header) and default slot (below it). No change for existing callers | Service titles can mark any spans; process description has a forced break | Proposed |
+| 2026-09-29 | Shared `Breadcrumbs` (`src/components/layout/`): `<nav aria-label="Breadcrumb"><ol>`, Eyebrow per level, chevron between, last item `aria-current="page"` with a gradient-border eyebrow; items without `href` are plain text; optional BreadcrumbList JSON-LD (`ld`, absolute URLs) | Service hero ref; reusable for blog posts | Proposed |
+| 2026-09-29 | Link → href mapping moved to `src/lib/sanity/links.ts` (`hrefFromLink`); `service` refs map to `/<slug>`, `post` to `/blog/<slug>`; `LINK_INTERNAL_REF` projects `coalesce(title, name)` | One mapping for every Sanity link; `service` added to `link.internalRef` (SCHEMAS v0.6) | Proposed |
 
 ### Open questions
 
@@ -127,6 +145,11 @@
 - **Testimonial card sizes** — photo 2.75rem, logo 1.8rem tall, photo → name gap, card gap 1.625rem, row gap 1.375rem are measured from the ref. `TODO: DS`. (2026-09-28)
 - ~~**CTA banner social-proof pill**~~ — RESOLVED 2026-09-28: lead spec'd the trusted badge (see Decisions).
 - **Trusted badge sizes** — gap text → circles (0.875rem) and circle overlap (0.4rem) measured from the ref. `TODO: DS`. (2026-09-28)
+- **Segmented control specs** — measured from the refs, `TODO: DS`: container radius 6px, padding 5px, item gap 10px; item 48px tall (padding 0.934rem 1.714rem), pill radius 5px. Active pill is `#F5F5F5` in the ref, not a token (built with `--color-gray-light` `#F0F0F0`). No hover spec (built: text → `--color-black-secondary`). Corner squares appear on the Work filters but not on the FAQ tabs: intended? (2026-09-29)
+- **FAQ accordion specs** — measured, `TODO: DS`: width 960px (68.571rem), row 76px (padding 1.607rem 2.286rem), row gap 0.75rem, radius 6px, icon 12px, answer padding 2.643rem / 2.286rem / 1.857rem. The question rows look slightly see-through over the section line art in the ref (built solid `--color-white`). No motion spec for open/close. (2026-09-29)
+- **Pricing card specs** — measured, `TODO: DS`: radius 6px, padding 1.714rem / 1.536rem, description → price 2.5rem, price → features 2.857rem, feature gap 1.143rem, check icon 1.429rem, icon → text 0.714rem. Ref text is `#222222`, not a token (built with `--color-black-secondary` `#212427`). The card button is 50px tall in the ref, the DS button is ≈56px (DS button kept). Lavender glow on cards 1 and 3: a section background asset? Not built. (2026-09-29)
+- **Ref px → rem conversion** — the Phase 5 primitives convert 1 ref px = 1/14 rem (the ≥1440 root). At that rate the DS type classes match the 1920 refs, and `SectionHeader` uses it too. The Our Work cards used 1/16 rem. Confirm which base the Figma file uses so the whole site uses one. (2026-09-29)
+- **Phase 5 primitives mobile** — no mobile refs. Segmented items wrap and center at ≤767, FAQ rows get less side padding, and the icon is 12px. Pricing cards stack via the caller's grid. `TODO: DS mobile`. (2026-09-29)
 - ~~**Client list hover**~~ — RESOLVED 2026-09-28: lead spec'd arrow + screenshot preview (see Decisions). The ref's row lift + row shadow were not requested and are not built.
 - ~~**Eyebrow specs**~~ — RESOLVED 2026-09-25 by project lead. Two variants shipped: `is-default` (15px Acumin 400, 10/16/8/16px padding, 0.5px `--color-gray` border, 3px radius, 0.96px tracking, two 10×10 decorative squares on outer edges) and `is-accent` (same box but `--color-accent` border, 8% accent tint bg, 600 weight, no squares). Implemented in `src/components/ui/Eyebrow.astro`; TODO marker removed.
 - ~~**Partner-badge assets**~~ — RESOLVED 2026-09-25: artwork landed as PNG in `/public/images/` (see Decisions). Originally: Webflow Partner + Claude Partner Network artwork not delivered; footer used bordered text boxes as placeholders.
@@ -137,6 +160,8 @@
 - **Production domain** — required for Sanity CORS allow-list, Adobe Fonts kit whitelist and `PUBLIC_SITE_URL` (Astro `site` → canonical / `og:url`). Lead: configure at the end of development. Until then canonical and `og:url` are omitted on Vercel; do not set `PUBLIC_SITE_URL` to a localhost URL there. (2026-09-25, updated 2026-09-29)
 - **Adobe Fonts kit ID** — Acumin Pro `<link>` cannot be added to `BaseLayout.astro` until the kit is provisioned and the ID is provided. Kit must also whitelist localhost + Vercel preview + production domains. Placeholder HTML comment in place. Until then body text renders in the fallback font, so text wraps differ from the refs. (2026-09-25)
 - **Figma Dev seat → MCP QA of DESIGN_SYSTEM** — requested. (2026-09-25)
+- **Phase 4 nits on components reused by Phase 5** — N5 (`<img>` without width/height in LogoStrip, ClientCard, ClientList, TestimonialCard), N6 (LogoStrip + ClientList render when empty) and N9 (Nav `menu` roles) break the Phase 5 QA rules on every new page that reuses them. Not fixed in the Phase 5 branch until the lead says so. (2026-09-29)
+- **404 cleanup** — `src/pages/404.astro` hardcodes `max-width: 1440px` + its own padding instead of `Container`, and has a mobile `TODO: DS`. Clean up in Phase 5 or leave? (2026-09-29)
 
 #### Needs lead OK
 - **Fixed-field Sanity schemas, no page builder** (2026-09-24)
@@ -145,6 +170,20 @@
 - **`Tag` mirrors the Eyebrow box** (2026-09-28)
 - **`SectionHeader` title `\n` line breaks** (2026-09-28)
 - **Client list rows link to `websiteUrl` in a new tab** (2026-09-28)
+- **`SectionHeader` `accent` prop** (2026-09-29)
+- **`SegmentedControl` + `initTabs`** (2026-09-29)
+- **`FaqAccordion` on native `<details name>`** (2026-09-29)
+- **`PricingCard` subgrid layout, glow not built** (2026-09-29)
+- **`PageHero` shared secondary-page hero** (2026-09-29)
+- **`ClientList` `data-category` hook + hidden-row overlap rule** (2026-09-29)
+- **`SegmentedControl` tabs render the tablist `hidden` until `initTabs` (G-2)** (2026-09-29)
+- **Shared `FaqSection` (tabs, no-JS group headings, FAQPage JSON-LD)** (2026-09-29)
+- **Shared static copy in `src/lib/content/`** (2026-09-29)
+- **Shared `CtaActions` (CTA buttons + trusted badge) with a light tone** (2026-09-29)
+- **`SectionHeader` `titleSegments` + `\n` in description; `PageHero` slots** (2026-09-29)
+- **Shared `Breadcrumbs` (eyebrow crumbs, gradient current item, JSON-LD)** (2026-09-29)
+- **`hrefFromLink` in `src/lib/sanity/links.ts` (`service` → `/<slug>`)** (2026-09-29)
+- ~~**`TestimonialCard` `fluid` variant (grid)**~~ — RESOLVED 2026-09-29: dropped; width 100% on the Testimonials page only (see Decisions).
 - ~~**Testimonial marquee pauses on hover / focus**~~ — RESOLVED 2026-09-29: lead removed the pause (see Decisions).
 
 #### Engineering follow-ups
@@ -154,6 +193,8 @@
 - **`@sanity/astro` upstream fix** — file upstream fix for the Windows path-strip bug (one-line regex `/[\\/]package\.json$/`); remove `benorSanityAliasFix` workaround from `astro.config.mjs` once a fixed release ships. (2026-09-25)
 - **TypeScript pin** — revisit `typescript` pin (`^6.0.0`) once Astro supports TS 7 via `@astrojs/ts-content-mapper`. (2026-09-25)
 - **Sitemap `/dev/*` exclusion** — `/dev/styleguide` uses `<meta name="robots" content="noindex, nofollow">`. Once a sitemap integration is added (Phase 2+), exclude `/dev/*` from the generated sitemap as well. (2026-09-25)
+- **No visually-hidden utility** — `WorkListing` scopes its own `.c-work-listing__sr-only` (1px clip pattern) for the hidden h2 and the live region. Request to @ui: add a global `cc-sr-only` utility and switch to it. (2026-09-29)
+- **Stale data model in `DESIGN_SYSTEM.md` §10** — still mentions `caseStudy`, `project` and `technology` types that don't exist (Work uses `client`). Needs the lead's OK to edit that file. (2026-09-29)
 
 ---
 
@@ -193,3 +234,159 @@
 
 #### Engineering follow-ups
 - **Technologies asset pipeline** — future exports of this diagram should come with bitmaps at ≤ 2–3× display size (or be run through the same WebP downscale) before landing in `public/`. (2026-09-28)
+
+---
+
+## Service pages
+
+### Decisions
+| Date | Decision | Reason | Status |
+|---|---|---|---|
+| 2026-09-29 | `service` fields (SCHEMAS v0.6), one Studio tab per page section: Overview (`name`, `slug`, `clients[]` → `client`), Hero (`headline`, `subtitle`), Problem (`problemTitle`, `problemDescription`), Process (`processTitle`, `processDescription`, `steps[]` of `processStep` = name, description, features[] tags, image + alt), FAQs (`faqSections`), SEO (`seo`). `slug` added for routing (from `name`, unique, kebab-case, reserved slugs blocked) | Lead-approved field list; three service pages share one template | Lead |
+| 2026-09-29 | Service FAQs reuse the existing `faqSections[]` → `faqSection` → `faq` objects (same as `post`); section title = tab label. No new FAQ type | Lead decision v0.4 (sections contain their questions) | Lead |
+| 2026-09-29 | Gradient words in service titles come from a reusable `accentTitle` type: one Portable Text block, style `normal`, no lists/annotations, one decorator `accent` ("Gradient"). Line breaks = Shift+Enter (`\n` in span text) | Editors choose which words get the gradient without a separate "accent" text field that can drift from the title | Lead |
+| 2026-09-29 | Process step number = the step's position in `steps[]` (01, 02… in creation order, drag to reorder). No position field | Nothing to keep in sync; reordering renumbers automatically | Lead |
+| 2026-09-29 | Seed only the Custom Websites & Migrations service (`_id` `service-custom-websites-migrations`). Growth and Ongoing Website Support documents are not created until their content exists | Only that page has a ref | Lead |
+| 2026-09-29 | Keep the `slug` field on `service` (PHASE5 S-8) | Routing needs it | Lead |
+| 2026-09-29 | Related clients on Custom Websites & Migrations: any selection for now, 7 clients (the 5 seeded + Emotional Hub, Garaje de Ideas), all with `websiteScreenshot` | Lead: "doesn't matter what to select for now"; final list later | Lead |
+| 2026-09-29 | Process steps 02–09 get placeholder names, descriptions and features (`TODO: COPY`, written by the sanity agent); all 9 steps use the lead's `service-step.svg` as a placeholder illustration (`TODO: assets`) | Lead: "placeholder copy for now"; unblocks the 9-tab Process build | Lead |
+| 2026-09-29 | Growth and Ongoing Website Support documents stay uncreated; make the one service work first | Lead decision | Lead |
+| 2026-09-29 | Service template `src/pages/[service].astro` (`getStaticPaths` from `SERVICE_SLUGS`): ServiceHero → LogoStrip → ServiceProblem → ServiceProcess → OurWork (Home pins) → Testimonials → FaqSection → CTA banner (BaseLayout). Meta fallback title = `name`, description = `subtitle` clamped to 160 chars | Lead brief: 3 custom sections, the rest reused | Proposed |
+| 2026-09-29 | Service hero breadcrumb "Services" › name: "Services" is plain text (no index page); BreadcrumbList JSON-LD lists only levels with a page (Home → service), because Google needs a URL on every level | Lead brief; valid structured data | Proposed |
+| 2026-09-29 | Hero line art `service-mid-hero-bg.svg` sits behind the hero bottom + logo strip (one wrapper, anchored to the strip bottom at the 1920 frame width); exported as 1x/2x WebP on white (347 KB SVG / 110 KB gzip → 26 KB / 77 KB); the logo strip is transparent on this page only | Matches the preview; lighter than the SVG | Proposed |
+| 2026-09-29 | Problem carousels: 4+ related clients are split between the columns (left = first half); 1–3 clients → both columns show all of them (right rotated, `aria-hidden`). Each copy repeats until ≥4 images so the loop never gaps; ≈20s per image (left 80s, right 120s with 7 clients, same speed). Hidden ≤991px | Lead brief; ref shows different sites per column | Proposed |
+| 2026-09-29 | Process tabs are a custom tablist (numbered gradient squares, not `SegmentedControl`) wired by the shared `initTabs`; no JS → tablist hidden, all panels in order with "NN Name" h3. ≤767 the bar wraps to squares only (name in the panel h3) | Ref tab design differs from the segmented pill; G-2 no-JS rule | Proposed |
+| 2026-09-29 | Service FAQ answers (Portable Text) are flattened to plain paragraphs for `FaqAccordion` + JSON-LD; bold / italic / links are dropped. `FaqAccordion` and Pricing unchanged | Seeded answers are plain; no PT renderer installed | Proposed |
+
+### Open questions
+
+#### Content
+- ~~**Process steps 02–09**~~ — RESOLVED 2026-09-29: placeholder copy for now; steps 02–09 have placeholder names/descriptions/features (`TODO: COPY`) and all 9 steps use `service-step.svg` as a placeholder illustration (`TODO: assets`). Final copy and per-step illustrations still to come (see Decisions).
+- ~~**Growth + Ongoing Support content**~~ — RESOLVED 2026-09-29: not now; make the one service work first. Their documents and routes stay uncreated (see Decisions).
+- **Problem section side images** — the side columns are cropped in `services-problem.jpg`; the full image list is unknown. (2026-09-29)
+- ~~**Related clients (seed guess)**~~ — RESOLVED 2026-09-29: any selection for now; 2 added (Emotional Hub, Garaje de Ideas) → 7 clients, all with `websiteScreenshot`. Placeholder selection (see Decisions).
+- **Service FAQs placeholder** — the seeded service copies the Pricing placeholder FAQ groups into Sanity; `TODO: COPY` until final copy (PHASE5 S-6). (2026-09-29)
+
+#### Design team
+- **Growth service name** — three spellings: nav/footer "Growth (AEO / SEO / CRO)", pricing "Growth (AEO/GEO + CRO)", Home "Web Growth (SEO + GEO + CRO)". Which one is correct? (2026-09-29)
+- ~~**Hero line art**~~ — RESOLVED 2026-09-29: the lead supplied `service-mid-hero-bg.svg` (a different asset); placed behind the hero bottom + logo strip (see Decisions).
+- **Mobile / tablet** — no mobile refs; built with DS tokens, `TODO: DS mobile`. (2026-09-29)
+- **Service template spacing / sizes (`TODO: DS`)** — measured at 1/14 rem: hero bottom 7.857rem, subtitle → buttons ≈40px, Problem padding 14.286rem (200px), frame 71.857rem, line → screenshot gap 3.929rem, screenshot width 32.369rem (453.172px), gap 1.786rem, node 1.339rem; Process top 7.857rem, bottom 6.429rem, description → box 4.786rem, box padding 1.5rem, bar padding 1.786rem, squares 4.571rem, image 33.143rem, pills 0.571rem gap. See PHASE5 S-23. (2026-09-29)
+- **Title sizes** — Problem / Process titles (≈71px at 1920) and the step h3 (≈40px) are larger than `c-text_xl` / `c-text_l`, same as W-10 / G-26; built with the existing classes. (2026-09-29)
+- **Breadcrumb current item + badge on light** — gradient-border eyebrow with blue squares and the white trusted badge with gradient border/text are read from `services-hero.jpg`; no DS spec (scoped overrides). (2026-09-29)
+- **Feature pills** — sentence case with a gray outline in the ref; the shared `Tag` is uppercase, so the pills are scoped in `ServiceProcess`. DS pill / Tag variant? (2026-09-29)
+- **Problem carousels below 1920** — the layout is fixed around the center (1920 frame), so at 1440 each side shows ≈160px of a 453px screenshot; hidden ≤991. Confirm the intended behavior at 1440 and on mobile. (2026-09-29)
+- **Carousel speed / animation spec** — ≈20s per screenshot, linear, CSS; no spec. (2026-09-29)
+
+#### Needs lead OK
+- **Service template structure + meta fallbacks** (2026-09-29)
+- **Breadcrumb: "Services" as text, JSON-LD Home → service** (2026-09-29)
+- **Hero line art placement + WebP export** (2026-09-29)
+- **Problem carousels: column split, repeat rule, speed, hidden ≤991** (2026-09-29)
+- **Process tabs markup + no-JS / mobile behavior** (2026-09-29)
+- **FAQ answers flattened to plain text** (2026-09-29)
+
+#### Engineering follow-ups
+- ~~**accentTitle → SectionHeader**~~ — RESOLVED 2026-09-29: `SectionHeader` / `PageHero` take `titleSegments` built by `accentTitleSegments()` (`src/lib/sanity/portable-text.ts`); every accent run renders, no substring match (see Global Decisions).
+- ~~**Step illustration is an SVG asset**~~ — RESOLVED 2026-09-29: `ServiceProcess` serves `-svg` assets as the plain asset URL (`isSvgAsset()` in `src/lib/sanity/image.ts`), raster assets with width/format params.
+- **FAQ rich text** — service FAQ answers lose bold / italic / links (plain paragraphs). If editors need them, add a Portable Text renderer and an optional rich answer to `FaqAccordion`. (2026-09-29)
+- **BreadcrumbList URLs** — built from `siteSettings.siteUrl`, else Astro `site` (`PUBLIC_SITE_URL`); the local build resolves to `http://localhost:4321`. Set the production URL before launch (same source as the canonical). (2026-09-29)
+
+---
+
+## Work
+
+### Decisions
+| Date | Decision | Reason | Status |
+|---|---|---|---|
+| 2026-09-29 | Page = `PageHero` (Our Work / "Websites we've launched." / description) → `WorkListing` (filters + every client in `ClientList`) → `Testimonials` → CTA banner (BaseLayout). All copy static; Sanity = clients, testimonials, `workPage.seo` (`getPageSeo("workPage")`, null → props fallback "Our Work" + hero description) | `work-preview.png`; SEO-only singleton (Lead 2026-09-29) | Proposed |
+| 2026-09-29 | Listing data = new `ALL_CLIENTS` / `getAllClients()`: every published client with a `name`, ordered `category->title asc, name asc`, projection shared with `CLIENTS_BY_IDS` via the `CLIENT_LIST_FIELDS` fragment | New clients appear without code changes | Proposed |
+| 2026-09-29 | Filters = 4 toggle buttons as in `work-list.jpg` (View All · Professional Services · SaaS / B2B Tech · Agency) with a static tab → category-slug map in `WorkListing.astro`. Filter bar is `hidden` until the script runs (no JS: every row, no dead buttons); a tab with 0 matches is dropped at build; visually hidden `role="status"` announces "Showing N of M projects" | Progressive enhancement; ref shows one "SaaS / B2B Tech" tab | Proposed |
+
+### Open questions
+
+#### Content
+- **`workPage` document missing in Sanity** — no document yet, so the page uses the fallback meta title "Our Work" and the hero description as meta description (`TODO: COPY`). Create it in Studio to override. (2026-09-29)
+- **Hidden copy** — visually hidden section heading "All projects" and the live-region text "Showing {shown} of {total} projects" are placeholders (`TODO: COPY`). (2026-09-29)
+
+#### Needs lead OK
+- **List order** — default: every client, sorted by category then name (new clients appear automatically). Alternative: a pinned order matching `work-list.jpg`. (2026-09-29)
+- **Filter tab → category mapping** — proposed: Professional Services = `professional-services`, SaaS / B2B Tech = `saas` + `saas-b2b-tech`, Agency = `agency`; View All = every client. Current data: 6 / 12 / 2 of 56. (2026-09-29)
+- **Work page structure, `ALL_CLIENTS` query, filter behavior** — see the three Proposed rows above. (2026-09-29)
+
+#### Design team
+- **Mobile / tablet** — no mobile refs; built with DS tokens, `TODO: DS mobile`. (2026-09-29)
+- **Hero and listing spacing** — measured from the 1920 ref at 1/14 rem, `TODO: DS`: nav → eyebrow 7.857rem (110px), hero description → filters 8.286rem (116px), filters → first row 4rem (56px). Mobile: 5rem / 5rem / 3rem, `TODO: DS mobile`. (2026-09-29)
+- **Hero type sizes** — ref title ≈ 91px (6.5rem at 1/14) and description ≈ 24px (between `c-paragraph_m` and `c-paragraph_l`). Built with the closest classes, `c-text_xxl` and `c-paragraph_m` (SectionHeader default). Depends on the Global "ref px → rem" question. (2026-09-29)
+
+---
+
+## Testimonials
+
+### Decisions
+| Date | Decision | Reason | Status |
+|---|---|---|---|
+| 2026-09-29 | Page = `PageHero` (Testimonials / "Hear from our more than 100 happy clients." with accent "100 happy clients.") → `TestimonialsGrid` (every published testimonial once, `TestimonialCard` with `width: 100%` on this page, 3 / 2 ≤991 / 1 ≤767 columns, visually hidden `<h2>`) → CTA banner (BaseLayout). All copy static; Sanity = testimonials + `testimonialsPage.seo` (null → fallback title "Testimonials" + 146-char description) | `testimonials-preview.png`; SEO-only singleton (Lead 2026-09-29) | Proposed |
+| 2026-09-29 | No placeholder duplicates: the ref's 15 identical cards are filler, the grid renders the 4 published testimonials once. Plain white background (no line art behind the grid in the ref) | Lead brief | Proposed |
+| 2026-09-29 | No Review / AggregateRating JSON-LD on the page | Google ignores self-serving reviews (an organization's reviews of itself on its own site) | Proposed |
+
+### Open questions
+
+#### Content
+- **Testimonials content** — only 4 testimonials exist and all are placeholders (same author, Lorem ipsum quote, no photo); the ref shows 15 cards. The page fills up as testimonials are published. (2026-09-29)
+- **`testimonialsPage` document missing in Sanity** — fallback meta title "Testimonials" and description "Hear from our more than 100 happy clients: what B2B marketing leaders say about working with BenorMedia on their websites, from launch day onward." (`TODO: COPY`). (2026-09-29)
+- **Hidden heading** — visually hidden `<h2>` "Client testimonials" above the grid is a placeholder (`TODO: COPY`). (2026-09-29)
+
+#### Design team
+- ~~**Page refs**~~ — RESOLVED 2026-09-29: refs landed in `docs/refs/testimonials/` (`testimonials-hero.jpg`, `testimonials-grid.jpg`, `testimonials-preview.png`).
+- **Grid spacing** — measured from the 1920 ref at 1/14 rem, `TODO: DS`: hero title ink → first card 112px (7.286rem below the h1 line box), card gap 1.429rem (20px, columns and rows), last card → CTA banner 15.714rem (220px). Mobile guesses 5rem / 5rem. (2026-09-29)
+- **Card size in the grid** — the ref card is 544 × 369px = the marquee card at 1/16 rem (34rem × 23.03rem), while the page uses 1/14 rem (see Global "ref px → rem"). In the 1440 container the fluid cards are 397 × 322px (3 columns). (2026-09-29)
+- **Mobile / tablet** — no refs; 2 columns at ≤991, 1 column at ≤767, `TODO: DS mobile`. At 767 the single-column cards are 731px wide with the 23.03rem min-height, so there's a large gap between quote and author; at 375 the hero title wraps "clients." to a 3rd line. (2026-09-29)
+
+#### Needs lead OK
+- **Testimonials page structure, no filler cards, no Review JSON-LD** — see the three Proposed rows above. (2026-09-29)
+
+---
+
+## Pricing
+
+### Decisions
+| Date | Decision | Reason | Status |
+|---|---|---|---|
+| 2026-09-29 | Page = `PageHero` (Pricing / "Simple and transparent\npricing that meets your needs." with accent "that meets your needs.") → `PricingPlans` (3 `PricingCard`s) → `LogoStrip` → `FaqSection` → `Testimonials` → `OurWork` (same clients as Home) → CTA banner (BaseLayout). All copy static; Sanity = logos, testimonials, Our Work clients, `pricingPage.seo` (null → fallback title "Pricing" + 156-char description) | `pricing-preview.png`; SEO-only singleton (Lead 2026-09-29) | Proposed |
+| 2026-09-29 | Plan copy transcribed verbatim from `pricing-cards.jpg` into `src/lib/content/pricing.ts`; cards are direct children of a `repeat(3, 1fr)` grid (1 column ≤991) with a visually hidden `<h2>` "Plans" | Subgrid alignment contract (ui handoff) | Proposed |
+| 2026-09-29 | FAQ answers and the whole AEO tab are generated placeholder copy (lead request), based only on facts on the pricing cards; `TODO: COPY` at the top of `src/lib/content/faqs.ts` and per group. The FAQPage JSON-LD ships the same placeholder text until replaced | Ref has questions only for one tab and one lorem answer | Proposed |
+| 2026-09-29 | FAQ background = `faqs-bg.png` flattened on white and exported as WebP: `public/images/pricing/faqs-bg.webp` (1920 wide, 21 KB) + `faqs-bg@2x.webp` (3840 wide, 55 KB) via `image-set()`, `cover`, anchored center bottom (source 7680×4140 PNG, 4.6 MB, untouched) | The export is the whole 1920×1035 section at 4x; alpha maxed at 62%, so flattening on the white section bg loses nothing | Proposed |
+
+### Open questions
+
+#### Content
+- **FAQ copy** — only the "Web Design And Development" questions are shown, with one lorem answer; the "Answer Engine Optimization (AEO)" tab and 4 of 5 answers are missing. Built with generated placeholder answers and 5 placeholder AEO questions (`TODO: COPY`, `src/lib/content/faqs.ts`). (2026-09-29)
+- **`pricingPage` document missing in Sanity** — fallback meta title "Pricing" and description "Simple, transparent pricing for B2B websites: monthly design and development, AEO/GEO growth plans, or one-off projects. Unlimited requests, cancel anytime." (`TODO: COPY`). (2026-09-29)
+- **Plan name** — the card says "Growth (AEO/GEO + CRO)", the nav / footer say "Growth (AEO / SEO / CRO)". Built as the card ref. Which is right? (2026-09-29)
+- **Hidden heading** — visually hidden `<h2>` "Plans" above the cards is a placeholder (`TODO: COPY`). (2026-09-29)
+
+#### Design team
+- ~~**FAQ background asset**~~ — RESOLVED 2026-09-29: web export produced from the PNG (see Decisions). An SVG from design would still be sharper and lighter.
+- **Mobile / tablet** — no mobile refs; built with DS tokens, `TODO: DS mobile`. At ≤991 the cards stack full width (811px at 991: lots of empty space); the FAQ globe shows only as a faint crop on phones. (2026-09-29)
+- **Pricing section background** — the ref shows faint line-art arcs left and right of the cards plus the lavender glow on cards 1 and 3. No asset delivered; not built. (2026-09-29)
+- **Spacing** — measured from the 1920 ref at 1/14 rem, `TODO: DS`: hero title → cards 7.357rem (103px), cards → logo strip 4.357rem (61px), card gap 1.071rem (15px), logo strip → FAQ title and last FAQ row → section end 8.571rem (120px), title → tabs 1.714rem (24px), tabs → first row 3.5rem (49px). Mobile guesses 5rem / 3rem. (2026-09-29)
+- **FAQ title size** — ref ≈ 60px at the 1920 frame, `c-text_xl` is 54.7px (SectionHeader default kept). (2026-09-29)
+- **Card width at 1440** — the ref cards are 441px wide at 1920 (1680px content); with the 1440px container they are 400px, so "Growth (AEO/GEO + CRO)" wraps to 2 lines and descriptions to 3–4 lines. Subgrid keeps prices and buttons aligned. (2026-09-29)
+- **FAQ default state** — the ref shows the second question open; built all closed (FaqAccordion default). (2026-09-29)
+
+#### Needs lead OK
+- **Pricing page structure, plans data, placeholder FAQ copy, FAQ background export** — see the four Proposed rows above. (2026-09-29)
+
+---
+
+## Blog
+
+### Decisions
+| Date | Decision | Reason | Status |
+|---|---|---|---|
+
+### Open questions
+
+#### Lead / CEO
+- **Build or keep out** — optional page (see Global Decisions 2026-09-29). Decide at the end of Phase 5. If it stays out, hide the footer "Blog" link. The article page has no refs. (2026-09-29)

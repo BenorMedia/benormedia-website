@@ -5,13 +5,13 @@ English only. No locale prefix.
 | Page | Route | Type | Sanity source | Notes |
 |---|---|---|---|---|
 | Home | `/` | Singleton | `homePage` | Home.png received |
-| Work | `/work` | Singleton + list | `workPage` + `project[]` | Listing only, no detail pages |
+| Work | `/work` | Singleton + list | `workPage` (SEO) + `client[]` | Listing only, no detail pages |
 | Pricing | `/pricing` | Singleton | `pricingPage` | |
 | Testimonials | `/testimonials` | Singleton + list | `testimonialsPage` + `testimonial[]` | |
 | Custom Websites & Migrations | `/custom-websites-migrations` | Service template | `service` | |
 | Growth (AEO / SEO / CRO) | `/growth` | Service template | `service` | |
 | Ongoing Website Support | `/ongoing-website-support` | Service template | `service` | |
-| Blog | `/blog` | Singleton + list | `blogPage` + `post[]` | Search input + category filter dropdown |
+| Blog | `/blog` | Singleton + list | `blogPage` + `post[]` | Search input + category filter dropdown. Optional for launch (DECISIONS 2026-09-29) |
 | Blog article | `/blog/[slug]` | Dynamic | `post` | |
 | 404 | `/404` | Static | `siteSettings` | |
 

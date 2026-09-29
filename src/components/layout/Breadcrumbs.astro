@@ -1,0 +1,141 @@
+---
+/**
+ * Breadcrumbs — c-breadcrumbs
+ * Eyebrow-style breadcrumb trail (service hero, `services-hero.jpg`):
+ * default Eyebrow per level, a gray chevron between levels, and the current
+ * page as an Eyebrow with a brand-gradient border.
+ *
+ * Markup: `<nav aria-label="Breadcrumb"><ol>…</ol></nav>`; the last item is
+ * the current page (`aria-current="page"`). Items without `href` render as
+ * plain text (e.g. "Services" has no index page, only the nav dropdown).
+ *
+ * `ld` (optional): BreadcrumbList JSON-LD items, absolute URLs. Google needs
+ * a URL on every level, so the caller passes only the levels that have a page
+ * (e.g. Home → service), not the visual trail.
+ */
+import Eyebrow from "../ui/Eyebrow.astro";
+
+interface Crumb {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  items: readonly Crumb[];
+  ld?: readonly { name: string; url: string }[] | undefined;
+  class?: string;
+}
+
+const { items, ld, class: className } = Astro.props;
+const rootClass = ["c-breadcrumbs", className].filter(Boolean).join(" ");
+const lastIndex = items.length - 1;
+
+const ldJson =
+  ld && ld.length > 0
+    ? JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: ld.map((item, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          name: item.name,
+          item: item.url,
+        })),
+      }).replace(/</g, "\\u003c")
+    : null;
+---
+
+{items.length > 0 && (
+  <nav class={rootClass} aria-label="Breadcrumb">
+    <ol class="c-breadcrumbs__list">
+      {items.map((item, i) => {
+        const isCurrent = i === lastIndex;
+        return (
+          <li class="c-breadcrumbs__item">
+            {i > 0 && (
+              <svg class="c-breadcrumbs__chevron" viewBox="0 0 6 10" width="6" height="10" fill="none" aria-hidden="true" focusable="false">
+                <path d="M1 1l4 4-4 4" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            )}
+            {isCurrent ? (
+              <span class="c-breadcrumbs__crumb" aria-current="page">
+                <Eyebrow variant="default" class="c-breadcrumbs__current">{item.label}</Eyebrow>
+              </span>
+            ) : item.href ? (
+              <a class="c-breadcrumbs__crumb c-breadcrumbs__link" href={item.href}>
+                <Eyebrow variant="default">{item.label}</Eyebrow>
+              </a>
+            ) : (
+              <span class="c-breadcrumbs__crumb">
+                <Eyebrow variant="default">{item.label}</Eyebrow>
+              </span>
+            )}
+          </li>
+        );
+      })}
+    </ol>
+    {ldJson && <script type="application/ld+json" set:html={ldJson} />}
+  </nav>
+)}
+
+<style>
+  .c-breadcrumbs__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    /* TODO: DS breadcrumb gaps: ref ≈ 18px eyebrow → chevron → eyebrow. */
+    gap: 1.286rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .c-breadcrumbs__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.286rem;
+  }
+
+  .c-breadcrumbs__crumb {
+    display: inline-flex;
+  }
+
+  .c-breadcrumbs__link {
+    text-decoration: none;
+  }
+  .c-breadcrumbs__link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .c-breadcrumbs__chevron {
+    flex: 0 0 auto;
+    width: 0.429rem; /* 6px — TODO: DS icon sizes (§9) */
+    height: 0.714rem;
+    color: var(--color-gray);
+  }
+
+  /* Current page: default eyebrow with a brand-gradient border and blue
+     squares (services-hero.jpg). TODO: DS eyebrow "current" / gradient-border
+     variant (@ui); scoped override until then. */
+  .c-breadcrumbs :global(.c-eyebrow.c-breadcrumbs__current) {
+    border-color: transparent;
+    background:
+      linear-gradient(var(--color-white), var(--color-white)) padding-box,
+      var(--gradient-primary) border-box;
+  }
+  .c-breadcrumbs :global(.c-eyebrow.c-breadcrumbs__current::before) {
+    border-color: var(--color-blue);
+  }
+  .c-breadcrumbs :global(.c-eyebrow.c-breadcrumbs__current::after) {
+    border-color: var(--color-blue-light);
+  }
+
+  @media (max-width: 767px) {
+    .c-breadcrumbs__list,
+    .c-breadcrumbs__item {
+      gap: 1rem; /* TODO: DS mobile */
+    }
+  }
+</style>

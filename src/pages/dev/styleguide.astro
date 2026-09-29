@@ -4,6 +4,10 @@ import Button from "../../components/ui/Button.astro";
 import Eyebrow from "../../components/ui/Eyebrow.astro";
 import Tag from "../../components/ui/Tag.astro";
 import Container from "../../components/ui/Container.astro";
+import SectionHeader from "../../components/ui/SectionHeader.astro";
+import SegmentedControl from "../../components/ui/SegmentedControl.astro";
+import FaqAccordion from "../../components/ui/FaqAccordion.astro";
+import PricingCard from "../../components/ui/PricingCard.astro";
 import CtaBanner from "../../components/layout/CtaBanner.astro";
 import type { SiteSettings } from "../../lib/sanity/types";
 
@@ -66,6 +70,90 @@ const paragraphClasses = [
 const pangram = "The quick brown fox jumps over the lazy dog";
 
 const buttonVariants = ["gradient", "gradient-outline", "white", "glass"] as const;
+
+// Phase 5 primitives — sample data only (copy from the refs, not final).
+const workFilters = [
+  { label: "View All", value: "all" },
+  { label: "Professional Services", value: "professional-services" },
+  { label: "SaaS / B2B Tech", value: "saas" },
+  { label: "Agency", value: "agency" },
+];
+
+const faqTabs = [
+  { label: "Web Design And Development", value: "web", controls: "sg-faq-web" },
+  { label: "Answer Engine Optimization (AEO)", value: "aeo", controls: "sg-faq-aeo" },
+];
+
+const loremAnswer =
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in.";
+
+const faqWeb = [
+  { question: "Are requests really unlimited?", answer: loremAnswer },
+  { question: "How many months will I need?", answer: loremAnswer },
+  { question: "How does the turnaround time work?", answer: loremAnswer },
+  { question: "What if I'm still unhappy with the work at the end?", answer: loremAnswer },
+  { question: "How will I communicate with you?", answer: loremAnswer },
+];
+
+const faqAeo = [
+  { question: "TODO: COPY — AEO question", answer: "TODO: COPY — AEO answer." },
+];
+
+const plans = [
+  {
+    name: "Design + Development",
+    description:
+      "Unlimited marketing design, web design, and web development support for growing B2B companies.",
+    price: "€2,000",
+    period: "/mo",
+    features: [
+      "Unlimited development requests",
+      "Unlimited web and marketing design requests",
+      "Unlimited technical SEO requests and consultancy",
+      "Unlimited revisions",
+      "Unlimited projects",
+      "Fast turnaround",
+      "Updates via our dashboard, Slack or Email",
+      "Dedicated client manager",
+      "Cancel anytime",
+    ],
+  },
+  {
+    name: "Growth (AEO/GEO + CRO)",
+    description:
+      "Technical AEO, AI search analytics, content creation, and ongoing optimization to improve your LLMs visibility and web conversion rate.",
+    price: "€2,500",
+    period: "/mo",
+    features: [
+      "Content creation",
+      "AI Search Analytics",
+      "AI Visibility Reporting",
+      "Competitive Intelligence",
+      "Technical Optimization",
+      "Conversion Rate Experiments",
+      "Content Opportunity Analysis",
+      "Behavior Analysis",
+      "Cancel anytime",
+    ],
+  },
+  {
+    name: "One Off",
+    description:
+      "A fixed-scope engagement for businesses that need expert design or development without a retainer.",
+    priceLabel: "Let's chat",
+    features: [
+      "Webflow development",
+      "Conversion-focused designs",
+      "Scalable development system",
+      "Scalable design system",
+      "Custom illustrations",
+      "Technical SEO optimization",
+      "Tutorials and Training",
+      "Dedicated client manager",
+      "Multiple reviews",
+    ],
+  },
+];
 ---
 
 <BaseLayout title="Style guide" noindex={true}>
@@ -238,7 +326,94 @@ const buttonVariants = ["gradient", "gradient-outline", "white", "glass"] as con
       </div>
     </section>
   </Container>
+  <!-- ================================================================== -->
+  <!-- 6. Phase 5 primitives                                              -->
+  <!-- ================================================================== -->
+  <Container>
+    <section class="sg-section">
+      <h2 class="c-text_l">6. Phase 5 primitives</h2>
+
+      <h3 class="c-text_m sg-subhead">SectionHeader — accent</h3>
+      <p class="c-paragraph_s sg-muted">
+        <code>accent</code> wraps a substring of <code>title</code> in
+        <code>.c-section-header__accent</code> (gradient text). Whitespace in the accent
+        matches a forced line break in the title.
+      </p>
+      <div class="sg-stack">
+        <SectionHeader
+          eyebrow="Pricing"
+          title={"Simple and transparent\npricing that meets your needs."}
+          accent="that meets your needs."
+          as="h3"
+          titleClass="c-text_xxl"
+        />
+        <SectionHeader
+          title={"Where marketing\nambition meets creative."}
+          accent="marketing ambition"
+          description="Accent crossing a forced line break."
+          as="h3"
+        />
+      </div>
+
+      <h3 class="c-text_m sg-subhead">SegmentedControl — toggle (Work filters, squares)</h3>
+      <p class="c-paragraph_s sg-muted">
+        <code>role="group"</code> + <code>aria-pressed</code> buttons. The caller wires the
+        behavior (styleguide demo script below).
+      </p>
+      <div class="sg-center" data-sg-toggle>
+        <SegmentedControl items={workFilters} label="Filter projects by industry" squares />
+      </div>
+
+      <h3 class="c-text_m sg-subhead">SegmentedControl — tabs (FAQ) + FaqAccordion</h3>
+      <p class="c-paragraph_s sg-muted">
+        <code>role="tablist"</code>; behavior from <code>initTabs()</code>
+        (<code>src/scripts/ui/tabs.ts</code>): click, Left/Right/Home/End, roving tabindex.
+        Without JS the tablist stays <code>hidden</code> (no dead tabs) and both panels stay
+        visible; <code>initTabs()</code> reveals the tabs. Accordion = native <code>&lt;details name&gt;</code>.
+      </p>
+      <div class="sg-faq" data-sg-tabs>
+        <SegmentedControl items={faqTabs} label="FAQ topics" mode="tabs" />
+        <div id="sg-faq-web" class="sg-faq__panel">
+          <FaqAccordion items={faqWeb} name="sg-faq-web" />
+        </div>
+        <div id="sg-faq-aeo" class="sg-faq__panel">
+          <FaqAccordion items={faqAeo} name="sg-faq-aeo" openFirst />
+        </div>
+      </div>
+
+      <h3 class="c-text_m sg-subhead">PricingCard</h3>
+      <p class="c-paragraph_s sg-muted">
+        Subgrid card: place cards directly in a grid parent so prices and buttons align.
+        Buttons carry <code>.js-open-contact</code>.
+      </p>
+      <div class="sg-pricing">
+        {plans.map((plan) => <PricingCard {...plan} />)}
+      </div>
+    </section>
+  </Container>
 </BaseLayout>
+
+<script>
+  // Styleguide-only wiring for the Phase 5 demos.
+  import { initTabs } from "../../scripts/ui/tabs";
+
+  document.querySelectorAll<HTMLElement>("[data-sg-tabs]").forEach((el) => initTabs(el));
+
+  document.querySelectorAll<HTMLElement>("[data-sg-toggle]").forEach((group) => {
+    const buttons = Array.from(group.querySelectorAll<HTMLButtonElement>("button[aria-pressed]"));
+    group.addEventListener("click", (event) => {
+      const pressed = (event.target as Element | null)?.closest<HTMLButtonElement>(
+        "button[aria-pressed]",
+      );
+      if (!pressed) return;
+      for (const b of buttons) {
+        const on = b === pressed;
+        b.setAttribute("aria-pressed", String(on));
+        b.classList.toggle("is-active", on);
+      }
+    });
+  });
+</script>
 
 <style>
   /* Styleguide-only styles. Not part of the DS. */
@@ -367,5 +542,39 @@ const buttonVariants = ["gradient", "gradient-outline", "white", "glass"] as con
     padding: 2rem;
     background: var(--color-white);
     border-radius: 3px;
+  }
+
+  /* Phase 5 primitives */
+  .sg-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+    margin-top: 1.5rem;
+  }
+  .sg-center {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+  }
+  .sg-faq {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3.5rem;
+    margin-top: 1.5rem;
+  }
+  .sg-faq__panel {
+    width: 100%;
+  }
+  .sg-pricing {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.071rem;
+    margin-top: 1.5rem;
+  }
+  @media (max-width: 991px) {
+    .sg-pricing {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

@@ -1,0 +1,189 @@
+---
+/**
+ * PricingCard — plan name, description, gradient price, feature list and a
+ * full-width "Get In Touch" button that opens the contact modal.
+ * Ref: `docs/refs/pricing/pricing-cards.jpg`.
+ *
+ * Price: `price` (+ optional `period`, e.g. "/mo") or `priceLabel` (e.g.
+ * "Let's chat", same gradient style, no period). `price` wins if both are set.
+ *
+ * Layout contract: the card uses CSS subgrid (4 rows: header, price, features,
+ * CTA) so prices and buttons line up across cards. Place cards directly in a
+ * grid parent, e.g. `display: grid; grid-template-columns: repeat(3, 1fr);`.
+ * Outside a grid the card still renders correctly, just without cross-card
+ * alignment.
+ *
+ * The plan name is an `<h3>`: the page needs an `<h1>` and a section `<h2>`
+ * (visible or visually hidden) above the cards.
+ */
+import Button from "./Button.astro";
+
+interface Props {
+  name: string;
+  description: string;
+  price?: string;
+  period?: string;
+  priceLabel?: string;
+  features: string[];
+  ctaLabel?: string;
+  class?: string;
+}
+
+const {
+  name,
+  description,
+  price,
+  period,
+  priceLabel,
+  features,
+  ctaLabel = "Get In Touch",
+  class: className,
+} = Astro.props;
+
+const amount = price ?? priceLabel;
+const showPeriod = Boolean(price && period);
+const rootClass = ["c-pricing-card", className].filter(Boolean).join(" ");
+---
+
+<article class={rootClass} data-anim="pricing-card">
+  <div class="c-pricing-card__header">
+    <h3 class="c-pricing-card__name c-text_l">{name}</h3>
+    <p class="c-pricing-card__description c-paragraph_m">{description}</p>
+  </div>
+
+  <p class="c-pricing-card__price">
+    {amount && <span class="c-pricing-card__amount c-text_xxl" data-anim="pricing-amount">{amount}</span>}
+    {showPeriod && <span class="c-pricing-card__period c-paragraph">{period}</span>}
+  </p>
+
+  <ul class="c-pricing-card__features" role="list">
+    {features.map((feature) => (
+      <li class="c-pricing-card__feature c-paragraph">
+        <span class="c-pricing-card__check" aria-hidden="true">
+          <svg viewBox="0 0 20 20" width="20" height="20" fill="none">
+            <path
+              d="M6 10.4l2.6 2.6L14 7.6"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </span>
+        <span>{feature}</span>
+      </li>
+    ))}
+  </ul>
+
+  <div class="c-pricing-card__cta">
+    <Button variant="gradient" class="c-pricing-card__button js-open-contact">{ctaLabel}</Button>
+  </div>
+</article>
+
+<style>
+  /* Measured from the ref (1920 frame, 1 ref px = 1/14 rem at the ≥1440 root).
+     TODO: DS — radius, paddings and vertical gaps are not in DESIGN_SYSTEM. */
+  .c-pricing-card {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 4;
+    row-gap: 0;
+    padding: 1.714rem 1.536rem 1.536rem; /* 24 / 21.5px — TODO: DS */
+    border: var(--border-default);
+    border-radius: 6px; /* TODO: DS */
+    background: var(--color-white);
+    /* TODO: DS — the faint lavender glow in the ref (top-left on card 1,
+       top-right on card 3, none on card 2) reads as a section background,
+       not a card style; not built here. */
+  }
+
+  .c-pricing-card__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.714rem; /* 10px, same as SectionHeader title → description */
+  }
+
+  /* TODO: DS — ref text is #222222; closest token is --color-black-secondary. */
+  .c-pricing-card__name,
+  .c-pricing-card__description,
+  .c-pricing-card__period,
+  .c-pricing-card__feature {
+    color: var(--color-black-secondary);
+  }
+
+  .c-pricing-card__price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.357rem; /* ≈5px amount → period — TODO: DS */
+    margin-top: 2.5rem; /* ≈35px — TODO: DS */
+  }
+
+  /* Gradient text, same technique as the `is-white` button text (§7.3). */
+  .c-pricing-card__amount {
+    color: var(--color-blue); /* fallback without background-clip: text */
+  }
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .c-pricing-card__amount {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+              background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+  }
+
+  .c-pricing-card__features {
+    display: flex;
+    flex-direction: column;
+    gap: 1.143rem; /* ≈16px between rows (38px pitch) — TODO: DS */
+    margin: 2.857rem 0 0; /* ≈40px — TODO: DS */
+    padding: 0;
+    list-style: none;
+  }
+
+  .c-pricing-card__feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.714rem; /* 10px icon → text — TODO: DS */
+  }
+
+  /* Gradient circle + white check. The circle is a CSS background so the
+     gradient comes straight from --gradient-primary (no SVG gradient ids). */
+  .c-pricing-card__check {
+    display: inline-flex;
+    flex: 0 0 auto;
+    width: 1.429rem; /* 20px — TODO: DS icon sizes (§9) */
+    height: 1.429rem;
+    /* Center the icon on the first text line (c-paragraph line-height 1.5). */
+    margin-top: calc((var(--fs-p) * 1.5 - 1.429rem) / 2);
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    color: var(--color-white);
+  }
+  .c-pricing-card__check svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .c-pricing-card__cta {
+    align-self: end;
+    margin-top: 1.714rem; /* ≥24px from the last feature — TODO: DS */
+  }
+  .c-pricing-card__cta :global(.c-pricing-card__button) {
+    width: 100%;
+  }
+
+  /* TODO: DS mobile — no mobile refs; slightly smaller vertical rhythm. */
+  @media (max-width: 767px) {
+    .c-pricing-card {
+      padding: 2.286rem 2rem 2rem;
+    }
+    .c-pricing-card__price {
+      margin-top: 2rem;
+    }
+    .c-pricing-card__features {
+      margin-top: 2rem;
+    }
+  }
+</style>

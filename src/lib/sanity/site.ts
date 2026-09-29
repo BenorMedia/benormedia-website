@@ -12,6 +12,7 @@
  */
 import { getClientBadges, getSiteSettings } from './queries';
 import type { Client, SiteSettings } from './types';
+import { urlFor, type Source } from './image';
 
 let cached: SiteSettings | null | undefined;
 
@@ -31,4 +32,19 @@ let badgesCached: Promise<Client[]> | undefined;
 export function getClientBadgesCached(): Promise<Client[]> {
   badgesCached ??= getClientBadges();
   return badgesCached;
+}
+
+/**
+ * Badge circle URLs for `CtaActions` (CTA banner + service hero): every
+ * client badge, 64×64 crop (31.68px circle at 2x density). Same cache.
+ */
+let badgeUrlsCached: Promise<string[]> | undefined;
+
+export function getCtaBadgeUrlsCached(): Promise<string[]> {
+  badgeUrlsCached ??= getClientBadgesCached().then((clients) =>
+    clients
+      .filter((c) => c.badge?.asset)
+      .map((c) => urlFor(c.badge as Source).width(64).height(64).fit('crop').auto('format').url()),
+  );
+  return badgeUrlsCached;
 }

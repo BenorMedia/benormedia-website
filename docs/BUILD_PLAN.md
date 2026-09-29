@@ -53,10 +53,15 @@ Sections: Our Work (cards + list) · Technologies · Testimonials. Home animatio
 ---
 
 ## Day 6 — Phase 5 Remaining pages + Phase 6 Motion/forms/webhooks
-- Service template → 3 service pages
-- Work (listing only, no detail pages)
-- Testimonials, Pricing
-- Blog listing (search + category filter) + article
+Phase 5 branch: `feat/phase5-secondary-pages` (all pages, one branch, lead checkpoint + commit per page). Plan approved 2026-09-29.
+Order and status:
+1. Work (listing only, no detail pages) — V1 built, QA PASS WITH NOTES, open items W-1…W-12
+2. Pricing — V1 built (no per-page QA), open items P-1…P-25 in `docs/PHASE5_OPEN_ITEMS.md`
+3. Service template → V1 built for `/custom-websites-migrations` (no per-page QA); `service` schema v0.6 deployed; Growth + Ongoing Support docs deferred (lead). Open items S-1…S-28 in `docs/PHASE5_OPEN_ITEMS.md`
+4. Testimonials — V1 built (no per-page QA), open items T-1…T-18 in `docs/PHASE5_OPEN_ITEMS.md`
+5. **Blog listing + article — OPTIONAL.** Decide at the end of Phase 5 whether to build or keep out (production can launch without a blog). If out, hide the footer "Blog" link.
+
+Page singletons stay SEO-only; page content is static in Astro (DECISIONS 2026-09-29). Per-page QA is paused (lead, 2026-09-29): every open point goes into `docs/PHASE5_OPEN_ITEMS.md`; the lead runs one full QA on all secondary pages after V1 of every page.
 - Remaining GSAP animations, contact form → Vercel endpoint → Make (if CEO confirmed)
 ✅ Checkpoint per page.
 

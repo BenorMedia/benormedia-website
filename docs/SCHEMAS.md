@@ -1,8 +1,14 @@
-# Sanity ↔ Astro Data Contract (v0.5, approved)
+# Sanity ↔ Astro Data Contract (v0.6, approved)
 
-Status: approved by the project lead 2026-09-25.
+Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) approved 2026-09-29.
 
 Approach: **repeatable data lives in Sanity documents; page copy is authored directly in Astro components.** Page singletons exist only to hold per-page SEO metadata. Global chrome (nav, footer) is authored in Astro components too.
+
+### v0.6 changes vs v0.5 (2026-09-29)
+- **`service` document reinstated** (supersedes the v0.5 removal) with the lead-approved field list: one Studio tab per page section (Overview, Hero, Problem, Process, FAQs) + SEO. Routable at `/<slug>` via `src/pages/[service].astro`.
+- **New objects:** `accentTitle` (one-line Portable Text title with a "Gradient" decorator) and `processStep`.
+- **`link.internalRef`** allows `service` again, so CMS buttons can link to service pages.
+- Services seeded: only Custom Websites & Migrations (lead). Growth and Ongoing Website Support documents are not created yet.
 
 ### v0.5 changes vs v0.4
 - **All page singletons are SEO-only.** Removed all `hero`/section/content fields from `homePage`, `workPage`, `pricingPage`, `testimonialsPage`, `blogPage`. No Content tab — just a single `seo` object.
@@ -32,6 +38,43 @@ Approach: **repeatable data lives in Sanity documents; page copy is authored dir
 All fields are optional so clients can be bulk-created and published without waiting on assets. Enforce presence at query/render time (skip incomplete clients in listings) rather than at Studio level.
 
 Preview: name · category · logo.
+
+### `service` — Service pages (routable at `/<slug>`)
+Fields are grouped in Studio tabs, one per page section, in this order.
+
+
+| Tab | Field | Name | Type | Rules |
+|---|---|---|---|---|
+| Overview (default) | Service name | `name` | string | required. Studio title, hero breadcrumb, anywhere the service name appears |
+| Overview | Slug | `slug` | slug (from name) | required, unique among services, lowercase kebab-case (`a-z`, `0-9`, `-`). Can't be a reserved slug: `work`, `pricing`, `testimonials`, `blog`, `studio`, `dev`, `404` (SITEMAP) |
+| Overview | Related clients | `clients` | array of references → `client` | optional, no duplicates. How they render is decided in the Astro template |
+| Hero | Headline | `headline` | `accentTitle` | required, exactly one line of text (Shift+Enter for a line break) |
+| Hero | Subtitle | `subtitle` | text (3 rows) | optional |
+| Problem | Problem title | `problemTitle` | `accentTitle` | optional, max 1 block |
+| Problem | Problem description | `problemDescription` | text (3 rows) | optional |
+| Process | Process title | `processTitle` | `accentTitle` | optional, max 1 block |
+| Process | Process description | `processDescription` | text (3 rows) | optional. A line break typed in the field is kept (`\n`) |
+| Process | Process steps | `steps` | array of `processStep` | optional. No position field: the step number (01, 02…) is the item's order in the array (drag to reorder) |
+| FAQs | FAQ sections | `faqSections` | array of `faqSection` | optional. Same object as `post` (see "FAQs"): section title = tab label |
+| SEO | SEO | `seo` | `seo` object | optional, falls back to name / subtitle / siteSettings |
+
+Preview: name · `/<slug>`. Desk list ordered by name.
+Step list items show their number (01, 02…) next to the step preview (name · first features or description · image).
+
+`processStep` object:
+
+| Field | Name | Type | Rules |
+|---|---|---|---|
+| Step name | `name` | string | required. Tab label and step heading |
+| Description | `description` | text (3 rows) | optional |
+| Features | `features` | array of string (tags input) | optional, no duplicates, order has no meaning |
+| Image | `image` | image (hotspot) + `alt` | optional. Alt required when an image is set |
+
+`accentTitle` (named type, array of Portable Text blocks):
+- Exactly one block (max 1), style `normal` only, no lists, no annotations, no inline objects.
+- One decorator: `accent`, titled "Gradient". Text marked with it renders with the brand gradient (`.c-section-header__accent` in Astro).
+- Line breaks are `\n` characters inside span text (Shift+Enter in the editor). The renderer turns them into `<br />`.
+- Shape: `[{ _type: "block", _key, style: "normal", markDefs: [], children: [{ _type: "span", _key, text, marks: [] | ["accent"] }] }]`.
 
 ### `testimonial` — Testimonials
 | Field | Name | Type | Rules |
@@ -104,11 +147,13 @@ Seed: Fintech · SaaS · HR Tech · Cleantech · Venture Capital · E-Commerce �
 | Object | Fields |
 |---|---|
 | `seo` | metaTitle (≤60 chars, warning), metaDescription (≤160 chars, warning), ogImage (1200×630), noIndex (bool), canonicalUrl (optional override). Empty fields fall back to siteSettings defaults |
-| `link` | label, type (`internal` / `external` / `contact`), internalRef (page singleton or post), externalUrl, openInNewTab. `contact` opens the contact popup |
+| `link` | label, type (`internal` / `external` / `contact`), internalRef (page singleton, post or service), externalUrl, openInNewTab. `contact` opens the contact popup |
 | `button` | link + variant (`gradient` / `gradient-outline` / `white` / `glass`) |
 | `sectionHeader` | eyebrow, title, description |
 | `stat` | value (string, e.g. "$700M+"), label |
 | `kpi` | value, description |
+| `accentTitle` | one-block Portable Text title with the "Gradient" (`accent`) decorator (see `service`) |
+| `processStep` | name, description, features[], image + alt (see `service`) |
 
 ---
 
@@ -135,20 +180,22 @@ Handled in code, not CMS: favicon + app icons (`/public`), robots.txt, sitemap, 
 
 ## Tabs on routable documents
 
-Only `post` (the sole routable document type) uses field groups:
+Routable documents use field groups:
 
-| Tab | Content |
+| Document | Tabs |
 |---|---|
-| **Content** | all post fields (default tab) |
-| **SEO** | `seo` object (metaTitle, metaDescription, ogImage, noIndex, canonicalUrl) |
+| `post` | **Content** (all post fields, default) · **SEO** |
+| `service` | **Overview** (default) · **Hero** · **Problem** · **Process** · **FAQs** · **SEO** |
+
+The **SEO** tab holds the `seo` object (metaTitle, metaDescription, ogImage, noIndex, canonicalUrl).
 
 Page singletons (`homePage`, `workPage`, …) hold `seo` only and don't need tabs.
 
-Meta resolution order: page/post `seo` field → generated from content (title/excerpt/thumbnail for posts) → `siteSettings` defaults.
+Meta resolution order: page/post/service `seo` field → generated from content (title/excerpt/thumbnail for posts; name/subtitle for services) → `siteSettings` defaults.
 
 ## Rules
 - Every content image has alt text. Logos, icons and author photos auto-generate alt from the related name (editor can override).
-- The only routable document is `post` (`/blog/[slug]`). Page routes (`/`, `/work`, `/pricing`, `/testimonials`, `/blog`) are static Astro pages that read only their SEO singleton from Sanity.
+- Routable documents: `post` (`/blog/[slug]`) and `service` (`/<slug>`, from `src/pages/[service].astro`; reserved slugs blocked by validation). Page routes (`/`, `/work`, `/pricing`, `/testimonials`, `/blog`) are static Astro pages that read only their SEO singleton from Sanity.
 - Deleting a `category`, `author` or `testimonial` that is referenced is blocked by Sanity by default. Keep it that way.
 - Astro queries only fields listed here. Any new field → update this file first.
 
