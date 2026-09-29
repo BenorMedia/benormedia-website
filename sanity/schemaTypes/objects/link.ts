@@ -4,7 +4,7 @@ import { defineType, defineField } from 'sanity';
  * Link object used by buttons.
  *
  * Three types:
- *   - internal: reference to a page or post document
+ *   - internal: reference to a page, post or service document
  *   - external: any URL
  *   - contact:  opens the site-wide contact popup (no href needed)
  */
@@ -40,7 +40,7 @@ export const link = defineType({
     defineField({
       name: 'internalRef',
       title: 'Internal page',
-      description: 'Pick the page or blog post you want to link to.',
+      description: 'Pick the page, blog post or service page you want to link to.',
       type: 'reference',
       to: [
         { type: 'homePage' },
@@ -49,6 +49,7 @@ export const link = defineType({
         { type: 'testimonialsPage' },
         { type: 'blogPage' },
         { type: 'post' },
+        { type: 'service' },
       ],
       hidden: ({ parent }) => parent?.type !== 'internal',
       validation: (Rule) =>
