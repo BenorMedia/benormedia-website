@@ -116,6 +116,10 @@
 | 2026-09-29 | Shared `FaqSection` (`src/components/sections/`): props `title`, `groups: { label, value, items: {question, answer}[] }[]`, `jsonLd` (default true), `background` (default true), `id` prefix. 2+ groups → tabs + one `FaqAccordion` per group (`initTabs` in the component script); 1 group → accordion only; empty groups dropped, nothing left → no section. No JS: tablist hidden, every panel shown under an `<h3>` with its group label (hidden once tabs work). Emits FAQPage JSON-LD (answered questions only) | Pricing FAQ now, service template later | Proposed |
 | 2026-09-29 | Static page copy that more than one page uses lives in `src/lib/content/` (`our-work.ts` Our Work pinned IDs, shared by Home + Pricing; `faqs.ts` FAQ groups; `pricing.ts` plans) | One place to edit shared copy; Home output unchanged | Proposed |
 | 2026-09-29 | Testimonials page grid reuses the shared marquee `TestimonialCard` unchanged; only `.c-testimonial-card { width: 100% }` on that page (scoped in `TestimonialsGrid.astro`). The proposed `fluid` prop was dropped; the shared card is untouched | Lead: "only on this page" | Lead |
+| 2026-09-29 | Shared `CtaActions` (`src/components/ui/`): the CTA banner's buttons + "Trusted by" badge with rotating client circles, extracted from `CtaBanner` (same classes and markup; other pages' HTML unchanged apart from scope hashes / CSS chunks). Props `buttons` (Sanity `button[]`), `badges` (URL pool, from `getCtaBadgeUrlsCached()`), `trustedText`, `tone="dark"` (banner) or `"light"` (white bg: white badge, 1px gradient border, gradient text) | Lead: service hero reuses the CTA actions incl. the badge animation | Proposed |
+| 2026-09-29 | `SectionHeader` gained optional `titleSegments` (`{ text, accent? }[]`, several gradient runs, e.g. Sanity `accentTitle`; overrides `accent` when set) and `description` now renders `\n` as `<br />`. `PageHero` forwards `titleSegments` and has an optional `top` slot (above the header) and default slot (below it). No change for existing callers | Service titles can mark any spans; process description has a forced break | Proposed |
+| 2026-09-29 | Shared `Breadcrumbs` (`src/components/layout/`): `<nav aria-label="Breadcrumb"><ol>`, Eyebrow per level, chevron between, last item `aria-current="page"` with a gradient-border eyebrow; items without `href` are plain text; optional BreadcrumbList JSON-LD (`ld`, absolute URLs) | Service hero ref; reusable for blog posts | Proposed |
+| 2026-09-29 | Link → href mapping moved to `src/lib/sanity/links.ts` (`hrefFromLink`); `service` refs map to `/<slug>`, `post` to `/blog/<slug>`; `LINK_INTERNAL_REF` projects `coalesce(title, name)` | One mapping for every Sanity link; `service` added to `link.internalRef` (SCHEMAS v0.6) | Proposed |
 
 ### Open questions
 
@@ -175,6 +179,10 @@
 - **`SegmentedControl` tabs render the tablist `hidden` until `initTabs` (G-2)** (2026-09-29)
 - **Shared `FaqSection` (tabs, no-JS group headings, FAQPage JSON-LD)** (2026-09-29)
 - **Shared static copy in `src/lib/content/`** (2026-09-29)
+- **Shared `CtaActions` (CTA buttons + trusted badge) with a light tone** (2026-09-29)
+- **`SectionHeader` `titleSegments` + `\n` in description; `PageHero` slots** (2026-09-29)
+- **Shared `Breadcrumbs` (eyebrow crumbs, gradient current item, JSON-LD)** (2026-09-29)
+- **`hrefFromLink` in `src/lib/sanity/links.ts` (`service` → `/<slug>`)** (2026-09-29)
 - ~~**`TestimonialCard` `fluid` variant (grid)**~~ — RESOLVED 2026-09-29: dropped; width 100% on the Testimonials page only (see Decisions).
 - ~~**Testimonial marquee pauses on hover / focus**~~ — RESOLVED 2026-09-29: lead removed the pause (see Decisions).
 
@@ -234,18 +242,55 @@
 ### Decisions
 | Date | Decision | Reason | Status |
 |---|---|---|---|
+| 2026-09-29 | `service` fields (SCHEMAS v0.6), one Studio tab per page section: Overview (`name`, `slug`, `clients[]` → `client`), Hero (`headline`, `subtitle`), Problem (`problemTitle`, `problemDescription`), Process (`processTitle`, `processDescription`, `steps[]` of `processStep` = name, description, features[] tags, image + alt), FAQs (`faqSections`), SEO (`seo`). `slug` added for routing (from `name`, unique, kebab-case, reserved slugs blocked) | Lead-approved field list; three service pages share one template | Lead |
+| 2026-09-29 | Service FAQs reuse the existing `faqSections[]` → `faqSection` → `faq` objects (same as `post`); section title = tab label. No new FAQ type | Lead decision v0.4 (sections contain their questions) | Lead |
+| 2026-09-29 | Gradient words in service titles come from a reusable `accentTitle` type: one Portable Text block, style `normal`, no lists/annotations, one decorator `accent` ("Gradient"). Line breaks = Shift+Enter (`\n` in span text) | Editors choose which words get the gradient without a separate "accent" text field that can drift from the title | Lead |
+| 2026-09-29 | Process step number = the step's position in `steps[]` (01, 02… in creation order, drag to reorder). No position field | Nothing to keep in sync; reordering renumbers automatically | Lead |
+| 2026-09-29 | Seed only the Custom Websites & Migrations service (`_id` `service-custom-websites-migrations`). Growth and Ongoing Website Support documents are not created until their content exists | Only that page has a ref | Lead |
+| 2026-09-29 | Keep the `slug` field on `service` (PHASE5 S-8) | Routing needs it | Lead |
+| 2026-09-29 | Related clients on Custom Websites & Migrations: any selection for now, 7 clients (the 5 seeded + Emotional Hub, Garaje de Ideas), all with `websiteScreenshot` | Lead: "doesn't matter what to select for now"; final list later | Lead |
+| 2026-09-29 | Process steps 02–09 get placeholder names, descriptions and features (`TODO: COPY`, written by the sanity agent); all 9 steps use the lead's `service-step.svg` as a placeholder illustration (`TODO: assets`) | Lead: "placeholder copy for now"; unblocks the 9-tab Process build | Lead |
+| 2026-09-29 | Growth and Ongoing Website Support documents stay uncreated; make the one service work first | Lead decision | Lead |
+| 2026-09-29 | Service template `src/pages/[service].astro` (`getStaticPaths` from `SERVICE_SLUGS`): ServiceHero → LogoStrip → ServiceProblem → ServiceProcess → OurWork (Home pins) → Testimonials → FaqSection → CTA banner (BaseLayout). Meta fallback title = `name`, description = `subtitle` clamped to 160 chars | Lead brief: 3 custom sections, the rest reused | Proposed |
+| 2026-09-29 | Service hero breadcrumb "Services" › name: "Services" is plain text (no index page); BreadcrumbList JSON-LD lists only levels with a page (Home → service), because Google needs a URL on every level | Lead brief; valid structured data | Proposed |
+| 2026-09-29 | Hero line art `service-mid-hero-bg.svg` sits behind the hero bottom + logo strip (one wrapper, anchored to the strip bottom at the 1920 frame width); exported as 1x/2x WebP on white (347 KB SVG / 110 KB gzip → 26 KB / 77 KB); the logo strip is transparent on this page only | Matches the preview; lighter than the SVG | Proposed |
+| 2026-09-29 | Problem carousels: 4+ related clients are split between the columns (left = first half); 1–3 clients → both columns show all of them (right rotated, `aria-hidden`). Each copy repeats until ≥4 images so the loop never gaps; ≈20s per image (left 80s, right 120s with 7 clients, same speed). Hidden ≤991px | Lead brief; ref shows different sites per column | Proposed |
+| 2026-09-29 | Process tabs are a custom tablist (numbered gradient squares, not `SegmentedControl`) wired by the shared `initTabs`; no JS → tablist hidden, all panels in order with "NN Name" h3. ≤767 the bar wraps to squares only (name in the panel h3) | Ref tab design differs from the segmented pill; G-2 no-JS rule | Proposed |
+| 2026-09-29 | Service FAQ answers (Portable Text) are flattened to plain paragraphs for `FaqAccordion` + JSON-LD; bold / italic / links are dropped. `FaqAccordion` and Pricing unchanged | Seeded answers are plain; no PT renderer installed | Proposed |
 
 ### Open questions
 
 #### Content
-- **Process steps 02–09** — `services-process.jpg` only shows step 01 ("Website strategy plan"). Labels, copy, tags and illustrations for steps 02–09 are missing; built with `TODO: COPY` / `TODO: assets`. (2026-09-29)
-- **Growth + Ongoing Support content** — only Custom Websites & Migrations has a ref; the other two service pages get `TODO: COPY` until copy lands. (2026-09-29)
+- ~~**Process steps 02–09**~~ — RESOLVED 2026-09-29: placeholder copy for now; steps 02–09 have placeholder names/descriptions/features (`TODO: COPY`) and all 9 steps use `service-step.svg` as a placeholder illustration (`TODO: assets`). Final copy and per-step illustrations still to come (see Decisions).
+- ~~**Growth + Ongoing Support content**~~ — RESOLVED 2026-09-29: not now; make the one service work first. Their documents and routes stay uncreated (see Decisions).
 - **Problem section side images** — the side columns are cropped in `services-problem.jpg`; the full image list is unknown. (2026-09-29)
+- ~~**Related clients (seed guess)**~~ — RESOLVED 2026-09-29: any selection for now; 2 added (Emotional Hub, Garaje de Ideas) → 7 clients, all with `websiteScreenshot`. Placeholder selection (see Decisions).
+- **Service FAQs placeholder** — the seeded service copies the Pricing placeholder FAQ groups into Sanity; `TODO: COPY` until final copy (PHASE5 S-6). (2026-09-29)
 
 #### Design team
 - **Growth service name** — three spellings: nav/footer "Growth (AEO / SEO / CRO)", pricing "Growth (AEO/GEO + CRO)", Home "Web Growth (SEO + GEO + CRO)". Which one is correct? (2026-09-29)
-- **Hero line art** — the service hero shows faint side lines; confirm whether it is the same asset as `home-hero-lines-*`. (2026-09-29)
+- ~~**Hero line art**~~ — RESOLVED 2026-09-29: the lead supplied `service-mid-hero-bg.svg` (a different asset); placed behind the hero bottom + logo strip (see Decisions).
 - **Mobile / tablet** — no mobile refs; built with DS tokens, `TODO: DS mobile`. (2026-09-29)
+- **Service template spacing / sizes (`TODO: DS`)** — measured at 1/14 rem: hero bottom 7.857rem, subtitle → buttons ≈40px, Problem padding 14.286rem (200px), frame 71.857rem, line → screenshot gap 3.929rem, screenshot width 32.369rem (453.172px), gap 1.786rem, node 1.339rem; Process top 7.857rem, bottom 6.429rem, description → box 4.786rem, box padding 1.5rem, bar padding 1.786rem, squares 4.571rem, image 33.143rem, pills 0.571rem gap. See PHASE5 S-23. (2026-09-29)
+- **Title sizes** — Problem / Process titles (≈71px at 1920) and the step h3 (≈40px) are larger than `c-text_xl` / `c-text_l`, same as W-10 / G-26; built with the existing classes. (2026-09-29)
+- **Breadcrumb current item + badge on light** — gradient-border eyebrow with blue squares and the white trusted badge with gradient border/text are read from `services-hero.jpg`; no DS spec (scoped overrides). (2026-09-29)
+- **Feature pills** — sentence case with a gray outline in the ref; the shared `Tag` is uppercase, so the pills are scoped in `ServiceProcess`. DS pill / Tag variant? (2026-09-29)
+- **Problem carousels below 1920** — the layout is fixed around the center (1920 frame), so at 1440 each side shows ≈160px of a 453px screenshot; hidden ≤991. Confirm the intended behavior at 1440 and on mobile. (2026-09-29)
+- **Carousel speed / animation spec** — ≈20s per screenshot, linear, CSS; no spec. (2026-09-29)
+
+#### Needs lead OK
+- **Service template structure + meta fallbacks** (2026-09-29)
+- **Breadcrumb: "Services" as text, JSON-LD Home → service** (2026-09-29)
+- **Hero line art placement + WebP export** (2026-09-29)
+- **Problem carousels: column split, repeat rule, speed, hidden ≤991** (2026-09-29)
+- **Process tabs markup + no-JS / mobile behavior** (2026-09-29)
+- **FAQ answers flattened to plain text** (2026-09-29)
+
+#### Engineering follow-ups
+- ~~**accentTitle → SectionHeader**~~ — RESOLVED 2026-09-29: `SectionHeader` / `PageHero` take `titleSegments` built by `accentTitleSegments()` (`src/lib/sanity/portable-text.ts`); every accent run renders, no substring match (see Global Decisions).
+- ~~**Step illustration is an SVG asset**~~ — RESOLVED 2026-09-29: `ServiceProcess` serves `-svg` assets as the plain asset URL (`isSvgAsset()` in `src/lib/sanity/image.ts`), raster assets with width/format params.
+- **FAQ rich text** — service FAQ answers lose bold / italic / links (plain paragraphs). If editors need them, add a Portable Text renderer and an optional rich answer to `FaqAccordion`. (2026-09-29)
+- **BreadcrumbList URLs** — built from `siteSettings.siteUrl`, else Astro `site` (`PUBLIC_SITE_URL`); the local build resolves to `http://localhost:4321`. Set the production URL before launch (same source as the canonical). (2026-09-29)
 
 ---
 

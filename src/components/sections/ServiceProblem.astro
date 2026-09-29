@@ -1,0 +1,316 @@
+---
+/**
+ * ServiceProblem — "The Problem" section of the service template.
+ * Ref: `docs/refs/services-template/services-problem.jpg` (the whole section
+ * at the 1920 frame, 1 ref px = 1/14 rem).
+ *
+ * Center: Eyebrow "The Problem" + `problemTitle` (accentTitle segments) +
+ * `problemDescription`, via the shared `SectionHeader` (h2, centered).
+ *
+ * Frame (decorative, `aria-hidden`): two thin vertical lines around the
+ * center column with square nodes, as in the ref. The section's bottom border
+ * closes the frame (the top edge is the logo strip's bottom border).
+ *
+ * Side carousels (lead request, the one animation in this phase): two
+ * VERTICAL infinite marquees of the related clients' `websiteScreenshot`,
+ * placed outside the frame and bleeding past the viewport (the section clips
+ * them, no fade, as in the ref). Left moves bottom → top, right top → bottom,
+ * very slowly. CSS only, like `LogoStrip` / `TestimonialMarquee`: each track
+ * holds one "copy" (the column's clients, repeated until it is taller than
+ * the section) twice, and animates translateY 0 → -50%. Only the first
+ * occurrence of each client is exposed to AT (alt = screenshot alt or
+ * "<name> website"); every repeat is `aria-hidden` with `alt=""`.
+ *   - 4+ clients: split between the columns (left gets the first half).
+ *   - 1–3 clients: both columns show all of them; the right one is
+ *     rotated and fully `aria-hidden` (no double announcement).
+ *   - no screenshots: center content only (no frame, no carousels).
+ *   - no title and no description: the section is not rendered.
+ * `prefers-reduced-motion`: tracks are static (the first images show).
+ * ≤991px: carousels and frame hidden (`TODO: DS mobile`, no ref).
+ *
+ * Hook: `data-anim="service-problem-carousel"` on each track (`data-direction`
+ * = `up` / `down`), for a future GSAP swap if the spec asks for one.
+ */
+import Container from "../ui/Container.astro";
+import SectionHeader from "../ui/SectionHeader.astro";
+import Eyebrow from "../ui/Eyebrow.astro";
+import type { Client, SanityImage } from "../../lib/sanity/types";
+import type { TitleSegment } from "../../lib/sanity/portable-text";
+import { urlFor, assetDimensions, type Source } from "../../lib/sanity/image";
+
+interface Props {
+  /** Plain title (`\n` = line break). Empty = no title. */
+  title: string;
+  titleSegments?: readonly TitleSegment[];
+  description?: string | null | undefined;
+  clients: readonly Client[];
+}
+
+const { title, titleSegments, description, clients } = Astro.props;
+
+// Rendered image box: 453.172px in the ref → 32.369rem (TODO: DS). The
+// `width`/`height` attributes carry the intrinsic ratio at that width.
+const IMG_WIDTH = 453;
+
+interface Shot {
+  key: string;
+  src: string;
+  srcset: string;
+  width: number;
+  height: number;
+  alt: string;
+}
+
+const shots: Shot[] = clients
+  .filter((c): c is Client & { websiteScreenshot: SanityImage } => !!c.websiteScreenshot?.asset)
+  .map((c) => {
+    const image = c.websiteScreenshot;
+    const size = assetDimensions(image.asset?._id ?? image.asset?._ref);
+    const height = size ? Math.round((IMG_WIDTH * size.height) / size.width) : Math.round(IMG_WIDTH * 0.5715);
+    const base = urlFor(image as Source).auto("format").fit("max");
+    return {
+      key: c._id,
+      src: base.width(IMG_WIDTH).url(),
+      srcset: `${base.width(IMG_WIDTH).url()} 1x, ${base.width(IMG_WIDTH * 2).url()} 2x`,
+      width: IMG_WIDTH,
+      height,
+      alt: image.alt?.trim() || `${c.name} website`,
+    };
+  });
+
+// Columns: split when there are enough screenshots, else share them.
+const split = shots.length >= 4;
+const half = Math.ceil(shots.length / 2);
+const leftShots = split ? shots.slice(0, half) : shots;
+const rightShots = split
+  ? shots.slice(half)
+  : [...shots.slice(Math.floor(shots.length / 2)), ...shots.slice(0, Math.floor(shots.length / 2))];
+
+// One copy must be taller than the section (≈701px ref) so the loop never
+// shows a gap: at least 4 images (4 × ~284px).
+const MIN_PER_COPY = 4;
+function buildTrack(list: Shot[], exposeFirst: boolean) {
+  if (list.length === 0) return [];
+  const repeats = Math.ceil(MIN_PER_COPY / list.length);
+  const copy = Array.from({ length: repeats }, () => list).flat();
+  return [...copy, ...copy].map((shot, i) => ({
+    ...shot,
+    hidden: !exposeFirst || i >= list.length,
+  }));
+}
+
+const columns = [
+  { side: "left", direction: "up", items: buildTrack(leftShots, true) },
+  { side: "right", direction: "down", items: buildTrack(rightShots, split) },
+].filter((col) => col.items.length > 0);
+
+// ≈20s per image in one copy: "very slow". TODO: DS animation spec.
+const SECONDS_PER_IMAGE = 20;
+
+const hasTitle = title.trim().length > 0;
+const hasDescription = !!description?.trim();
+const shouldRender = hasTitle || hasDescription;
+const hasCarousels = columns.length > 0;
+
+const headerOptional = {
+  ...(titleSegments !== undefined && { titleSegments }),
+  ...(hasDescription && description ? { description } : {}),
+};
+---
+
+{shouldRender && (
+  <section class={["c-service-problem", hasCarousels && "is-carousels"].filter(Boolean).join(" ")}>
+    <Container class="c-service-problem__container">
+      {hasCarousels && (
+        <div class="c-service-problem__frame" aria-hidden="true">
+          <span class="c-service-problem__node is-left-mid"></span>
+          <span class="c-service-problem__node is-right-top"></span>
+          <span class="c-service-problem__node is-right-bottom"></span>
+        </div>
+      )}
+
+      {columns.map((col) => (
+        <div
+          class={`c-service-problem__carousel is-${col.side}`}
+          aria-hidden={col.items.every((item) => item.hidden) ? "true" : undefined}
+        >
+          <ul
+            class="c-service-problem__track"
+            data-anim="service-problem-carousel"
+            data-direction={col.direction}
+            style={`--c-service-problem-duration: ${(col.items.length / 2) * SECONDS_PER_IMAGE}s`}
+          >
+            {col.items.map((item) => (
+              <li class="c-service-problem__item" aria-hidden={item.hidden ? "true" : undefined}>
+                <img
+                  class="c-service-problem__img"
+                  src={item.src}
+                  srcset={item.srcset}
+                  width={item.width}
+                  height={item.height}
+                  alt={item.hidden ? "" : item.alt}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+
+      <div class="c-service-problem__content">
+        {hasTitle ? (
+          <SectionHeader eyebrow="The Problem" title={title} {...headerOptional} />
+        ) : (
+          /* Description only: same header markup/classes, no empty heading. */
+          <header class="c-section-header">
+            <Eyebrow variant="default">The Problem</Eyebrow>
+            <div class="c-section-header__text">
+              <p class="c-section-header__description c-paragraph_m">{description}</p>
+            </div>
+          </header>
+        )}
+      </div>
+    </Container>
+  </section>
+)}
+
+<style>
+  .c-service-problem {
+    /* Center column (frame) width and the gap frame line → screenshots,
+       measured in the ref: lines at x 471 / 1477 (1006px), screenshots end
+       59px / start 51px from them (avg 55px). TODO: DS */
+    --c-service-problem-frame: 71.857rem;
+    --c-service-problem-gap: 3.929rem;
+    --c-service-problem-img: 32.369rem; /* 453.172px — TODO: DS */
+
+    position: relative;
+    overflow: hidden; /* clips the bleeding carousels */
+    background: var(--color-white);
+    border-bottom: var(--border-default);
+  }
+
+  .c-service-problem :global(.c-container.c-service-problem__container) {
+    position: relative;
+    /* 200px top / bottom in the ref (lead brief). TODO: DS */
+    padding-top: 14.286rem;
+    padding-bottom: 14.286rem;
+  }
+
+  .c-service-problem__content {
+    position: relative;
+    z-index: 1;
+    max-width: var(--c-service-problem-frame);
+    margin-inline: auto;
+  }
+
+  /* --- Frame ------------------------------------------------------------ */
+  .c-service-problem__frame {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: var(--c-service-problem-frame);
+    transform: translateX(-50%);
+    border-inline: var(--border-default);
+    pointer-events: none;
+  }
+
+  /* Square nodes on the lines (≈19px, white, light border, 2px radius).
+     Positions from the ref: left line 56.3% down, right line 23.1% and at
+     the bottom border. TODO: DS */
+  .c-service-problem__node {
+    position: absolute;
+    width: 1.339rem;
+    height: 1.339rem;
+    border: var(--border-default);
+    border-radius: 2px;
+    background: var(--color-white);
+    transform: translate(-50%, -50%);
+  }
+  .c-service-problem__node.is-left-mid {
+    left: 0;
+    top: 56.3%;
+  }
+  .c-service-problem__node.is-right-top {
+    left: 100%;
+    top: 23.1%;
+  }
+  .c-service-problem__node.is-right-bottom {
+    left: 100%;
+    top: 100%;
+  }
+
+  /* --- Carousels ---------------------------------------------------------- */
+  .c-service-problem__carousel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: var(--c-service-problem-img);
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .c-service-problem__carousel.is-left {
+    right: calc(50% + var(--c-service-problem-frame) / 2 + var(--c-service-problem-gap));
+  }
+  .c-service-problem__carousel.is-right {
+    left: calc(50% + var(--c-service-problem-frame) / 2 + var(--c-service-problem-gap));
+  }
+
+  .c-service-problem__track {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    animation: c-service-problem-scroll var(--c-service-problem-duration, 80s) linear infinite;
+  }
+  /* Right column: top → bottom. */
+  .c-service-problem__track[data-direction="down"] {
+    animation-direction: reverse;
+  }
+
+  @keyframes c-service-problem-scroll {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-50%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .c-service-problem__track {
+      animation: none;
+    }
+  }
+
+  /* Padding (not flex gap) so both halves are exactly equal and the loop
+     is seamless. Gap between screenshots ≈ 25px in the ref. TODO: DS */
+  .c-service-problem__item {
+    padding-bottom: 1.786rem;
+  }
+
+  .c-service-problem__img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 6px; /* TODO: DS */
+  }
+
+  /* TODO: DS mobile — no ref. Below the desktop layout the side columns
+     would be off-screen slivers: hide carousels + frame, keep the center. */
+  @media (max-width: 991px) {
+    .c-service-problem__frame,
+    .c-service-problem__carousel {
+      display: none;
+    }
+    .c-service-problem :global(.c-container.c-service-problem__container) {
+      padding-top: 8.571rem;
+      padding-bottom: 8.571rem;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .c-service-problem :global(.c-container.c-service-problem__container) {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
+  }
+</style>

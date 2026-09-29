@@ -12,6 +12,14 @@
  * whitespace in `title`, so the accent can span a forced line break:
  *   title="Where marketing\nambition meets creative." accent="marketing ambition"
  * No match → the title renders plain.
+ *
+ * `titleSegments` (optional): pre-split runs `{ text, accent? }` for titles
+ * with several gradient runs (Sanity `accentTitle`, see
+ * `src/lib/sanity/portable-text.ts`). When set and non-empty it replaces the
+ * `title` + `accent` rendering; `\n` inside a run is still a line break.
+ * `title` stays required (plain text of the same heading).
+ *
+ * `description` may contain `\n` for a forced line break (`<br />`).
  */
 import Eyebrow from "./Eyebrow.astro";
 
@@ -23,6 +31,7 @@ interface Props {
   eyebrowVariant?: EyebrowVariant;
   title: string;
   accent?: string;
+  titleSegments?: readonly { text: string; accent?: boolean }[];
   description?: string;
   titleClass?: string;
   as?: HeadingTag;
@@ -34,6 +43,7 @@ const {
   eyebrowVariant = "default",
   title,
   accent,
+  titleSegments,
   description,
   titleClass = "c-text_xl",
   as = "h2",
@@ -65,7 +75,11 @@ function toSegments(text: string, match?: string): Segment[] {
 }
 
 const HeadingTag = as;
-const segments = toSegments(title, accent);
+const segments: Segment[] =
+  titleSegments && titleSegments.length > 0
+    ? titleSegments.map((s) => ({ lines: s.text.split("\n"), isAccent: s.accent === true }))
+    : toSegments(title, accent);
+const descriptionLines = description ? description.split("\n") : [];
 const rootClass = ["c-section-header", className].filter(Boolean).join(" ");
 const titleClassList = ["c-section-header__title", titleClass]
   .filter(Boolean)
@@ -91,7 +105,14 @@ const titleClassList = ["c-section-header__title", titleClass]
       })}
     </HeadingTag>
     {description && (
-      <p class="c-section-header__description c-paragraph_m">{description}</p>
+      <p class="c-section-header__description c-paragraph_m">
+        {descriptionLines.map((line, i) => (
+          <>
+            {i > 0 && <br />}
+            {line}
+          </>
+        ))}
+      </p>
     )}
   </div>
 </header>

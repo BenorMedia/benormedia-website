@@ -187,3 +187,60 @@ Status: V1 built (no per-page QA). Details: `docs/handoffs/2026-09-29_astro_phas
 | T-16 | `TODO: COPY` fallback meta title "Testimonials" + 146-char description, until the `testimonialsPage` document exists | Open |
 | T-17 | `TODO: COPY` visually hidden h2 "Client testimonials" | Open |
 | T-18 | Create the `testimonialsPage` document in Studio with real SEO copy | Open |
+
+---
+
+## Service pages (`/<slug>`)
+Status: V1 built (no per-page QA). Sanity `service` type live (SCHEMAS v0.6); one published document `service-custom-websites-migrations` (7 related clients, 9 steps with placeholder copy + placeholder illustration, updated 2026-09-29). Details: `docs/handoffs/2026-09-29_sanity_service-schema.md` (see its Update section), `docs/handoffs/2026-09-29_astro_phase5-service-template.md`.
+
+### Content
+| ID | Item | Status |
+|---|---|---|
+| S-1 | Related clients on Custom Websites & Migrations are a guess from the Problem side columns in `services-problem.jpg`: Kreios Space, Arrows, 12th Street Catering, REC Philly, Resourcify. Two more sites are cropped and not identified (an orange "A creative partner to the world's most ambitious people" site top left, a "…motional" site bottom left). Confirm the list and its order. **2026-09-29 lead: any selection is fine for now, add 2 more** → 7 clients: Kreios Space, Arrows, 12th Street Catering, REC Philly, Resourcify, Emotional Hub, Garaje de Ideas (all have `websiteScreenshot`). Placeholder selection, final list later | Resolved (placeholder) |
+| S-2 | Process steps 02–09 are placeholders in Sanity (name "TODO: COPY — Step 0N", description "TODO: COPY", no features). Only step 01 has copy in the ref. **2026-09-29 lead: placeholder copy for now** → steps 02–09 now have placeholder names, 1–3 sentence descriptions and 4–5 features each (Content and UX structure, Visual design, Custom development, CMS setup, Content migration, Quality assurance, Launch, Post-launch support). `TODO: COPY`: written by the sanity agent, not approved copy. Step 01 unchanged | Updated (placeholder) |
+| S-3 | No step image in Sanity: the step 01 illustration was not delivered as an asset, so `steps[].image` is empty on every step. **2026-09-29**: the lead's `docs/refs/services-template/service-step.svg` is uploaded once (`image-7147726e41fbec265037424241c552edfdfbc63d-464x417-svg`) and set on all 9 steps, alt "<Step name> illustration". `TODO: assets`: one real illustration per step still needed | Updated (placeholder) |
+| S-4 | Growth and Ongoing Website Support `service` documents are not created (lead: seed only Custom Websites & Migrations). `/growth` and `/ongoing-website-support` won't build until they exist. **2026-09-29 lead: not now, make the one service work first** | Open (deferred) |
+| S-5 | Growth service name has three spellings (nav/footer "Growth (AEO / SEO / CRO)", pricing "Growth (AEO/GEO + CRO)", Home "Web Growth (SEO + GEO + CRO)"). Needed before its `service.name` is entered | Open |
+| S-6 | Service FAQs are the Pricing placeholder groups copied into Sanity (same generated answers as P-22). `TODO: COPY` until final copy | Open |
+| S-7 | `seo` is empty on the seeded service: the page uses name / subtitle / siteSettings fallbacks | Open |
+
+### Schema notes (info)
+| ID | Item | Status |
+|---|---|---|
+| S-8 | `slug` was not in the lead's field list; added because routing needs it (from `name`, unique, kebab-case, reserved slugs blocked). **2026-09-29 lead: OK to keep** | Resolved |
+| S-9 | `link.internalRef` now also accepts `service`, so CMS buttons can link to service pages. The post body "Internal link" annotation was not changed | Open (info) |
+| S-10 | Step numbers in the Studio list come from a small custom item component (the preview can't know the array index) | Open (info) |
+
+### Known issues / nits
+| ID | Item | Where | Status |
+|---|---|---|---|
+| S-11 | Only `/custom-websites-migrations` is generated; the nav links `/growth` and `/ongoing-website-support` 404 until their documents exist (S-4, lead OK) | `src/pages/[service].astro` | Open (expected) |
+| S-12 | Problem carousels are laid out around the center at the 1920 frame: at 1440 each side shows ≈160px of a 453px screenshot; at 1920 it matches the ref. Hidden ≤991 (frame lines too) | `ServiceProblem.astro` | Open |
+| S-13 | FAQ answers are flattened from Portable Text to plain paragraphs (bold / italic / links dropped); fine for the seeded answers | `[service].astro`, `src/lib/sanity/portable-text.ts` | Open |
+| S-14 | Reused components still render `<img>` without width/height (G-16: LogoStrip, ClientCard, ClientList, TestimonialCard, ~175 on this page). Every new `<img>` (screenshots, step images, badges) has width, height and alt | reused components | Open |
+| S-15 | Titles render smaller than the ref (Problem / Process ≈71px at 1920 vs `c-text_xl`; step h3 ≈40px vs `c-text_l`; hero as W-10). Body text is in the fallback font, so wraps differ | `SectionHeader`, `ServiceProcess` | Open |
+| S-16 | Visually hidden tab names use a scoped clip pattern until `cc-sr-only` exists (G-14) | `ServiceProcess.astro` | Open |
+| S-17 | BreadcrumbList / canonical use the configured site URL, `http://localhost:4321` in the local build. Needs the production URL (`siteSettings.siteUrl` or `PUBLIC_SITE_URL`) | `[service].astro`, `Seo.astro` | Open |
+| S-18 | Hero and CTA banner badges rotate independently (two random decks), so they can show the same circles at the same moment | `cta-badges.ts` | Open (info) |
+
+### Questions for the lead
+| ID | Question | Status |
+|---|---|---|
+| S-19 | Breadcrumb: "Services" is plain text (no index page) and the JSON-LD lists Home → service only (Google needs a URL per level). OK, or should "Services" link somewhere (e.g. Home #services)? | Open |
+| S-20 | Problem carousels: 4+ clients are split between the columns (left = first half), fewer are shown in both; ≈20s per screenshot. OK? And at 1440 only a sliver of each column is visible (S-12): keep, or tighten the layout below 1920? | Open |
+| S-21 | Mobile Process tabs: at ≤767 the bar shows squares only (wrapping), the step name is in the panel heading. OK? | Open |
+| S-22 | Approve: page structure, `CtaActions` extraction (+ light tone), `SectionHeader` `titleSegments`, `PageHero` slots, `Breadcrumbs`, hero line art as WebP | Open |
+
+### Design team
+| ID | Item | Status |
+|---|---|---|
+| S-23 | `TODO: DS` spacing and sizes, measured at 1/14 rem (G-26 applies): hero bottom 7.857rem, subtitle → buttons ≈40px; Problem padding 14.286rem (200px), frame 71.857rem, line → screenshot 3.929rem, screenshot 32.369rem (453.172px), screenshot gap 1.786rem, radius 6px, nodes 1.339rem at 56.3% / 23.1% / 100%; Process top 7.857rem, bottom 6.429rem, description → box 4.786rem, box padding 1.5rem, tab bar padding 1.786rem, squares 4.571rem, name max 8.571rem, image 33.143rem, text column 37.5rem, pill gap 0.571rem | Open |
+| S-24 | No DS spec for: breadcrumb current item (gradient-border eyebrow, blue squares), trusted badge on light (white, gradient border + text), sentence-case feature pills (scoped, `Tag` is uppercase) | Open |
+| S-25 | Mobile / tablet: no refs. Carousels + frame hidden ≤991; Problem padding 8.571rem ≤991, 5rem ≤767; Process panel stacks ≤767; tab bar wraps. `TODO: DS mobile` | Open |
+| S-26 | Carousel motion: no spec (built linear CSS, ≈20s per screenshot, static under reduced motion). Hook `data-anim="service-problem-carousel"` | Open |
+
+### Content
+| ID | Item | Status |
+|---|---|---|
+| S-27 | Hero buttons are static in the template ("Get In Touch" → contact modal, "See Pricing" → /pricing, as in the ref); not editable in Sanity | Open (info) |
+| S-28 | The `service` document has no SEO: the page uses name / subtitle (see S-7) | Open |

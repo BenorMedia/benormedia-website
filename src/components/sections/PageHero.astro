@@ -8,6 +8,11 @@
  * the next section owns the space below the hero, because it differs per page
  * (e.g. Work: hero → filters).
  *
+ * Optional slots (service template): `top` renders above the header (e.g. a
+ * breadcrumb in place of the eyebrow), the default slot below it (e.g. CTA
+ * buttons). `titleSegments` forwards pre-split gradient runs to SectionHeader
+ * (Sanity `accentTitle`). Without them the output is unchanged.
+ *
  * Ref: `docs/refs/work/work-hero.jpg` (1920 frame, 1 ref px = 1/14 rem, same
  * base as the Phase 5 primitives).
  */
@@ -20,23 +25,27 @@ interface Props {
   title: string;
   /** Optional gradient substring of `title` (SectionHeader `accent`). */
   accent?: string;
+  /** Pre-split gradient runs (SectionHeader `titleSegments`); overrides `accent`. */
+  titleSegments?: readonly { text: string; accent?: boolean }[];
   description?: string;
   class?: string;
 }
 
-const { eyebrow, title, accent, description, class: className } = Astro.props;
+const { eyebrow, title, accent, titleSegments, description, class: className } = Astro.props;
 const rootClass = ["c-page-hero", className].filter(Boolean).join(" ");
 
 // Forward only the optional props that are set (exactOptionalPropertyTypes).
 const optional = {
   ...(eyebrow !== undefined && { eyebrow }),
   ...(accent !== undefined && { accent }),
+  ...(titleSegments !== undefined && { titleSegments }),
   ...(description !== undefined && { description }),
 };
 ---
 
 <section class={rootClass} data-anim="page-hero">
   <Container>
+    {Astro.slots.has("top") && <slot name="top" />}
     <SectionHeader
       as="h1"
       title={title}
@@ -44,6 +53,7 @@ const optional = {
       titleClass="c-text_xxl"
       class="c-page-hero__header"
     />
+    {Astro.slots.has("default") && <slot />}
   </Container>
 </section>
 

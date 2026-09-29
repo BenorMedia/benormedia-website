@@ -21,6 +21,7 @@ import type {
   HomePage,
   PageSeoDoc,
   PageSingletonType,
+  Service,
   SiteSettings,
   Testimonial,
 } from './types';
@@ -51,7 +52,7 @@ const LINK_INTERNAL_REF = /* groq */ `internalRef->{
   _id,
   _type,
   "slug": slug,
-  title
+  "title": coalesce(title, name)
 }`;
 
 /** A `link` object in full (all three types: internal, external, contact). */
@@ -276,6 +277,61 @@ export const CLIENT_BADGES = /* groq */ `
 `;
 
 // ---------------------------------------------------------------------------
+// SERVICE_SLUGS / SERVICE_BY_SLUG — the service template (`src/pages/[service].astro`)
+// ---------------------------------------------------------------------------
+
+/** A one-block `accentTitle` (spans may carry `marks: ["accent"]`; `\n` = line break). */
+const ACCENT_TITLE = /* groq */ `[]{
+  _key,
+  _type,
+  style,
+  children[]{ _key, _type, text, marks }
+}`;
+
+export const SERVICE_SLUGS = /* groq */ `
+*[_type == "service" && defined(slug.current) && !(_id in path("drafts.**"))].slug.current
+`;
+
+/**
+ * One published service. Related clients only project what the Problem
+ * carousels render (name + website screenshot). FAQ answers are Portable
+ * Text (same shape as `post` FAQs).
+ */
+export const SERVICE_BY_SLUG = /* groq */ `
+*[_type == "service" && slug.current == $slug && !(_id in path("drafts.**"))][0]{
+  _id,
+  _type,
+  name,
+  "slug": slug.current,
+  "clients": clients[]->{
+    _id,
+    _type,
+    name,
+    "websiteScreenshot": websiteScreenshot${IMAGE}
+  },
+  "headline": headline${ACCENT_TITLE},
+  subtitle,
+  "problemTitle": problemTitle${ACCENT_TITLE},
+  problemDescription,
+  "processTitle": processTitle${ACCENT_TITLE},
+  processDescription,
+  steps[]{
+    _key,
+    name,
+    description,
+    features,
+    "image": image${IMAGE}
+  },
+  faqSections[]{
+    _key,
+    title,
+    faqs[]{ _key, question, answer }
+  },
+  "seo": seo${SEO}
+}
+`;
+
+// ---------------------------------------------------------------------------
 // Fetchers
 // ---------------------------------------------------------------------------
 
@@ -368,6 +424,18 @@ export async function getAllClientsWithLogo(): Promise<Client[]> {
  */
 export async function getAllClients(): Promise<Client[]> {
   return await sanityClient.fetch<Client[]>(ALL_CLIENTS);
+}
+
+/** Slugs of every published service (the template's `getStaticPaths`). */
+export async function getServiceSlugs(): Promise<string[]> {
+  const result = await sanityClient.fetch<(string | null)[]>(SERVICE_SLUGS);
+  return result.filter((slug): slug is string => typeof slug === 'string' && slug.length > 0);
+}
+
+/** One published service by slug, or `null`. */
+export async function getServiceBySlug(slug: string): Promise<Service | null> {
+  const result = await sanityClient.fetch<Service | null>(SERVICE_BY_SLUG, { slug });
+  return result ?? null;
 }
 
 /**
