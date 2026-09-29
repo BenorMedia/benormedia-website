@@ -57,13 +57,16 @@ const robots = shouldNoIndex ? "noindex, nofollow" : "index, follow";
 // Canonical URL -------------------------------------------------------------
 // Base = siteSettings.siteUrl, else Astro `site` (PUBLIC_SITE_URL env). With
 // neither, canonical + og:url are omitted rather than pointing at localhost.
+// No trailing slash (`trailingSlash: 'never'`); the build still reports
+// `/work/` (directory format), so strip it. Home stays `/`.
 const siteUrl = siteSettings?.siteUrl?.replace(/\/$/, "");
+const pathname = Astro.url.pathname.replace(/(.)\/$/, "$1");
 const canonical = canonicalUrlProp
   ?? pageSeo?.canonicalUrl
   ?? (siteUrl
-    ? `${siteUrl}${Astro.url.pathname}`
+    ? `${siteUrl}${pathname}`
     : Astro.site
-      ? new URL(Astro.url.pathname, Astro.site).toString()
+      ? new URL(pathname, Astro.site).toString()
       : undefined);
 
 // OG image URL --------------------------------------------------------------

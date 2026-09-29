@@ -16,10 +16,10 @@ How this file works:
 ### QA should-fix
 | ID | Item | Where | Proposed fix | Status |
 |---|---|---|---|---|
-| G-1 | Canonical + `og:url` end in a trailing slash (`/work/`) while all internal links and SITEMAP use `/work` | `src/components/layout/Seo.astro:61-67`, `astro.config.mjs` | Set `trailingSlash: "never"` (needs lead OK) or strip the slash in Seo | Open |
+| G-1 | Canonical + `og:url` end in a trailing slash (`/work/`) while all internal links and SITEMAP use `/work` | `src/components/layout/Seo.astro:61-67`, `astro.config.mjs` | Set `trailingSlash: "never"` (needs lead OK) or strip the slash in Seo | Resolved 2026-09-29 (`trailingSlash: 'never'` + `vercel.json` `trailingSlash: false`; the Vercel adapter forces directory format, so `Seo` strips the slash from the path. Verified in the build: canonical, `og:url`, sitemap, internal links and BreadcrumbList have no slash; `.vercel/output/config.json` has the 308 `^/(.*)/$` → `/$1` rule. `/work/` → `/work` on the preview to confirm after push) |
 | G-2 | SegmentedControl in `tabs` mode renders dead tab buttons without JS (inactive tab also `tabindex=-1`) | `src/components/ui/SegmentedControl.astro:70-82`, `src/scripts/ui/tabs.ts` | Render the tablist `hidden`; `initTabs` reveals it (same pattern as WorkListing) | Resolved 2026-09-29 (tabs mode renders the tablist `hidden` + `.c-segmented[hidden] { display: none }`; `initTabs` removes `hidden` on init and its cleanup restores the no-JS state; styleguide copy updated; verified with and without JS on `/pricing` and `/dev/styleguide`) |
 | G-3 | Gradient text (section-header accents, pricing prices) is 2.29:1 on white at its light end; large text needs 3:1 | `SectionHeader.astro:130-143`, `PricingCard.astro:123-134` | Design decision: accept, or a darker text gradient | Open |
-| G-4 | ClientList downloads every hover-preview screenshot on page load (≈830 KB on `/work`), touch devices never see them | `src/components/ui/ClientList.astro:127-138` | Set the image `src` on first hover/focus (needs lead OK) | Open |
+| G-4 | ClientList downloads every hover-preview screenshot on page load (≈830 KB on `/work`), touch devices never see them | `src/components/ui/ClientList.astro:127-138` | Set the image `src` on first hover/focus (needs lead OK) | Resolved 2026-09-29 (`data-src` + `initClientPreviews` in `src/scripts/ui/client-previews.ts`: first pointer entry / focus in a list loads every preview, `(hover: hover)` only, touch pointers ignored; a preview opens only once loaded. Verified on `/work`: 0 of 55 screenshots on load, all 55 load on first hover and open, cold hover on a lower row opens without a blank box, touch pointer events load nothing) |
 
 ### QA nits
 | ID | Item | Where | Status |
@@ -34,7 +34,10 @@ How this file works:
 | G-12 | Shell images without width/height (missed by the Phase 4 list) | `Footer.astro:93-94, 113`, `CtaBanner.astro:137-142` | Open |
 | G-13 | Footer images are heavy (526 / 195 / 125 KB), social links have empty `href` and 16.9px tap targets | `Footer.astro` | Open |
 | G-14 | Add a global `cc-sr-only` utility (WorkListing uses a scoped visually-hidden class) | `src/styles/utilities.css` | Open |
-| G-15 | Add `src/scripts/ui/` to the CLAUDE.md folder tree (needs lead OK to edit CLAUDE.md) | `CLAUDE.md` | Open |
+| G-15 | Add `src/scripts/ui/` to the CLAUDE.md folder tree (needs lead OK to edit CLAUDE.md) | `CLAUDE.md` | Resolved 2026-09-29 (`scripts/ui/` added to the CLAUDE.md folder tree) |
+| G-34 | Sitemap (`@astrojs/sitemap`, added 2026-09-29) needs `site`: on Vercel `PUBLIC_SITE_URL` is unset, so no sitemap is built there until the production domain is set (build warns "requires the `site`"). Locally `.env` points at localhost | `astro.config.mjs` | Open (expected) |
+| G-35 | The 404 page emits a canonical / `og:url` of `<site>/404` (noindex page; pre-existing). Consider dropping canonical on the 404 | `src/pages/404.astro`, `Seo.astro` | Open |
+| G-36 | With `trailingSlash: 'never'`, `pnpm dev` returns 404 for `/work/` (Astro behavior); production redirects it (308) | dev only | Open (info) |
 
 ### Phase 4 carry-overs (not fixed in Phase 5 unless the lead says so)
 | ID | Item | Status |
@@ -48,16 +51,16 @@ How this file works:
 ### Questions for the lead
 | ID | Question | Status |
 |---|---|---|
-| G-21 | No trailing slashes site-wide? (G-1) | Open |
-| G-22 | Load hover screenshots on first hover instead of with the page? (G-4) | Open |
+| G-21 | No trailing slashes site-wide? (G-1) | Resolved 2026-09-29 (lead: yes, see G-1) |
+| G-22 | Load hover screenshots on first hover instead of with the page? (G-4) | Resolved 2026-09-29 (lead: yes, see G-4) |
 | G-23 | Fix G-16 / G-17 / G-18 in this branch? | Open |
-| G-24 | Approve the shared primitives (Proposed): SectionHeader `accent`, SegmentedControl + `initTabs`, FaqAccordion on `<details name>`, PricingCard subgrid, shared `PageHero` | Open |
-| G-25 | 404 cleanup (`Container` instead of hardcoded max-width, mobile `TODO: DS`)? | Open |
+| G-24 | Approve the shared primitives (Proposed): SectionHeader `accent`, SegmentedControl + `initTabs`, FaqAccordion on `<details name>`, PricingCard subgrid, shared `PageHero` | Resolved 2026-09-29 (lead approved all five + the G-2 tablist `hidden` row; DECISIONS rows set to Lead) |
+| G-25 | 404 cleanup (`Container` instead of hardcoded max-width, mobile `TODO: DS`)? | Resolved 2026-09-29 (lead: `Container` + scoped `.c-notfound__inner` with 8rem vertical padding; mobile 5rem stays `TODO: DS mobile`) |
 
 ### Design team
 | ID | Item | Status |
 |---|---|---|
-| G-26 | Which base converts ref px → rem: 14px (DS text classes, SectionHeader, Phase 5) or 16px (Our Work cards)? Affects every measured value | Open |
+| G-26 | Which base converts ref px → rem: 14px (DS text classes, SectionHeader, Phase 5) or 16px (Our Work cards)? Affects every measured value | Resolved 2026-09-29 (lead: 14px base for new changes and new pages only; existing values not converted, the lead reviews them in visual QA. Noted in DESIGN_SYSTEM §1 + DECISIONS) |
 | G-27 | Active segmented pill: ref `#F5F5F5` is not a token (built `--color-gray-light`); contrast vs white is 1.14:1 (state indicators expect 3:1). No hover spec | Open |
 | G-28 | Corner squares on the Work filter but not on the FAQ tabs — intended? | Open |
 | G-29 | Faint full-height vertical lines in `work-preview.png` / `Home.png` (x ≈ 120 / 260 / 1660 / 1800): decorative grid or Figma guides? | Open |
@@ -69,6 +72,7 @@ How this file works:
 |---|---|---|
 | G-32 | No page singletons exist in Sanity (`homePage`, `siteSettings`, `workPage`, `pricingPage`…): every page uses fallback SEO from code | Open |
 | G-33 | `fundsRaised` empty on every client (funds tags hidden) | Open |
+| G-37 | PagoNxt has no `websiteScreenshot` in Sanity, so its row has no hover preview | Open |
 
 ---
 

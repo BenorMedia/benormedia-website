@@ -31,6 +31,8 @@ html { font-size: 1vw; }
 - Exception: internal padding of components whose padding must follow their own text size (buttons, tags) uses `em` on purpose.
 - `px` only for: border widths, border-radius, blur, and fixed media-query values.
 
+**Ref px → rem base (lead, 2026-09-29):** Converting reference px to rem uses a 14px base. This applies only to new changes and new pages from 2026-09-29 on. Existing values stay as they are; the lead reviews them in visual QA and asks for specific changes. The fluid root (1vw) is unchanged.
+
 ---
 
 ## 2. Fonts
