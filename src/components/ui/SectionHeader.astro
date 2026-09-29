@@ -4,9 +4,14 @@
  *
  * Always center-aligned by project rule: no left-aligned section headers.
  *
- * `title` may contain `
-` to force a line break where the design breaks the
+ * `title` may contain `\n` to force a line break where the design breaks the
  * heading at a specific word (rendered as `<br />`).
+ *
+ * `accent` (optional): a substring of `title` rendered with the brand gradient
+ * as text (`.c-section-header__accent`). Whitespace in `accent` matches any
+ * whitespace in `title`, so the accent can span a forced line break:
+ *   title="Where marketing\nambition meets creative." accent="marketing ambition"
+ * No match → the title renders plain.
  */
 import Eyebrow from "./Eyebrow.astro";
 
@@ -17,6 +22,7 @@ interface Props {
   eyebrow?: string;
   eyebrowVariant?: EyebrowVariant;
   title: string;
+  accent?: string;
   description?: string;
   titleClass?: string;
   as?: HeadingTag;
@@ -27,14 +33,39 @@ const {
   eyebrow,
   eyebrowVariant = "default",
   title,
+  accent,
   description,
   titleClass = "c-text_xl",
   as = "h2",
   class: className,
 } = Astro.props;
 
+interface Segment {
+  lines: string[];
+  isAccent: boolean;
+}
+
+// Split the title into [before, accent, after]; each part keeps its `\n` breaks.
+function toSegments(text: string, match?: string): Segment[] {
+  const plain = (t: string, isAccent = false): Segment => ({ lines: t.split("\n"), isAccent });
+  const words = match?.trim().split(/\s+/).filter(Boolean) ?? [];
+  if (words.length === 0) return [plain(text)];
+
+  const escaped = words.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  const found = new RegExp(escaped.join("\\s+")).exec(text);
+  if (!found) return [plain(text)];
+
+  const start = found.index;
+  const end = start + found[0].length;
+  return [
+    plain(text.slice(0, start)),
+    plain(found[0], true),
+    plain(text.slice(end)),
+  ].filter((s) => s.lines.join("").length > 0 || s.lines.length > 1);
+}
+
 const HeadingTag = as;
-const titleLines = title.split("\n");
+const segments = toSegments(title, accent);
 const rootClass = ["c-section-header", className].filter(Boolean).join(" ");
 const titleClassList = ["c-section-header__title", titleClass]
   .filter(Boolean)
@@ -45,12 +76,19 @@ const titleClassList = ["c-section-header__title", titleClass]
   {eyebrow && <Eyebrow variant={eyebrowVariant}>{eyebrow}</Eyebrow>}
   <div class="c-section-header__text">
     <HeadingTag class={titleClassList}>
-      {titleLines.map((line, i) => (
-        <>
-          {i > 0 && <br />}
-          {line}
-        </>
-      ))}
+      {segments.map((segment) => {
+        const content = segment.lines.map((line, i) => (
+          <>
+            {i > 0 && <br />}
+            {line}
+          </>
+        ));
+        return segment.isAccent ? (
+          <span class="c-section-header__accent" data-anim="section-header-accent">{content}</span>
+        ) : (
+          content
+        );
+      })}
     </HeadingTag>
     {description && (
       <p class="c-section-header__description c-paragraph_m">{description}</p>
@@ -83,6 +121,25 @@ const titleClassList = ["c-section-header__title", titleClass]
     color: var(--color-heading);
     text-align: center;
     margin: 0 auto;
+  }
+
+  /* Accent words: brand gradient clipped to the text (same technique as the
+     `is-white` / `is-gradient-outline` button text, DESIGN_SYSTEM §7.3).
+     `clone` restarts the gradient on each line when the accent wraps or
+     crosses a `\n` break, as in the service hero ref ("marketing / ambition"). */
+  .c-section-header__accent {
+    color: var(--color-blue); /* fallback without background-clip: text */
+    -webkit-box-decoration-break: clone;
+            box-decoration-break: clone;
+  }
+  @supports (background-clip: text) or (-webkit-background-clip: text) {
+    .c-section-header__accent {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+              background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
   }
 
   .c-section-header__description {

@@ -191,6 +191,23 @@ export interface HomePage {
 }
 
 // ---------------------------------------------------------------------------
+// PageSeoDoc — result of `PAGE_SEO` (SEO-only page singletons)
+// ---------------------------------------------------------------------------
+
+export type PageSingletonType =
+  | 'workPage'
+  | 'pricingPage'
+  | 'testimonialsPage'
+  | 'blogPage';
+
+export interface PageSeoDoc<T extends PageSingletonType = PageSingletonType> {
+  _id: T;
+  _type: T;
+  /** `null` when the document exists but its `seo` object is empty. */
+  seo?: Seo | null;
+}
+
+// ---------------------------------------------------------------------------
 // SiteSettings — result of `SITE_SETTINGS_QUERY`
 // ---------------------------------------------------------------------------
 

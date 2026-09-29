@@ -1,0 +1,36 @@
+---
+/**
+ * Work page — Phase 5. Refs: `docs/refs/work/`.
+ *
+ * All page copy is static. Sanity supplies the clients, the testimonials and
+ * the `workPage` SEO singleton (null until the document is created: the
+ * title/description props below are the fallback).
+ *
+ * BaseLayout owns Nav, CtaBanner, Footer and ContactModal.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getAllClients, getPageSeo, getTestimonials } from "../lib/sanity/queries";
+import PageHero from "../components/sections/PageHero.astro";
+import WorkListing from "../components/sections/WorkListing.astro";
+import Testimonials from "../components/sections/Testimonials.astro";
+
+const [workPage, clients, testimonials] = await Promise.all([
+  getPageSeo("workPage"),
+  getAllClients(),
+  getTestimonials(),
+]);
+
+const heroDescription =
+  "We work with enterprises and startups alike, driving growth through website transformation and optimization. We specialize in B2B technology, financial services, and professional services.";
+---
+
+<!-- TODO: COPY — fallback meta title / description until workPage.seo is filled in Sanity. -->
+<BaseLayout pageSeo={workPage?.seo ?? null} title="Our Work" description={heroDescription}>
+  <PageHero
+    eyebrow="Our Work"
+    title={"Websites\nwe've launched."}
+    description={heroDescription}
+  />
+  <WorkListing clients={clients} />
+  <Testimonials testimonials={testimonials} />
+</BaseLayout>

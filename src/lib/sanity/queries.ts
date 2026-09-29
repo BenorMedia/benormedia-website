@@ -16,7 +16,14 @@
  * has its own queries when a page needs it — those live in later phases.
  */
 import { sanityClient } from './client';
-import type { Client, HomePage, SiteSettings, Testimonial } from './types';
+import type {
+  Client,
+  HomePage,
+  PageSeoDoc,
+  PageSingletonType,
+  SiteSettings,
+  Testimonial,
+} from './types';
 
 // ---------------------------------------------------------------------------
 // Fragments — assembled into the full queries below.
@@ -83,6 +90,24 @@ export const HOME_QUERY = /* groq */ `
 `;
 
 // ---------------------------------------------------------------------------
+// PAGE_SEO — SEO-only page singletons (Work, Pricing, Testimonials, Blog)
+// ---------------------------------------------------------------------------
+
+/**
+ * Singletons are pinned to `_id == <type name>` by the desk structure
+ * (`sanity/structure.ts` → `S.editor().documentId(typeName)`), so matching the
+ * exact `_id` also excludes drafts (`drafts.<type>`). `_type` is matched too so
+ * a stray document with that id can never leak in.
+ */
+export const PAGE_SEO = /* groq */ `
+*[_id == $type && _type == $type][0]{
+  _id,
+  _type,
+  "seo": seo${SEO}
+}
+`;
+
+// ---------------------------------------------------------------------------
 // SITE_SETTINGS_QUERY
 // ---------------------------------------------------------------------------
 
@@ -133,6 +158,27 @@ export const SITE_SETTINGS_QUERY = /* groq */ `
 // ---------------------------------------------------------------------------
 
 /**
+ * Fields the shared `ClientList` rows render (icon, name, funds tag, category
+ * tag, website link, hover screenshot). Shared by CLIENTS_BY_IDS and
+ * ALL_CLIENTS so the list projection is defined once.
+ */
+const CLIENT_LIST_FIELDS = /* groq */ `
+  _id,
+  _type,
+  name,
+  "icon": icon${IMAGE},
+  "websiteScreenshot": websiteScreenshot${IMAGE},
+  fundsRaised,
+  websiteUrl,
+  "category": category->{
+    _id,
+    _type,
+    title,
+    "slug": slug
+  }
+`;
+
+/**
  * Returns published clients whose `_id` is in `$ids`. Used by Home sections
  * (FeaturedWork, OurWork) which pin the clients they render by hardcoded
  * document IDs — see `getClientsByIds` below for the order-preserving fetcher.
@@ -147,21 +193,9 @@ export const SITE_SETTINGS_QUERY = /* groq */ `
  */
 export const CLIENTS_BY_IDS = /* groq */ `
 *[_type == "client" && _id in $ids]{
-  _id,
-  _type,
-  name,
+  ${CLIENT_LIST_FIELDS},
   "logo": logo${IMAGE},
-  "icon": icon${IMAGE},
   "cardThumbnail": cardThumbnail${IMAGE},
-  "websiteScreenshot": websiteScreenshot${IMAGE},
-  fundsRaised,
-  websiteUrl,
-  "category": category->{
-    _id,
-    _type,
-    title,
-    "slug": slug
-  },
   "testimonial": testimonial->{
     _id,
     _type,
@@ -172,6 +206,20 @@ export const CLIENTS_BY_IDS = /* groq */ `
     "companyLogo": companyLogo${IMAGE},
     kpis[]{ value, description }
   }
+}
+`;
+
+// ---------------------------------------------------------------------------
+// ALL_CLIENTS — the Work page listing. Every published client that has a
+// name (incomplete clients are skipped at query time, SCHEMAS.md), with only
+// the fields `ClientList` renders. Ordered by category title, then name
+// (Proposed default; the lead may prefer a pinned order).
+// ---------------------------------------------------------------------------
+
+export const ALL_CLIENTS = /* groq */ `
+*[_type == "client" && defined(name) && !(_id in path("drafts.**"))]
+  | order(category->title asc, name asc){
+  ${CLIENT_LIST_FIELDS}
 }
 `;
 
@@ -312,4 +360,26 @@ export async function getTestimonials(): Promise<Testimonial[]> {
  */
 export async function getAllClientsWithLogo(): Promise<Client[]> {
   return await sanityClient.fetch<Client[]>(ALL_CLIENTS_WITH_LOGO);
+}
+
+/**
+ * Fetch every published, named client for the Work page listing, ordered by
+ * category title then name.
+ */
+export async function getAllClients(): Promise<Client[]> {
+  return await sanityClient.fetch<Client[]>(ALL_CLIENTS);
+}
+
+/**
+ * Fetch an SEO-only page singleton. Returns `null` when the document hasn't
+ * been created in Sanity yet; callers fall back to their own title/description
+ * props, then to siteSettings defaults.
+ */
+export async function getPageSeo<T extends PageSingletonType>(
+  type: T,
+): Promise<PageSeoDoc<T> | null> {
+  const result = await sanityClient.fetch<PageSeoDoc<T> | null>(PAGE_SEO, {
+    type,
+  });
+  return result ?? null;
 }
