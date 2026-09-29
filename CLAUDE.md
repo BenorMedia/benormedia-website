@@ -29,7 +29,9 @@ Design is approved in Figma. Build it faithfully. Never redesign, never prototyp
 | Decisions and open questions | `docs/DECISIONS.md` |
 | Task reports | `docs/handoffs/` |
 
-If code and docs disagree, docs win. If docs are missing a value: STOP, log it in `DECISIONS.md` under "Open questions", and use the closest existing token as a placeholder marked `/* TODO: DS */`.
+If code and docs disagree, docs win. If docs are missing a value: STOP, log it in `DECISIONS.md` (Global or the page section → Open questions → category, following "How this file works" at the top of that file), and use the closest existing token as a placeholder marked `/* TODO: DS */`.
+
+The project lead does not read `DECISIONS.md`: the orchestrator relays open questions to the lead in chat, numbered and grouped by who answers.
 
 ## Hard rules
 1. Never deploy to production. Never push or merge to `main`. Production is released by the project lead only.

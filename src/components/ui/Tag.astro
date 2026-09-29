@@ -1,23 +1,54 @@
 ---
+/**
+ * Tag — small uppercase label ("€14.5M RAISED", "SALES TECH").
+ *
+ * Box mirrors the locked Eyebrow spec (DESIGN_SYSTEM §3.3) without the
+ * decorative squares — the closest existing values until the DS ships tag
+ * specs (§9).
+ *   - `default`: gray border, text color, no background.
+ *   - `accent`:  accent border + 8% accent tint + accent text.
+ */
 interface Props {
+  variant?: "default" | "accent";
   class?: string;
 }
 
-const { class: className } = Astro.props;
-const classList = ["c-tag", "c-text_xs", className].filter(Boolean).join(" ");
+const { variant = "default", class: className } = Astro.props;
+const classList = ["c-tag", `is-${variant}`, className].filter(Boolean).join(" ");
 ---
 
 <span class={classList}><slot /></span>
 
 <style>
-  /* TODO: DS tag specs (radius, padding, colors) */
+  /* TODO: DS tag specs — mirrors Eyebrow §3.3 until confirmed. */
   .c-tag {
-    display: inline-block;
-    text-transform: uppercase;
-    border: var(--border-default);
-    border-radius: 999px;
-    padding: 0.35em 0.9em;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5em 1.05em;
+    border: 0.5px solid var(--color-gray);
+    border-radius: 3px;
     color: var(--color-text);
-    letter-spacing: 0.08em;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: 0.064em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* Mobile: 12px (1.3333rem at the 9px mobile root). Global — every c-tag.
+     Lead request 2026-09-29. */
+  @media (max-width: 767px) {
+    .c-tag {
+      font-size: 1.3333rem;
+    }
+  }
+
+  .c-tag.is-accent {
+    border-color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+    color: var(--color-accent);
+    font-weight: 600;
   }
 </style>

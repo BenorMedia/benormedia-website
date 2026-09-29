@@ -1,0 +1,143 @@
+---
+/**
+ * TestimonialMarquee — two infinite rows of TestimonialCards.
+ *
+ *   Top row:    right → left
+ *   Bottom row: left → right
+ *
+ * Usage: `<TestimonialMarquee testimonials={await getTestimonials()} />`.
+ * The component clips its own tracks; to run edge-to-edge the caller's
+ * wrapper handles the full-bleed (see Home `Testimonials.astro`).
+ *
+ * Rows: with 8+ testimonials they are split alternately between the rows;
+ * with fewer, both rows show all of them and the bottom row is rotated by
+ * half so the same cards don't line up.
+ *
+ * Loop: pure CSS. Each row's list is repeated until one half has at least
+ * MIN_PER_HALF cards (wider than any viewport), then doubled; the track moves
+ * exactly −50%. Cards are spaced with a trailing margin (not flex `gap`) so
+ * the −50% point lands on a card edge and the loop has no jump. Repeats are
+ * `aria-hidden`. No pause on hover (lead, 2026-09-29). Reduced motion → no
+ * animation, rows scroll horizontally instead.
+ */
+import type { Testimonial } from "../../lib/sanity/types";
+import TestimonialCard from "./TestimonialCard.astro";
+
+interface Props {
+  testimonials: Testimonial[];
+  class?: string;
+}
+
+const { testimonials, class: className } = Astro.props;
+
+const MIN_PER_HALF = 6;
+/* TODO: DS marquee speed — no spec yet. 13.2s per card = 10% slower than
+   the first pass (12s), per lead 2026-09-29. */
+const SECONDS_PER_CARD = 13.2;
+
+const rotate = <T,>(list: T[], by: number): T[] => [...list.slice(by), ...list.slice(0, by)];
+
+const [topList, bottomList] =
+  testimonials.length >= 8
+    ? [testimonials.filter((_, i) => i % 2 === 0), testimonials.filter((_, i) => i % 2 === 1)]
+    : [testimonials, rotate(testimonials, Math.ceil(testimonials.length / 2))];
+
+const buildTrack = (list: Testimonial[]) => {
+  if (list.length === 0) return { items: [], perHalf: 0 };
+  const half: Testimonial[] = [];
+  while (half.length < MIN_PER_HALF) half.push(...list);
+  return {
+    // Only the very first pass is announced; every repeat is aria-hidden.
+    items: [...half, ...half].map((t, i) => ({ t, hidden: i >= list.length })),
+    perHalf: half.length,
+  };
+};
+
+const rows = [
+  { ...buildTrack(topList), direction: "is-left" },
+  { ...buildTrack(bottomList), direction: "is-right" },
+].filter((row) => row.items.length > 0);
+
+const rootClass = ["c-testimonial-marquee", className].filter(Boolean).join(" ");
+---
+
+{rows.length > 0 && (
+  <div class={rootClass} data-anim="testimonials-marquee">
+    {rows.map((row) => (
+      <div class="c-testimonial-marquee__row">
+        <ul
+          class:list={["c-testimonial-marquee__track", row.direction]}
+          style={`--marquee-duration: ${row.perHalf * SECONDS_PER_CARD}s`}
+        >
+          {row.items.map(({ t, hidden }) => (
+            <li class="c-testimonial-marquee__item" aria-hidden={hidden ? "true" : undefined}>
+              <TestimonialCard testimonial={t} />
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+)}
+
+<style>
+  .c-testimonial-marquee {
+    display: flex;
+    flex-direction: column;
+    /* TODO: DS gap between rows (ref ≈ 22px). */
+    gap: 1.375rem;
+    overflow: hidden;
+  }
+
+  .c-testimonial-marquee__row {
+    display: flex;
+  }
+
+  .c-testimonial-marquee__track {
+    display: flex;
+    width: max-content;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    animation: var(--marquee-duration) linear infinite;
+  }
+
+  .c-testimonial-marquee__track.is-left {
+    animation-name: c-testimonial-marquee-left;
+  }
+
+  .c-testimonial-marquee__track.is-right {
+    animation-name: c-testimonial-marquee-right;
+  }
+
+  .c-testimonial-marquee__item {
+    flex: 0 0 auto;
+    display: flex;
+    /* Trailing margin (not flex gap) keeps the −50% loop point exact.
+       TODO: DS gap between cards (ref ≈ 26px). */
+    margin-inline-end: 1.625rem;
+  }
+
+  @keyframes c-testimonial-marquee-left {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  @keyframes c-testimonial-marquee-right {
+    from { transform: translateX(-50%); }
+    to   { transform: translateX(0); }
+  }
+
+  /* No continuous motion: stop the loop and let each row scroll instead. */
+  @media (prefers-reduced-motion: reduce) {
+    /* Same specificity as the `is-left` / `is-right` rules, so this wins. */
+    .c-testimonial-marquee__track.is-left,
+    .c-testimonial-marquee__track.is-right {
+      animation: none;
+    }
+
+    .c-testimonial-marquee__row {
+      overflow-x: auto;
+    }
+  }
+</style>

@@ -10,8 +10,8 @@
  * The cache stores `null` (singleton not yet published) and the resolved
  * document alike; only the initial `undefined` triggers a fetch.
  */
-import { getSiteSettings } from './queries';
-import type { SiteSettings } from './types';
+import { getClientBadges, getSiteSettings } from './queries';
+import type { Client, SiteSettings } from './types';
 
 let cached: SiteSettings | null | undefined;
 
@@ -20,4 +20,15 @@ export async function getSiteSettingsCached(): Promise<SiteSettings | null> {
     cached = await getSiteSettings();
   }
   return cached;
+}
+
+/**
+ * Same once-per-build cache for the client badges shown in the global CTA
+ * banner (rendered on every page).
+ */
+let badgesCached: Promise<Client[]> | undefined;
+
+export function getClientBadgesCached(): Promise<Client[]> {
+  badgesCached ??= getClientBadges();
+  return badgesCached;
 }

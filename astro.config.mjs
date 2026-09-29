@@ -13,6 +13,9 @@ const proc = /** @type {any} */ (globalThis).process;
 const env = loadEnv(proc.env.NODE_ENV ?? 'development', proc.cwd(), '');
 const projectId = env['PUBLIC_SANITY_PROJECT_ID'] ?? '';
 const dataset = env['PUBLIC_SANITY_DATASET'] ?? '';
+// Production URL (e.g. https://benor.media). Unset until the domain is
+// confirmed; Seo then omits canonical/og:url instead of emitting localhost.
+const siteUrl = env['PUBLIC_SITE_URL'] || undefined;
 
 const require = createRequire(import.meta.url);
 const sanityEntry = require.resolve('sanity');
@@ -95,6 +98,7 @@ const benorSanityAliasFix = {
 
 // https://astro.build/config
 export default defineConfig({
+  ...(siteUrl ? { site: siteUrl } : {}),
   output: 'static',
   adapter: vercel({ imageService: true }),
   integrations: [

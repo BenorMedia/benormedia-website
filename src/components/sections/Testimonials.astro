@@ -1,0 +1,53 @@
+---
+/**
+ * Testimonials — Home "Testimonials" section.
+ *
+ * Section header + the shared `TestimonialMarquee` (two infinite rows),
+ * run edge-to-edge across the viewport. Data: `getTestimonials()` in
+ * `src/pages/index.astro`.
+ */
+import Container from "../ui/Container.astro";
+import SectionHeader from "../ui/SectionHeader.astro";
+import TestimonialMarquee from "../ui/TestimonialMarquee.astro";
+import type { Testimonial } from "../../lib/sanity/types";
+
+interface Props {
+  testimonials: Testimonial[];
+}
+
+const { testimonials } = Astro.props;
+---
+
+{testimonials.length > 0 && (
+<section class="c-testimonials">
+  <Container>
+    <SectionHeader
+      eyebrow="Testimonials"
+      title="Hear from our clients."
+      description="What marketing leaders say after launch day, and months into working together."
+      class="c-testimonials__header"
+    />
+
+    <div class="c-testimonials__marquee">
+      <TestimonialMarquee testimonials={testimonials} />
+    </div>
+  </Container>
+</section>
+)}
+
+<style>
+  .c-testimonials {
+    /* Decorative lines (docs/refs/testimonials-section-bg.svg, 1920×1284 =
+       the section at the 1920 frame), anchored to the bottom. */
+    background: var(--color-white) url("/images/home/testimonials-bg.svg") no-repeat center bottom / cover;
+    /* Clip the full-bleed marquee (100vw includes the scrollbar). */
+    overflow-x: clip;
+  }
+
+  .c-testimonials__marquee {
+    /* TODO: DS space between section header and content. */
+    margin-top: 3rem;
+    /* Full-bleed: break out of the container to the viewport edges. */
+    margin-inline: calc(50% - 50vw);
+  }
+</style>

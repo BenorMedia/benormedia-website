@@ -126,7 +126,8 @@ import Stat from "../ui/Stat.astro";
     align-self: stretch;
     max-width: 1440px;
     margin: 0 auto;
-    padding: 7.8rem 0 5em;
+    /* Was 5em on body text: same value, expressed from the type token. */
+    padding: 7.8rem 0 calc(5 * var(--fs-p));
     gap: 8.286rem; /* 116px between the two outer blocks */
   }
 
@@ -167,12 +168,22 @@ import Stat from "../ui/Stat.astro";
     text-align: center;
     /* TODO: DS — secondary gradient stop (#8BC1F9) is not in tokens yet.
        Kept inline with white so the title reads as spec on the blue bg. */
-    background: linear-gradient(108deg, #FFFFFF 59.9%, #8BC1F9 100%);
+    background: linear-gradient(108deg, var(--color-white) 59.9%, #8BC1F9 100%);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     /* Fallback for browsers without background-clip: text */
     color: var(--color-white);
+  }
+
+  /* Mobile: DS mobile H1 size (§3.2 `--fs-text-xxl` = 4rem ≈ 36px) instead of
+     the fixed desktop 6.286rem; letter-spacing scaled by the same ratio.
+     Lead request 2026-09-29. */
+  @media (max-width: 767px) {
+    .c-hero__title {
+      font-size: var(--fs-text-xxl);
+      letter-spacing: -0.08rem;
+    }
   }
 
   .c-hero__desc {

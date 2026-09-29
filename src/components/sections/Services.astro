@@ -76,23 +76,25 @@ const items: [Item, Item, Item] = [
       <div class="c-services__col-right">
         <div class="c-services__accordion">
           {items.map((item, i) => (
-            <button
+            <div
               class:list={["c-services__item", { "is-active": i === 0 }]}
-              type="button"
               data-index={i}
               data-image={item.image}
-              aria-pressed={i === 0 ? "true" : "false"}
             >
               <h3 class="c-services__heading">
-                <span class="c-services__trigger">
+                <button
+                  type="button"
+                  class="c-services__trigger"
+                  aria-pressed={i === 0 ? "true" : "false"}
+                >
                   <span class="c-services__trigger-label">{item.title}</span>
                   <span class="c-services__trigger-icon" aria-hidden="true"></span>
-                </span>
+                </button>
               </h3>
               <div class="c-services__panel">
                 <p class="c-paragraph">{item.body}</p>
               </div>
-            </button>
+            </div>
           ))}
         </div>
       </div>
@@ -162,7 +164,11 @@ const items: [Item, Item, Item] = [
     gap: 1rem;
   }
 
+  /* Card wrapper. The title <button> is stretched over the whole card via
+     ::after (see .c-services__trigger), so the card stays one click target
+     while the button's accessible name is just the title. */
   .c-services__item {
+    position: relative;
     display: flex;
     padding: 1.3125rem; /* 21px */
     flex-direction: column;
@@ -182,7 +188,8 @@ const items: [Item, Item, Item] = [
       box-shadow var(--duration-hover) var(--ease-smooth);
   }
 
-  .c-services__item:focus-visible {
+  /* Focus ring draws on the card, driven by the stretched button. */
+  .c-services__item:has(.c-services__trigger:focus-visible) {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
@@ -205,14 +212,30 @@ const items: [Item, Item, Item] = [
     justify-content: space-between;
     gap: 1rem;
     width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
     text-align: left;
     color: var(--color-heading);
+    cursor: pointer;
+  }
+
+  .c-services__trigger:focus-visible {
+    outline: none;
+  }
+
+  /* Stretch the hit area over the whole card. */
+  .c-services__trigger::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
   }
 
   .c-services__trigger-label {
     color: var(--color-black-secondary);
     font-family: var(--font-heading);
-    font-size: 1.8rem;
+    font-size: var(--fs-text-m);
     font-style: normal;
     font-weight: 400;
     line-height: 1.4;
@@ -286,7 +309,7 @@ const items: [Item, Item, Item] = [
 
   roots.forEach((root) => {
     const items = Array.from(
-      root.querySelectorAll<HTMLButtonElement>(".c-services__item"),
+      root.querySelectorAll<HTMLElement>(".c-services__item"),
     );
     const image = root.querySelector<HTMLImageElement>("[data-c-services-image]");
     if (items.length === 0 || !image) return;
@@ -295,7 +318,9 @@ const items: [Item, Item, Item] = [
       items.forEach((item, i) => {
         const isActive = i === index;
         item.classList.toggle("is-active", isActive);
-        item.setAttribute("aria-pressed", isActive ? "true" : "false");
+        item
+          .querySelector(".c-services__trigger")
+          ?.setAttribute("aria-pressed", isActive ? "true" : "false");
         if (isActive) {
           const nextSrc = item.dataset.image;
           if (nextSrc && nextSrc !== image.getAttribute("src")) {
@@ -306,7 +331,9 @@ const items: [Item, Item, Item] = [
     };
 
     items.forEach((item, i) => {
-      item.addEventListener("click", () => activate(i));
+      item
+        .querySelector<HTMLButtonElement>(".c-services__trigger")
+        ?.addEventListener("click", () => activate(i));
     });
   });
 </script>

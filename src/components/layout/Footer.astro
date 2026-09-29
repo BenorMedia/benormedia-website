@@ -243,7 +243,8 @@ const legalLinks = [
   .c-footer__side {
     display: flex;
     flex-direction: column;
-    gap: 9.5em;
+    /* Was 9.5em on body text: same value, expressed from the type token. */
+    gap: calc(9.5 * var(--fs-p));
     align-items: flex-end;
   }
   .c-footer__badges {

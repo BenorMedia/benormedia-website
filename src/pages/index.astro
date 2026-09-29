@@ -1,9 +1,9 @@
 ---
 /**
- * Home page — Phase 4 part 1.
+ * Home page — Phase 4.
  *
  * All Home copy is static in the section components. Sanity only feeds the
- * two client-driven sections (LogoStrip, FeaturedWork) with clients pinned
+ * client-driven sections (LogoStrip, FeaturedWork, OurWork) with clients pinned
  * by document `_id`. See `getClientsByIds` in `src/lib/sanity/queries.ts`.
  *
  * BaseLayout owns Nav, Footer, CtaBanner and ContactModal — do not repeat
@@ -14,16 +14,40 @@ import {
   getHome,
   getClientsByIds,
   getAllClientsWithLogo,
+  getTestimonials,
 } from "../lib/sanity/queries";
 import HomeHero from "../components/sections/HomeHero.astro";
 import LogoStrip from "../components/sections/LogoStrip.astro";
 import FeaturedWork from "../components/sections/FeaturedWork.astro";
 import Services from "../components/sections/Services.astro";
+import OurWork from "../components/sections/OurWork.astro";
+import Technologies from "../components/sections/Technologies.astro";
+import Testimonials from "../components/sections/Testimonials.astro";
 
 const home = await getHome();
-const [logoClients, featuredClients] = await Promise.all([
+const [logoClients, featuredClients, workClients, workListClients, testimonials] = await Promise.all([
   getAllClientsWithLogo(),
   getClientsByIds(["client-surfe", "client-puzzle"]),
+  getClientsByIds([
+    "client-surfe",
+    "client-puzzle",
+    "client-sprii",
+    "client-arrows",
+    "client-garaje-de-ideas",
+    "client-simpletiger",
+  ]),
+  getClientsByIds([
+    "client-unit21",
+    "client-darwincx",
+    "client-mashgin",
+    "client-major-players",
+    "client-hireart",
+    "client-resourcify",
+    "client-userled",
+    "client-sublime-security",
+    "client-notable-capital",
+  ]),
+  getTestimonials(),
 ]);
 ---
 
@@ -32,4 +56,7 @@ const [logoClients, featuredClients] = await Promise.all([
   <LogoStrip clients={logoClients} />
   <FeaturedWork clients={featuredClients} />
   <Services />
+  <OurWork clients={workClients} listClients={workListClients} />
+  <Technologies />
+  <Testimonials testimonials={testimonials} />
 </BaseLayout>

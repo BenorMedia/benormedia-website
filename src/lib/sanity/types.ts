@@ -158,6 +158,8 @@ export interface Testimonial extends SanityRef<'testimonial'> {
   authorPhoto?: SanityImage;
   companyLogo?: SanityImage;
   kpis?: Kpi[];
+  /** Client whose `testimonial` references this one (TESTIMONIALS query only). */
+  client?: { _id: string; name: string; logo?: SanityImage } | null;
 }
 
 /**
@@ -170,6 +172,7 @@ export interface Client extends SanityRef<'client'> {
   logo?: SanityImage;
   icon?: SanityImage;
   cardThumbnail?: SanityImage;
+  badge?: SanityImage;
   websiteScreenshot?: SanityImage;
   fundsRaised?: string;
   category?: Category;

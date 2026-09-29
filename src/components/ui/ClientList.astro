@@ -1,0 +1,336 @@
+---
+/**
+ * ClientList — stacked client rows, reused across most pages.
+ *
+ * Row: [ icon box · client name ][ funds raised tag · category tag ][ arrow ]
+ *
+ * Usage: fetch clients on the page (e.g. `getClientsByIds`) and pass them in.
+ * `limit` caps how many rows render (default: all). No width: the list fills
+ * its parent up to `max-width: 85%` (100% on mobile), centered.
+ *
+ * Rows overlap by their extra bottom padding (30px bottom vs 14px top) so the
+ * list reads as a stacked deck; later rows paint over earlier ones.
+ *
+ * Fallbacks:
+ *   - Missing icon → client initial inside the icon box.
+ *   - Funds tag only when `fundsRaised` is set; category tag only when set.
+ *   - Row is a link (new tab) only when `websiteUrl` is set; otherwise a div.
+ *   - Hover preview only renders when `websiteScreenshot` is set.
+ *
+ * Hover (and keyboard focus on a linked row):
+ *   - Arrow turns accent and rotates −30.963deg.
+ *   - Website screenshot preview opens from the row's vertical center
+ *     (height 0 → full, image stays unscaled). Height is fixed, width
+ *     follows the screenshot's own ratio so nothing is cropped.
+ *     Lead-approved shadow exception 2026-09-28 — see docs/DECISIONS.md.
+ */
+import type { Client } from "../../lib/sanity/types";
+import { urlFor, type Source } from "../../lib/sanity/image";
+import Tag from "./Tag.astro";
+
+interface Props {
+  clients: Client[];
+  limit?: number;
+  class?: string;
+}
+
+const { clients, limit, class: className } = Astro.props;
+
+function assetSize(id?: string): { width: number; height: number } | undefined {
+  const match = id?.match(/-(\d+)x(\d+)-[a-z0-9]+$/i);
+  return match ? { width: Number(match[1]), height: Number(match[2]) } : undefined;
+}
+
+const rows = (limit === undefined ? clients : clients.slice(0, limit)).map(
+  (client) => {
+    const iconAsset = client.icon?.asset;
+    return {
+      id: client._id,
+      name: client.name,
+      href: client.websiteUrl,
+      // 56px box at 2x density. Width only: passing width + height makes the
+      // builder crop a square `rect`, clipping wide icons (e.g. DarwinCX).
+      iconUrl: iconAsset
+        ? urlFor(client.icon as Source).width(112).fit("max").auto("format").url()
+        : undefined,
+      iconAlt: client.icon?.alt ?? client.name,
+      initial: client.name?.trim().charAt(0).toUpperCase() ?? "",
+      fundsLabel: client.fundsRaised?.trim()
+        ? `${client.fundsRaised.trim()} Raised`
+        : undefined,
+      categoryLabel: client.category?.title,
+      // Height only (≈249px preview at 2x density) — no width, so the
+      // builder never crops; the full screenshot is always shown.
+      previewUrl: client.websiteScreenshot?.asset
+        ? urlFor(client.websiteScreenshot as Source)
+            .height(500)
+            .fit("max")
+            .auto("format")
+            .url()
+        : undefined,
+      // Intrinsic size from the asset id (`image-<hash>-<w>x<h>-<ext>`) so the
+      // browser knows the ratio before the file loads.
+      previewSize: assetSize(client.websiteScreenshot?.asset?._id),
+    };
+  },
+);
+
+const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
+---
+
+<ul class={rootClass}>
+  {rows.map((row) => {
+    const RowTag = row.href ? "a" : "div";
+    const linkAttrs = row.href
+      ? { href: row.href, target: "_blank", rel: "noopener noreferrer" }
+      : {};
+    return (
+      <li class="c-client-list__item">
+        <RowTag class="c-client-list__row" {...linkAttrs}>
+          <span class="c-client-list__client">
+            <span class="c-client-list__icon">
+              {row.iconUrl ? (
+                <img src={row.iconUrl} alt={row.iconAlt} loading="lazy" decoding="async" />
+              ) : (
+                <span class="c-client-list__initial c-text_m" aria-hidden="true">
+                  {row.initial}
+                </span>
+              )}
+            </span>
+            <span class="c-client-list__name c-text_m">{row.name}</span>
+          </span>
+
+          <span class="c-client-list__tags">
+            {row.fundsLabel && <Tag>{row.fundsLabel}</Tag>}
+            {row.categoryLabel && <Tag variant="accent">{row.categoryLabel}</Tag>}
+          </span>
+
+          <svg
+            class="c-client-list__arrow"
+            aria-hidden="true"
+            width="15"
+            height="15"
+            viewBox="0 0 15 15"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0.000296913 6.53389H11.6643C10.0983 5.20189 7.2543 2.51989 5.4903 0.917886L6.3543 -0.000113487L14.0583 7.16389V7.21789L6.3543 14.4719L5.4903 13.5359C7.2723 11.8979 10.0803 9.28789 11.6643 7.84789H0.000296913V6.53389Z"
+            />
+          </svg>
+
+          {row.previewUrl && (
+            <span class="c-client-list__preview" aria-hidden="true">
+              <img
+                src={row.previewUrl}
+                alt=""
+                width={row.previewSize?.width}
+                height={row.previewSize?.height}
+                loading="lazy"
+                decoding="async"
+              />
+            </span>
+          )}
+        </RowTag>
+      </li>
+    );
+  })}
+</ul>
+
+<style>
+  .c-client-list {
+    display: flex;
+    flex-direction: column;
+    /* No width: fills its parent up to max-width. `flex-grow` keeps that
+       true inside a flex wrapper, where it would otherwise shrink to content. */
+    flex-grow: 1;
+    max-width: 85%;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Mobile: full width. */
+  @media (max-width: 767px) {
+    .c-client-list {
+      max-width: 100%;
+    }
+  }
+
+  .c-client-list__item {
+    position: relative;
+    /* Drop back under neighbours only after the preview has closed. */
+    transition: z-index 0s linear var(--duration-hover);
+  }
+
+  /* Hovered row (and its preview) paints above the rows around it. */
+  .c-client-list__item:hover,
+  .c-client-list__item:focus-within {
+    z-index: 1;
+    transition-delay: 0s;
+  }
+
+  /* Stacked deck: each row covers the previous row's extra bottom padding
+     (30px − 14px top → 14px overlap), so visible padding reads balanced. */
+  .c-client-list__item + .c-client-list__item {
+    margin-top: -0.875rem; /* 14px */
+  }
+
+  .c-client-list__row {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 18.75rem 2.5rem; /* 1fr · 300px · 40px */
+    grid-template-rows: 3.5rem; /* 56px */
+    align-items: center;
+    column-gap: 1.5rem; /* 24px */
+    row-gap: 1.5rem; /* 24px */
+    padding: 0.875rem 1.375rem 1.875rem 1.375rem; /* 14 22 30 22 */
+    border-radius: 0.5rem; /* 8px */
+    border: var(--border-default);
+    background: var(--color-white);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  a.c-client-list__row:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* --- Left: icon box + name ------------------------------------------- */
+  .c-client-list__client {
+    display: flex;
+    align-items: center;
+    /* TODO: DS gap icon → name (ref ≈ 22px). */
+    gap: 1.375rem;
+    min-width: 0;
+  }
+
+  .c-client-list__icon {
+    display: flex;
+    flex: 0 0 auto;
+    width: 3.5rem; /* 56px */
+    height: 3.5rem;
+    padding: 0.5rem; /* 8px */
+    justify-content: center;
+    align-items: center;
+    border-radius: 0.5rem; /* 8px */
+    border: var(--border-default);
+    background: var(--color-white);
+  }
+
+  .c-client-list__icon img {
+    display: block;
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
+    object-position: center;
+  }
+
+  .c-client-list__initial {
+    color: var(--color-heading);
+    line-height: 1;
+  }
+
+  .c-client-list__name {
+    color: var(--color-heading);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* --- Middle: tags (right-aligned; long labels spill left) ------------ */
+  .c-client-list__tags {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    /* TODO: DS gap between tags (ref ≈ 12px). */
+    gap: 0.75rem;
+  }
+
+  /* --- Right: arrow ---------------------------------------------------- */
+  .c-client-list__arrow {
+    display: block;
+    justify-self: center;
+    width: 0.9375rem; /* 15px */
+    height: 0.9375rem;
+    transition: transform var(--duration-hover) var(--ease-smooth);
+  }
+
+  .c-client-list__arrow path {
+    fill: var(--color-text);
+    transition: fill var(--duration-hover) var(--ease-smooth);
+  }
+
+  .c-client-list__row:hover .c-client-list__arrow,
+  a.c-client-list__row:focus-visible .c-client-list__arrow {
+    transform: rotate(-30.963deg);
+  }
+
+  .c-client-list__row:hover .c-client-list__arrow path,
+  a.c-client-list__row:focus-visible .c-client-list__arrow path {
+    fill: var(--color-accent);
+  }
+
+  /* --- Hover preview --------------------------------------------------- */
+  /* Centered on the row's 56px track; height grows from 0 so the reveal
+     opens from the middle to top + bottom. The image keeps its full size
+     and stays centered, so it is uncovered rather than stretched. The box
+     has no width: it shrinks to the image, whose width follows its ratio. */
+  .c-client-list__preview {
+    position: absolute;
+    top: 2.625rem; /* 14px top padding + half of the 56px track */
+    left: 50%;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    height: 0;
+    overflow: hidden;
+    border-radius: 0.875rem; /* 14px */
+    /* Lead-approved shadow exception (2026-09-28), see DECISIONS.md. */
+    box-shadow: 0 0.6875rem 1.48125rem 0.125rem rgba(0, 0, 0, 0.2); /* 0 11px 23.7px 2px */
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    transition:
+      height var(--duration-hover) var(--ease-smooth),
+      opacity var(--duration-hover) var(--ease-smooth);
+  }
+
+  /* Height only (277px − 10% ≈ 249px); width auto keeps the whole image.
+     `max-width: none` overrides the base reset, which would collapse the
+     image inside a shrink-to-fit box. */
+  .c-client-list__preview img {
+    display: block;
+    flex: 0 0 auto;
+    height: 15.58rem;
+    width: auto;
+    max-width: none;
+  }
+
+  .c-client-list__row:hover .c-client-list__preview,
+  a.c-client-list__row:focus-visible .c-client-list__preview {
+    height: 15.58rem;
+    opacity: 1;
+  }
+
+  /* TODO: DS mobile — no mobile design; tags drop to a second line. */
+  @media (max-width: 767px) {
+    .c-client-list__row {
+      grid-template-columns: minmax(0, 1fr) 2.5rem;
+      grid-template-rows: 3.5rem auto;
+    }
+
+    .c-client-list__tags {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .c-client-list__arrow {
+      grid-column: 2;
+      grid-row: 1;
+    }
+  }
+</style>

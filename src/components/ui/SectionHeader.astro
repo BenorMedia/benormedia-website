@@ -3,6 +3,10 @@
  * SectionHeader — eyebrow + heading + optional description.
  *
  * Always center-aligned by project rule: no left-aligned section headers.
+ *
+ * `title` may contain `
+` to force a line break where the design breaks the
+ * heading at a specific word (rendered as `<br />`).
  */
 import Eyebrow from "./Eyebrow.astro";
 
@@ -30,6 +34,7 @@ const {
 } = Astro.props;
 
 const HeadingTag = as;
+const titleLines = title.split("\n");
 const rootClass = ["c-section-header", className].filter(Boolean).join(" ");
 const titleClassList = ["c-section-header__title", titleClass]
   .filter(Boolean)
@@ -39,7 +44,14 @@ const titleClassList = ["c-section-header__title", titleClass]
 <header class={rootClass}>
   {eyebrow && <Eyebrow variant={eyebrowVariant}>{eyebrow}</Eyebrow>}
   <div class="c-section-header__text">
-    <HeadingTag class={titleClassList}>{title}</HeadingTag>
+    <HeadingTag class={titleClassList}>
+      {titleLines.map((line, i) => (
+        <>
+          {i > 0 && <br />}
+          {line}
+        </>
+      ))}
+    </HeadingTag>
     {description && (
       <p class="c-section-header__description c-paragraph_m">{description}</p>
     )}
