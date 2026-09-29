@@ -1,0 +1,130 @@
+---
+/**
+ * OurWork — Home "Our Work" section.
+ *
+ *   1. Header + 3×2 card grid — one `ClientCard variant="grid"` per `clients`.
+ *   2. Client list — shared `ClientList` fed by `listClients`.
+ *   3. "View All" CTA → /work.
+ *
+ * Order is preserved by the `getClientsByIds` fetcher in `src/pages/index.astro`.
+ */
+import Container from "../ui/Container.astro";
+import SectionHeader from "../ui/SectionHeader.astro";
+import ClientCard from "../ui/ClientCard.astro";
+import ClientList from "../ui/ClientList.astro";
+import Button from "../ui/Button.astro";
+import type { Client } from "../../lib/sanity/types";
+
+interface Props {
+  clients: Client[];
+  listClients: Client[];
+}
+
+const { clients, listClients } = Astro.props;
+
+// Full-height wordmarks read larger than icon + text logos at the same box
+// height — render them one step smaller (lead visual QA 2026-09-28).
+const COMPACT_LOGOS = new Set(["client-surfe", "client-arrows"]);
+---
+
+<section class="c-work">
+  <Container>
+    <SectionHeader
+      eyebrow="Our Work"
+      title={"From growing B2B\ncompanies to large enterprises."}
+      description="100+ launches for B2B teams across sales tech, fintech, HR tech, cleantech, and venture capital."
+      class="c-work__header"
+    />
+
+    <div class="c-work__grid">
+      {clients.map((client) => (
+        <ClientCard
+          variant="grid"
+          client={client}
+          logoSize={COMPACT_LOGOS.has(client._id) ? "compact" : "default"}
+        />
+      ))}
+    </div>
+
+    <div class="c-work__list">
+      <ClientList clients={listClients} limit={9} />
+    </div>
+
+    <div class="c-work__cta">
+      <Button variant="gradient" href="/work">
+        View All 100+ Projects
+        <svg
+          slot="icon"
+          class="c-work__cta-icon"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+        >
+          <path d="M19 12L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M15 7L19.2929 11.2929C19.6262 11.6262 19.7929 11.7929 19.7929 12C19.7929 12.2071 19.6262 12.3738 19.2929 12.7071L15 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </Button>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .c-work {
+    background: var(--color-white);
+  }
+
+  /* Subtitle wraps after "sales tech," in the ref (≈ 522px at the 1920 frame). */
+  .c-work :global(.c-work__header .c-section-header__description) {
+    max-width: 35rem;
+  }
+
+  @media (max-width: 767px) {
+    .c-work :global(.c-work__header .c-section-header__description) {
+      max-width: 100%;
+    }
+  }
+
+  .c-work__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: 1.3rem;
+    row-gap: 1.3rem;
+    /* TODO: DS space between section header and grid. */
+    margin-top: 3rem;
+  }
+
+  @media (max-width: 991px) {
+    .c-work__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Wrapper for the shared ClientList (width is capped by the list's own
+     max-width). */
+  .c-work__list {
+    display: flex;
+    justify-content: center;
+    margin-top: 2.5rem;
+  }
+
+  .c-work__cta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2.5em; /* lead request 2026-09-28 (em, not rem) */
+  }
+
+  .c-work__cta-icon {
+    display: block;
+    width: 1.5rem; /* 24px */
+    height: 1.5rem;
+  }
+
+  @media (max-width: 767px) {
+    .c-work__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

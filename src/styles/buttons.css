@@ -37,6 +37,15 @@
   color: var(--color-white);
 }
 
+/* Optional trailing icon (Button `icon` slot). Icons use `currentColor`;
+   size is set by the caller. */
+.c-button__icon {
+  display: inline-flex;
+  flex: 0 0 auto;
+  margin-left: 0.5em; /* TODO: DS gap between button text and icon */
+  color: var(--color-white);
+}
+
 /* 1. Gradient Solid */
 .c-button.is-gradient {
   background: var(--gradient-primary);

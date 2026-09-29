@@ -199,7 +199,7 @@ import Button from "../ui/Button.astro";
     max-width: 100%;
     padding: 1.875rem 2.675rem 2.572rem 2.675rem; /* 30 / 42.797 / 41.151 */
     border: 0;
-    border-right: 1px solid #E4E6EA;
+    border-right: 1px solid var(--color-border);
     background: var(--color-white);
     display: flex;
     flex-direction: column;
@@ -237,10 +237,11 @@ import Button from "../ui/Button.astro";
     padding-right: 2.5rem; /* leave room for the close button */
   }
   .c-contact-modal__title {
-    color: #222; /* Figma spec — near-heading but exact per design */
+    /* Figma #222 → closest token. TODO: DS confirm modal title color. */
+    color: var(--color-black-secondary);
   }
   .c-contact-modal__subtitle {
-    color: #222;
+    color: var(--color-black-secondary); /* Figma #222 → closest token */
   }
   .c-contact-modal__subtitle a {
     color: inherit;

@@ -1,0 +1,68 @@
+---
+/**
+ * Technologies — Home "Technologies" section.
+ *
+ * Section header + static diagram (tool categories → BenorMedia mark →
+ * capabilities). Design-only for now: the animation spec is pending from
+ * the design team; the image carries `data-anim="tech-diagram"` as the hook.
+ *
+ * `/images/home/technologies.svg` is an optimized copy of
+ * `docs/refs/technologies-image.svg` (embedded bitmaps downscaled to WebP;
+ * vectors untouched) — 20 MB → ~0.4 MB.
+ */
+import Container from "../ui/Container.astro";
+import SectionHeader from "../ui/SectionHeader.astro";
+---
+
+<section class="c-tech">
+  <Container>
+    <SectionHeader
+      eyebrow="Technologies"
+      title={"Connected tools.\nClear revenue impact."}
+      description="We connect your CRM, analytics, and website into a single closed loop - so every visit, form fill, and conversion traces back to pipeline."
+      class="c-tech__header"
+    />
+
+    <div class="c-tech__diagram">
+      <img
+        src="/images/home/technologies.svg"
+        alt="Diagram: tools for web design and development, CRM and API integrations, SEO / GEO / AEO, CRO optimization, and CMS integrations and migrations connect through BenorMedia into capabilities such as scalable CMS structure, web design and development systems, custom API and CRM integrations, accessibility, GDPR and CCPA, content creation, and CRO, SEO and AEO / GEO analytics."
+        width="1680"
+        height="1107"
+        loading="lazy"
+        decoding="async"
+        data-anim="tech-diagram"
+      />
+    </div>
+  </Container>
+</section>
+
+<style>
+  .c-tech {
+    background: var(--color-white);
+  }
+
+  /* Subtitle wraps after "single closed" in the ref (≈ 718px at the 1920 frame). */
+  .c-tech :global(.c-tech__header .c-section-header__description) {
+    max-width: 46rem;
+  }
+
+  @media (max-width: 767px) {
+    .c-tech :global(.c-tech__header .c-section-header__description) {
+      max-width: 100%;
+    }
+  }
+
+  .c-tech__diagram {
+    /* TODO: DS space between section header and content. */
+    margin-top: 3rem;
+  }
+
+  /* TODO: DS mobile — no mobile design; the diagram scales down with the
+     container, so its labels get small on phones. */
+  .c-tech__diagram img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+</style>

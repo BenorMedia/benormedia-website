@@ -16,7 +16,7 @@
  * has its own queries when a page needs it — those live in later phases.
  */
 import { sanityClient } from './client';
-import type { Client, HomePage, SiteSettings } from './types';
+import type { Client, HomePage, SiteSettings, Testimonial } from './types';
 
 // ---------------------------------------------------------------------------
 // Fragments — assembled into the full queries below.
@@ -134,7 +134,7 @@ export const SITE_SETTINGS_QUERY = /* groq */ `
 
 /**
  * Returns published clients whose `_id` is in `$ids`. Used by Home sections
- * (LogoStrip, FeaturedWork) which pin the clients they render by hardcoded
+ * (FeaturedWork, OurWork) which pin the clients they render by hardcoded
  * document IDs — see `getClientsByIds` below for the order-preserving fetcher.
  *
  * Client documents are seeded with deterministic IDs of the form
@@ -152,6 +152,7 @@ export const CLIENTS_BY_IDS = /* groq */ `
   name,
   "logo": logo${IMAGE},
   "icon": icon${IMAGE},
+  "cardThumbnail": cardThumbnail${IMAGE},
   "websiteScreenshot": websiteScreenshot${IMAGE},
   fundsRaised,
   websiteUrl,
@@ -186,6 +187,43 @@ export const ALL_CLIENTS_WITH_LOGO = /* groq */ `
   _type,
   name,
   "logo": logo${IMAGE}
+}
+`;
+
+// ---------------------------------------------------------------------------
+// TESTIMONIALS — every published testimonial, oldest first, with the client
+// that references it (`client.testimonial`) so cards can show that client's
+// logo. Used by the shared TestimonialMarquee (Home + other pages).
+// ---------------------------------------------------------------------------
+
+export const TESTIMONIALS = /* groq */ `
+*[_type == "testimonial" && !(_id in path("drafts.**"))] | order(_createdAt asc){
+  _id,
+  _type,
+  quote,
+  authorName,
+  authorRole,
+  "authorPhoto": authorPhoto${IMAGE},
+  "companyLogo": companyLogo${IMAGE},
+  kpis[]{ value, description },
+  "client": *[_type == "client" && references(^._id)][0]{
+    _id,
+    name,
+    "logo": logo${IMAGE}
+  }
+}
+`;
+
+// ---------------------------------------------------------------------------
+// CLIENT_BADGES — every published client with a circular `badge` image.
+// Feeds the rotating badge group in the global CTA banner (every page).
+// ---------------------------------------------------------------------------
+
+export const CLIENT_BADGES = /* groq */ `
+*[_type == "client" && defined(badge.asset) && !(_id in path("drafts.**"))] | order(name asc){
+  _id,
+  name,
+  "badge": badge${IMAGE}
 }
 `;
 
@@ -252,6 +290,20 @@ export async function getClientsByIds(ids: string[]): Promise<Client[]> {
   }
 
   return ordered;
+}
+
+/**
+ * Fetch every published client that has a badge image, alphabetical by name.
+ */
+export async function getClientBadges(): Promise<Client[]> {
+  return await sanityClient.fetch<Client[]>(CLIENT_BADGES);
+}
+
+/**
+ * Fetch every published testimonial (oldest first) with its related client.
+ */
+export async function getTestimonials(): Promise<Testimonial[]> {
+  return await sanityClient.fetch<Testimonial[]>(TESTIMONIALS);
 }
 
 /**

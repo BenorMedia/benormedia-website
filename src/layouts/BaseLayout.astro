@@ -141,5 +141,10 @@ if (siteSettings) {
     {showCtaBanner && <CtaBanner siteSettings={siteSettings} />}
     <Footer siteSettings={siteSettings} />
     <ContactModal siteSettings={siteSettings} />
+    <script>
+      // Animations — one file per animation in src/scripts/animations/.
+      import { initCtaBadges } from "../scripts/animations/cta-badges";
+      initCtaBadges();
+    </script>
   </body>
 </html>

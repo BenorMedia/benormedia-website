@@ -1,9 +1,36 @@
 # Decisions Log
 
-Format: date · decision · reason · approved by.
+## How this file works (read before writing)
 
-## Locked
-| Date | Decision | Reason | By |
+**Structure.** `## Global` first (stack, workflow, design system, layout shell, and any component reused on more than one page), then one `## <Page>` section per page in `SITEMAP.md` order: Home · Service pages · Work · Testimonials · Pricing · Blog. Add a page section the first time that page needs an entry. Nothing goes outside these sections.
+
+**Each section has exactly two parts, in this order:**
+
+1. `### Decisions` — one table, newest row at the bottom:
+   `| Date | Decision | Reason | Status |`
+   - `Status` = `Lead` (approved by the project lead) or `Proposed` (built, waiting for the lead's OK).
+   - One row per decision, single line. Never put a raw line break inside a cell (write `\n` inside backticks if you need to mention it).
+2. `### Open questions` — grouped under these `####` headings, always in this order (omit empty ones):
+   - `#### Content` — copy, Sanity data, client assets.
+   - `#### Design team` — missing specs, mobile designs, animation specs.
+   - `#### Lead / CEO` — business calls, accounts, credentials, third-party setup.
+   - `#### Needs lead OK` — one line per `Proposed` decision in the table above.
+   - `#### Engineering follow-ups` — tech debt; no lead action needed.
+
+   Item format: `- **Short title** — one or two sentences: what's missing and what is built meanwhile. (YYYY-MM-DD)`
+
+**Where an entry goes.** A shared component (e.g. `ClientList`, `Tag`, `Button`) → `Global`; its page-specific usage (which clients, wrapper spacing) → that page. Page sections (e.g. Home → Services) → that page.
+
+**Resolving.** Never delete an open question: strike it and add the answer — `- ~~**Title**~~ — RESOLVED YYYY-MM-DD: answer (see Decisions).` — and add/update the matching Decisions row (`Status: Lead`).
+
+**Who reads it.** Every agent logs here. The project lead does not read this file: the orchestrator relays open questions to the lead in chat.
+
+---
+
+## Global
+
+### Decisions
+| Date | Decision | Reason | Status |
 |---|---|---|---|
 | 2026-09-24 | Astro static output + TypeScript strict | Performance, agency's new custom-code offer | Lead |
 | 2026-09-24 | Sanity Studio embedded at `/studio` | One repo, one deploy | Lead |
@@ -15,6 +42,7 @@ Format: date · decision · reason · approved by.
 | 2026-09-24 | rem units on fluid root (html), em only for component padding | Avoid em compounding | Lead |
 | 2026-09-24 | Figma text class names kept as-is | 1:1 QA with design | Lead |
 | 2026-09-24 | Breakpoints 767 / 991 / 1440; 12px root on 768–991 | Tablet legibility | Lead |
+| 2026-09-24 | Fixed-field Sanity schemas, no page builder | Approved fixed layouts, safer editing | Proposed |
 | 2026-09-25 | Figma is not a dependency; Figma sync is a floating Phase F | Keep build moving without MCP access | Lead |
 | 2026-09-25 | Work: listing only, no detail pages | Scope | Lead |
 | 2026-09-25 | Services: header dropdown only, routes at root (`/<service-slug>`), no `/services` prefix | No main services area | Lead |
@@ -22,13 +50,11 @@ Format: date · decision · reason · approved by.
 | 2026-09-25 | No legal pages for now; footer links hidden | Scope | Lead |
 | 2026-09-25 | Blog search + category filter, client-side | Static site, small content volume | Lead |
 | 2026-09-25 | Plan: Home by Day 5, remaining pages Day 6, content/QA Day 7 | Deadline | Lead |
-| 2026-09-24 | Fixed-field Sanity schemas, no page builder | Approved fixed layouts, safer editing | Proposed |
 | 2026-09-25 | Package manager: pnpm (supersedes earlier implied npm) | Strict node_modules layout, faster installs, better monorepo readiness | Lead |
 | 2026-09-25 | Node 22.x LTS pinned via `.nvmrc` and `engines.node >= 22.12.0` | Required by Astro 7 | Lead |
 | 2026-09-25 | TypeScript preset `astro/tsconfigs/strictest` | Stronger safety net than plain `strict` | Lead |
 | 2026-09-25 | Vercel adapter included with `output: 'static'` + `imageService: true` | Vercel Image Optimization for Sanity images | Lead |
 | 2026-09-25 | Sanity Studio routing: hash-based (default under static output) | Avoids `vercel.json` rewrite and 404-on-refresh | Lead |
-| 2026-09-26 | Shadow exception on active Services card only (`0 0 20px rgba(0,0,0,0.05)`) | CEO-approved deviation from the DS "no shadows" rule to signal the selected service | Lead |
 | 2026-09-25 | Sanity `apiVersion` pinned to `2026-09-25` | Predictable behavior across upgrades | Lead |
 | 2026-09-25 | Visual Editing deferred to post-launch; would require on-demand preview routes | Static output only; publish webhook rebuild is sufficient for launch | Lead |
 | 2026-09-25 | CORS: no wildcard `vercel.app`; only `http://localhost:4321`, the `dev` branch preview URL, and the production domain (once known) | Least-privilege; wildcard preview URLs expose Studio to any Vercel deploy | Lead |
@@ -53,31 +79,117 @@ Format: date · decision · reason · approved by.
 | 2026-09-25 | Footer legal links moved to the bottom **credit strip** (Privacy Policy · Terms & Conditions · Cookie Policy). Middle-columns legal was already hidden | Bottom strip is a separate context from the mid-footer columns; routes `/privacy-policy` etc. are placeholders until pages exist | Lead |
 | 2026-09-25 | Footer wordmark sits in a **full-width strip** (258 px tall, border top + bottom) outside `.c-container`; credit strip stays inside the container with 30 px vertical padding | Wordmark spans viewport width regardless of container max; credit stays aligned with the rest of the site | Lead |
 | 2026-09-25 | Partner-badge artwork landed as PNG in `/public/images/` (`webflow-partner.png`, `claude-partner.png`, width 216 px each) | Replaces the placeholder bordered text boxes; retires the `TODO: assets partner-badges` marker | Lead |
+| 2026-09-28 | `Tag` primitive rebuilt to mirror the locked Eyebrow box (§3.3) without squares: `default` (gray border, text color) and `accent` (accent border, 8% accent tint, accent text, 600). Replaces the pill placeholder | Our Work ref shows square tags identical in size to the eyebrow; closest existing spec until DS tag specs land. `TODO: DS` kept | Proposed |
+| 2026-09-28 | `SectionHeader` title accepts `\n` → `<br />` | Our Work title breaks after "B2B" in the design; greedy wrapping can't reproduce it (line 2 is wider than line 1 + "companies") | Proposed |
+| 2026-09-26 | `SectionHeader` is always centered — no `align` prop; global styles + `width: 100%` + `text-align: center` + `margin: 0 auto` | Every section header in the refs is centered | Lead |
+| 2026-09-26 | Page copy lives in the Astro section components; Sanity only feeds client/testimonial data, pinned by document `_id` (`client-<slug>`) via `getClientsByIds` (order-preserving, warns on missing IDs) | Confirms SCHEMAS v0.5 (singletons are SEO-only) | Lead |
+| 2026-09-28 | Shared `ClientList` component (`src/components/ui/ClientList.astro`): data in via `clients` prop + optional `limit`. Rows overlap 14px (stacked deck, 14/30 vertical padding). List has no width — `max-width: 85%` (100% ≤767), `margin: 0 auto`, `flex-grow: 1` to fill flex wrappers | Most-used component on the site; pages fetch, component renders, same as other client sections | Lead |
+| 2026-09-28 | Client list rows are links (new tab) only when `websiteUrl` is set; otherwise plain rows | No client detail pages; arrow implies a destination. All 9 Home clients currently have no URL, so rows render static | Proposed |
+| 2026-09-28 | Client list hover: arrow → `--color-accent` + `rotate(-30.963deg)`; website-screenshot preview centered on the row, opening from the center (height 0 → full). Preview height `15.58rem`, width auto (full screenshot, no crop). Preview shadow `0 0.6875rem 1.48125rem 0.125rem rgba(0,0,0,0.2)` is the **second approved exception** to the no-shadow rule (after Home Services active card). Triggers on any `:hover` (no media gate); linked rows also trigger on `:focus-visible` | Matches `clients-list-hover.png` | Lead |
+| 2026-09-28 | `Button` gained an optional trailing `icon` named slot (`.c-button__icon`, `currentColor`, 0.5em gap `TODO: DS`) | Reusable icon buttons without a new component | Lead |
+| 2026-09-28 | `DECISIONS.md` restructured: Global, then per page; each with Decisions table + Open questions by category (see "How this file works") | Lead request; open questions are relayed to the lead in chat | Lead |
+| 2026-09-28 | Shared `TestimonialCard` (`src/components/ui/TestimonialCard.astro`): 34rem × 23.03rem, padding 2.375rem 2.125rem, gap 1.5rem, column + `space-between`, radius 0.875rem, `--border-default`, white 5% bg (`color-mix` of `--color-white`) + `backdrop-filter: blur(10px)`. Quote `c-paragraph` `--color-text` with curly quotes; author row = photo (initial fallback) + name (700) + role, client logo right | Lead spec | Lead |
+| 2026-09-28 | Card logo = the client that references the testimonial (`client.testimonial`), fallback `testimonial.companyLogo`. New `TESTIMONIALS` query + `getTestimonials()` (all published, oldest first, with `client{ name, logo }`) | Lead: "logo from client related" | Lead |
+| 2026-09-28 | Shared `TestimonialMarquee` (`src/components/ui/TestimonialMarquee.astro`): 2 infinite CSS rows (top → left, bottom → right). <8 testimonials: both rows show all, bottom rotated by half; 8+: split alternately. Each half repeated to ≥ 6 cards, track moves −50%, cards spaced by trailing margin (seamless loop). Repeats `aria-hidden`. Component clips itself; full-bleed is the caller's job | Reused on several pages | Lead |
+| 2026-09-28 | Testimonial marquee pauses on hover / keyboard focus; reduced motion → no animation, rows scroll horizontally | Accessibility (moving content must be pausable) | Proposed |
+| 2026-09-29 | Testimonial marquee: hover/focus pause **removed**; speed 10% slower (13.2s per card, was 12s). Reduced-motion fallback kept (static, horizontally scrollable rows) | Lead request; supersedes the 2026-09-28 pause row | Lead |
+| 2026-09-29 | `Tag` mobile (≤767) font-size `1.3333rem` = 12px at the 9px root, for every `c-tag` site-wide (desktop unchanged, 0.9375rem) | Lead request | Lead |
+| 2026-09-28 | Animation scripts live in `src/scripts/animations/` (one file per animation) and are initialized from a `<script>` in `BaseLayout`; first file: `cta-badges.ts`. CSS-only motion (marquees) stays in the component | Implements the CLAUDE.md animation rule; folder didn't exist before Phase 4 | Lead |
+| 2026-09-29 | Seo: the title template applies only to page-specific titles (Home = "BenorMedia"); canonical + `og:url` use `siteSettings.siteUrl`, else Astro `site` from `PUBLIC_SITE_URL`, else are omitted (no localhost URLs) | QA S1 + S2 | Lead |
+| 2026-09-29 | `docs/refs/` and `.claude/scheduled_tasks.lock` added to `.gitignore`; the refs already tracked stay as they are (the lead handles them) | Lead request | Lead |
+| 2026-09-28 | `CtaBanner` structure = `<section class="c-cta-section">` → `Container` → `.c-cta` (was `<section class="c-container">`). Still rendered by BaseLayout on every page (Home: right below Testimonials). Content = `siteSettings.ctaBanner` when it has a title, else the approved design copy: "Ready to build your website? Let's chat." + Get in Touch (`is-white`, opens contact modal) + See Pricing (`is-glass`, `/pricing`) | No `siteSettings` document exists in Sanity, so the banner had never rendered; lead asked for section → container → CTA | Lead |
+| 2026-09-28 | `CtaBanner`: `.c-cta-section .c-container { padding-top: 0 }`; bottom padding stays the container default | Lead: the section above already provides the spacing | Lead |
+| 2026-09-28 | `CtaBanner` trusted badge (replaces the empty `c-cta__pill`, below the buttons, every page): padding 0.4946rem 0.8902rem, gap 0.5341rem, radius 0.2576rem, white 10% bg, shadow `0.445rem 0.178rem 1.7804rem 0 rgba(0,0,0,0.05)` — **third approved shadow exception**. Text = `siteSettings.ctaBanner.socialProofText` or "Trusted by +100 companies"; circles 1.98rem = 6 client `badge` images + `/images/more-badge.png` | Lead spec (`docs/refs/trusted-badge.png`) | Lead |
+| 2026-09-28 | Badge rotation: all client badges (new `CLIENT_BADGES` query, cached once per build in `site.ts`) ship as JSON in `data-cta-badges`; `src/scripts/animations/cta-badges.ts` (first file in that folder, initialized from BaseLayout) fades the 6 client circles every 5s and swaps in the next 6 from a shuffled deck, so every badge shows before any repeats. No JS / reduced motion: first 6 stay static | Lead: "show all badges while rotating" | Lead |
+| 2026-09-28 | `CtaBanner`: buttons + trusted badge wrapped in `.c-cta__actions` (column, `width: fit-content`) so both share the badge's width; `.c-cta__buttons` is a grid of equal `1fr` columns (one per button) stretched to that width | Lead: buttons and badge must be the same width | Lead |
 
-## Pending
-| Topic | Status |
-|---|---|
-| Forms: Vercel endpoint → Make webhook | Waiting CEO confirmation |
-| Figma Dev seat → MCP QA of DESIGN_SYSTEM | Requested |
+### Open questions
 
-## Open questions
-- See `DESIGN_SYSTEM.md` §9.
-- Animation spec per section.
-- Final copy (many placeholders in design).
-- Production domain — required for Sanity CORS allow-list and Adobe Fonts kit whitelist.
-- File upstream fix for `@sanity/astro` Windows path-strip bug (one-line regex `/[\\/]package\.json$/`); remove `benorSanityAliasFix` workaround from `astro.config.mjs` once a fixed release ships.
-- Revisit `typescript` pin (`^6.0.0`) once Astro supports TS 7 via `@astrojs/ts-content-mapper`.
+#### Content
+- **Final copy** — many placeholders in design (Lorem ipsum, XXX+). Final copy needed before content entry. (2026-09-25)
+- **`siteSettings` document missing in Sanity** — no document exists, so every siteSettings-driven field falls back (CTA banner uses design copy, footer address uses the hardcoded Barcelona fallback, Seo uses code defaults, no social links). Create and fill it in Studio. (2026-09-28)
+- **Client badges are 29×29px** — all 34 badge images are below the ≈64px needed for the 31.68px circles on retina, so they look soft. 22 of 56 clients have no badge (not in the rotation). (2026-09-28)
 
-### Raised in Phase 3 (Astro — Layout Shell)
-- **Eyebrow on-dark variant** — the two shipped eyebrow variants (`is-default`, `is-accent`) only read on light backgrounds. CTA banner (gradient bg) needs on-dark colors; currently overridden scoped to `.c-cta`. Consider a third variant `is-on-dark` in the DS, or a per-instance color override contract.
-- **On-dark surface tokens** — DS has no translucent-white or scrim tokens. `CtaBanner.astro` uses `rgba(255,255,255,α)` literals for the social-proof pill background, border and avatar placeholder, and for the eyebrow on-dark override; `ContactModal.astro` uses `rgba(0,0,0,0.5)` for the `::backdrop` scrim. Consider adding `--color-white-10`, `--color-white-15`, `--color-white-35`, `--color-white-40`, `--color-white-60`, `--color-white-90`, and `--color-scrim` tokens (or a smaller opinionated set) so these components can drop the literals.
-- **Partner-badge assets** — Webflow Partner + Claude Partner Network artwork not delivered; footer uses bordered text boxes as placeholders (`TODO: assets partner-badges`).
-- **Mobile nav / menu / modal designs** — no dedicated mobile designs provided; built functional with DS tokens. Flagged with `/* TODO: DS mobile */` in each component.
-
-### Raised in Phase 1 (UI — Design System)
-- **Adobe Fonts kit ID** — Acumin Pro `<link>` cannot be added to `BaseLayout.astro` until the kit is provisioned and the ID is provided. Kit must also whitelist localhost + Vercel preview + production domains. Placeholder HTML comment in place.
+#### Design team
+- **DESIGN_SYSTEM §9 gaps** — see `DESIGN_SYSTEM.md` §9 for the full list of values still missing from the DS. (2026-09-25)
+- **Animation spec per section** — pending; sections ship static with `data-anim` hooks. (2026-09-25)
+- **Header → content spacing** — Featured Work and Our Work refs both show ≈88px (≈5.5rem) between section header and content; built sections use `margin-top: 3rem`. Confirm the value and apply to all sections at once. (2026-09-28)
+- **Section vertical spacing** — §8.1 uses `padding: 5rem 3rem` on `.c-container`. Confirm whether 5rem is the intended section rhythm or if a separate section token is needed. Marked `/* TODO: DS section vertical spacing */` in `utilities.css`. (2026-09-25)
+- **Tag specs** — §9 flags this. As of 2026-09-28 `src/components/ui/Tag.astro` mirrors the Eyebrow box (see Decisions, Proposed row). Still marked `/* TODO: DS tag specs */` until confirmed. (2026-09-25)
+- **Text color on dark / gradient backgrounds** — §4 assumes `--color-white`; needs confirmation for hero, CTA banner and any gradient-backed surfaces. (2026-09-25)
+- **Eyebrow on-dark variant** — the two shipped eyebrow variants (`is-default`, `is-accent`) only read on light backgrounds. CTA banner (gradient bg) needs on-dark colors; currently overridden scoped to `.c-cta`. Consider a third variant `is-on-dark` in the DS, or a per-instance color override contract. (2026-09-25)
+- **On-dark surface tokens** — DS has no translucent-white or scrim tokens. `CtaBanner.astro` uses `rgba(255,255,255,α)` literals for the social-proof pill background, border and avatar placeholder, and for the eyebrow on-dark override; `ContactModal.astro` uses `rgba(255,255,255,0.05)` + `blur(12px)` for the `::backdrop` scrim (updated 2026-09-29; was `rgba(0,0,0,0.5)`). Consider adding `--color-white-10`, `--color-white-15`, `--color-white-35`, `--color-white-40`, `--color-white-60`, `--color-white-90`, and `--color-scrim` tokens (or a smaller opinionated set) so these components can drop the literals. (2026-09-25)
+- **Hero title gradient stop `#8BC1F9`** — the hero title's text gradient (`HomeHero.astro:168`) ends on `#8BC1F9`, which is not a token. Add it to the DS or map it to an existing token. (2026-09-29)
+- **Mobile nav / menu / modal designs** — no dedicated mobile designs provided; built functional with DS tokens. Flagged with `/* TODO: DS mobile */` in each component. (2026-09-25)
+- **Client list mobile** — no mobile design; tags drop to a second line under icon + name. `TODO: DS mobile`. (2026-09-28)
+- **Button text → icon gap** — 0.5em placeholder in `buttons.css`, `TODO: DS`. (2026-09-28)
+- **Testimonial marquee speed** — no spec; 13.2s per card (~37 px/s at 1440) after the lead's −10%. `TODO: DS`. (2026-09-28)
+- **Testimonial card sizes** — photo 2.75rem, logo 1.8rem tall, photo → name gap, card gap 1.625rem, row gap 1.375rem are measured from the ref. `TODO: DS`. (2026-09-28)
+- ~~**CTA banner social-proof pill**~~ — RESOLVED 2026-09-28: lead spec'd the trusted badge (see Decisions).
+- **Trusted badge sizes** — gap text → circles (0.875rem) and circle overlap (0.4rem) measured from the ref. `TODO: DS`. (2026-09-28)
+- ~~**Client list hover**~~ — RESOLVED 2026-09-28: lead spec'd arrow + screenshot preview (see Decisions). The ref's row lift + row shadow were not requested and are not built.
 - ~~**Eyebrow specs**~~ — RESOLVED 2026-09-25 by project lead. Two variants shipped: `is-default` (15px Acumin 400, 10/16/8/16px padding, 0.5px `--color-gray` border, 3px radius, 0.96px tracking, two 10×10 decorative squares on outer edges) and `is-accent` (same box but `--color-accent` border, 8% accent tint bg, 600 weight, no squares). Implemented in `src/components/ui/Eyebrow.astro`; TODO marker removed.
-- **Tag specs** — §9 flags this. Placeholder implemented in `src/components/ui/Tag.astro` (pill: `c-text_xs`, radius 999px, 0.35em/0.9em padding, 0.08em tracking). Marked `/* TODO: DS tag specs */`.
-- **Section vertical spacing** — §8.1 uses `padding: 5rem 3rem` on `.c-container`. Confirm whether 5rem is the intended section rhythm or if a separate section token is needed. Marked `/* TODO: DS section vertical spacing */` in `utilities.css`.
-- **Text color on dark / gradient backgrounds** — §4 assumes `--color-white`; needs confirmation for hero, CTA banner and any gradient-backed surfaces.
-- **Sitemap `/dev/*` exclusion** — `/dev/styleguide` uses `<meta name="robots" content="noindex, nofollow">`. Once a sitemap integration is added (Phase 2+), exclude `/dev/*` from the generated sitemap as well.
+- ~~**Partner-badge assets**~~ — RESOLVED 2026-09-25: artwork landed as PNG in `/public/images/` (see Decisions). Originally: Webflow Partner + Claude Partner Network artwork not delivered; footer used bordered text boxes as placeholders.
+
+#### Lead / CEO
+- **White-on-gradient contrast (QA S6)** — lead: leave for now (2026-09-29). Hero stat labels (60% white, 1.67–2.39:1), hero body text at the light end of the gradient (2.29:1) and the hero title's gradient end (1.21:1) fail WCAG AA. Accept for brand, or adjust (darker gradient end, full-opacity labels, text shadow is not allowed). Accent tag text is 4.48:1 (just under 4.5). (2026-09-29)
+- **Forms: Vercel endpoint → Make webhook** — waiting CEO confirmation. Contact modal ships UI only. (2026-09-24)
+- **Production domain** — required for Sanity CORS allow-list, Adobe Fonts kit whitelist and `PUBLIC_SITE_URL` (Astro `site` → canonical / `og:url`). Lead: configure at the end of development. Until then canonical and `og:url` are omitted on Vercel; do not set `PUBLIC_SITE_URL` to a localhost URL there. (2026-09-25, updated 2026-09-29)
+- **Adobe Fonts kit ID** — Acumin Pro `<link>` cannot be added to `BaseLayout.astro` until the kit is provisioned and the ID is provided. Kit must also whitelist localhost + Vercel preview + production domains. Placeholder HTML comment in place. Until then body text renders in the fallback font, so text wraps differ from the refs. (2026-09-25)
+- **Figma Dev seat → MCP QA of DESIGN_SYSTEM** — requested. (2026-09-25)
+
+#### Needs lead OK
+- **Fixed-field Sanity schemas, no page builder** (2026-09-24)
+- **Mobile nav / menu built functional without a design** (2026-09-25)
+- **CTA banner eyebrow on-dark override** (2026-09-25)
+- **`Tag` mirrors the Eyebrow box** (2026-09-28)
+- **`SectionHeader` title `\n` line breaks** (2026-09-28)
+- **Client list rows link to `websiteUrl` in a new tab** (2026-09-28)
+- ~~**Testimonial marquee pauses on hover / focus**~~ — RESOLVED 2026-09-29: lead removed the pause (see Decisions).
+
+#### Engineering follow-ups
+- ~~**Phase 4 final QA should-fix items (S1–S11)**~~ — RESOLVED 2026-09-29: S1–S5 and S7–S11 fixed (see `docs/handoffs/2026-09-29_astro_qa-fixes-nav-services.md` and the Phase 4 handoff). S6 (contrast) deferred by the lead — see Lead / CEO.
+- **Mobile menu backdrop click can't close the menu** — `.c-nav__mobile-inner` has `min-height: 100%`, so no click lands on the backdrop. X, Esc and link clicks work. Found while fixing S5. (2026-09-29)
+- **QA nits N1–N10** — still open, listed in `docs/handoffs/2026-09-29_qa_phase4-home-final-review.md` (modal copy spacing, duplicate SR output in testimonial rows, reduced-motion rows not keyboard-scrollable, partial badge rotation with 7–11 badges, images without width/height, empty LogoStrip, no Organization JSON-LD fallback, untokenized font sizes, nav menu roles without arrow keys, accent tag 4.48:1). (2026-09-29)
+- **`@sanity/astro` upstream fix** — file upstream fix for the Windows path-strip bug (one-line regex `/[\\/]package\.json$/`); remove `benorSanityAliasFix` workaround from `astro.config.mjs` once a fixed release ships. (2026-09-25)
+- **TypeScript pin** — revisit `typescript` pin (`^6.0.0`) once Astro supports TS 7 via `@astrojs/ts-content-mapper`. (2026-09-25)
+- **Sitemap `/dev/*` exclusion** — `/dev/styleguide` uses `<meta name="robots" content="noindex, nofollow">`. Once a sitemap integration is added (Phase 2+), exclude `/dev/*` from the generated sitemap as well. (2026-09-25)
+
+---
+
+## Home
+
+### Decisions
+| Date | Decision | Reason | Status |
+|---|---|---|---|
+| 2026-09-26 | Services: shadow exception on the active card only (`0 0 20px rgba(0,0,0,0.05)`) | CEO-approved deviation from the DS "no shadows" rule to signal the selected service | Lead |
+| 2026-09-26 | Hero on the gradient background with white text; CTAs `is-white` (Get in Touch → contact modal) + `is-glass` (See Our Work → `/work`); title gradient text | Matches `hero.jpg` (resolved part-1 QA note) | Lead |
+| 2026-09-26 | LogoStrip: title is a default `Eyebrow` ("trusted by 100+ b2b teams"); every client with a logo, alphabetical, in a full-bleed CSS marquee (right → left, 270s loop, off for reduced motion) | Matches `logos-partners.jpg` (resolved part-1 QA note) | Lead |
+| 2026-09-26 | Featured Work: 2 `ClientCard variant="featured"` (Surfe, Puzzle), screenshot + testimonial body in a `1fr / .65fr` grid, second card mirrored; single column ≤991 | Matches `featured-work.jpg` (resolved part-1 QA note) | Lead |
+| 2026-09-26 | Services: header centered; left = illustration with the 2 CTAs overlaid at the bottom, right = 3 click-to-activate service cards (`<button aria-pressed>`); active card swaps the illustration (`services.png` / `services-2.png`) and rotates its gradient arrow −25deg. Body copy always visible (not an accordion) | Matches `services.jpg` (resolved part-1 QA notes) | Lead |
+| 2026-09-28 | Our Work cards pin 6 clients by `_id` (Surfe, Puzzle, Sprii, Arrows, Garaje de Ideas, SimpleTiger) via `getClientsByIds`; rendered with `ClientCard variant="grid"` using `cardThumbnail` + `logo` + funds/category tags. Logos: `is-compact` (Surfe, Arrows) 1.4rem, others 2.35rem | Same pinning pattern as Featured Work; per-logo sizing set by lead visual QA | Lead |
+| 2026-09-28 | Our Work client list: `ClientList` inside `.c-work__list` (flex center, `margin-top: 2.5rem`), `limit={9}`, 9 clients pinned by `_id` (Unit21, DarwinCX, Mashgin, Major Players, HireArt, Resourcify, Userled, Sublime Security, Notable Capital) | Matches `clients-list.png` | Lead |
+| 2026-09-28 | Our Work "View All 100+ Projects" CTA: `.c-work__cta` (flex, centered, `margin-top: 2.5em`), `Button is-gradient` → `/work` with a 1.5rem arrow in the `icon` slot | Lead spec | Lead |
+| 2026-09-28 | Technologies ships design-only: SectionHeader + static diagram `<img src="/images/home/technologies.svg">` with `data-anim="tech-diagram"` hook. The served SVG is an optimized copy of `docs/refs/technologies-image.svg`: the 29 embedded PNGs (up to 3840 px, displayed ≤ 45 px) re-encoded as WebP, longest side 160 px; vectors, text outlines, pattern transforms untouched. 20.3 MB → 394 KB (192 KB gzip); retina render diff 0.04% of pixels | Animation spec pending from design; a 20 MB image is not shippable | Lead |
+| 2026-09-28 | Testimonials: SectionHeader + `TestimonialMarquee` fed by `getTestimonials()`, full-bleed via `margin-inline: calc(50% - 50vw)` with `overflow-x: clip` on the section | Matches `testimonials-component.jpg` | Lead |
+| 2026-09-28 | Testimonials background: `docs/refs/testimonials-section-bg.svg` → `/images/home/testimonials-bg.svg` (180 KB vector, no embedded bitmaps), `no-repeat center bottom / cover` on `.c-testimonials` | Lead spec; SVG is 1920×1284 = the section at the 1920 frame | Lead |
+| 2026-09-29 | Hero title mobile (≤767): `font-size: var(--fs-text-xxl)` (DS mobile H1, 4rem = 36px; was the fixed 6.286rem ≈ 57px), letter-spacing −0.08rem (scaled) | Lead: reduce hero title on mobile; value taken from the DS mobile type scale | Lead |
+
+### Open questions
+
+#### Content
+- **Our Work cards — `fundsRaised` empty on all 6 clients** — the "€XXM RAISED" tag is hidden until the field is filled in Studio. Ref values (€14.5M / €66.5M) look like design placeholders; confirm real amounts per client. (2026-09-28)
+- **Our Work cards — Garaje de Ideas thumbnail shows "GARAJE CENTRAL" artwork** — all three source files (`card-garaje-de-ideas.png`, `card-garaje-central.png`, `card-garaje.png`) are the same image; the Figma ref shows "GARAJE DE IDEAS". Need the correct asset. (2026-09-28)
+- **Our Work client list data** — `fundsRaised` and `websiteUrl` are empty on all 9 list clients (funds tags hidden, rows not linked). Resourcify has no `icon` (initial fallback shown). Major Players' `icon` is an 87×26 wordmark, not the "M" mark in the ref; DarwinCX (41×22) and Major Players icons are low-res. (2026-09-28)
+- **Testimonials content** — all 4 testimonials (Surfe, HireArt, Puzzle, SimpleTiger) are placeholders: same author (Rob Alfano, VP of Digital, Verifone), Lorem ipsum quote, no author photo (initial shown). (2026-09-28)
+- ~~**Testimonials section description**~~ — RESOLVED 2026-09-28: "What marketing leaders say after launch day, and months into working together."
+
+#### Design team
+- **Our Work card interaction** — no hover/link spec for Our Work cards (DS §10 says "Hover"); built static. (2026-09-28)
+- **Technologies animation spec** — pending from design. The diagram is one flat SVG (labels are outlined paths, no `<text>`), so an animated version (DS §10: capability marquee, connector lines) will likely need the parts delivered separately (category cards, centre mark, lines, capability pills) or rebuilt in HTML. (2026-09-28)
+- **Technologies mobile** — no mobile design; the diagram scales with the container and its labels are ≈3 px tall at 375 px. Needs a mobile layout (stacked cards / marquee) or a mobile-specific asset. `TODO: DS mobile`. (2026-09-28)
+- ~~**Testimonials background**~~ — RESOLVED 2026-09-28: lead delivered `testimonials-section-bg.svg` (see Decisions).
+- ~~**Our Work logo optical sizing**~~ — RESOLVED 2026-09-28: lead set per-logo sizes (`is-compact` for Surfe + Arrows, see Decisions).
+
+#### Engineering follow-ups
+- **Technologies asset pipeline** — future exports of this diagram should come with bitmaps at ≤ 2–3× display size (or be run through the same WebP downscale) before landing in `public/`. (2026-09-28)

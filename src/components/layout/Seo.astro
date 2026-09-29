@@ -42,9 +42,12 @@ const ogImageResolved: OgImage | undefined =
 
 // Title template ------------------------------------------------------------
 const template = siteSettings?.titleTemplate ?? "%s | BenorMedia";
+// Template only applies to a page-specific title. A fallback to the default
+// title or the site name is used as-is (avoids "BenorMedia | BenorMedia").
+const titleFromPage = !!(pageSeo?.metaTitle ?? titleProp);
 const isDefaultTitle =
   !!siteSettings?.defaultMetaTitle && rawTitle === siteSettings.defaultMetaTitle;
-const title = isDefaultTitle ? rawTitle : template.replace("%s", rawTitle);
+const title = titleFromPage && !isDefaultTitle ? template.replace("%s", rawTitle) : rawTitle;
 
 // Robots --------------------------------------------------------------------
 const envIsProd = import.meta.env["PUBLIC_SITE_ENV"] === "production";
@@ -52,10 +55,16 @@ const shouldNoIndex = noIndexProp || pageSeo?.noIndex === true || !envIsProd;
 const robots = shouldNoIndex ? "noindex, nofollow" : "index, follow";
 
 // Canonical URL -------------------------------------------------------------
+// Base = siteSettings.siteUrl, else Astro `site` (PUBLIC_SITE_URL env). With
+// neither, canonical + og:url are omitted rather than pointing at localhost.
 const siteUrl = siteSettings?.siteUrl?.replace(/\/$/, "");
 const canonical = canonicalUrlProp
   ?? pageSeo?.canonicalUrl
-  ?? (siteUrl ? `${siteUrl}${Astro.url.pathname}` : new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString());
+  ?? (siteUrl
+    ? `${siteUrl}${Astro.url.pathname}`
+    : Astro.site
+      ? new URL(Astro.url.pathname, Astro.site).toString()
+      : undefined);
 
 // OG image URL --------------------------------------------------------------
 function resolveOgImage(img: OgImage | undefined): string | undefined {
@@ -74,13 +83,13 @@ const googleSiteVerification = siteSettings?.googleSiteVerification;
 
 <title>{title}</title>
 {description && <meta name="description" content={description} />}
-<link rel="canonical" href={canonical} />
+{canonical && <link rel="canonical" href={canonical} />}
 <meta name="robots" content={robots} />
 
 <meta property="og:title" content={title} />
 {description && <meta property="og:description" content={description} />}
 {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
-<meta property="og:url" content={canonical} />
+{canonical && <meta property="og:url" content={canonical} />}
 <meta property="og:type" content={ogType} />
 <meta property="og:site_name" content={siteName} />
 

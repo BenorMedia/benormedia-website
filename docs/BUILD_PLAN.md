@@ -2,7 +2,7 @@
 
 ✅ = project lead approval checkpoint. Nothing moves to the next step without it.
 Current target: **Home complete by end of Day 5.**
-Current phase: **Phase 0**
+Current phase: **Day 6 — Phase 5 (remaining pages) + Phase 6 (motion / forms / webhooks)**
 
 Figma is NOT a dependency. We build from `DESIGN_SYSTEM.md` + screenshots. Figma checks are inserted as a floating phase (**Phase F**) whenever access is available (see bottom).
 
@@ -42,13 +42,13 @@ Figma is NOT a dependency. We build from `DESIGN_SYSTEM.md` + screenshots. Figma
 | `c-contact-modal`: native `<dialog>`, opened by any "Get in Touch" link; form UI only (submit wired on Day 6) | astro + ui |
 ✅ Checkpoint: shell reviewed at 1440 / 991 / 767 / 375.
 
-## Day 4 — Phase 4 Home (part 1)
+## Day 4 — Phase 4 Home (part 1) — ✅ DONE
 Sections: Hero · Logo strip · Featured Work · Services accordion. astro builds, ui supports, qa reviews the PR.
-✅ Checkpoint.
+✅ Checkpoint. Approved by the project lead (PR #6 merged to `dev`).
 
-## Day 5 — Phase 4 Home (part 2)
+## Day 5 — Phase 4 Home (part 2) — ✅ DONE
 Sections: Our Work (cards + list) · Technologies · Testimonials. Home animations (marquees, etc.) per spec; if no spec yet, static first. Full qa pass on Home.
-✅ Checkpoint: **Home complete on preview.**
+✅ Checkpoint: **Home complete on preview.** Phase 4 approved by the project lead 2026-09-29. Handoff: `docs/handoffs/2026-09-29_orchestrator_phase4-home.md`.
 
 ---
 

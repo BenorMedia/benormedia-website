@@ -6,10 +6,14 @@
  * - Logo: siteSettings.logo overrides the static /images/Logo.svg fallback.
  * - "Get in Touch" is a <button> (no href), fires the ContactModal via
  *   [data-open-contact] — wired globally in ContactModal.astro.
- * - Services dropdown: hover on hover-capable devices; click toggle for touch;
- *   Esc closes and restores focus; outside click closes.
- * - Mobile (≤767): hamburger opens full-height off-canvas panel. body scroll
- *   is locked while open. Close via X, Esc, or backdrop click.
+ * - Services dropdown: hover on hover-capable devices; click toggle for touch
+ *   and keyboard; Esc closes and restores focus; outside click and focus
+ *   leaving the dropdown close it.
+ * - Mobile (≤767): hamburger opens full-height off-canvas panel (a modal
+ *   dialog). While open: body scroll is locked, the rest of the page is
+ *   `inert`, focus moves to the close button. Close via X, Esc, backdrop or
+ *   link click; focus returns to the burger. The menu's "Get in Touch" closes
+ *   the menu before the ContactModal opens.
  */
 import type { SiteSettings } from "../../lib/sanity/types";
 import { urlFor } from "../../lib/sanity/image";
@@ -103,7 +107,14 @@ const primaryLinks = [
     </button>
   </div>
 
-  <div id="nav-mobile-panel" class="c-nav__mobile" hidden>
+  <div
+    id="nav-mobile-panel"
+    class="c-nav__mobile"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Menu"
+    hidden
+  >
     <div class="c-nav__mobile-inner">
       <button
         type="button"
@@ -171,6 +182,13 @@ const primaryLinks = [
         trigger.focus();
       }
     });
+
+    // Close when keyboard focus leaves the trigger + panel (e.g. Tab past
+    // the last link), so the panel and aria-expanded stay in sync.
+    services.addEventListener("focusout", (e) => {
+      const next = e.relatedTarget as Node | null;
+      if (!next || !services.contains(next)) closeServices();
+    });
   }
 
   // --- Scroll state (toggles the underline border) ------------------------
@@ -188,20 +206,49 @@ const primaryLinks = [
   const burger = document.querySelector<HTMLButtonElement>(".c-nav__burger");
   const mobile = document.querySelector<HTMLElement>("#nav-mobile-panel");
   const mobileClose = document.querySelector<HTMLButtonElement>(".c-nav__mobile-close");
+  const navInner = document.querySelector<HTMLElement>(".c-nav__inner");
+
+  // Elements made inert while the menu is open (everything outside the panel:
+  // the header bar behind it, main, CTA banner, footer...). Tracked so we only
+  // restore what we changed.
+  let inerted: HTMLElement[] = [];
+  let mobileOpen = false;
+
+  function setPageInert(on: boolean) {
+    if (on) {
+      const header = mobile?.closest("header");
+      const targets = Array.from(document.body.children).filter(
+        (el): el is HTMLElement =>
+          el instanceof HTMLElement && el !== header && el.tagName !== "SCRIPT",
+      );
+      if (navInner) targets.push(navInner);
+      inerted = targets.filter((el) => !el.inert);
+      inerted.forEach((el) => (el.inert = true));
+    } else {
+      inerted.forEach((el) => (el.inert = false));
+      inerted = [];
+    }
+  }
 
   function openMobile() {
-    if (!mobile || !burger) return;
+    if (!mobile || !burger || mobileOpen) return;
+    mobileOpen = true;
     mobile.hidden = false;
     // Allow next paint to apply the transition
     requestAnimationFrame(() => mobile.classList.add("is-open"));
     burger.setAttribute("aria-expanded", "true");
     document.body.style.overflow = "hidden";
+    setPageInert(true);
+    mobileClose?.focus();
   }
   function closeMobile() {
-    if (!mobile || !burger) return;
+    if (!mobile || !burger || !mobileOpen) return;
+    mobileOpen = false;
     mobile.classList.remove("is-open");
     burger.setAttribute("aria-expanded", "false");
     document.body.style.overflow = "";
+    setPageInert(false);
+    burger.focus();
     // Hide after transition; keep simple + immediate for reduced motion
     window.setTimeout(() => {
       if (mobile && !mobile.classList.contains("is-open")) mobile.hidden = true;
@@ -210,7 +257,7 @@ const primaryLinks = [
 
   if (burger && mobile) {
     burger.addEventListener("click", () => {
-      if (mobile.classList.contains("is-open")) closeMobile();
+      if (mobileOpen) closeMobile();
       else openMobile();
     });
     mobileClose?.addEventListener("click", closeMobile);
@@ -218,11 +265,42 @@ const primaryLinks = [
       if (e.target === mobile) closeMobile();
     });
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && mobile.classList.contains("is-open")) closeMobile();
+      if (e.key === "Escape" && mobileOpen) closeMobile();
     });
     // Close on nav link click (so anchor navigation shows the destination page cleanly)
     mobile.querySelectorAll("a").forEach((a) => {
       a.addEventListener("click", () => closeMobile());
+    });
+
+    // Menu "Get in Touch": close the menu first (capture phase, so it runs
+    // before ContactModal's own click listener) so the modal never stacks on
+    // an open menu and the page is no longer inert when the modal opens.
+    let contactFromMenu = false;
+    mobile.addEventListener(
+      "click",
+      (e) => {
+        if ((e.target as Element).closest(".js-open-contact")) {
+          contactFromMenu = true;
+          closeMobile();
+        }
+      },
+      { capture: true },
+    );
+    // ContactModal restores focus to its opener, which here is the now-hidden
+    // menu button. If focus was lost, land it on the burger instead.
+    document.querySelector("#contact-modal")?.addEventListener("close", () => {
+      if (!contactFromMenu) return;
+      contactFromMenu = false;
+      const active = document.activeElement as HTMLElement | null;
+      if (!active || active === document.body || !active.checkVisibility()) {
+        burger.focus();
+      }
+    });
+
+    // Leaving the mobile breakpoint hides the panel via CSS; reset state so
+    // the page is not left inert.
+    window.matchMedia("(min-width: 768px)").addEventListener("change", (e) => {
+      if (e.matches && mobileOpen) closeMobile();
     });
   }
 </script>
@@ -341,16 +419,15 @@ const primaryLinks = [
     visibility: visible;
     pointer-events: auto;
   }
-  /* Hover open on hover-capable devices */
+  /* Hover open on hover-capable devices. Keyboard open/close is driven only
+     by `is-open` (script), so Esc and focus-out visibly close the panel. */
   @media (hover: hover) {
-    .c-nav__item.is-has-menu:hover > .c-nav__panel,
-    .c-nav__item.is-has-menu:focus-within > .c-nav__panel {
+    .c-nav__item.is-has-menu:hover > .c-nav__panel {
       opacity: 1;
       visibility: visible;
       pointer-events: auto;
     }
-    .c-nav__item.is-has-menu:hover .c-nav__caret,
-    .c-nav__item.is-has-menu:focus-within .c-nav__caret {
+    .c-nav__item.is-has-menu:hover .c-nav__caret {
       transform: rotate(180deg);
     }
   }
