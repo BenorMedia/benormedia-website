@@ -56,7 +56,7 @@ Sections: Our Work (cards + list) · Technologies · Testimonials. Home animatio
 Phase 5 branch: `feat/phase5-secondary-pages` (all pages, one branch, lead checkpoint + commit per page). Plan approved 2026-09-29.
 Order and status:
 1. Work (listing only, no detail pages) — V1 built, QA PASS WITH NOTES, open items W-1…W-12
-2. Pricing
+2. Pricing — V1 built (no per-page QA), open items P-1…P-25 in `docs/PHASE5_OPEN_ITEMS.md`
 3. Service template → 3 service pages (checkpoint: lead approves `service` fields in `SCHEMAS.md` first)
 4. Testimonials (waits for `docs/refs/testimonials/`)
 5. **Blog listing + article — OPTIONAL.** Decide at the end of Phase 5 whether to build or keep out (production can launch without a blog). If out, hide the footer "Blog" link.

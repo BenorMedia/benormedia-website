@@ -310,7 +310,7 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
  * Returns `[]` immediately when called with no IDs so callers can safely
  * forward variables that may be empty in early development.
  */
-export async function getClientsByIds(ids: string[]): Promise<Client[]> {
+export async function getClientsByIds(ids: readonly string[]): Promise<Client[]> {
   if (ids.length === 0) return [];
 
   const result = await sanityClient.fetch<Client[]>(CLIENTS_BY_IDS, { ids });

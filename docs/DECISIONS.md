@@ -113,6 +113,8 @@
 | 2026-09-29 | Shared `PageHero` section (`src/components/sections/`): white hero for secondary pages = `SectionHeader as="h1"` + `titleClass="c-text_xxl"`, optional `accent`, top padding 7.857rem (5rem ≤767), no bottom padding (the next section owns it) | Work hero ref; Pricing / Testimonials / Blog heroes follow the same pattern | Proposed |
 | 2026-09-29 | `ClientList`: every `<li>` emits `data-category="<category slug>"` (when set) as a filter hook; the stacked-deck overlap now applies only after a visible row (`.c-client-list__item:not([hidden]) ~ .c-client-list__item`) and `[hidden]` rows are `display: none`. Home renders the same | Work filters hide rows; the first visible row must not keep the −14px overlap | Proposed |
 | 2026-09-29 | `SegmentedControl mode="tabs"` renders its tablist `hidden`; `initTabs` removes `hidden` on init (cleanup restores it and shows every panel). Toggle mode unchanged | QA G-2: no dead tabs without JS; panels stay visible | Proposed |
+| 2026-09-29 | Shared `FaqSection` (`src/components/sections/`): props `title`, `groups: { label, value, items: {question, answer}[] }[]`, `jsonLd` (default true), `background` (default true), `id` prefix. 2+ groups → tabs + one `FaqAccordion` per group (`initTabs` in the component script); 1 group → accordion only; empty groups dropped, nothing left → no section. No JS: tablist hidden, every panel shown under an `<h3>` with its group label (hidden once tabs work). Emits FAQPage JSON-LD (answered questions only) | Pricing FAQ now, service template later | Proposed |
+| 2026-09-29 | Static page copy that more than one page uses lives in `src/lib/content/` (`our-work.ts` Our Work pinned IDs, shared by Home + Pricing; `faqs.ts` FAQ groups; `pricing.ts` plans) | One place to edit shared copy; Home output unchanged | Proposed |
 
 ### Open questions
 
@@ -170,6 +172,8 @@
 - **`PageHero` shared secondary-page hero** (2026-09-29)
 - **`ClientList` `data-category` hook + hidden-row overlap rule** (2026-09-29)
 - **`SegmentedControl` tabs render the tablist `hidden` until `initTabs` (G-2)** (2026-09-29)
+- **Shared `FaqSection` (tabs, no-JS group headings, FAQPage JSON-LD)** (2026-09-29)
+- **Shared static copy in `src/lib/content/`** (2026-09-29)
 - ~~**Testimonial marquee pauses on hover / focus**~~ — RESOLVED 2026-09-29: lead removed the pause (see Decisions).
 
 #### Engineering follow-ups
@@ -288,15 +292,30 @@
 ### Decisions
 | Date | Decision | Reason | Status |
 |---|---|---|---|
+| 2026-09-29 | Page = `PageHero` (Pricing / "Simple and transparent\npricing that meets your needs." with accent "that meets your needs.") → `PricingPlans` (3 `PricingCard`s) → `LogoStrip` → `FaqSection` → `Testimonials` → `OurWork` (same clients as Home) → CTA banner (BaseLayout). All copy static; Sanity = logos, testimonials, Our Work clients, `pricingPage.seo` (null → fallback title "Pricing" + 156-char description) | `pricing-preview.png`; SEO-only singleton (Lead 2026-09-29) | Proposed |
+| 2026-09-29 | Plan copy transcribed verbatim from `pricing-cards.jpg` into `src/lib/content/pricing.ts`; cards are direct children of a `repeat(3, 1fr)` grid (1 column ≤991) with a visually hidden `<h2>` "Plans" | Subgrid alignment contract (ui handoff) | Proposed |
+| 2026-09-29 | FAQ answers and the whole AEO tab are generated placeholder copy (lead request), based only on facts on the pricing cards; `TODO: COPY` at the top of `src/lib/content/faqs.ts` and per group. The FAQPage JSON-LD ships the same placeholder text until replaced | Ref has questions only for one tab and one lorem answer | Proposed |
+| 2026-09-29 | FAQ background = `faqs-bg.png` flattened on white and exported as WebP: `public/images/pricing/faqs-bg.webp` (1920 wide, 21 KB) + `faqs-bg@2x.webp` (3840 wide, 55 KB) via `image-set()`, `cover`, anchored center bottom (source 7680×4140 PNG, 4.6 MB, untouched) | The export is the whole 1920×1035 section at 4x; alpha maxed at 62%, so flattening on the white section bg loses nothing | Proposed |
 
 ### Open questions
 
 #### Content
-- **FAQ copy** — only the "Web Design And Development" questions are shown, with one lorem answer; the "Answer Engine Optimization (AEO)" tab and 4 of 5 answers are missing. Built with `TODO: COPY`. (2026-09-29)
+- **FAQ copy** — only the "Web Design And Development" questions are shown, with one lorem answer; the "Answer Engine Optimization (AEO)" tab and 4 of 5 answers are missing. Built with generated placeholder answers and 5 placeholder AEO questions (`TODO: COPY`, `src/lib/content/faqs.ts`). (2026-09-29)
+- **`pricingPage` document missing in Sanity** — fallback meta title "Pricing" and description "Simple, transparent pricing for B2B websites: monthly design and development, AEO/GEO growth plans, or one-off projects. Unlimited requests, cancel anytime." (`TODO: COPY`). (2026-09-29)
+- **Plan name** — the card says "Growth (AEO/GEO + CRO)", the nav / footer say "Growth (AEO / SEO / CRO)". Built as the card ref. Which is right? (2026-09-29)
+- **Hidden heading** — visually hidden `<h2>` "Plans" above the cards is a placeholder (`TODO: COPY`). (2026-09-29)
 
 #### Design team
-- **FAQ background asset** — `docs/refs/pricing/faqs-bg.png` is 7680×4140; needs a web-sized export (SVG preferred). (2026-09-29)
-- **Mobile / tablet** — no mobile refs; built with DS tokens, `TODO: DS mobile`. (2026-09-29)
+- ~~**FAQ background asset**~~ — RESOLVED 2026-09-29: web export produced from the PNG (see Decisions). An SVG from design would still be sharper and lighter.
+- **Mobile / tablet** — no mobile refs; built with DS tokens, `TODO: DS mobile`. At ≤991 the cards stack full width (811px at 991: lots of empty space); the FAQ globe shows only as a faint crop on phones. (2026-09-29)
+- **Pricing section background** — the ref shows faint line-art arcs left and right of the cards plus the lavender glow on cards 1 and 3. No asset delivered; not built. (2026-09-29)
+- **Spacing** — measured from the 1920 ref at 1/14 rem, `TODO: DS`: hero title → cards 7.357rem (103px), cards → logo strip 4.357rem (61px), card gap 1.071rem (15px), logo strip → FAQ title and last FAQ row → section end 8.571rem (120px), title → tabs 1.714rem (24px), tabs → first row 3.5rem (49px). Mobile guesses 5rem / 3rem. (2026-09-29)
+- **FAQ title size** — ref ≈ 60px at the 1920 frame, `c-text_xl` is 54.7px (SectionHeader default kept). (2026-09-29)
+- **Card width at 1440** — the ref cards are 441px wide at 1920 (1680px content); with the 1440px container they are 400px, so "Growth (AEO/GEO + CRO)" wraps to 2 lines and descriptions to 3–4 lines. Subgrid keeps prices and buttons aligned. (2026-09-29)
+- **FAQ default state** — the ref shows the second question open; built all closed (FaqAccordion default). (2026-09-29)
+
+#### Needs lead OK
+- **Pricing page structure, plans data, placeholder FAQ copy, FAQ background export** — see the four Proposed rows above. (2026-09-29)
 
 ---
 

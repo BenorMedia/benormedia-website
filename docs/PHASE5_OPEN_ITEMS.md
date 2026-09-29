@@ -106,4 +106,47 @@ Status: V1 built. Per-page QA done once (PASS WITH NOTES).
 ---
 
 ## Pricing (`/pricing`)
-Status: in progress.
+Status: V1 built (no per-page QA). Details: `docs/handoffs/2026-09-29_astro_phase5-pricing.md`.
+
+### Known issues / nits
+| ID | Item | Where | Status |
+|---|---|---|---|
+| P-1 | At 1440 the cards are 400px wide (ref 441px at the 1920 frame, container capped at 1440px): "Growth (AEO/GEO + CRO)" wraps to 2 lines and descriptions to 3–4 lines. Subgrid keeps prices and buttons aligned | `PricingPlans.astro` / `.c-container` | Open |
+| P-2 | Hero title breaks "needs." onto a 3rd line at 991 (forced `\n` + 66px title) | `PageHero` / `c-text_xxl` at 12px root | Open |
+| P-3 | FAQPage JSON-LD ships the placeholder FAQ copy until the final copy lands (staging is noindex) | `FaqSection.astro`, `src/lib/content/faqs.ts` | Open |
+| P-4 | Reused components still render `<img>` without width/height (162 of 186 on this page: LogoStrip, ClientCard, ClientList, TestimonialCard, G-16). No new `<img>` added. LogoStrip / OurWork are guarded in the page so they don't render empty (G-17) | `src/pages/pricing.astro` | Open |
+| P-5 | Solid white FAQ rows hide most of the globe when every row is closed (ref rows look slightly see-through) | `FaqAccordion.astro` | Open |
+| P-6 | Faint dotted row near the bottom-right of the FAQ background: it is in the source `faqs-bg.png` too (export artifact) | `public/images/pricing/faqs-bg*.webp` | Open |
+| P-7 | Hidden h2 uses a scoped visually-hidden class until `cc-sr-only` exists (G-14) | `PricingPlans.astro` | Open |
+| P-8 | FAQ tabs wrap to 2 rows at 375 (ui primitive's mobile behavior) | `SegmentedControl.astro` | Open |
+| P-9 | Home: `OurWork` CSS is now emitted as its own chunk because two pages use it. Markup is identical to before (verified); only the `<link>` list changed | build output | Open (info) |
+| P-10 | G-2 fix touched ui-owned files (`SegmentedControl.astro`, `tabs.ts`) at the orchestrator's request: @ui to review | `src/components/ui/`, `src/scripts/ui/` | Open |
+
+### Questions for the lead
+| ID | Question | Status |
+|---|---|---|
+| P-11 | Plan name: the card says "Growth (AEO/GEO + CRO)", the nav / footer say "Growth (AEO / SEO / CRO)". Which one? (built as the card) | Open |
+| P-12 | FAQ default state: the ref shows the 2nd question open. Keep all closed, or open the first one? | Open |
+| P-13 | OK to keep the generated placeholder FAQ answers (and the 5 AEO questions) on staging until final copy? | Open |
+| P-14 | Approve: page structure, plans data in `src/lib/content/pricing.ts`, shared `FaqSection` (tabs, no-JS group headings, JSON-LD), shared `src/lib/content/` (Our Work pins moved from Home), FAQ background export | Open |
+
+### Design team
+| ID | Item | Status |
+|---|---|---|
+| P-15 | `TODO: DS` spacing, measured at 1/14 rem: hero title → cards 7.357rem (103px), cards → logo strip 4.357rem (61px), card gap 1.071rem (15px), logo strip → FAQ title 8.571rem (120px), title → tabs 1.714rem (24px), tabs → first row 3.5rem (49px), last row → section end 8.571rem (120px), no-JS panel gap 4rem. Mobile guesses: 5rem section padding, 3rem tabs → rows (G-26 base question applies) | Open |
+| P-16 | Pricing section background not built: faint line-art arcs left and right of the cards + lavender glow on cards 1 and 3. Asset needed | Open |
+| P-17 | Card button is 50px tall in the ref, the DS button is ≈56px (DS kept) | Open |
+| P-18 | Gradient price text contrast at its light end (see G-3) | Open |
+| P-19 | FAQ title ≈60px in the ref vs `c-text_xl` 54.7px (kept the SectionHeader default) | Open |
+| P-20 | FAQ background: current asset is a WebP export of the PNG (flattened on white, 21 KB 1x / 55 KB 2x). An SVG from design would be sharper and lighter | Open |
+| P-21 | Mobile / tablet: no refs. Cards stack full width at ≤991 (811px wide at 991); on phones the FAQ globe shows as a faint crop (`cover`). `TODO: DS mobile` | Open |
+
+### Content
+| ID | Item | Status |
+|---|---|---|
+| P-22 | `TODO: COPY` placeholder FAQ copy: 5 generated answers ("Web Design And Development") and 5 generated questions + answers ("Answer Engine Optimization (AEO)") in `src/lib/content/faqs.ts` | Open |
+| P-23 | `TODO: COPY` fallback meta title "Pricing" + 156-char description, until the `pricingPage` document exists in Studio | Open |
+| P-24 | `TODO: COPY` visually hidden h2 "Plans" above the cards | Open |
+| P-25 | Create the `pricingPage` document in Studio with real SEO copy | Open |
+
+---

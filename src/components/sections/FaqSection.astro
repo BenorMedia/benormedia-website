@@ -1,0 +1,215 @@
+---
+/**
+ * FaqSection — shared FAQ block: centered title, topic tabs, one accordion per
+ * topic. Used by Pricing; built to be reused by the service template.
+ * Ref: `docs/refs/pricing/FAQs.jpg` (1920 frame, 1 ref px = 1/14 rem).
+ *
+ * Data comes in through props (static copy in `src/lib/content/faqs.ts`).
+ *   - 2+ groups → `SegmentedControl mode="tabs"` + one `FaqAccordion` panel
+ *     per group, wired by `initTabs` (`src/scripts/ui/tabs.ts`).
+ *   - 1 group  → the accordion only, no tabs.
+ *   - Groups with no items are dropped; no items at all → renders nothing.
+ *
+ * No JS: the tablist stays `hidden` (SegmentedControl), every panel is visible
+ * and each panel shows its group label as an `<h3>`. Once the tabs work, the
+ * script adds `is-enhanced` and the `<h3>`s are hidden (the tabs label the
+ * panels instead).
+ *
+ * Emits FAQPage JSON-LD from the same data (questions with an answer only);
+ * `jsonLd={false}` turns it off (e.g. if a page already emits one).
+ *
+ * `background` (default true): the wireframe globe from
+ * `docs/refs/pricing/faqs-bg.png`, exported as `public/images/pricing/faqs-bg{,@2x}.webp`
+ * (1920 / 3840 wide, flattened on white). The export is the whole section at
+ * the 1920 frame, so it covers the section from the bottom.
+ */
+import Container from "../ui/Container.astro";
+import SectionHeader from "../ui/SectionHeader.astro";
+import SegmentedControl from "../ui/SegmentedControl.astro";
+import FaqAccordion from "../ui/FaqAccordion.astro";
+import type { FaqGroup } from "../../lib/content/faqs";
+
+interface Props {
+  title: string;
+  groups: readonly FaqGroup[];
+  /** Accessible name of the tablist. */
+  tabsLabel?: string;
+  /** Emit FAQPage JSON-LD. Default true. */
+  jsonLd?: boolean;
+  /** Wireframe globe background. Default true. */
+  background?: boolean;
+  /** Prefix for the panel / accordion ids; must be unique per page. */
+  id?: string;
+  class?: string;
+}
+
+const {
+  title,
+  groups,
+  tabsLabel = "FAQ topics",
+  jsonLd = true,
+  background = true,
+  id = "faq",
+  class: className,
+} = Astro.props;
+
+const visibleGroups = groups
+  .map((group) => ({
+    ...group,
+    items: group.items.filter((item) => item.question.trim().length > 0),
+  }))
+  .filter((group) => group.items.length > 0);
+
+const hasTabs = visibleGroups.length > 1;
+const headingId = `${id}-title`;
+const panelId = (value: string): string => `${id}-${value}`;
+
+const rootClass = ["c-faq-section", background && "is-bg", className]
+  .filter(Boolean)
+  .join(" ");
+
+// FAQPage structured data (schema.org). `<` is escaped so the JSON can never
+// close the script element.
+const answered = visibleGroups.flatMap((group) =>
+  group.items.filter((item) => item.answer.trim().length > 0),
+);
+const ldJson =
+  jsonLd && answered.length > 0
+    ? JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: answered.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: item.answer.replace(/\s*\n\s*\n\s*/g, "\n\n").trim(),
+          },
+        })),
+      }).replace(/</g, "\\u003c")
+    : null;
+---
+
+{visibleGroups.length > 0 && (
+  <section class={rootClass} aria-labelledby={headingId} data-faq-section>
+    <Container>
+      <div class="c-faq-section__header" id={headingId}>
+        <SectionHeader title={title} />
+      </div>
+
+      {hasTabs && (
+        <div class="c-faq-section__tabs">
+          <SegmentedControl
+            mode="tabs"
+            label={tabsLabel}
+            items={visibleGroups.map((group) => ({
+              label: group.label,
+              value: group.value,
+              controls: panelId(group.value),
+            }))}
+          />
+        </div>
+      )}
+
+      <div class="c-faq-section__panels">
+        {visibleGroups.map((group) =>
+          hasTabs ? (
+            /* `role="tabpanel"`, `tabindex` and `aria-labelledby` are added by
+               initTabs, so without JS these are plain blocks under their h3. */
+            <div id={panelId(group.value)} class="c-faq-section__panel">
+              <h3 class="c-faq-section__group-title c-text_m">{group.label}</h3>
+              <FaqAccordion items={group.items} name={panelId(group.value)} />
+            </div>
+          ) : (
+            <div class="c-faq-section__panel">
+              <FaqAccordion items={group.items} name={panelId(group.value)} />
+            </div>
+          ),
+        )}
+      </div>
+    </Container>
+
+    {ldJson && <script type="application/ld+json" set:html={ldJson} />}
+  </section>
+)}
+
+<script>
+  import { initTabs } from "../../scripts/ui/tabs";
+
+  document.querySelectorAll<HTMLElement>("[data-faq-section]").forEach((section) => {
+    const tabs = section.querySelector<HTMLElement>(".c-faq-section__tabs");
+    if (!tabs) return;
+    initTabs(tabs);
+    section.classList.add("is-enhanced");
+  });
+</script>
+
+<style>
+  .c-faq-section {
+    background-color: var(--color-white);
+  }
+
+  /* Wireframe globe. The export is the section at the 1920 frame (1920×1035),
+     flattened on white, so it covers the section anchored to the bottom. */
+  .c-faq-section.is-bg {
+    background-image: url("/images/pricing/faqs-bg.webp");
+    background-image: image-set(
+      url("/images/pricing/faqs-bg.webp") 1x,
+      url("/images/pricing/faqs-bg@2x.webp") 2x
+    );
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    background-size: cover;
+  }
+
+  .c-faq-section :global(.c-container) {
+    /* Logo strip → title ≈ 120px, last row → section end ≈ 120px in the ref.
+       TODO: DS. */
+    padding-top: 8.571rem;
+    padding-bottom: 8.571rem;
+  }
+
+  .c-faq-section__tabs {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.714rem; /* title → tabs ≈ 24px — TODO: DS */
+  }
+
+  .c-faq-section__panels {
+    display: flex;
+    flex-direction: column;
+    gap: 4rem; /* only matters without JS (all panels visible) — TODO: DS */
+    margin-top: 3.5rem; /* tabs → first row ≈ 49px — TODO: DS */
+  }
+
+  /* Author `display` would override `hidden` (set by initTabs). */
+  .c-faq-section__panel[hidden] {
+    display: none;
+  }
+
+  .c-faq-section__panel:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 0.5rem;
+  }
+
+  /* Group label: only shown without JS, when the tabs are hidden. */
+  .c-faq-section__group-title {
+    margin: 0 0 1.714rem;
+    color: var(--color-heading);
+    text-align: center;
+  }
+  .c-faq-section.is-enhanced .c-faq-section__group-title {
+    display: none;
+  }
+
+  /* TODO: DS mobile — no mobile ref. */
+  @media (max-width: 767px) {
+    .c-faq-section :global(.c-container) {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
+    .c-faq-section__panels {
+      margin-top: 3rem;
+    }
+  }
+</style>
