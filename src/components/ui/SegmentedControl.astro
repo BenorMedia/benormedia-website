@@ -130,6 +130,11 @@ const rootClass = ["c-segmented", squares && "is-squared", className].filter(Boo
     color: var(--color-text);
     white-space: nowrap;
     cursor: pointer;
+    /* Active pill fades between items instead of jumping (lead, 2026-09-29).
+       Reduced motion: base.css shortens every transition. */
+    transition:
+      background-color var(--duration-hover) var(--ease-smooth),
+      color var(--duration-hover) var(--ease-smooth);
   }
 
   .c-segmented__item:hover {

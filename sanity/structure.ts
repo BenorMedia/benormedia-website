@@ -1,4 +1,5 @@
 import type { StructureResolver } from 'sanity/structure';
+import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list';
 import { SINGLETON_TYPES } from './schemaTypes';
 
 /**
@@ -13,7 +14,7 @@ import { SINGLETON_TYPES } from './schemaTypes';
  *   ── divider ──
  *   Services        (service pages, ordered by name)
  *   ── divider ──
- *   Clients
+ *   Clients         (drag-and-drop order → Work page listing, `orderRank`)
  *   Testimonials
  *   Blog (posts)
  *   Authors
@@ -22,7 +23,7 @@ import { SINGLETON_TYPES } from './schemaTypes';
  * Singletons and `service` are filtered out of the generic document type list
  * below the dividers so they never appear twice.
  */
-export const structure: StructureResolver = (S) => {
+export const structure: StructureResolver = (S, context) => {
   const singleton = (typeName: string, title: string) =>
     S.listItem()
       .title(title)
@@ -45,11 +46,10 @@ export const structure: StructureResolver = (S) => {
           .defaultOrdering([{ field: orderBy, direction: 'asc' }]),
       );
 
-  // Types with their own list item above; excluded from the generic list.
-  const customListTypes = new Set<string>(['service']);
+  // Types with their own list item; excluded from the generic list.
+  const customListTypes = new Set<string>(['service', 'client']);
 
   const collectionOrder = [
-    'client',
     'testimonial',
     'post',
     'author',
@@ -81,6 +81,7 @@ export const structure: StructureResolver = (S) => {
       S.divider(),
       collection('service', 'Services', 'name'),
       S.divider(),
+      orderableDocumentListDeskItem({ type: 'client', title: 'Clients', S, context }),
       ...documentTypeItems,
     ]);
 };

@@ -9,12 +9,27 @@
  *   - Without JS every row shows and the filter bar stays `hidden`, so there
  *     are no dead buttons. The script below un-hides it.
  *   - Each filter maps to one or more category slugs (static map below,
- *     Proposed, lead to confirm). "all" shows every client.
+ *     lead-approved 2026-09-29). "all" shows every client.
  *   - A filter with no matching client is dropped at build time; if only
  *     "View All" is left, the filter bar isn't rendered at all.
  *   - Click → `aria-pressed` + `is-active` on every item, `hidden` on the rows
  *     that don't match (`ClientList` emits `data-category` per row), and the
  *     visually hidden live region announces the new count.
+ *   - URL state (W-7): the active filter is `?category=<filter value>`; "all"
+ *     has no parameter. Loading a URL with the parameter opens that filter.
+ *     Changes use `history.replaceState` (no history entries). An unknown
+ *     value, or a filter dropped at build time, falls back to "all" and the
+ *     parameter is removed. Other query parameters are kept.
+ *
+ * Tab → category slugs (lead, 2026-09-29):
+ *   View All              → every client (no parameter)
+ *   Professional Services → professional-services
+ *   SaaS / B2B Tech       → saas-b2b-tech, saas
+ *   AI & Technology       → ai-technology, marketing-tech, sales-tech
+ *   Agency                → agency
+ *
+ * Order: the rows keep the `getAllClients()` order (Studio drag-and-drop
+ * `orderRank`); filtering only hides rows.
  *
  * Hides entirely when there are no clients.
  */
@@ -36,7 +51,8 @@ interface Filter {
   categories?: string[];
 }
 
-// Tab → category slugs. Proposed mapping (DECISIONS.md → Work), lead to confirm.
+// Tab → category slugs (lead, 2026-09-29; see the header comment). `value` is
+// also the `?category=` URL value.
 const FILTERS: Filter[] = [
   { label: "View All", value: "all" },
   {
@@ -48,6 +64,11 @@ const FILTERS: Filter[] = [
     label: "SaaS / B2B Tech",
     value: "saas-b2b-tech",
     categories: ["saas-b2b-tech", "saas"],
+  },
+  {
+    label: "AI & Technology",
+    value: "ai-technology",
+    categories: ["ai-technology", "marketing-tech", "sales-tech"],
   },
   { label: "Agency", value: "agency", categories: ["agency"] },
 ];
@@ -126,6 +147,18 @@ const headingId = "work-listing-title";
     const status = root.querySelector<HTMLElement>("[data-work-status]");
     if (buttons.length === 0 || rows.length === 0) return;
 
+    const PARAM = "category";
+
+    // Reflects the active filter in the URL without adding history entries.
+    const syncUrl = (value: string): void => {
+      const url = new URL(window.location.href);
+      if (value === "all") url.searchParams.delete(PARAM);
+      else url.searchParams.set(PARAM, value);
+      if (url.href !== window.location.href) {
+        window.history.replaceState(window.history.state, "", url);
+      }
+    };
+
     const apply = (value: string): void => {
       const categories = map[value];
       let shown = 0;
@@ -153,7 +186,17 @@ const headingId = "work-listing-title";
       const value = button?.dataset["value"];
       if (!value) return;
       apply(value);
+      syncUrl(value);
     });
+
+    // Initial filter from `?category=`; unknown values fall back to "all".
+    const requested = new URL(window.location.href).searchParams.get(PARAM);
+    const initial =
+      requested && buttons.some((button) => button.dataset["value"] === requested)
+        ? requested
+        : "all";
+    if (initial !== "all") apply(initial);
+    syncUrl(initial);
 
     filters.hidden = false;
   }
@@ -169,8 +212,8 @@ const headingId = "work-listing-title";
   }
 
   .c-work-listing :global(.c-container) {
-    /* Hero description → filters ≈ 116px in the ref. TODO: DS. */
-    padding-top: 8.286rem;
+    /* Hero description → filters (lead, visual QA 2026-09-29). */
+    padding-top: 7.5rem;
   }
 
   .c-work-listing__filters {
@@ -187,9 +230,9 @@ const headingId = "work-listing-title";
     justify-content: center;
   }
 
-  /* Filters → first row ≈ 56px in the ref. TODO: DS. */
+  /* Filters → first row (lead, visual QA 2026-09-29). */
   .c-work-listing__filters + .c-work-listing__sr-only + .c-work-listing__list {
-    margin-top: 4rem;
+    margin-top: 3rem;
   }
 
   /* Without JS the filter bar is hidden: hero → list keeps the hero spacing
@@ -216,10 +259,6 @@ const headingId = "work-listing-title";
   @media (max-width: 767px) {
     .c-work-listing :global(.c-container) {
       padding-top: 5rem;
-    }
-
-    .c-work-listing__filters + .c-work-listing__sr-only + .c-work-listing__list {
-      margin-top: 3rem;
     }
   }
 </style>

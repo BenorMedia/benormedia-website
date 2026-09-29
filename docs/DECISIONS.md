@@ -110,7 +110,7 @@
 | 2026-09-29 | Shared `SegmentedControl` (`src/components/ui/`): `mode="toggle"` (`role="group"` + `aria-pressed`, Work filters) or `mode="tabs"` (`role="tablist"`, FAQ tabs), optional `squares` (Eyebrow corner squares, Work filters only). Tabs behavior in `src/scripts/ui/tabs.ts` → `initTabs(root)` (WAI-ARIA, roving tabindex, hides inactive panels on init) | Work filters and FAQ tabs are the same switcher in the refs | Lead |
 | 2026-09-29 | Shared `FaqAccordion`: native `<details name>` + `<summary>` (exclusive, works without JS), border on the question row only, answer below it unbordered, + rotates to × on `[open]` | Matches `FAQs.jpg` | Lead |
 | 2026-09-29 | Shared `PricingCard`: CSS subgrid (4 rows: header, price, features, CTA) so prices and buttons line up across cards; parent must be a grid. CTA = full-width `Button is-gradient` + `.js-open-contact`. The lavender glow in the ref is not built | Matches `pricing-cards.jpg`; the glow is only on the outer cards, so it reads as a section background | Lead |
-| 2026-09-29 | Shared `PageHero` section (`src/components/sections/`): white hero for secondary pages = `SectionHeader as="h1"` + `titleClass="c-text_xxl"`, optional `accent`, top padding 7.857rem (5rem ≤767), no bottom padding (the next section owns it) | Work hero ref; Pricing / Testimonials / Blog heroes follow the same pattern | Lead |
+| 2026-09-29 | Shared `PageHero` section (`src/components/sections/`): white hero for secondary pages = `SectionHeader as="h1"` + `titleClass="c-text_xxl"`, optional `accent`, top padding 7.857rem → 7.5rem 2026-09-29 (5rem ≤767), no bottom padding (the next section owns it) | Work hero ref; Pricing / Testimonials / Blog heroes follow the same pattern | Lead |
 | 2026-09-29 | `ClientList`: every `<li>` emits `data-category="<category slug>"` (when set) as a filter hook; the stacked-deck overlap now applies only after a visible row (`.c-client-list__item:not([hidden]) ~ .c-client-list__item`) and `[hidden]` rows are `display: none`. Home renders the same | Work filters hide rows; the first visible row must not keep the −14px overlap | Proposed |
 | 2026-09-29 | `SegmentedControl mode="tabs"` renders its tablist `hidden`; `initTabs` removes `hidden` on init (cleanup restores it and shows every panel). Toggle mode unchanged | QA G-2: no dead tabs without JS; panels stay visible | Lead |
 | 2026-09-29 | Shared `FaqSection` (`src/components/sections/`): props `title`, `groups: { label, value, items: {question, answer}[] }[]`, `jsonLd` (default true), `background` (default true), `id` prefix. 2+ groups → tabs + one `FaqAccordion` per group (`initTabs` in the component script); 1 group → accordion only; empty groups dropped, nothing left → no section. No JS: tablist hidden, every panel shown under an `<h3>` with its group label (hidden once tabs work). Emits FAQPage JSON-LD (answered questions only) | Pricing FAQ now, service template later | Proposed |
@@ -125,6 +125,10 @@
 | 2026-09-29 | `@astrojs/sitemap` added: `sitemap-index.xml` + `sitemap-0.xml`, no trailing slashes, `/dev/*`, `/studio` and `/404` excluded. Needs `site` (`PUBLIC_SITE_URL`): skipped with a build warning until the production domain is set | SEO; lead asked for it with the trailing-slash fix | Lead |
 | 2026-09-29 | `ClientList` hover screenshots load on demand: the `<img>` ships with `data-src`; `initClientPreviews` (`src/scripts/ui/client-previews.ts`) sets `src` on every preview of a list on the first pointer entry / focus, only when `(hover: hover)` matches (touch never downloads them). A preview opens only once loaded (`is-loaded`). No JS → no previews | ≈830 KB of screenshots were downloaded with `/work` and never seen on touch (G-4 / G-22) | Lead |
 | 2026-09-29 | 404 page uses `Container` (max-width + side padding) with a scoped `.c-notfound__inner` class for its own vertical padding (8rem, 5rem ≤767 `TODO: DS mobile`) | Remove the hardcoded max-width (G-25) | Lead |
+| 2026-09-29 | `ClientList` hover (every page): the row lifts `translateY(-0.4rem)` with `box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.07)` and `transition: all 0.2s linear`; no z-index change on hover. The preview keeps a fixed 15.58rem height and only fades in (opacity), once loaded. Lift + shadow are applied to `__row` (hover read on the `<li>`), and the preview is the row's sibling, so its `z-index: 1` stays above every row (a transform on the `<li>` would trap it). Second shadow exception after the preview shadow | Lead visual QA; previews stay fully visible without raising the hovered item | Lead |
+| 2026-09-29 | `PageHero` top padding 7.5rem (was 7.857rem) on every page hero: Work, Pricing, Testimonials, service template | Lead visual QA: "apply for every page that uses hero" | Lead |
+| 2026-09-29 | `SegmentedControl` items transition `background-color` + `color` (`--duration-hover`, `--ease-smooth`), so the active pill fades between tabs; applies to the Work filters and the FAQ tabs | Lead: tab change was too abrupt | Lead |
+| 2026-09-29 | `@sanity/orderable-document-list` for drag-and-drop document order (`client` first). `sanity.cli.ts` sets `vite.ssr.external: ['lexorank']`: the CLI inlines every dependency (`ssr.noExternal: true`) and CommonJS `lexorank` then fails with "exports is not defined" in `schema deploy` / `manifest extract` | Sanity's recommended ordering plugin; CLI workaround keeps `pnpm schema:deploy` working | Lead |
 
 ### Open questions
 
@@ -304,25 +308,30 @@
 ### Decisions
 | Date | Decision | Reason | Status |
 |---|---|---|---|
-| 2026-09-29 | Page = `PageHero` (Our Work / "Websites we've launched." / description) → `WorkListing` (filters + every client in `ClientList`) → `Testimonials` → CTA banner (BaseLayout). All copy static; Sanity = clients, testimonials, `workPage.seo` (`getPageSeo("workPage")`, null → props fallback "Our Work" + hero description) | `work-preview.png`; SEO-only singleton (Lead 2026-09-29) | Proposed |
-| 2026-09-29 | Listing data = new `ALL_CLIENTS` / `getAllClients()`: every published client with a `name`, ordered `category->title asc, name asc`, projection shared with `CLIENTS_BY_IDS` via the `CLIENT_LIST_FIELDS` fragment | New clients appear without code changes | Proposed |
-| 2026-09-29 | Filters = 4 toggle buttons as in `work-list.jpg` (View All · Professional Services · SaaS / B2B Tech · Agency) with a static tab → category-slug map in `WorkListing.astro`. Filter bar is `hidden` until the script runs (no JS: every row, no dead buttons); a tab with 0 matches is dropped at build; visually hidden `role="status"` announces "Showing N of M projects" | Progressive enhancement; ref shows one "SaaS / B2B Tech" tab | Proposed |
+| 2026-09-29 | Page = `PageHero` (Our Work / "Websites we've launched." / description) → `WorkListing` (filters + every client in `ClientList`) → `Testimonials` → CTA banner (BaseLayout). All copy static; Sanity = clients, testimonials, `workPage.seo` (`getPageSeo("workPage")`, null → props fallback "Our Work" + hero description) | `work-preview.png`; SEO-only singleton (Lead 2026-09-29) | Lead |
+| 2026-09-29 | Listing data = new `ALL_CLIENTS` / `getAllClients()`: every published client with a `name`, ordered `category->title asc, name asc` (superseded 2026-09-29: `orderRank`, see below), projection shared with `CLIENTS_BY_IDS` via the `CLIENT_LIST_FIELDS` fragment | New clients appear without code changes | Lead |
+| 2026-09-29 | Filters = 4 toggle buttons as in `work-list.jpg` (View All · Professional Services · SaaS / B2B Tech · Agency) with a static tab → category-slug map in `WorkListing.astro`. Filter bar is `hidden` until the script runs (no JS: every row, no dead buttons); a tab with 0 matches is dropped at build; visually hidden `role="status"` announces "Showing N of M projects" | Progressive enhancement; ref shows one "SaaS / B2B Tech" tab | Lead |
+| 2026-09-29 | Work list order = Studio drag-and-drop order (`client.orderRank`, `@sanity/orderable-document-list`), name as tie-break. Seeded to the `work-list.jpg` order (Surfe, Puzzle, HireArt … Novo, 56 clients) with `pnpm seed:client-order`. Only `ALL_CLIENTS` sorts by it; Home, Pricing, service pages unchanged | W-5: manual order editable in Studio | Lead |
+| 2026-09-29 | Fifth filter tab "AI & Technology" = `ai-technology` + `marketing-tech` + `sales-tech` (9 clients), between SaaS / B2B Tech and Agency. SaaS / B2B Tech stays `saas-b2b-tech` + `saas`. Mapping documented in `WorkListing.astro` | W-6 | Lead |
+| 2026-09-29 | Active filter in the URL: `?category=<tab value>` (none for View All), `history.replaceState` (no history entries), loaded on init; unknown or dropped values fall back to View All and the parameter is removed; other parameters kept. Canonical stays `/work` | W-7: shareable filtered views | Lead |
+| 2026-09-29 | `/work` SEO lives in code: no `workPage` document will exist, the page no longer fetches it. Meta title "Our Work" + a 147-character meta description (`TODO: COPY`); the hero description is unchanged. The `workPage` schema type is kept | W-3 / W-12 | Lead |
+| 2026-09-29 | Spacing (lead visual QA): hero → filters 7.5rem (was 8.286rem), filters → list 3rem (was 4rem); mobile 5rem / 3rem unchanged | Lead measurements replace the 1/14 ref measurements | Lead |
 
 ### Open questions
 
 #### Content
-- **`workPage` document missing in Sanity** — no document yet, so the page uses the fallback meta title "Our Work" and the hero description as meta description (`TODO: COPY`). Create it in Studio to override. (2026-09-29)
+- ~~**`workPage` document missing in Sanity**~~ — RESOLVED 2026-09-29: there will be no `workPage` document; SEO stays in code (see Decisions).
 - **Hidden copy** — visually hidden section heading "All projects" and the live-region text "Showing {shown} of {total} projects" are placeholders (`TODO: COPY`). (2026-09-29)
 
 #### Needs lead OK
-- **List order** — default: every client, sorted by category then name (new clients appear automatically). Alternative: a pinned order matching `work-list.jpg`. (2026-09-29)
-- **Filter tab → category mapping** — proposed: Professional Services = `professional-services`, SaaS / B2B Tech = `saas` + `saas-b2b-tech`, Agency = `agency`; View All = every client. Current data: 6 / 12 / 2 of 56. (2026-09-29)
-- **Work page structure, `ALL_CLIENTS` query, filter behavior** — see the three Proposed rows above. (2026-09-29)
+- ~~**List order**~~ — RESOLVED 2026-09-29: Studio drag-and-drop order, seeded to the ref order (see Decisions).
+- ~~**Filter tab → category mapping**~~ — RESOLVED 2026-09-29: approved, plus an AI & Technology tab (see Decisions).
+- ~~**Work page structure, `ALL_CLIENTS` query, filter behavior**~~ — RESOLVED 2026-09-29: approved (W-8).
 
 #### Design team
 - **Mobile / tablet** — no mobile refs; built with DS tokens, `TODO: DS mobile`. (2026-09-29)
-- **Hero and listing spacing** — measured from the 1920 ref at 1/14 rem, `TODO: DS`: nav → eyebrow 7.857rem (110px), hero description → filters 8.286rem (116px), filters → first row 4rem (56px). Mobile: 5rem / 5rem / 3rem, `TODO: DS mobile`. (2026-09-29)
-- **Hero type sizes** — ref title ≈ 91px (6.5rem at 1/14) and description ≈ 24px (between `c-paragraph_m` and `c-paragraph_l`). Built with the closest classes, `c-text_xxl` and `c-paragraph_m` (SectionHeader default). Depends on the Global "ref px → rem" question. (2026-09-29)
+- ~~**Hero and listing spacing**~~ — RESOLVED 2026-09-29: lead set 7.5rem (hero top, hero → filters) and 3rem (filters → list) in visual QA (see Decisions).
+- ~~**Hero type sizes**~~ — CLOSED 2026-09-29: the lead gives measurements in visual QA if needed (W-10).
 
 ---
 

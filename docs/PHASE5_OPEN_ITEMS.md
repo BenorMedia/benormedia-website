@@ -30,7 +30,7 @@ How this file works:
 | G-8 | FaqAccordion gap without `TODO: DS`; PricingCard reuses a SectionHeader value without a marker | `FaqAccordion.astro:76`, `PricingCard.astro:103` | Open |
 | G-9 | PricingCard renders an empty `<p>` when there is no price; "/mo" ≈14.6px vs ≈20px in the ref | `PricingCard.astro:54-57` | Open |
 | G-10 | Nav has no `aria-current="page"` on the current page link | `src/components/layout/Nav.astro:87` | Open |
-| G-11 | A `TODO: COPY` HTML comment placed before `<html>` ships in the built page | pages using that pattern (`src/pages/work.astro:27`) | Open |
+| G-11 | A `TODO: COPY` HTML comment placed before `<html>` ships in the built page | pages using that pattern (`src/pages/work.astro:27`) | Resolved 2026-09-29 (the comment on `/work` is gone with the SEO-in-code change; no other page uses the pattern) |
 | G-12 | Shell images without width/height (missed by the Phase 4 list) | `Footer.astro:93-94, 113`, `CtaBanner.astro:137-142` | Open |
 | G-13 | Footer images are heavy (526 / 195 / 125 KB), social links have empty `href` and 16.9px tap targets | `Footer.astro` | Open |
 | G-14 | Add a global `cc-sr-only` utility (WorkListing uses a scoped visually-hidden class) | `src/styles/utilities.css` | Open |
@@ -77,35 +77,51 @@ How this file works:
 ---
 
 ## Work (`/work`)
-Status: V1 built. Per-page QA done once (PASS WITH NOTES).
+Status: V1 built. Per-page QA done once (PASS WITH NOTES). Lead QA round 2026-09-29 on `chore/phase5-secondary-qa`: written notes + visual QA fixes (details: `docs/handoffs/2026-09-29_orchestrator_work-qa.md`).
 
 ### QA nits
 | ID | Item | Where | Status |
 |---|---|---|---|
-| W-1 | Filter bar is revealed by a deferred script: the list could shift ≈116px on slow connections (0 locally) | `WorkListing.astro:84, 158` | Open |
-| W-2 | With no clients and no testimonials, the hero sits flush against the CTA banner | `src/pages/work.astro` | Open |
-| W-3 | Fallback meta description is 196 characters (keep the real one ≤160) | `src/pages/work.astro` | Open |
-| W-4 | List → Testimonials gap 168px vs ≈221px in the ref (global section spacing) | `.c-container` / section rhythm | Open |
+| W-1 | Filter bar is revealed by a deferred script: the list could shift ≈116px on slow connections (0 locally) | `WorkListing.astro:84, 158` | Resolved 2026-09-29 (lead: no jump, verified in visual QA) |
+| W-2 | With no clients and no testimonials, the hero sits flush against the CTA banner | `src/pages/work.astro` | Resolved 2026-09-29 (won't fix: there will always be clients) |
+| W-3 | Fallback meta description is 196 characters (keep the real one ≤160) | `src/pages/work.astro` | Resolved 2026-09-29 (meta description in code, 147 characters, `TODO: COPY`; hero description unchanged) |
+| W-4 | List → Testimonials gap 168px vs ≈221px in the ref (global section spacing) | `.c-container` / section rhythm | Resolved 2026-09-29 (spacing approved by the lead) |
 
 ### Questions for the lead
 | ID | Question | Status |
 |---|---|---|
-| W-5 | List order: automatic (category A→Z, then name — AI & Technology comes first) or the pinned ref order (Surfe, Puzzle, HireArt…)? Pinning = hardcoded ID list like Home, or a new `order` field on `client` | Open |
-| W-6 | Filter mapping: SaaS / B2B Tech = `saas-b2b-tech` + `saas` (12 clients). Should AI & Technology, Marketing Tech or Sales Tech count too? Professional Services = 6, Agency = 2 | Open |
-| W-7 | Put the filter in the URL (`?category=`) so filtered views can be shared? | Open |
-| W-8 | Approve: page structure, `ALL_CLIENTS` query, ClientList `data-category` + overlap rule, filter behavior (hidden without JS, tabs with 0 matches dropped) | Open |
+| W-5 | List order: automatic (category A→Z, then name — AI & Technology comes first) or the pinned ref order (Surfe, Puzzle, HireArt…)? Pinning = hardcoded ID list like Home, or a new `order` field on `client` | Resolved 2026-09-29 (Studio drag-and-drop order: `client.orderRank` via `@sanity/orderable-document-list`, seeded to the ref order with `pnpm seed:client-order`, schema deployed; only `ALL_CLIENTS` sorts by it. Home / Pricing / service lists unchanged, checked in the build) |
+| W-6 | Filter mapping: SaaS / B2B Tech = `saas-b2b-tech` + `saas` (12 clients). Should AI & Technology, Marketing Tech or Sales Tech count too? Professional Services = 6, Agency = 2 | Resolved 2026-09-29 ("AI & Technology" tab = `ai-technology` + `marketing-tech` + `sales-tech`, 9 clients, between SaaS / B2B Tech and Agency; mapping in `WorkListing.astro` + handoff) |
+| W-7 | Put the filter in the URL (`?category=`) so filtered views can be shared? | Resolved 2026-09-29 (`?category=<tab value>`, `replaceState`, opens on load, unknown value → View All + parameter removed, other parameters kept) |
+| W-8 | Approve: page structure, `ALL_CLIENTS` query, ClientList `data-category` + overlap rule, filter behavior (hidden without JS, tabs with 0 matches dropped) | Resolved 2026-09-29 (page structure and filter behavior approved by the lead) |
 
 ### Design team
 | ID | Item | Status |
 |---|---|---|
-| W-9 | Spacing measured at 1/14 rem (`TODO: DS`): nav → eyebrow 7.857rem, description → filters 8.286rem, filters → list 4rem. Mobile guesses 5 / 5 / 3rem | Open |
-| W-10 | Hero type: ref title ≈91px (bigger than `c-text_xxl`), description ≈24px (between `c-paragraph_m` and `_l`). Built with the closest classes | Open |
+| W-9 | Spacing measured at 1/14 rem (`TODO: DS`): nav → eyebrow 7.857rem, description → filters 8.286rem, filters → list 4rem. Mobile guesses 5 / 5 / 3rem | Resolved 2026-09-29 (spacing approved; lead then set hero top 7.5rem, hero → filters 7.5rem, filters → list 3rem in visual QA) |
+| W-10 | Hero type: ref title ≈91px (bigger than `c-text_xxl`), description ≈24px (between `c-paragraph_m` and `_l`). Built with the closest classes | Closed 2026-09-29 (the lead gives measurements in visual QA if needed) |
 
 ### Content
 | ID | Item | Status |
 |---|---|---|
 | W-11 | `TODO: COPY`: fallback meta title "Our Work" + description, hidden h2 "All projects", live-region text "Showing {shown} of {total} projects" | Open |
-| W-12 | Create the `workPage` document in Studio with real SEO copy | Open |
+| W-12 | Create the `workPage` document in Studio with real SEO copy | Resolved 2026-09-29 (no `workPage` document: SEO stays in code; `/work` no longer fetches it) |
+
+### Lead visual QA (2026-09-29)
+| ID | Item | Where | Status |
+|---|---|---|---|
+| W-13 | Hero top padding 7.5rem (every `PageHero`: Work, Pricing, Testimonials, service), hero → filters 7.5rem, filters → list 3rem | `PageHero.astro`, `WorkListing.astro` | Resolved 2026-09-29 (lead to confirm visually) |
+| W-14 | ClientList hover on every page: row lifts 0.4rem + shadow, `transition: all 0.2s linear`, no z-index on hover; preview has a fixed 15.58rem height and only fades in. Preview moved out of the row (sibling) and the lift applied to the row, so the preview stays above every row | `ClientList.astro` | Resolved 2026-09-29 (lead to confirm visually on Home, Work, Pricing, service) |
+| W-20 | Filter tab change jumps: the active pill now fades between items (`background-color` + `color`, `--duration-hover` + `--ease-smooth`). Shared `SegmentedControl`, so the FAQ tabs (Pricing, service) get it too | `SegmentedControl.astro` | Resolved 2026-09-29 (lead to confirm visually) |
+
+### Flags from the QA fixes
+| ID | Item | Status |
+|---|---|---|
+| W-15 | The `workPage` schema type still exists (Studio "Work Page" singleton, `links.ts` maps it to `/work`) but no document will be created. Not deleted (lead). Remove it later if the lead asks | Open (info) |
+| W-16 | On a filtered URL (`?category=`) the full list shows until the deferred script applies the filter (static page) | Open (info) |
+| W-17 | The row lift is on hover only (lead spec); keyboard focus on a linked row still rotates the arrow and fades in the preview, without the lift. No client has `websiteUrl` today, so no row is focusable | Open (info) |
+| W-18 | On touch devices a tap leaves `:hover` on the row, so the lift + shadow stay until the next tap elsewhere (previews never load on touch) | Open (info) |
+| W-19 | `sanity.cli.ts` externalizes `lexorank` for the CLI (`schema deploy` failed with "exports is not defined" once the ordering plugin was added). Remove when the plugin / CLI fixes CommonJS interop | Open (info) |
 
 ---
 

@@ -1,4 +1,5 @@
 import { defineType, defineField } from 'sanity';
+import { orderRankField, orderRankOrdering } from '@sanity/orderable-document-list';
 
 /**
  * Client — a customer showcased across the site.
@@ -6,12 +7,18 @@ import { defineType, defineField } from 'sanity';
  * Not a routable document; no detail pages (see DECISIONS 2026-09-25).
  * Referenced from Home (featured work, work cards/list, logo strip) and
  * from the Work page.
+ *
+ * `orderRank` (hidden, @sanity/orderable-document-list): drag-and-drop order
+ * of the Studio "Clients" list. Only the Work page listing sorts by it; Home,
+ * Pricing and service pages keep their own order (SCHEMAS.md v0.7).
  */
 export const client = defineType({
   name: 'client',
   title: 'Client',
   type: 'document',
+  orderings: [orderRankOrdering],
   fields: [
+    orderRankField({ type: 'client', newItemPosition: 'after' }),
     defineField({
       name: 'name',
       title: 'Name',
