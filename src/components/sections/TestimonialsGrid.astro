@@ -1,0 +1,110 @@
+---
+/**
+ * TestimonialsGrid — Testimonials page: every testimonial as a static card grid.
+ * Ref: `docs/refs/testimonials/testimonials-grid.jpg` (1920 frame, 1 ref px =
+ * 1/14 rem, same base as the Phase 5 pages).
+ *
+ * Data: `getTestimonials()`, passed in by the page. Every published
+ * testimonial renders once (the ref's 15 identical cards are placeholders; no
+ * duplicates to fill rows). Cards = the shared marquee `TestimonialCard`,
+ * unchanged except `width: 100%` on this page (lead, 2026-09-29) so each card
+ * fills its grid cell. Height stays the card's fixed marquee height.
+ *
+ * Layout: 3 columns, 2 at ≤991, 1 at ≤767. Plain white background (the ref
+ * shows no line art behind the grid). Visually hidden `<h2>` keeps the outline
+ * h1 → h2. Hides entirely when there are no testimonials.
+ */
+import Container from "../ui/Container.astro";
+import TestimonialCard from "../ui/TestimonialCard.astro";
+import type { Testimonial } from "../../lib/sanity/types";
+
+interface Props {
+  testimonials: Testimonial[];
+}
+
+const { testimonials } = Astro.props;
+const headingId = "testimonials-grid-title";
+---
+
+{testimonials.length > 0 && (
+  <section class="c-testimonials-grid" aria-labelledby={headingId}>
+    <Container>
+      {/* TODO: COPY — section heading (visually hidden). */}
+      <h2 id={headingId} class="c-testimonials-grid__sr-only">Client testimonials</h2>
+
+      <ul class="c-testimonials-grid__list" data-anim="testimonials-grid">
+        {testimonials.map((testimonial) => (
+          <li class="c-testimonials-grid__item">
+            <TestimonialCard testimonial={testimonial} />
+          </li>
+        ))}
+      </ul>
+    </Container>
+  </section>
+)}
+
+<style>
+  .c-testimonials-grid {
+    background: var(--color-white);
+  }
+
+  .c-testimonials-grid :global(.c-container) {
+    /* Hero title ink (descenders) → first card ≈ 112px in the ref = 102px
+       below the h1 line box; last card → CTA banner ≈ 220px (the CTA section
+       has no top padding). TODO: DS. */
+    padding-top: 7.286rem;
+    padding-bottom: 15.714rem;
+  }
+
+  .c-testimonials-grid__list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.429rem; /* ≈20px between cards and rows — TODO: DS */
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .c-testimonials-grid__item {
+    display: flex;
+    min-width: 0;
+  }
+
+  /* This page only: the marquee card fills its grid cell (lead, 2026-09-29). */
+  .c-testimonials-grid :global(.c-testimonial-card) {
+    width: 100%;
+  }
+
+  /* TODO: DS mobile — no tablet ref. */
+  @media (max-width: 991px) {
+    .c-testimonials-grid__list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* TODO: DS mobile — no mobile ref; container's mobile padding. */
+  @media (max-width: 767px) {
+    .c-testimonials-grid :global(.c-container) {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
+
+    .c-testimonials-grid__list {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Visually hidden, still read by screen readers. TODO: switch to a global
+     `cc-sr-only` utility (G-14, @ui). */
+  .c-testimonials-grid__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

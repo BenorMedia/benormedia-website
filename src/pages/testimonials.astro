@@ -1,0 +1,44 @@
+---
+/**
+ * Testimonials page — Phase 5. Refs: `docs/refs/testimonials/`
+ * (`testimonials-preview.png`).
+ *
+ * All page copy is static. Sanity supplies the testimonials and the
+ * `testimonialsPage` SEO singleton (null until the document is created: the
+ * title/description props below are the fallback).
+ *
+ * No Review / AggregateRating JSON-LD: Google ignores self-serving reviews
+ * (an organization's reviews of itself on its own site).
+ *
+ * BaseLayout owns Nav, CtaBanner, Footer and ContactModal.
+ *
+ * TODO: COPY — fallback meta title / description until testimonialsPage.seo
+ * is filled in Sanity (kept here, not as an HTML comment, so it doesn't ship).
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getPageSeo, getTestimonials } from "../lib/sanity/queries";
+import PageHero from "../components/sections/PageHero.astro";
+import TestimonialsGrid from "../components/sections/TestimonialsGrid.astro";
+
+const [testimonialsPage, testimonials] = await Promise.all([
+  getPageSeo("testimonialsPage"),
+  getTestimonials(),
+]);
+
+// Keep ≤160 characters.
+const metaDescription =
+  "Hear from our more than 100 happy clients: what B2B marketing leaders say about working with BenorMedia on their websites, from launch day onward.";
+---
+
+<BaseLayout
+  pageSeo={testimonialsPage?.seo ?? null}
+  title="Testimonials"
+  description={metaDescription}
+>
+  <PageHero
+    eyebrow="Testimonials"
+    title={"Hear from our more\nthan 100 happy clients."}
+    accent="100 happy clients."
+  />
+  <TestimonialsGrid testimonials={testimonials} />
+</BaseLayout>

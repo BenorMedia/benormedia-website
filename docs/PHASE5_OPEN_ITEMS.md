@@ -150,3 +150,40 @@ Status: V1 built (no per-page QA). Details: `docs/handoffs/2026-09-29_astro_phas
 | P-25 | Create the `pricingPage` document in Studio with real SEO copy | Open |
 
 ---
+
+## Testimonials (`/testimonials`)
+Status: V1 built (no per-page QA). Details: `docs/handoffs/2026-09-29_astro_phase5-testimonials.md`.
+
+### Known issues / nits
+| ID | Item | Where | Status |
+|---|---|---|---|
+| T-1 | Only 4 testimonials are published, so the grid is one full row + one card (the ref shows 5 × 3 filler cards). No duplicates are rendered | `TestimonialsGrid.astro` | Open |
+| T-2 | Grid reuses the shared marquee `TestimonialCard` with `width: 100%` on this page only (`TestimonialsGrid.astro`); cards keep the fixed marquee height 23.03rem | `src/components/sections/TestimonialsGrid.astro` | Resolved 2026-09-29 (lead: width 100% only on this page; `fluid` prop dropped) |
+| T-3 | Client logo `<img>` in `TestimonialCard` still has no width/height (G-16): the query has no asset dimensions, so it isn't a trivial fix. 4 on this page; no new `<img>` added | `TestimonialCard.astro` | Open |
+| T-4 | Cards are `<article>` without a heading (quote + author only), under a visually hidden `<h2>` | `TestimonialCard.astro`, `TestimonialsGrid.astro` | Open (info) |
+| T-5 | Hidden h2 uses a scoped visually-hidden class until `cc-sr-only` exists (G-14) | `TestimonialsGrid.astro` | Open |
+| T-6 | Hero title renders smaller than the ref (`c-text_xxl` vs ≈91px at 1920, same as W-10); at 375 "clients." wraps to a 3rd line | `PageHero` | Open |
+| T-7 | Cards use curly quotes (shared card), the ref shows straight quotes | `TestimonialCard.astro` | Open (info) |
+
+### Questions for the lead
+| ID | Question | Status |
+|---|---|---|
+| T-8 | OK to show only the published testimonials (4 today) instead of filling the 5 × 3 grid? | Open |
+| T-9 | OK to ship no Review / AggregateRating JSON-LD (Google ignores self-serving reviews)? | Open |
+| T-10 | Approve: page structure, `TestimonialsGrid` | Open |
+
+### Design team
+| ID | Item | Status |
+|---|---|---|
+| T-11 | `TODO: DS` spacing, measured at 1/14 rem: hero title ink → first card 112px (7.286rem padding below the h1 line box), card gap 1.429rem (20px, columns and rows), last card → CTA banner 15.714rem (220px). Mobile guesses 5rem / 5rem | Open |
+| T-12 | Card size: the ref card is 544 × 369px = the marquee card at 1/16 rem, while the page spacing uses 1/14 rem (G-26). Fluid in the grid: 397 × 322px at 1440, 397 × 276px at 991 | Open |
+| T-13 | Mobile / tablet: no refs. 2 columns at ≤991, 1 at ≤767; at 767 the single cards are 731px wide with a large gap between quote and author (23.03rem min-height). `TODO: DS mobile` | Open |
+| T-14 | No section background behind the grid in the ref (plain white): confirm the Home line art isn't wanted here | Open |
+
+### Content
+| ID | Item | Status |
+|---|---|---|
+| T-15 | All 4 testimonials are placeholders (Rob Alfano, Lorem ipsum, no photo). The ref uses a SimpleTiger quote with a photo | Open |
+| T-16 | `TODO: COPY` fallback meta title "Testimonials" + 146-char description, until the `testimonialsPage` document exists | Open |
+| T-17 | `TODO: COPY` visually hidden h2 "Client testimonials" | Open |
+| T-18 | Create the `testimonialsPage` document in Studio with real SEO copy | Open |

@@ -115,6 +115,7 @@
 | 2026-09-29 | `SegmentedControl mode="tabs"` renders its tablist `hidden`; `initTabs` removes `hidden` on init (cleanup restores it and shows every panel). Toggle mode unchanged | QA G-2: no dead tabs without JS; panels stay visible | Proposed |
 | 2026-09-29 | Shared `FaqSection` (`src/components/sections/`): props `title`, `groups: { label, value, items: {question, answer}[] }[]`, `jsonLd` (default true), `background` (default true), `id` prefix. 2+ groups → tabs + one `FaqAccordion` per group (`initTabs` in the component script); 1 group → accordion only; empty groups dropped, nothing left → no section. No JS: tablist hidden, every panel shown under an `<h3>` with its group label (hidden once tabs work). Emits FAQPage JSON-LD (answered questions only) | Pricing FAQ now, service template later | Proposed |
 | 2026-09-29 | Static page copy that more than one page uses lives in `src/lib/content/` (`our-work.ts` Our Work pinned IDs, shared by Home + Pricing; `faqs.ts` FAQ groups; `pricing.ts` plans) | One place to edit shared copy; Home output unchanged | Proposed |
+| 2026-09-29 | Testimonials page grid reuses the shared marquee `TestimonialCard` unchanged; only `.c-testimonial-card { width: 100% }` on that page (scoped in `TestimonialsGrid.astro`). The proposed `fluid` prop was dropped; the shared card is untouched | Lead: "only on this page" | Lead |
 
 ### Open questions
 
@@ -174,6 +175,7 @@
 - **`SegmentedControl` tabs render the tablist `hidden` until `initTabs` (G-2)** (2026-09-29)
 - **Shared `FaqSection` (tabs, no-JS group headings, FAQPage JSON-LD)** (2026-09-29)
 - **Shared static copy in `src/lib/content/`** (2026-09-29)
+- ~~**`TestimonialCard` `fluid` variant (grid)**~~ — RESOLVED 2026-09-29: dropped; width 100% on the Testimonials page only (see Decisions).
 - ~~**Testimonial marquee pauses on hover / focus**~~ — RESOLVED 2026-09-29: lead removed the pause (see Decisions).
 
 #### Engineering follow-ups
@@ -279,11 +281,25 @@
 ### Decisions
 | Date | Decision | Reason | Status |
 |---|---|---|---|
+| 2026-09-29 | Page = `PageHero` (Testimonials / "Hear from our more than 100 happy clients." with accent "100 happy clients.") → `TestimonialsGrid` (every published testimonial once, `TestimonialCard` with `width: 100%` on this page, 3 / 2 ≤991 / 1 ≤767 columns, visually hidden `<h2>`) → CTA banner (BaseLayout). All copy static; Sanity = testimonials + `testimonialsPage.seo` (null → fallback title "Testimonials" + 146-char description) | `testimonials-preview.png`; SEO-only singleton (Lead 2026-09-29) | Proposed |
+| 2026-09-29 | No placeholder duplicates: the ref's 15 identical cards are filler, the grid renders the 4 published testimonials once. Plain white background (no line art behind the grid in the ref) | Lead brief | Proposed |
+| 2026-09-29 | No Review / AggregateRating JSON-LD on the page | Google ignores self-serving reviews (an organization's reviews of itself on its own site) | Proposed |
 
 ### Open questions
 
+#### Content
+- **Testimonials content** — only 4 testimonials exist and all are placeholders (same author, Lorem ipsum quote, no photo); the ref shows 15 cards. The page fills up as testimonials are published. (2026-09-29)
+- **`testimonialsPage` document missing in Sanity** — fallback meta title "Testimonials" and description "Hear from our more than 100 happy clients: what B2B marketing leaders say about working with BenorMedia on their websites, from launch day onward." (`TODO: COPY`). (2026-09-29)
+- **Hidden heading** — visually hidden `<h2>` "Client testimonials" above the grid is a placeholder (`TODO: COPY`). (2026-09-29)
+
 #### Design team
-- **Page refs** — no refs yet; the lead will add them to `docs/refs/testimonials/`. The page is built only after they land. (2026-09-29)
+- ~~**Page refs**~~ — RESOLVED 2026-09-29: refs landed in `docs/refs/testimonials/` (`testimonials-hero.jpg`, `testimonials-grid.jpg`, `testimonials-preview.png`).
+- **Grid spacing** — measured from the 1920 ref at 1/14 rem, `TODO: DS`: hero title ink → first card 112px (7.286rem below the h1 line box), card gap 1.429rem (20px, columns and rows), last card → CTA banner 15.714rem (220px). Mobile guesses 5rem / 5rem. (2026-09-29)
+- **Card size in the grid** — the ref card is 544 × 369px = the marquee card at 1/16 rem (34rem × 23.03rem), while the page uses 1/14 rem (see Global "ref px → rem"). In the 1440 container the fluid cards are 397 × 322px (3 columns). (2026-09-29)
+- **Mobile / tablet** — no refs; 2 columns at ≤991, 1 column at ≤767, `TODO: DS mobile`. At 767 the single-column cards are 731px wide with the 23.03rem min-height, so there's a large gap between quote and author; at 375 the hero title wraps "clients." to a 3rd line. (2026-09-29)
+
+#### Needs lead OK
+- **Testimonials page structure, no filler cards, no Review JSON-LD** — see the three Proposed rows above. (2026-09-29)
 
 ---
 
