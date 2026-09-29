@@ -80,6 +80,7 @@ The project lead does not read `DECISIONS.md`: the orchestrator relays open ques
    ├─ pages/
    ├─ styles/               tokens.css, base.css, typography.css, buttons.css, utilities.css
    ├─ scripts/animations/   one file per animation, initialized from BaseLayout
+   ├─ scripts/ui/           shared UI behaviors (tabs.ts, client-previews.ts), imported by components
    └─ lib/sanity/           client.ts, queries.ts, types.ts, image.ts
 ```
 

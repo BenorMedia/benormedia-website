@@ -1,12 +1,13 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Container from "../components/ui/Container.astro";
 import Eyebrow from "../components/ui/Eyebrow.astro";
 import Button from "../components/ui/Button.astro";
 ---
 
 <BaseLayout title="Page not found" noIndex={true} showCtaBanner={false}>
   <section class="c-notfound">
-    <div class="c-notfound__inner">
+    <Container class="c-notfound__inner">
       <Eyebrow variant="default">404</Eyebrow>
       <h1 class="c-text_xl">Page not found</h1>
       <p class="c-paragraph_l">
@@ -15,7 +16,7 @@ import Button from "../components/ui/Button.astro";
       <div class="c-notfound__cta">
         <Button href="/" variant="gradient">Back to home</Button>
       </div>
-    </div>
+    </Container>
   </section>
 </BaseLayout>
 
@@ -26,21 +27,25 @@ import Button from "../components/ui/Button.astro";
     justify-content: center;
     min-height: 60vh;
   }
-  .c-notfound__inner {
-    max-width: 1440px;
-    margin-inline: auto;
-    padding: 8rem 3rem;
+  /* Container owns max-width + side padding; the page keeps its own 8rem
+     vertical padding (lead, 2026-09-29). */
+  .c-notfound :global(.c-container.c-notfound__inner) {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
     gap: 1.5rem;
+    padding-top: 8rem;
+    padding-bottom: 8rem;
   }
   .c-notfound__cta {
     margin-top: 1rem;
   }
   @media (max-width: 767px) {
     /* TODO: DS mobile — no dedicated design provided; built functional with DS tokens. */
-    .c-notfound__inner { padding: 5rem 1.5rem; }
+    .c-notfound :global(.c-container.c-notfound__inner) {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
   }
 </style>

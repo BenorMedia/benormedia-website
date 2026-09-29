@@ -27,6 +27,13 @@
  *     (height 0 → full, image stays unscaled). Height is fixed, width
  *     follows the screenshot's own ratio so nothing is cropped.
  *     Lead-approved shadow exception 2026-09-28 — see docs/DECISIONS.md.
+ *
+ * Preview loading (lead, 2026-09-29): screenshots are not part of the page
+ * load. The `<img>` ships with `data-src` only; on hover-capable devices
+ * (`(hover: hover)`) the first pointer entry or focus inside a list sets
+ * `src` on every preview in that list. Touch devices never download them.
+ * A preview only opens once its image has loaded (`is-loaded`), so it is
+ * never blank. No JS → no previews (decorative, `aria-hidden`).
  */
 import type { Client } from "../../lib/sanity/types";
 import { urlFor, type Source } from "../../lib/sanity/image";
@@ -127,11 +134,10 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
           {row.previewUrl && (
             <span class="c-client-list__preview" aria-hidden="true">
               <img
-                src={row.previewUrl}
+                data-src={row.previewUrl}
                 alt=""
                 width={row.previewSize?.width}
                 height={row.previewSize?.height}
-                loading="lazy"
                 decoding="async"
               />
             </span>
@@ -141,6 +147,14 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
     );
   })}
 </ul>
+
+<script>
+  import { initClientPreviews } from "../../scripts/ui/client-previews";
+
+  document.querySelectorAll<HTMLElement>(".c-client-list").forEach((list) => {
+    initClientPreviews(list);
+  });
+</script>
 
 <style>
   .c-client-list {
@@ -319,8 +333,9 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
     max-width: none;
   }
 
-  .c-client-list__row:hover .c-client-list__preview,
-  a.c-client-list__row:focus-visible .c-client-list__preview {
+  /* Opens only once its screenshot has loaded (script below). */
+  .c-client-list__row:hover .c-client-list__preview.is-loaded,
+  a.c-client-list__row:focus-visible .c-client-list__preview.is-loaded {
     height: 15.58rem;
     opacity: 1;
   }

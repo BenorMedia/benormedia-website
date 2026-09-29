@@ -6,6 +6,7 @@ import { createRequire } from 'node:module';
 import vercel from '@astrojs/vercel';
 import react from '@astrojs/react';
 import sanity from '@sanity/astro';
+import sitemap from '@astrojs/sitemap';
 
 /** @type {{ env: { NODE_ENV?: string }, cwd(): string }} */
 const proc = /** @type {any} */ (globalThis).process;
@@ -100,6 +101,11 @@ const benorSanityAliasFix = {
 export default defineConfig({
   ...(siteUrl ? { site: siteUrl } : {}),
   output: 'static',
+  // No trailing slashes site-wide (lead, 2026-09-29). The Vercel adapter turns
+  // this into `trailingSlash: false` routes (308 `/work/` → `/work`); it also
+  // forces `build.format: 'directory'`, so `Astro.url.pathname` still ends in
+  // `/` at build time: Seo strips it for canonical / og:url.
+  trailingSlash: 'never',
   adapter: vercel({ imageService: true }),
   integrations: [
     sanity({
@@ -110,6 +116,11 @@ export default defineConfig({
       studioBasePath: '/studio',
     }),
     react(),
+    // Needs `site` (PUBLIC_SITE_URL): skipped with a warning until the
+    // production domain is set. Dev pages, Studio and the 404 are left out.
+    sitemap({
+      filter: (page) => !/\/(dev|studio)(\/|$)|\/404$/.test(new URL(page).pathname),
+    }),
   ],
   vite: {
     plugins: [benorSanityAliasFix],
