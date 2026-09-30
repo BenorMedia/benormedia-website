@@ -187,6 +187,7 @@ export interface Client extends SanityRef<'client'> {
   badge?: SanityImage;
   websiteScreenshot?: SanityImage;
   websiteVideo?: SanityVideo;
+  websiteVideoPoster?: SanityImage;
   fundsRaised?: string;
   category?: Category;
   websiteUrl?: string;

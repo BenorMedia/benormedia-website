@@ -15,6 +15,7 @@ import {
   getHome,
   getClientsByIds,
   getAllClientsWithLogo,
+  getAllClientsWithIcon,
   getTestimonials,
 } from "../lib/sanity/queries";
 import { OUR_WORK_GRID_IDS, OUR_WORK_LIST_IDS } from "../lib/content/our-work";
@@ -27,7 +28,8 @@ import Technologies from "../components/sections/Technologies.astro";
 import Testimonials from "../components/sections/Testimonials.astro";
 
 const home = await getHome();
-const [logoClients, featuredClients, workClients, workListClients, testimonials] = await Promise.all([
+const [heroClients, logoClients, featuredClients, workClients, workListClients, testimonials] = await Promise.all([
+  getAllClientsWithIcon(),
   getAllClientsWithLogo(),
   getClientsByIds(["client-surfe", "client-puzzle"]),
   getClientsByIds(OUR_WORK_GRID_IDS),
@@ -37,7 +39,7 @@ const [logoClients, featuredClients, workClients, workListClients, testimonials]
 ---
 
 <BaseLayout pageSeo={home?.seo ?? null}>
-  <HomeHero />
+  <HomeHero clients={heroClients} />
   <LogoStrip clients={logoClients} />
   <FeaturedWork clients={featuredClients} />
   <Services />

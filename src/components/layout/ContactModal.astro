@@ -9,9 +9,15 @@
  * - Header (title + subtitle) hardcoded per Figma; siteSettings.contactModal
  *   is NOT read in this iteration — content is the exact Figma copy.
  * - Form is UI-only for Phase 3 (submit stubbed, wired Day 6).
- * - Testimonial card: 100% width placeholder — real data wired later.
+ * - Testimonial card (bottom): the first Sanity testimonial as the shared
+ *   TestimonialCard, styled like the Testimonials page grid (full width,
+ *   solid white). Hidden when there are no testimonials. Lead 2026-09-30.
  */
 import Button from "../ui/Button.astro";
+import TestimonialCard from "../ui/TestimonialCard.astro";
+import { getFirstTestimonialCached } from "../../lib/sanity/site";
+
+const testimonial = await getFirstTestimonialCached();
 ---
 
 <dialog id="contact-modal" class="c-contact-modal" aria-labelledby="contact-modal-title">
@@ -29,7 +35,7 @@ import Button from "../ui/Button.astro";
 
     <header class="c-contact-modal__header">
       <h2 id="contact-modal-title" class="c-text_xl c-contact-modal__title">Let's work together.</h2>
-      <p class="c-text c-contact-modal__subtitle">
+      <p class="c-contact-modal__subtitle">
         Please fill out the form below and one of our team members will be in touch
         with you within 24 hours. You can also reach out at
         <a href="mailto:info@benor.media">info@benor.media</a>
@@ -83,8 +89,11 @@ import Button from "../ui/Button.astro";
       <Button variant="gradient" type="submit" class="c-contact-modal__submit">Submit</Button>
     </form>
 
-    <!-- Testimonial card placeholder. Real data will be wired via Sanity later. -->
-    <div class="c-contact-modal__testimonial" aria-hidden="true"></div>
+    {testimonial && (
+      <div class="c-contact-modal__testimonial">
+        <TestimonialCard testimonial={testimonial} />
+      </div>
+    )}
   </div>
 </dialog>
 
@@ -240,8 +249,14 @@ import Button from "../ui/Button.astro";
     /* Figma #222 → closest token. TODO: DS confirm modal title color. */
     color: var(--color-black-secondary);
   }
+  /* Scoped text style (lead 2026-09-30): 20.1px / 34.238px line-height. */
   .c-contact-modal__subtitle {
-    color: var(--color-black-secondary); /* Figma #222 → closest token */
+    color: var(--color-black-secondary); /* #222 → closest token */
+    font-family: var(--font-body);
+    font-size: 1.436rem; /* 20.1px ÷14 */
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.703; /* 34.238 / 20.1 */
   }
   .c-contact-modal__subtitle a {
     color: inherit;
@@ -318,13 +333,16 @@ import Button from "../ui/Button.astro";
     width: 100%;
   }
 
-  /* --- Testimonial placeholder ------------------------------------------- */
+  /* --- Testimonial card --------------------------------------------------
+     Same look as the Testimonials page grid: full width, solid white. */
   .c-contact-modal__testimonial {
     width: 100%;
-    flex: 1;
-    min-height: 8rem;
-    background: var(--color-gray-light);
-    border-radius: 6px;
+  }
+  .c-contact-modal__testimonial :global(.c-testimonial-card) {
+    width: 100%;
+    background: var(--color-white);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 
   /* --- Breakpoints ------------------------------------------------------- */

@@ -10,8 +10,14 @@
  *   - title sub-block (eyebrow row + h1 + subtitle, 24px gap). Eyebrow row:
  *     "$700M+" eyebrow left of the partner one; stacked on mobile, new on top.
  *   - buttons sub-block
- * Stats row removed (lead 2026-09-30); the container's bottom padding keeps
- * its space for a custom animation (spec pending).
+ * Stats row removed (lead 2026-09-30); the container's bottom padding is the
+ * resting space of the client icon pile:
+ *
+ * Physics pile (`.c-hero__physics`, lead 2026-09-30): one ClientIcon tile per
+ * client with an icon (same tile as ClientList). hero-physics.ts (Matter.js)
+ * drops them into the hero, where they can be dragged and thrown. Without JS
+ * or under reduced motion they render as a static wrapped row at the bottom.
+ * Decorative (`aria-hidden`): the logos are in the LogoStrip below.
  *
  * No animations wired — `data-anim="..."` hooks are placed for Phase 6.
  *
@@ -21,6 +27,14 @@
  */
 import Button from "../ui/Button.astro";
 import Eyebrow from "../ui/Eyebrow.astro";
+import ClientIcon from "../ui/ClientIcon.astro";
+import type { Client } from "../../lib/sanity/types";
+
+interface Props {
+  clients?: Client[];
+}
+
+const { clients = [] } = Astro.props;
 ---
 
 <section class="c-hero">
@@ -71,6 +85,19 @@ import Eyebrow from "../ui/Eyebrow.astro";
       </div>
     </div>
   </div>
+
+  {clients.length > 0 && (
+    <div class="c-hero__physics" data-hero-physics aria-hidden="true">
+      {clients.map((client) => (
+        <ClientIcon
+          client={client}
+          class="c-hero__physics-item"
+          imgLoading="eager"
+          data-hero-physics-item
+        />
+      ))}
+    </div>
+  )}
 </section>
 
 <style>
@@ -225,6 +252,70 @@ import Eyebrow from "../ui/Eyebrow.astro";
     .c-hero__buttons :global(.c-button) {
       width: 100%;
     }
+  }
+
+  /* --- Physics pile (hero-physics.ts) ---------------------------------
+     Static (no JS / reduced motion): a wrapped row in the bottom space,
+     clipped to it so it never reaches the buttons. Live (`is-live`): the
+     layer covers the whole hero and each tile is placed by transform. */
+  .c-hero__physics {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: flex-end;
+    /* TODO: DS static pile spacing. */
+    gap: 0.5rem;
+    padding: 1.5rem;
+    max-height: 20.5rem; /* = the container's bottom padding */
+    overflow: hidden;
+    pointer-events: none;
+  }
+  /* Hero tiles: the ClientIcon tile scaled +15% (box, padding and radius,
+     so the icon grows in proportion). Lead 2026-09-30. */
+  .c-hero__physics :global(.c-hero__physics-item) {
+    width: 4.025rem;   /* 3.5rem x 1.15 */
+    height: 4.025rem;
+    padding: 0.575rem; /* 0.5rem x 1.15 */
+    border-radius: 0.575rem;
+  }
+  @media (max-width: 767px) {
+    .c-hero__physics :global(.c-hero__physics-item) {
+      width: 3rem;  /* lead 2026-09-30 */
+      height: 3rem;
+    }
+  }
+  /* JS on: the static row stays hidden until the physics goes live (no
+     flash of the fallback before the drop; see hero-physics.ts). */
+  :global(html.is-hero-pending) .c-hero__physics:not(.is-live) {
+    visibility: hidden;
+  }
+  .c-hero__physics.is-live {
+    top: 0;
+    display: block;
+    padding: 0;
+    max-height: none;
+    overflow: visible;
+  }
+  .c-hero__physics.is-live :global(.c-hero__physics-item) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: auto;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+    will-change: transform;
+  }
+  .c-hero__physics.is-live :global(.c-hero__physics-item.is-dragging) {
+    cursor: grabbing;
+  }
+  .c-hero__physics :global(.c-hero__physics-item.is-off) {
+    display: none;
   }
 
   /* --- Eyebrow on-dark override ----------------------------------------

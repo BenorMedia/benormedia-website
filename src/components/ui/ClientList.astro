@@ -52,6 +52,7 @@
 import type { Client } from "../../lib/sanity/types";
 import { urlFor, type Source } from "../../lib/sanity/image";
 import Tag from "./Tag.astro";
+import ClientIcon from "./ClientIcon.astro";
 
 interface Props {
   clients: Client[];
@@ -68,17 +69,11 @@ function assetSize(id?: string): { width: number; height: number } | undefined {
 
 const rows = (limit === undefined ? clients : clients.slice(0, limit)).map(
   (client) => {
-    const iconAsset = client.icon?.asset;
     return {
       id: client._id,
+      client,
       name: client.name,
       href: client.websiteUrl,
-      // 56px box at 2x density. Width only: passing width + height makes the
-      // builder crop a square `rect`, clipping wide icons (e.g. DarwinCX).
-      iconUrl: iconAsset
-        ? urlFor(client.icon as Source).width(112).fit("max").auto("format").url()
-        : undefined,
-      initial: client.name?.trim().charAt(0).toUpperCase() ?? "",
       fundsLabel: client.fundsRaised?.trim()
         ? `${client.fundsRaised.trim()} Raised`
         : undefined,
@@ -113,15 +108,7 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
       <li class="c-client-list__item" data-category={row.categorySlug}>
         <RowTag class="c-client-list__row" {...linkAttrs}>
           <span class="c-client-list__client">
-            <span class="c-client-list__icon">
-              {row.iconUrl ? (
-                <img src={row.iconUrl} alt="" loading="lazy" decoding="async" />
-              ) : (
-                <span class="c-client-list__initial c-text_m" aria-hidden="true">
-                  {row.initial}
-                </span>
-              )}
-            </span>
+            <ClientIcon client={row.client} />
             <span class="c-client-list__name c-text_m">{row.name}</span>
             {/* TODO: COPY — screen-reader note on linked rows. */}
             {row.href && <span class="c-client-list__sr-only"> (opens in a new tab)</span>}
@@ -248,31 +235,7 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
     min-width: 0;
   }
 
-  .c-client-list__icon {
-    display: flex;
-    flex: 0 0 auto;
-    width: 3.5rem; /* 56px */
-    height: 3.5rem;
-    padding: 0.5rem; /* 8px */
-    justify-content: center;
-    align-items: center;
-    border-radius: 0.5rem; /* 8px */
-    border: var(--border-default);
-    background: var(--color-white);
-  }
-
-  .c-client-list__icon img {
-    display: block;
-    width: 90%;
-    height: 90%;
-    object-fit: contain;
-    object-position: center;
-  }
-
-  .c-client-list__initial {
-    color: var(--color-heading);
-    line-height: 1;
-  }
+  /* Icon tile: shared ClientIcon (also used by the Home hero pile). */
 
   /* Visually hidden, still read by screen readers. TODO: switch to a global
      `cc-sr-only` utility (G-14). */

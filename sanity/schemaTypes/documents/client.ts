@@ -135,6 +135,13 @@ export const client = defineType({
       options: { accept: 'video/mp4' },
     }),
     defineField({
+      name: 'websiteVideoPoster',
+      title: 'Website video poster',
+      description:
+        'Still image shown over the website video until the card is hovered (then it fades out and the video plays). Falls back to the website screenshot when empty.',
+      type: 'image',
+    }),
+    defineField({
       name: 'testimonial',
       title: 'Testimonial',
       description:

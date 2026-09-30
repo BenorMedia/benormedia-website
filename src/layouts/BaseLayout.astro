@@ -111,12 +111,15 @@ if (siteSettings) {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
 
-    <!-- Nav entry animation pre-state (nav-motion.ts). Set before first paint
-         so the bar doesn't flash; the timeout shows it if the module fails. -->
+    <!-- Animation pre-states, set before first paint so nothing flashes:
+         nav entry (nav-motion.ts) and the hero pile's static fallback
+         (hero-physics.ts). The timeouts show both if the modules fail. -->
     <script is:inline>
       if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        document.documentElement.classList.add("is-nav-intro");
-        window.setTimeout(() => document.documentElement.classList.remove("is-nav-intro"), 3000);
+        const root = document.documentElement;
+        root.classList.add("is-nav-intro", "is-hero-pending");
+        window.setTimeout(() => root.classList.remove("is-nav-intro"), 3000);
+        window.setTimeout(() => root.classList.remove("is-hero-pending"), 5000);
       }
     </script>
 
@@ -156,7 +159,9 @@ if (siteSettings) {
       import { initCtaBadges } from "../scripts/animations/cta-badges";
       import { initCtaVector } from "../scripts/animations/cta-vector";
       import { initFooterWordmark } from "../scripts/animations/footer-wordmark";
+      import { initHeroPhysics } from "../scripts/animations/hero-physics";
       initNavMotion();
+      initHeroPhysics();
       initCtaBadges();
       initCtaVector();
       initFooterWordmark();
