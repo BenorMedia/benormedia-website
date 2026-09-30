@@ -7,7 +7,11 @@
  *
  * Layout: every `PricingCard` is a DIRECT child of the grid, so the card's
  * subgrid lines up the prices, feature lists and buttons across cards
- * (see `PricingCard.astro`). 3 columns, 1 column at ≤991.
+ * (see `PricingCard.astro`). 3 columns, 1 column at ≤991. The grid is 90%
+ * wide, centered by `__wrap` (100% ≤991).
+ *
+ * No section background of its own: on /pricing it sits in `.c-pricing-intro`
+ * with the hero, which paints the line art the glass cards blur.
  *
  * Each card's "Get In Touch" button carries `.js-open-contact` (contact modal).
  * The section has a visually hidden `<h2>` (plan names are `<h3>`).
@@ -31,46 +35,54 @@ const headingId = "pricing-plans-title";
       {/* TODO: COPY — section heading (visually hidden; keeps the outline h1 → h2 → h3). */}
       <h2 id={headingId} class="c-pricing-plans__sr-only">Plans</h2>
 
-      <div class="c-pricing-plans__grid" data-anim="pricing-plans">
-        {plans.map((plan) => (
-          <PricingCard
-            name={plan.name}
-            description={plan.description}
-            features={plan.features}
-            {...(plan.price !== undefined && { price: plan.price })}
-            {...(plan.period !== undefined && { period: plan.period })}
-            {...(plan.priceLabel !== undefined && { priceLabel: plan.priceLabel })}
-          />
-        ))}
+      <div class="c-pricing-plans__wrap">
+        <div class="c-pricing-plans__grid" data-anim="pricing-plans">
+          {plans.map((plan) => (
+            <PricingCard
+              name={plan.name}
+              description={plan.description}
+              features={plan.features}
+              {...(plan.price !== undefined && { price: plan.price })}
+              {...(plan.period !== undefined && { period: plan.period })}
+              {...(plan.priceLabel !== undefined && { priceLabel: plan.priceLabel })}
+            />
+          ))}
+        </div>
       </div>
     </Container>
   </section>
 )}
 
 <style>
+  /* Transparent: the page wrapper (`.c-pricing-intro`) paints white + line
+     art. TODO: DS — the lavender glow on cards 1 and 3 is not built. */
   .c-pricing-plans {
-    background: var(--color-white);
-    /* TODO: DS — the ref also shows faint line-art arcs left and right of the
-       cards and a lavender glow on cards 1 and 3 (section background asset,
-       not delivered). Not built. */
+    background: transparent;
   }
 
   .c-pricing-plans :global(.c-container) {
-    /* Hero title → cards ≈ 103px, cards → logo strip ≈ 61px in the ref.
-       TODO: DS. */
-    padding-top: 7.357rem;
-    padding-bottom: 4.357rem;
+    /* Lead visual QA 2026-09-29: 7.5rem top, 60px bottom. */
+    padding-top: 7.5rem;
+    padding-bottom: 4.286rem;
+  }
+
+  .c-pricing-plans__wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .c-pricing-plans__grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1.071rem; /* ≈15px between cards — TODO: DS */
+    width: 90%;
+    gap: 1rem; /* 14px */
   }
 
   @media (max-width: 991px) {
     .c-pricing-plans__grid {
       grid-template-columns: 1fr;
+      width: 100%;
     }
   }
 

@@ -45,6 +45,9 @@
   --color-gray: #C9CEDA;
   --color-gray-light: #F0F0F0;
 
+  /* Surfaces — glass (cards, FAQ rows over line art; lead 2026-09-29) */
+  --color-surface-glass: rgba(255, 255, 255, 0.05);
+
   /* Borders */
   --color-border: #E4E6EA;
   --border-default: 1px solid var(--color-border);

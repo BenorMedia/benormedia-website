@@ -16,6 +16,10 @@
  *
  * `squares` adds the two decorative corner squares seen on the Work filters
  * (top-left + bottom-right, same box as the Eyebrow squares, DESIGN_SYSTEM §3.3).
+ *
+ * `scroll` (opt-in, lead 2026-09-29): at ≤767 the items stay on one row and
+ * the control scrolls horizontally instead of wrapping (Pricing FAQ tabs).
+ * `initTabs` scrolls the selected tab into view. Without it, items wrap.
  */
 interface Item {
   label: string;
@@ -36,10 +40,20 @@ interface Props {
   label: string;
   mode?: Mode;
   squares?: boolean;
+  /** ≤767: one row that scrolls horizontally instead of wrapping. */
+  scroll?: boolean;
   class?: string;
 }
 
-const { items, active, label, mode = "toggle", squares = false, class: className } = Astro.props;
+const {
+  items,
+  active,
+  label,
+  mode = "toggle",
+  squares = false,
+  scroll = false,
+  class: className,
+} = Astro.props;
 
 const activeValue = items.some((item) => item.value === active) ? active : items[0]?.value;
 const isTabs = mode === "tabs";
@@ -52,7 +66,9 @@ if (isTabs && import.meta.env.DEV) {
   }
 }
 
-const rootClass = ["c-segmented", squares && "is-squared", className].filter(Boolean).join(" ");
+const rootClass = ["c-segmented", squares && "is-squared", scroll && "is-scroll", className]
+  .filter(Boolean)
+  .join(" ");
 ---
 
 {
@@ -183,6 +199,22 @@ const rootClass = ["c-segmented", squares && "is-squared", className].filter(Boo
       flex-wrap: wrap;
       justify-content: center;
       max-width: 100%;
+    }
+
+    /* Opt-in: one row that scrolls sideways (scrollbar hidden; the cut-off
+       item at the edge shows there is more). */
+    .c-segmented.is-scroll {
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+    }
+    .c-segmented.is-scroll::-webkit-scrollbar {
+      display: none;
+    }
+    .c-segmented.is-scroll .c-segmented__item {
+      flex: 0 0 auto;
     }
   }
 </style>

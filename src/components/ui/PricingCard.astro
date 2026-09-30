@@ -48,7 +48,7 @@ const rootClass = ["c-pricing-card", className].filter(Boolean).join(" ");
 <article class={rootClass} data-anim="pricing-card">
   <div class="c-pricing-card__header">
     <h3 class="c-pricing-card__name c-text_l">{name}</h3>
-    <p class="c-pricing-card__description c-paragraph_m">{description}</p>
+    <p class="c-pricing-card__description c-paragraph">{description}</p>
   </div>
 
   <p class="c-pricing-card__price">
@@ -81,29 +81,38 @@ const rootClass = ["c-pricing-card", className].filter(Boolean).join(" ");
 </article>
 
 <style>
-  /* Measured from the ref (1920 frame, 1 ref px = 1/14 rem at the ≥1440 root).
-     TODO: DS — radius, paddings and vertical gaps are not in DESIGN_SYSTEM. */
+  /* Lead visual QA 2026-09-29 (ref px → rem at 1/14). The subgrid is kept so
+     prices, feature lists and buttons line up across cards; `row-gap` is the
+     28px between blocks. Glass surface over the page line art. */
   .c-pricing-card {
     display: grid;
     grid-template-rows: subgrid;
     grid-row: span 4;
-    row-gap: 0;
-    padding: 1.714rem 1.536rem 1.536rem; /* 24 / 21.5px — TODO: DS */
-    border: var(--border-default);
-    border-radius: 6px; /* TODO: DS */
-    background: var(--color-white);
+    row-gap: 2rem; /* 28px */
+    align-self: stretch;
+    padding: 1.5rem; /* 21px */
+    border: 0.8px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-surface-glass);
+    -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
     /* TODO: DS — the faint lavender glow in the ref (top-left on card 1,
-       top-right on card 3, none on card 2) reads as a section background,
-       not a card style; not built here. */
+       top-right on card 3, none on card 2) is not built. */
   }
 
   .c-pricing-card__header {
     display: flex;
     flex-direction: column;
-    gap: 0.714rem; /* 10px, same as SectionHeader title → description */
+    gap: 1rem; /* 14px */
   }
 
-  /* TODO: DS — ref text is #222222; closest token is --color-black-secondary. */
+  /* Name: `c-text_l` (Brulia, 140%) with a scoped 1.8rem size (lead visual QA
+     2026-09-29; not a DS token); 2.7rem at ≤767 (media query below).
+     Ref text is #222222; closest token is --color-black-secondary (lead). */
+  .c-pricing-card__name {
+    font-size: 1.8rem;
+  }
+
   .c-pricing-card__name,
   .c-pricing-card__description,
   .c-pricing-card__period,
@@ -111,21 +120,27 @@ const rootClass = ["c-pricing-card", className].filter(Boolean).join(" ");
     color: var(--color-black-secondary);
   }
 
+  /* The period always sits right of the amount (no wrapping). */
   .c-pricing-card__price {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: baseline;
-    gap: 0.357rem; /* ≈5px amount → period — TODO: DS */
-    margin-top: 2.5rem; /* ≈35px — TODO: DS */
+    gap: 0;
+    margin: 0;
   }
 
-  /* Gradient text, same technique as the `is-white` button text (§7.3). */
+  /* Amount: `c-text_xxl` (Brulia, 120%) with a scoped 4.6rem size (lead
+     visual QA 2026-09-29; not a DS token, same at every breakpoint).
+     Gradient from the lead's spec (290deg, #6BB0F7 8.49% → #6275F6 91.51%),
+     written with the brand color tokens. Same technique as the `is-white`
+     button text (§7.3). */
   .c-pricing-card__amount {
+    font-size: 4.6rem;
     color: var(--color-blue); /* fallback without background-clip: text */
   }
   @supports (background-clip: text) or (-webkit-background-clip: text) {
     .c-pricing-card__amount {
-      background: var(--gradient-primary);
+      background: linear-gradient(290deg, var(--color-blue-light) 8.49%, var(--color-blue) 91.51%);
       -webkit-background-clip: text;
               background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -136,16 +151,18 @@ const rootClass = ["c-pricing-card", className].filter(Boolean).join(" ");
   .c-pricing-card__features {
     display: flex;
     flex-direction: column;
-    gap: 1.143rem; /* ≈16px between rows (38px pitch) — TODO: DS */
-    margin: 2.857rem 0 0; /* ≈40px — TODO: DS */
+    gap: 1rem; /* 14px */
+    margin: 0;
     padding: 0;
     list-style: none;
   }
 
+  /* Font size of `c-text_s` (lead); the body font of `c-paragraph` is kept. */
   .c-pricing-card__feature {
     display: flex;
     align-items: flex-start;
     gap: 0.714rem; /* 10px icon → text — TODO: DS */
+    font-size: var(--fs-text-s);
   }
 
   /* Gradient circle + white check. The circle is a CSS background so the
@@ -155,8 +172,8 @@ const rootClass = ["c-pricing-card", className].filter(Boolean).join(" ");
     flex: 0 0 auto;
     width: 1.429rem; /* 20px — TODO: DS icon sizes (§9) */
     height: 1.429rem;
-    /* Center the icon on the first text line (c-paragraph line-height 1.5). */
-    margin-top: calc((var(--fs-p) * 1.5 - 1.429rem) / 2);
+    /* Center the icon on the first text line (line-height 1.5). */
+    margin-top: calc((var(--fs-text-s) * 1.5 - 1.429rem) / 2);
     border-radius: 50%;
     background: var(--gradient-primary);
     color: var(--color-white);
@@ -168,22 +185,23 @@ const rootClass = ["c-pricing-card", className].filter(Boolean).join(" ");
 
   .c-pricing-card__cta {
     align-self: end;
-    margin-top: 1.714rem; /* ≥24px from the last feature — TODO: DS */
   }
-  .c-pricing-card__cta :global(.c-pricing-card__button) {
+  /* 0.75rem vertical padding on this button only (lead); `.c-button` keeps
+     its em side padding. */
+  .c-pricing-card__cta :global(.c-button.c-pricing-card__button) {
     width: 100%;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
   }
 
-  /* TODO: DS mobile — no mobile refs; slightly smaller vertical rhythm. */
+  /* TODO: DS mobile — no mobile refs; a little more side padding. */
   @media (max-width: 767px) {
     .c-pricing-card {
-      padding: 2.286rem 2rem 2rem;
+      padding: 2rem;
     }
-    .c-pricing-card__price {
-      margin-top: 2rem;
-    }
-    .c-pricing-card__features {
-      margin-top: 2rem;
+    /* Lead visual QA 2026-09-29: 2.7rem on mobile (≈24px at the 9px root). */
+    .c-pricing-card__name {
+      font-size: 2.7rem;
     }
   }
 </style>
