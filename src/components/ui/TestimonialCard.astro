@@ -65,20 +65,22 @@ const rootClass = ["c-testimonial-card", className].filter(Boolean).join(" ");
 </article>
 
 <style>
+  /* Shared by every TestimonialMarquee (Home, Work, Pricing, service) and the
+     Testimonials grid. Padding, gap and radius: lead visual QA 2026-09-29,
+     px → rem at 1/14. Size is still the marquee size at 1/16 rem. */
   .c-testimonial-card {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: flex-start;
     flex-shrink: 0;
-    gap: 1.5rem; /* 24px */
-    width: 34rem; /* 544px */
-    height: 23.03rem; /* 368.484px */
-    padding: 2.375rem 2.125rem; /* 38px 34px */
-    border-radius: 0.875rem; /* 14px */
+    gap: 1.714rem; /* 24px */
+    width: 34rem; /* 544px at 1/16 */
+    height: 23.03rem; /* 368.484px at 1/16 */
+    padding: 2.714rem 2.429rem; /* 38px 34px */
+    border-radius: 14px;
     border: var(--border-default);
-    /* rgba(255,255,255,0.05) expressed from the white token. */
-    background: color-mix(in srgb, var(--color-white) 5%, transparent);
+    background: var(--color-surface-glass);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
   }
