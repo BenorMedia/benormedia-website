@@ -203,6 +203,7 @@ export const CLIENTS_BY_IDS = /* groq */ `
   "logo": logo${IMAGE},
   "cardThumbnail": cardThumbnail${IMAGE},
   "websiteVideo": websiteVideo${VIDEO},
+  "websiteVideoPoster": websiteVideoPoster${IMAGE},
   "testimonial": testimonial->{
     _id,
     _type,
@@ -244,6 +245,20 @@ export const ALL_CLIENTS_WITH_LOGO = /* groq */ `
   _type,
   name,
   "logo": logo${IMAGE}
+}
+`;
+
+// ---------------------------------------------------------------------------
+// ALL_CLIENTS_WITH_ICON — the Home hero physics pile: every published client
+// with an icon asset (name + icon only).
+// ---------------------------------------------------------------------------
+
+export const ALL_CLIENTS_WITH_ICON = /* groq */ `
+*[_type == "client" && defined(icon.asset) && !(_id in path("drafts.**"))] | order(name asc){
+  _id,
+  _type,
+  name,
+  "icon": icon${IMAGE}
 }
 `;
 
@@ -424,6 +439,14 @@ export async function getTestimonials(): Promise<Testimonial[]> {
  */
 export async function getAllClientsWithLogo(): Promise<Client[]> {
   return await sanityClient.fetch<Client[]>(ALL_CLIENTS_WITH_LOGO);
+}
+
+/**
+ * Fetch every published client that has an icon asset, alphabetical by name.
+ * Consumed by the Home hero physics pile.
+ */
+export async function getAllClientsWithIcon(): Promise<Client[]> {
+  return await sanityClient.fetch<Client[]>(ALL_CLIENTS_WITH_ICON);
 }
 
 /**

@@ -1,0 +1,61 @@
+---
+/**
+ * ClientIcon — the client's square icon tile: white box, default border,
+ * 8px radius, icon at 90% (initial letter when the client has no icon).
+ *
+ * Shared by the ClientList rows and the Home hero physics pile
+ * (hero-physics.ts), so both render literally the same tile. Extra
+ * attributes (e.g. `data-*` hooks) are spread onto the tile.
+ */
+import type { HTMLAttributes } from "astro/types";
+import type { Client } from "../../lib/sanity/types";
+import { urlFor, type Source } from "../../lib/sanity/image";
+
+interface Props extends HTMLAttributes<"span"> {
+  client: Pick<Client, "name" | "icon">;
+  imgLoading?: "lazy" | "eager";
+}
+
+const { client, imgLoading = "lazy", class: className, ...attrs } = Astro.props;
+
+// 56px box at 2x density. Width only: passing width + height makes the
+// builder crop a square `rect`, clipping wide icons (e.g. DarwinCX).
+const iconUrl = client.icon?.asset
+  ? urlFor(client.icon as Source).width(112).fit("max").auto("format").url()
+  : undefined;
+const initial = client.name?.trim().charAt(0).toUpperCase() ?? "";
+---
+
+<span class:list={["c-client-icon", className]} {...attrs}>
+  {iconUrl ? (
+    <img src={iconUrl} alt="" loading={imgLoading} decoding="async" draggable="false" />
+  ) : (
+    <span class="c-client-icon__initial c-text_m" aria-hidden="true">{initial}</span>
+  )}
+</span>
+
+<style>
+  .c-client-icon {
+    display: flex;
+    flex: 0 0 auto;
+    width: 3.5rem; /* 56px */
+    height: 3.5rem;
+    padding: 0.5rem; /* 8px */
+    justify-content: center;
+    align-items: center;
+    border-radius: 0.5rem; /* 8px */
+    border: var(--border-default);
+    background: var(--color-white);
+  }
+  .c-client-icon img {
+    display: block;
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
+    object-position: center;
+  }
+  .c-client-icon__initial {
+    color: var(--color-heading);
+    line-height: 1;
+  }
+</style>

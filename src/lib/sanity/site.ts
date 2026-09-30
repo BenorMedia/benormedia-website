@@ -10,8 +10,8 @@
  * The cache stores `null` (singleton not yet published) and the resolved
  * document alike; only the initial `undefined` triggers a fetch.
  */
-import { getClientBadges, getSiteSettings } from './queries';
-import type { Client, SiteSettings } from './types';
+import { getClientBadges, getSiteSettings, getTestimonials } from './queries';
+import type { Client, SiteSettings, Testimonial } from './types';
 import { urlFor, type Source } from './image';
 
 let cached: SiteSettings | null | undefined;
@@ -32,6 +32,17 @@ let badgesCached: Promise<Client[]> | undefined;
 export function getClientBadgesCached(): Promise<Client[]> {
   badgesCached ??= getClientBadges();
   return badgesCached;
+}
+
+/**
+ * The first testimonial (TESTIMONIALS order: oldest first) for the global
+ * ContactModal card, rendered on every page. Same once-per-build cache.
+ */
+let firstTestimonialCached: Promise<Testimonial | null> | undefined;
+
+export function getFirstTestimonialCached(): Promise<Testimonial | null> {
+  firstTestimonialCached ??= getTestimonials().then((list) => list[0] ?? null);
+  return firstTestimonialCached;
 }
 
 /**

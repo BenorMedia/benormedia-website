@@ -16,9 +16,11 @@
  * Featured layout (≥992):
  *   [ screenshot / video ][ testimonial block ]
  *
- * Media: `websiteVideo` (MP4) when set — muted, looping, playing only while
- * on screen and never under reduced motion; the screenshot is its poster.
- * Without a video the screenshot image renders as before.
+ * Media: `websiteVideo` (MP4) when set — a poster image (`websiteVideoPoster`,
+ * else the screenshot) always covers it; hovering the card body fades the
+ * poster out and plays the video from the start (muted, looping); leaving
+ * pauses it and fades the poster back. Hover-capable devices only, never under reduced motion. Without a
+ * video the screenshot image renders as before.
  *
  * Testimonial block: quote → author row (photo + name + role) → up to 2 KPIs.
  * Any missing field degrades gracefully (see fallbacks below).
@@ -56,6 +58,9 @@ const screenshotUrl = screenshotAsset
   : undefined;
 const screenshotAlt = client.websiteScreenshot?.alt ?? client.name;
 const videoUrl = client.websiteVideo?.asset?.url;
+const posterUrl = client.websiteVideoPoster?.asset
+  ? urlFor(client.websiteVideoPoster as Source).width(960).auto("format").url()
+  : screenshotUrl;
 
 // Author avatar (96px). If missing we render the first initial in a circle.
 const authorPhotoAsset = testimonial?.authorPhoto?.asset;
@@ -143,18 +148,27 @@ const categoryLabel = client.category?.title;
 <article class={rootClass} data-anim="card-reveal">
   {
     videoUrl ? (
-      <div class="c-client-card__screenshot">
+      <div class="c-client-card__screenshot" data-client-media>
         <video
           class="c-client-card__video"
           src={videoUrl}
-          poster={screenshotUrl}
           aria-label={screenshotAlt}
           muted
           loop
           playsinline
-          preload="none"
+          preload="metadata"
           data-client-video
         />
+        {posterUrl && (
+          <img
+            class="c-client-card__poster"
+            src={posterUrl}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            data-client-poster
+          />
+        )}
       </div>
     ) : screenshotUrl ? (
       <div class="c-client-card__screenshot">
@@ -255,20 +269,39 @@ const categoryLabel = client.category?.title;
 )}
 
 <script>
-  // Featured card videos: play only while on screen, never under reduced
-  // motion (the poster screenshot stays). No JS: poster only.
-  const videos = document.querySelectorAll<HTMLVideoElement>("[data-client-video]");
+  // Featured card videos: every hover of the card body restarts the video
+  // from 0 and fades the poster out once frames are playing; leaving pauses
+  // it at once (the poster fades back over the frozen frame). Hover-capable
+  // devices only, never under reduced motion. No JS / touch: poster only.
+  const canHover = window.matchMedia("(hover: hover)");
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-  if (videos.length > 0) {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(({ target, isIntersecting }) => {
-        const video = target as HTMLVideoElement;
-        if (isIntersecting && !reduced.matches) void video.play().catch(() => {});
-        else video.pause();
-      });
+
+  document.querySelectorAll<HTMLElement>("[data-client-media]").forEach((media) => {
+    const video = media.querySelector<HTMLVideoElement>("[data-client-video]");
+    const poster = media.querySelector<HTMLElement>("[data-client-poster]");
+    const body = media.closest(".c-client-card")?.querySelector<HTMLElement>(".c-client-card__body");
+    if (!video || !body) return;
+
+    let hovering = false;
+
+    video.addEventListener("playing", () => {
+      // A play() that resolved after the pointer already left stops here.
+      if (hovering) poster?.classList.add("is-hidden");
+      else video.pause();
     });
-    videos.forEach((video) => observer.observe(video));
-  }
+    body.addEventListener("pointerenter", () => {
+      if (!canHover.matches || reduced.matches) return;
+      hovering = true;
+      video.currentTime = 0;
+      void video.play().catch(() => {});
+    });
+    body.addEventListener("pointerleave", () => {
+      if (!hovering) return;
+      hovering = false;
+      video.pause();
+      poster?.classList.remove("is-hidden");
+    });
+  });
 </script>
 
 <style>
@@ -306,13 +339,28 @@ const categoryLabel = client.category?.title;
   }
 
   .c-client-card__screenshot img,
-  .c-client-card__video {
+  .c-client-card__video,
+  .c-client-card__poster {
     width: 100%;
     height: 100%;
     object-fit: cover;
     /* Keep the site's logo + headline (top-left) when the 4:3 crop kicks in. */
     object-position: left top;
     display: block;
+  }
+
+  /* Poster over the video; fades out while the video plays on hover. */
+  .c-client-card__poster {
+    position: absolute;
+    inset: 0;
+    transition: opacity var(--duration-hover) var(--ease-smooth);
+  }
+  /* Beats the shared `.c-client-card__screenshot img` left-top crop. */
+  .c-client-card__screenshot .c-client-card__poster {
+    object-position: center;
+  }
+  .c-client-card__poster.is-hidden {
+    opacity: 0;
   }
 
   .c-client-card__screenshot.is-empty {
