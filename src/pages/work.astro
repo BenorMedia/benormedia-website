@@ -2,30 +2,33 @@
 /**
  * Work page — Phase 5. Refs: `docs/refs/work/`.
  *
- * All page copy is static. Sanity supplies the clients, the testimonials and
- * the `workPage` SEO singleton (null until the document is created: the
- * title/description props below are the fallback).
+ * All page copy is static. Sanity supplies the clients and the testimonials.
+ * SEO lives in code (lead, 2026-09-29: there will be no `workPage` document;
+ * the `workPage` schema type still exists and is not read here).
  *
  * BaseLayout owns Nav, CtaBanner, Footer and ContactModal.
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getAllClients, getPageSeo, getTestimonials } from "../lib/sanity/queries";
+import { getAllClients, getTestimonials } from "../lib/sanity/queries";
 import PageHero from "../components/sections/PageHero.astro";
 import WorkListing from "../components/sections/WorkListing.astro";
 import Testimonials from "../components/sections/Testimonials.astro";
 
-const [workPage, clients, testimonials] = await Promise.all([
-  getPageSeo("workPage"),
+const [clients, testimonials] = await Promise.all([
   getAllClients(),
   getTestimonials(),
 ]);
 
 const heroDescription =
   "We work with enterprises and startups alike, driving growth through website transformation and optimization. We specialize in B2B technology, financial services, and professional services.";
+
+// TODO: COPY — meta title / description (≤160 characters).
+const metaTitle = "Our Work";
+const metaDescription =
+  "We work with enterprises and startups alike, driving growth through website transformation and optimization for B2B tech and professional services.";
 ---
 
-<!-- TODO: COPY — fallback meta title / description until workPage.seo is filled in Sanity. -->
-<BaseLayout pageSeo={workPage?.seo ?? null} title="Our Work" description={heroDescription}>
+<BaseLayout title={metaTitle} description={metaDescription}>
   <PageHero
     eyebrow="Our Work"
     title={"Websites\nwe've launched."}

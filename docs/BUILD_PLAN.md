@@ -63,7 +63,7 @@ Order and status:
 
 Page singletons stay SEO-only; page content is static in Astro (DECISIONS 2026-09-29). Per-page QA is paused (lead, 2026-09-29): every open point goes into `docs/PHASE5_OPEN_ITEMS.md`; the lead runs one full QA on all secondary pages after V1 of every page.
 
-**Phase 5 QA round (started 2026-09-29, V1 of all pages merged to `dev` in PR #8).** The lead's written notes in `docs/PHASE5_OPEN_ITEMS.md` + a visual QA page by page. No qa agent until the final round (lead). Global fixes first on `chore/phase5-global-fixes`: G-1/G-21 (no trailing slashes + sitemap), G-4/G-22 (on-demand hover screenshots), G-15, G-24, G-25, G-26 done; page-specific fixes follow.
+**Phase 5 QA round (started 2026-09-29, V1 of all pages merged to `dev` in PR #8).** The lead's written notes in `docs/PHASE5_OPEN_ITEMS.md` + a visual QA page by page. No qa agent until the final round (lead). Global fixes first on `chore/phase5-global-fixes`: G-1/G-21 (no trailing slashes + sitemap), G-4/G-22 (on-demand hover screenshots), G-15, G-24, G-25, G-26 done (PR #9). Page fixes stacked on `chore/phase5-secondary-qa`: Work, Pricing (+ FAQs), Testimonials, Service template (+ CTAs) done (handoffs `2026-09-29_orchestrator_{work,pricing,testimonials,service}-qa.md`). Final qa agent pass 2026-09-30: PASS WITH NOTES, findings fixed or deferred by the lead (`2026-09-30_qa_phase5-final-review.md`, PHASE5_OPEN_ITEMS → Final QA). Remaining: blog decision (optional), production content with the CEO.
 - Remaining GSAP animations, contact form → Vercel endpoint → Make (if CEO confirmed)
 ✅ Checkpoint per page.
 

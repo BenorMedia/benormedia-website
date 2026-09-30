@@ -80,6 +80,12 @@ const heroOptional = {
     padding-bottom: 7.857rem;
   }
 
+  /* Subtitle width (lead visual QA 2026-09-29): 40% on this hero only;
+     full width on phones (40% of 375px would be ≈150px). */
+  :global(section.c-page-hero.c-service-hero .c-section-header__description) {
+    max-width: 40%;
+  }
+
   /* Breadcrumb sits where the eyebrow would: same 24px gap as SectionHeader. */
   :global(.c-breadcrumbs.c-service-hero__breadcrumbs) {
     margin-bottom: 1.714rem;
@@ -96,6 +102,9 @@ const heroOptional = {
   @media (max-width: 767px) {
     :global(section.c-page-hero.c-service-hero .c-container) {
       padding-bottom: 5rem;
+    }
+    :global(section.c-page-hero.c-service-hero .c-section-header__description) {
+      max-width: 100%;
     }
     .c-service-hero__actions {
       margin-top: 2rem;

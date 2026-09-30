@@ -38,7 +38,7 @@ export const PRICING_PLANS: readonly PricingPlan[] = [
     ],
   },
   {
-    // Ref spelling. The nav / footer say "Growth (AEO / SEO / CRO)" — open item P-11.
+    // Canonical service name (lead, 2026-09-29): nav + footer use the same.
     name: "Growth (AEO/GEO + CRO)",
     description:
       "Technical AEO, AI search analytics, content creation, and ongoing optimization to improve your LLMs visibility and web conversion rate.",

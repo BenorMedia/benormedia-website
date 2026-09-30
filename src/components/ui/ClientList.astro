@@ -19,14 +19,28 @@
  *   - Missing icon → client initial inside the icon box.
  *   - Funds tag only when `fundsRaised` is set; category tag only when set.
  *   - Row is a link (new tab) only when `websiteUrl` is set; otherwise a div.
+ *     A linked row's accessible name = client name + tags + a visually
+ *     hidden "(opens in a new tab)"; the icon is decorative (`alt=""`), so
+ *     the name isn't read twice (QA 2026-09-30).
  *   - Hover preview only renders when `websiteScreenshot` is set.
  *
- * Hover (and keyboard focus on a linked row):
- *   - Arrow turns accent and rotates −30.963deg.
- *   - Website screenshot preview opens from the row's vertical center
- *     (height 0 → full, image stays unscaled). Height is fixed, width
- *     follows the screenshot's own ratio so nothing is cropped.
+ * Hover (lead, visual QA 2026-09-29):
+ *   - The row lifts 0.4rem with a soft shadow (`transition: all 0.2s linear`).
+ *     Lead-approved shadow exception 2026-09-29 — see docs/DECISIONS.md.
+ *     No z-index change: the next row still paints over the lifted row's
+ *     bottom edge (stacked deck).
+ *   - Arrow turns accent and rotates −30.963deg (also on keyboard focus).
+ *   - Website screenshot preview fades in (opacity only; fixed height, width
+ *     follows the screenshot's ratio so nothing is cropped), centered on the
+ *     row. Also on keyboard focus of a linked row.
  *     Lead-approved shadow exception 2026-09-28 — see docs/DECISIONS.md.
+ *
+ * Stacking: the lift is applied to the row (`__row`), not the `<li>`, and the
+ * preview is the row's sibling. A transform on the `<li>` would make it a
+ * stacking context and trap the preview under the following rows; this way
+ * the preview's `z-index: 1` paints above every row. The row is the only
+ * visible part of the item, so this looks the same as styling the item.
+ * Hover is read on the `<li>` (it doesn't move), so the lift can't flicker.
  *
  * Preview loading (lead, 2026-09-29): screenshots are not part of the page
  * load. The `<img>` ships with `data-src` only; on hover-capable devices
@@ -64,7 +78,6 @@ const rows = (limit === undefined ? clients : clients.slice(0, limit)).map(
       iconUrl: iconAsset
         ? urlFor(client.icon as Source).width(112).fit("max").auto("format").url()
         : undefined,
-      iconAlt: client.icon?.alt ?? client.name,
       initial: client.name?.trim().charAt(0).toUpperCase() ?? "",
       fundsLabel: client.fundsRaised?.trim()
         ? `${client.fundsRaised.trim()} Raised`
@@ -102,7 +115,7 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
           <span class="c-client-list__client">
             <span class="c-client-list__icon">
               {row.iconUrl ? (
-                <img src={row.iconUrl} alt={row.iconAlt} loading="lazy" decoding="async" />
+                <img src={row.iconUrl} alt="" loading="lazy" decoding="async" />
               ) : (
                 <span class="c-client-list__initial c-text_m" aria-hidden="true">
                   {row.initial}
@@ -110,6 +123,8 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
               )}
             </span>
             <span class="c-client-list__name c-text_m">{row.name}</span>
+            {/* TODO: COPY — screen-reader note on linked rows. */}
+            {row.href && <span class="c-client-list__sr-only"> (opens in a new tab)</span>}
           </span>
 
           <span class="c-client-list__tags">
@@ -131,18 +146,19 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
             />
           </svg>
 
-          {row.previewUrl && (
-            <span class="c-client-list__preview" aria-hidden="true">
-              <img
-                data-src={row.previewUrl}
-                alt=""
-                width={row.previewSize?.width}
-                height={row.previewSize?.height}
-                decoding="async"
-              />
-            </span>
-          )}
         </RowTag>
+
+        {row.previewUrl && (
+          <span class="c-client-list__preview" aria-hidden="true">
+            <img
+              data-src={row.previewUrl}
+              alt=""
+              width={row.previewSize?.width}
+              height={row.previewSize?.height}
+              decoding="async"
+            />
+          </span>
+        )}
       </li>
     );
   })}
@@ -176,17 +192,10 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
     }
   }
 
+  /* Positioning context for the preview. No z-index and no transform here,
+     so the preview's own z-index paints above the other rows. */
   .c-client-list__item {
     position: relative;
-    /* Drop back under neighbours only after the preview has closed. */
-    transition: z-index 0s linear var(--duration-hover);
-  }
-
-  /* Hovered row (and its preview) paints above the rows around it. */
-  .c-client-list__item:hover,
-  .c-client-list__item:focus-within {
-    z-index: 1;
-    transition-delay: 0s;
   }
 
   /* Stacked deck: each row covers the previous row's extra bottom padding
@@ -215,6 +224,14 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
     background: var(--color-white);
     color: inherit;
     text-decoration: none;
+    transition: all 0.2s linear;
+  }
+
+  /* Lift on hover (lead spec for the item, applied to its row, see header). */
+  .c-client-list__item:hover .c-client-list__row {
+    transform: translateY(-0.4rem);
+    /* Lead-approved shadow exception (2026-09-29), see DECISIONS.md. */
+    box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.07);
   }
 
   a.c-client-list__row:focus-visible {
@@ -255,6 +272,20 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
   .c-client-list__initial {
     color: var(--color-heading);
     line-height: 1;
+  }
+
+  /* Visually hidden, still read by screen readers. TODO: switch to a global
+     `cc-sr-only` utility (G-14). */
+  .c-client-list__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
   }
 
   .c-client-list__name {
@@ -298,10 +329,9 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
   }
 
   /* --- Hover preview --------------------------------------------------- */
-  /* Centered on the row's 56px track; height grows from 0 so the reveal
-     opens from the middle to top + bottom. The image keeps its full size
-     and stays centered, so it is uncovered rather than stretched. The box
-     has no width: it shrinks to the image, whose width follows its ratio. */
+  /* Sibling of the row, centered on its 56px track. Fixed height (same as
+     the image), fades in on hover. The box has no width: it shrinks to the
+     image, whose width follows its ratio. */
   .c-client-list__preview {
     position: absolute;
     top: 2.625rem; /* 14px top padding + half of the 56px track */
@@ -309,7 +339,7 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
     z-index: 1;
     display: flex;
     align-items: center;
-    height: 0;
+    height: 15.58rem;
     overflow: hidden;
     border-radius: 0.875rem; /* 14px */
     /* Lead-approved shadow exception (2026-09-28), see DECISIONS.md. */
@@ -317,9 +347,7 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
     opacity: 0;
     transform: translate(-50%, -50%);
     pointer-events: none;
-    transition:
-      height var(--duration-hover) var(--ease-smooth),
-      opacity var(--duration-hover) var(--ease-smooth);
+    transition: opacity var(--duration-hover) var(--ease-smooth);
   }
 
   /* Height only (277px − 10% ≈ 249px); width auto keeps the whole image.
@@ -333,10 +361,9 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
     max-width: none;
   }
 
-  /* Opens only once its screenshot has loaded (script below). */
-  .c-client-list__row:hover .c-client-list__preview.is-loaded,
-  a.c-client-list__row:focus-visible .c-client-list__preview.is-loaded {
-    height: 15.58rem;
+  /* Fades in only once its screenshot has loaded (script above). */
+  .c-client-list__item:hover .c-client-list__preview.is-loaded,
+  a.c-client-list__row:focus-visible + .c-client-list__preview.is-loaded {
     opacity: 1;
   }
 

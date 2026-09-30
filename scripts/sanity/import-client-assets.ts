@@ -11,6 +11,10 @@
  *   --dry-run   Read/plan only. No uploads, no patches. All log lines
  *               prefixed with `[DRY]`.
  *   --force     Overwrite fields that already have an image.
+ *   --only=<folder>[,<folder>]
+ *               Only process these folders (logos, icons, ss, card, badge);
+ *               the other asset types are left untouched, even with --force.
+ *               e.g. `--only=badge --force` re-uploads the badges only.
  *
  * Env (fail-fast, never printed):
  *   PUBLIC_SANITY_PROJECT_ID
@@ -20,6 +24,8 @@
  * Run:
  *   pnpm import:clients --dry-run
  *   pnpm import:clients            (project lead only)
+ *   pnpm import:badges --dry-run   (= --only=badge --force, preview)
+ *   pnpm import:badges             (re-upload every badge, project lead only)
  */
 import 'dotenv/config';
 import { createClient, type SanityDocument } from '@sanity/client';
@@ -44,10 +50,19 @@ if (missing.length) {
 }
 
 // ---------- flags ----------
-const argv = new Set(process.argv.slice(2));
+const args = process.argv.slice(2);
+const argv = new Set(args);
 const DRY_RUN = argv.has('--dry-run');
 const FORCE = argv.has('--force');
 const PREFIX = DRY_RUN ? '[DRY] ' : '';
+// `--only=badge,logos` → Set { 'badge', 'logos' }; empty = every folder.
+const ONLY = new Set(
+  args
+    .filter((arg) => arg.startsWith('--only='))
+    .flatMap((arg) => arg.slice('--only='.length).split(','))
+    .map((folder) => folder.trim())
+    .filter(Boolean),
+);
 
 // ---------- constants ----------
 type ClientField = 'logo' | 'icon' | 'badge' | 'cardThumbnail' | 'websiteScreenshot';
@@ -58,13 +73,24 @@ interface FolderSpec {
   field: ClientField;
 }
 
-const FOLDERS: FolderSpec[] = [
+const ALL_FOLDERS: FolderSpec[] = [
   { folder: 'logos', expectedPrefix: 'logo', field: 'logo' },
   { folder: 'icons', expectedPrefix: 'icon', field: 'icon' },
   { folder: 'ss', expectedPrefix: 'ss', field: 'websiteScreenshot' },
   { folder: 'card', expectedPrefix: 'card', field: 'cardThumbnail' },
   { folder: 'badge', expectedPrefix: 'badge', field: 'badge' },
 ];
+
+const unknownOnly = [...ONLY].filter((folder) => !ALL_FOLDERS.some((spec) => spec.folder === folder));
+if (unknownOnly.length) {
+  console.error(`Unknown --only folder(s): ${unknownOnly.join(', ')}`);
+  console.error(`Valid: ${ALL_FOLDERS.map((spec) => spec.folder).join(', ')}`);
+  process.exit(1);
+}
+
+const FOLDERS: FolderSpec[] = ONLY.size
+  ? ALL_FOLDERS.filter((spec) => ONLY.has(spec.folder))
+  : ALL_FOLDERS;
 
 const ACCEPTED_EXTS = new Set(['.png', '.jpg', '.jpeg', '.svg']);
 
@@ -180,7 +206,9 @@ interface ClientReport {
 async function main(): Promise<void> {
   console.log(`${PREFIX}Import client assets — project "${projectId}" / dataset "${dataset}"`);
   console.log(`${PREFIX}Source: ${CONTENT_ROOT}`);
-  console.log(`${PREFIX}Flags: dry-run=${DRY_RUN}, force=${FORCE}`);
+  console.log(
+    `${PREFIX}Flags: dry-run=${DRY_RUN}, force=${FORCE}, only=${FOLDERS.map((spec) => spec.folder).join(',')}`,
+  );
   console.log('');
 
   // 1. Discover files from disk.

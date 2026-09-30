@@ -17,7 +17,9 @@
     "astro": "astro",
     "seed:categories": "node scripts/seed-categories.mjs",
     "import:clients": "tsx scripts/sanity/import-client-assets.ts",
-    "schema:deploy": "sanity schema deploy"
+    "import:badges": "tsx scripts/sanity/import-client-assets.ts --only=badge --force",
+    "schema:deploy": "sanity schema deploy",
+    "seed:client-order": "tsx scripts/sanity/seed-client-order.ts"
   },
   "dependencies": {
     "@astrojs/react": "^7.0.0",
@@ -26,6 +28,7 @@
     "@sanity/astro": "^3.5.1",
     "@sanity/client": "^8.7.0",
     "@sanity/image-url": "^2.1.1",
+    "@sanity/orderable-document-list": "^2.0.25",
     "@sanity/table": "^3.1.16",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
@@ -47,6 +50,7 @@
     "dotenv": "^18.0.3",
     "eslint": "^10.11.0",
     "eslint-plugin-astro": "^3.2.1",
+    "lexorank": "^1.0.5",
     "prettier": "^3.9.9",
     "prettier-plugin-astro": "^1.1.0",
     "tsx": "^4.23.15",

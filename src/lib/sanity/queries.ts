@@ -213,13 +213,15 @@ export const CLIENTS_BY_IDS = /* groq */ `
 // ---------------------------------------------------------------------------
 // ALL_CLIENTS — the Work page listing. Every published client that has a
 // name (incomplete clients are skipped at query time, SCHEMAS.md), with only
-// the fields `ClientList` renders. Ordered by category title, then name
-// (Proposed default; the lead may prefer a pinned order).
+// the fields `ClientList` renders. Ordered by the Studio drag-and-drop order
+// (`orderRank`, @sanity/orderable-document-list; lead 2026-09-29, W-5), name
+// as tie-break. Only the Work page uses this order: CLIENTS_BY_IDS (Home,
+// Pricing, service pages) and ALL_CLIENTS_WITH_LOGO keep their own.
 // ---------------------------------------------------------------------------
 
 export const ALL_CLIENTS = /* groq */ `
 *[_type == "client" && defined(name) && !(_id in path("drafts.**"))]
-  | order(category->title asc, name asc){
+  | order(orderRank asc, name asc){
   ${CLIENT_LIST_FIELDS}
 }
 `;
@@ -419,8 +421,8 @@ export async function getAllClientsWithLogo(): Promise<Client[]> {
 }
 
 /**
- * Fetch every published, named client for the Work page listing, ordered by
- * category title then name.
+ * Fetch every published, named client for the Work page listing, in the
+ * Studio drag-and-drop order (`orderRank`), then name.
  */
 export async function getAllClients(): Promise<Client[]> {
   return await sanityClient.fetch<Client[]>(ALL_CLIENTS);

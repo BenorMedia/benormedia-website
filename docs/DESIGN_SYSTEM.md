@@ -160,6 +160,10 @@ Default squares (`::before` left, `::after` right): 0.625rem × 0.625rem, `backg
   --color-gray: #C9CEDA;
   --color-gray-light: #F0F0F0;
 
+  /* Surfaces — glass (lead, 2026-09-29): pricing cards, FAQ rows; used with
+     backdrop-filter: blur(10px) over line art */
+  --color-surface-glass: rgba(255, 255, 255, 0.05);
+
   /* Borders */
   --color-border: #E4E6EA;
   --border-default: 1px solid var(--color-border);

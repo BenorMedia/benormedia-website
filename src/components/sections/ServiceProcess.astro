@@ -12,7 +12,13 @@
  *   - Tab bar: one `<button role="tab">` per step, numbered 01…NN by array
  *     order. Active = outlined square + the step name; inactive = gradient
  *     square with the white number only (the name stays in the accessible
- *     name, visually hidden). Arrow keys / Home / End via `initTabs`.
+ *     name, collapsed to 0 width). Arrow keys / Home / End via `initTabs`.
+ *   - Smooth tab change (lead, 2026-09-29): the name's width, opacity and
+ *     the square → name gap transition (the inner `__tab-name-text` keeps
+ *     its wrapping while the box grows, so the other tabs slide), the
+ *     square's gradient fill fades (`::before`), and the shown panel fades
+ *     in. `--duration-hover` / `--ease-smooth`; reduced motion → instant
+ *     (base.css).
  *   - Panel: step image left (SVG assets are served as the raw file, never
  *     rasterized), h3 name + description + feature pills right.
  *   - No JS (G-2 pattern): the tablist is rendered `hidden` and every panel
@@ -109,7 +115,7 @@ const headerOptional = {
                   tabindex={i === 0 ? 0 : -1}
                 >
                   <span class="c-service-process__tab-num c-paragraph_m">{item.num}</span>{" "}
-                  <span class="c-service-process__tab-name c-paragraph_m">{item.name}</span>
+                  <span class="c-service-process__tab-name c-paragraph_m"><span class="c-service-process__tab-name-text">{item.name}</span></span>
                 </button>
               ))}
             </div>
@@ -185,6 +191,17 @@ const headerOptional = {
     padding-bottom: 6.429rem;
   }
 
+  /* Description width (lead visual QA 2026-09-29): 50% in this section only;
+     full width on phones. */
+  .c-service-process :global(.c-section-header__description) {
+    max-width: 50%;
+  }
+  @media (max-width: 767px) {
+    .c-service-process :global(.c-section-header__description) {
+      max-width: 100%;
+    }
+  }
+
   /* --- Box (services-procees-tabs.svg: 1352 × 622, 1px border, 8px) ------ */
   .c-service-process__box {
     margin-top: 4.786rem; /* description → box ≈ 67px — TODO: DS */
@@ -210,10 +227,11 @@ const headerOptional = {
   }
 
   .c-service-process__tab {
-    position: relative; /* containing block for the visually hidden name */
+    position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 1.714rem; /* square → name 24px — TODO: DS */
+    gap: 0; /* inactive: square only */
+    transition: gap var(--duration-hover) var(--ease-smooth);
     margin: 0;
     padding: 0;
     border: 0;
@@ -229,48 +247,75 @@ const headerOptional = {
     border-radius: 4px;
   }
 
-  /* 64px square (62px + gradient border for the active one). TODO: DS */
+  .c-service-process__tab.is-active {
+    gap: 1.714rem; /* square → name 24px — TODO: DS */
+  }
+
+  /* 64px square (62px + gradient border for the active one). TODO: DS
+     Every square is the active look (white fill, 1px gradient border); the
+     inactive gradient fill is a `::before` layer that fades out on select. */
   .c-service-process__tab-num {
+    position: relative;
+    isolation: isolate;
     flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 4.571rem;
     height: 4.571rem;
+    border: 1px solid transparent;
     border-radius: 4px; /* TODO: DS */
-    background: var(--gradient-primary);
+    background:
+      linear-gradient(var(--color-white), var(--color-white)) padding-box,
+      var(--gradient-primary) border-box;
     color: var(--color-white);
-    transition: transform var(--duration-hover) var(--ease-smooth);
+    transition:
+      transform var(--duration-hover) var(--ease-smooth),
+      color var(--duration-hover) var(--ease-smooth);
+  }
+  .c-service-process__tab-num::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--gradient-primary);
+    opacity: 1;
+    transition: opacity var(--duration-hover) var(--ease-smooth);
   }
   .c-service-process__tab:not(.is-active):hover .c-service-process__tab-num {
     transform: translateY(-7%); /* same lift as the buttons */
   }
 
-  /* Active: 1px gradient outline + gradient number. */
+  /* Active: 1px gradient outline + blue number (the fill fades out). */
   .c-service-process__tab.is-active .c-service-process__tab-num {
-    border: 1px solid transparent;
-    background:
-      linear-gradient(var(--color-white), var(--color-white)) padding-box,
-      var(--gradient-primary) border-box;
     color: var(--color-blue);
   }
+  .c-service-process__tab.is-active .c-service-process__tab-num::before {
+    opacity: 0;
+  }
 
+  /* Name: collapsed (0 width, transparent) on inactive tabs, still in the
+     tab's accessible name; grows and fades in on the active tab. The inner
+     text keeps its own width so it doesn't re-wrap while the box grows. */
   .c-service-process__tab-name {
+    display: inline-block;
+    max-width: 0;
+    overflow: hidden;
     color: var(--color-heading);
+    opacity: 0;
+    transition:
+      max-width var(--duration-hover) var(--ease-smooth),
+      opacity var(--duration-hover) var(--ease-smooth);
+  }
+  .c-service-process__tab-name-text {
+    display: block;
+    width: max-content;
     max-width: 8.571rem; /* wraps "Website / strategy plan" as in the ref — TODO: DS */
   }
-  /* Inactive: the name stays in the accessible name, visually hidden.
-     TODO: move to a global `cc-sr-only` (G-14). */
-  .c-service-process__tab:not(.is-active) .c-service-process__tab-name {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-    border: 0;
+  .c-service-process__tab.is-active .c-service-process__tab-name {
+    max-width: 8.571rem;
+    opacity: 1;
   }
 
   /* --- Panels ------------------------------------------------------------- */
@@ -292,6 +337,15 @@ const headerOptional = {
   }
   .c-service-process__panel[hidden] {
     display: none;
+  }
+  /* With tabs: the panel that becomes visible fades in (the animation
+     restarts each time `hidden` is removed). */
+  .c-service-process.is-enhanced .c-service-process__panel:not([hidden]) {
+    animation: c-service-process-panel-in var(--duration-hover) var(--ease-smooth);
+  }
+  @keyframes c-service-process-panel-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
   }
   .c-service-process__panel:focus-visible {
     outline: 2px solid var(--color-accent);
@@ -358,6 +412,25 @@ const headerOptional = {
   }
 
   /* TODO: DS mobile — no ref. */
+  /* ≤991 (QA S1): 9 squares + the active name don't fit the bar below the
+     desktop layout (≈713px needed at the 12px root vs ≈505px at 768), so
+     the bar shows squares only and wraps; the step name is the panel h3. */
+  @media (max-width: 991px) {
+    .c-service-process__tabs {
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: 1rem;
+    }
+    /* Squares only: the active name stays collapsed too. */
+    .c-service-process__tab.is-active {
+      gap: 0;
+    }
+    .c-service-process__tab.is-active .c-service-process__tab-name {
+      max-width: 0;
+      opacity: 0;
+    }
+  }
+
   @media (max-width: 767px) {
     .c-service-process :global(.c-container) {
       padding-top: 5rem;
@@ -367,21 +440,8 @@ const headerOptional = {
       margin-top: 3rem;
       padding: 1rem;
     }
-    /* Squares only, wrapping; the step name is the panel h3. */
     .c-service-process__tabs {
-      flex-wrap: wrap;
-      justify-content: flex-start;
-      gap: 1rem;
       padding: 1.5rem;
-    }
-    .c-service-process__tab.is-active .c-service-process__tab-name {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      margin: -1px;
-      overflow: hidden;
-      clip-path: inset(50%);
-      white-space: nowrap;
     }
     .c-service-process__tab-num {
       width: 5rem;

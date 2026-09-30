@@ -12,8 +12,11 @@
  * Trusted badge (docs/refs/trusted-badge.png): text left, circles right =
  * the first 6 URLs of `badges` + the static "+" circle. Every URL ships in
  * `data-cta-badges`; `src/scripts/animations/cta-badges.ts` (initialized
- * from BaseLayout) rotates the 6 client circles every 5s in every
- * `[data-cta-badges]` on the page. No JS / reduced motion: the first 6 stay.
+ * from BaseLayout) swaps one client circle at a time, at a random position,
+ * every 1.5–2.5s, in every `[data-cta-badges]` on the page (lead,
+ * 2026-09-29). Each client circle sits in a `__badge-slot` so the new badge
+ * crossfades in on top of the old one (no empty moment). No JS / reduced
+ * motion: the first 6 stay.
  *
  * `tone`:
  *   - `dark` (default): on the gradient CTA banner (translucent white badge,
@@ -87,11 +90,13 @@ const rootClass = ["c-cta__actions", tone === "light" && "is-light", className]
       {badgesInitial.length > 0 && (
         <span class="c-cta__badge-group" data-cta-badges-group>
           {badgesInitial.map((src) => (
-            <img class="c-cta__badge-circle" src={src} alt="" width="32" height="32" loading="lazy" decoding="async" data-cta-badge />
+            <span class="c-cta__badge-slot" data-cta-badge>
+              <img class="c-cta__badge-circle" src={src} alt="" width="32" height="32" loading="lazy" decoding="async" />
+            </span>
           ))}
         </span>
       )}
-      <img class="c-cta__badge-circle" src="/images/more-badge.png" alt="" width="32" height="32" loading="lazy" decoding="async" />
+      <img class="c-cta__badge-circle is-more" src="/images/more-badge.png" alt="" width="32" height="32" loading="lazy" decoding="async" />
     </span>
   </div>
 </div>
@@ -106,7 +111,7 @@ const rootClass = ["c-cta__actions", tone === "light" && "is-light", className]
     align-items: stretch;
     width: fit-content;
     max-width: 100%;
-    gap: 1.5rem; /* same spacing as before (c-cta__inner gap) */
+    gap: 1.071rem; /* 15px (lead visual QA 2026-09-29, every CTA) */
     margin-top: 0.5rem;
   }
   /* Equal-width columns (one per button, however many Sanity sends),
@@ -116,7 +121,7 @@ const rootClass = ["c-cta__actions", tone === "light" && "is-light", className]
     display: grid;
     grid-auto-flow: column;
     grid-auto-columns: 1fr;
-    gap: 1rem;
+    gap: 1.071rem; /* 15px (lead visual QA 2026-09-29) */
   }
 
   /* --- Trusted badge (docs/refs/trusted-badge.png) ------------------- */
@@ -159,27 +164,45 @@ const rootClass = ["c-cta__actions", tone === "light" && "is-light", className]
     align-items: center;
   }
 
-  .c-cta__badge-group {
-    opacity: 1;
-    transition: opacity var(--duration-hover) var(--ease-smooth);
-  }
-
-  /* Set by cta-badges.ts while the 6 client circles are swapped. */
-  .c-cta__badge-group.is-fading {
-    opacity: 0;
-  }
-
+  /* Slot = one client circle (positioned so the incoming badge can sit on
+     top of the current one during the crossfade). */
+  .c-cta__badge-slot,
   .c-cta__badge-circle {
     flex: 0 0 auto;
     display: block;
     width: 1.98rem; /* 31.68px */
     height: 1.98rem;
     border-radius: 999px;
+  }
+  .c-cta__badge-slot {
+    position: relative;
+  }
+  .c-cta__badge-circle {
     object-fit: cover;
+  }
+  /* Positioned like the slots, so it still paints over the last one. */
+  .c-cta__badge-circle.is-more {
+    position: relative;
+  }
+
+  /* Crossfade (cta-badges.ts): the incoming badge is stacked on the current
+     one and fades + scales in; the old image is removed afterwards. */
+  .c-cta__badge-circle.is-entering {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: scale(0.85);
+    transition:
+      opacity var(--duration-hover) var(--ease-smooth),
+      transform var(--duration-hover) var(--ease-smooth);
+  }
+  .c-cta__badge-circle.is-entering.is-in {
+    opacity: 1;
+    transform: none;
   }
 
   /* Circles overlap like a stack. TODO: DS overlap (ref ≈ 20%). */
-  .c-cta__badge-circle + .c-cta__badge-circle,
+  .c-cta__badge-slot + .c-cta__badge-slot,
   .c-cta__badge-group + .c-cta__badge-circle {
     margin-left: -0.4rem;
   }
@@ -206,7 +229,4 @@ const rootClass = ["c-cta__actions", tone === "light" && "is-light", className]
     }
   }
 
-  @media (max-width: 767px) {
-    .c-cta__actions { gap: 1.25rem; }
-  }
 </style>

@@ -15,6 +15,13 @@
  * script adds `is-enhanced` and the `<h3>`s are hidden (the tabs label the
  * panels instead).
  *
+ * Default open state (lead, 2026-09-29, P-12): with JS, the first question of
+ * the active group is open on load, and the first question of the new group
+ * opens on every tab change (no animation). Without JS all stay closed.
+ *
+ * `scrollTabs` (opt-in): at ≤767 the tabs stay on one row and scroll
+ * sideways instead of wrapping (`SegmentedControl scroll`; Pricing).
+ *
  * Emits FAQPage JSON-LD from the same data (questions with an answer only);
  * `jsonLd={false}` turns it off (e.g. if a page already emits one).
  *
@@ -40,6 +47,8 @@ interface Props {
   background?: boolean;
   /** Prefix for the panel / accordion ids; must be unique per page. */
   id?: string;
+  /** ≤767: tabs on one scrollable row instead of wrapping. Default false. */
+  scrollTabs?: boolean;
   class?: string;
 }
 
@@ -50,6 +59,7 @@ const {
   jsonLd = true,
   background = true,
   id = "faq",
+  scrollTabs = false,
   class: className,
 } = Astro.props;
 
@@ -101,6 +111,7 @@ const ldJson =
         <div class="c-faq-section__tabs">
           <SegmentedControl
             mode="tabs"
+            scroll={scrollTabs}
             label={tabsLabel}
             items={visibleGroups.map((group) => ({
               label: group.label,
@@ -135,11 +146,22 @@ const ldJson =
 
 <script>
   import { initTabs } from "../../scripts/ui/tabs";
+  import { initAccordion } from "../../scripts/ui/accordion";
+
+  // Opens the first question of a panel (no animation), closing the others.
+  const openFirst = (panel: Element | null): void => {
+    const accordion = panel?.querySelector<HTMLElement>(".c-faq");
+    const first = accordion?.querySelector<HTMLDetailsElement>("details.c-faq__item");
+    if (accordion && first) initAccordion(accordion).open(first, false);
+  };
 
   document.querySelectorAll<HTMLElement>("[data-faq-section]").forEach((section) => {
     const tabs = section.querySelector<HTMLElement>(".c-faq-section__tabs");
-    if (!tabs) return;
-    initTabs(tabs);
+    if (!tabs) {
+      openFirst(section.querySelector(".c-faq-section__panel"));
+      return;
+    }
+    initTabs(tabs, { onSelect: (_tab, panel) => openFirst(panel) });
     section.classList.add("is-enhanced");
   });
 </script>
@@ -150,7 +172,10 @@ const ldJson =
   }
 
   /* Wireframe globe. The export is the section at the 1920 frame (1920×1035),
-     flattened on white, so it covers the section anchored to the bottom. */
+     flattened on white. Fixed size (lead, 2026-09-29): its height is the
+     export's at 1/14 rem, width follows the ratio, anchored to the section
+     top, so opening / closing a question never scales or moves it (the
+     section grows below it; the white background fills the rest). */
   .c-faq-section.is-bg {
     background-image: url("/images/pricing/faqs-bg.webp");
     background-image: image-set(
@@ -158,8 +183,8 @@ const ldJson =
       url("/images/pricing/faqs-bg@2x.webp") 2x
     );
     background-repeat: no-repeat;
-    background-position: center bottom;
-    background-size: cover;
+    background-position: center top;
+    background-size: auto 73.929rem; /* 1035px */
   }
 
   .c-faq-section :global(.c-container) {

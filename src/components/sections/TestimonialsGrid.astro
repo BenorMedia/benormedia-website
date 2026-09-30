@@ -8,7 +8,8 @@
  * testimonial renders once (the ref's 15 identical cards are placeholders; no
  * duplicates to fill rows). Cards = the shared marquee `TestimonialCard`,
  * unchanged except `width: 100%` on this page (lead, 2026-09-29) so each card
- * fills its grid cell. Height stays the card's fixed marquee height.
+ * fills its grid cell and is solid white (no glass). Height stays the card's
+ * fixed marquee height.
  *
  * Layout: 3 columns, 2 at ≤991, 1 at ≤767. Plain white background (the ref
  * shows no line art behind the grid). Visually hidden `<h2>` keeps the outline
@@ -52,14 +53,14 @@ const headingId = "testimonials-grid-title";
     /* Hero title ink (descenders) → first card ≈ 112px in the ref = 102px
        below the h1 line box; last card → CTA banner ≈ 220px (the CTA section
        has no top padding). TODO: DS. */
-    padding-top: 7.286rem;
+    padding-top: 7.5rem; /* lead visual QA 2026-09-29 */
     padding-bottom: 15.714rem;
   }
 
   .c-testimonials-grid__list {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1.429rem; /* ≈20px between cards and rows — TODO: DS */
+    gap: 1.2rem; /* between cards and rows (lead visual QA 2026-09-29) */
     margin: 0;
     padding: 0;
     list-style: none;
@@ -70,9 +71,13 @@ const headingId = "testimonials-grid-title";
     min-width: 0;
   }
 
-  /* This page only: the marquee card fills its grid cell (lead, 2026-09-29). */
+  /* This page only: the marquee card fills its grid cell and is solid white
+     instead of glass (lead, 2026-09-29; no line art behind the grid). */
   .c-testimonials-grid :global(.c-testimonial-card) {
     width: 100%;
+    background: var(--color-white);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 
   /* TODO: DS mobile — no tablet ref. */

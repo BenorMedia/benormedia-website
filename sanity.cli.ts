@@ -19,4 +19,12 @@ export default defineCliConfig({
     ...(projectId ? { projectId } : {}),
     ...(dataset ? { dataset } : {}),
   },
+  // The CLI loads the Studio config through Vite with `ssr.noExternal: true`,
+  // which inlines CommonJS `lexorank` (dep of @sanity/orderable-document-list)
+  // as ESM → "exports is not defined" in `schema deploy` / `manifest extract`.
+  // An explicit `ssr.external` entry takes priority, so Node loads it natively.
+  vite: (config) => ({
+    ...config,
+    ssr: { ...config.ssr, external: ['lexorank'] },
+  }),
 });
