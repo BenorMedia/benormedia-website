@@ -26,7 +26,13 @@
  *   - no screenshots: center content only (no frame, no carousels).
  *   - no title and no description: the section is not rendered.
  * `prefers-reduced-motion`: tracks are static (the first images show).
- * ≤991px: carousels and frame hidden (`TODO: DS mobile`, no ref).
+ *
+ * ≤991px (lead, 2026-09-29, S-20): the same two tracks become HORIZONTAL
+ * full-bleed rows, one above the content (left column, moving left → right)
+ * and one below it (right column, moving right → left). Same markup, same
+ * screenshots, same ≈20s per screenshot; CSS only (`order`, row track,
+ * `translateX` loop). Frame lines hidden. The section clips the rows, so the
+ * page never scrolls sideways. Screenshot width `TODO: DS mobile`.
  *
  * Hook: `data-anim="service-problem-carousel"` on each track (`data-direction`
  * = `up` / `down`), for a future GSAP swap if the spec asks for one.
@@ -275,10 +281,10 @@ const headerOptional = {
     to   { transform: translateY(-50%); }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .c-service-problem__track {
-      animation: none;
-    }
+  /* Mobile rows (≤991): 0 → -50% moves right → left. */
+  @keyframes c-service-problem-scroll-x {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
   }
 
   /* Padding (not flex gap) so both halves are exactly equal and the loop
@@ -294,23 +300,81 @@ const headerOptional = {
     border-radius: 6px; /* TODO: DS */
   }
 
-  /* TODO: DS mobile — no ref. Below the desktop layout the side columns
-     would be off-screen slivers: hide carousels + frame, keep the center. */
+  /* ≤991 (lead, S-20): the side columns become two horizontal rows, above
+     (left column) and below (right column) the content. TODO: DS mobile —
+     no ref for the screenshot width or the row → content spacing. */
   @media (max-width: 991px) {
-    .c-service-problem__frame,
-    .c-service-problem__carousel {
+    .c-service-problem {
+      --c-service-problem-img: 22rem;
+    }
+    .c-service-problem__frame {
       display: none;
     }
     .c-service-problem :global(.c-container.c-service-problem__container) {
+      display: flex;
+      flex-direction: column;
+      gap: 4rem; /* TODO: DS mobile */
       padding-top: 8.571rem;
       padding-bottom: 8.571rem;
+    }
+
+    .c-service-problem__carousel {
+      position: static;
+      /* Full bleed; the section's `overflow: hidden` clips it. */
+      width: 100vw;
+      margin-inline: calc(50% - 50vw);
+    }
+    .c-service-problem__carousel.is-left {
+      order: 1;
+    }
+    .c-service-problem__content {
+      order: 2;
+      width: 100%;
+    }
+    .c-service-problem__carousel.is-right {
+      order: 3;
+    }
+
+    .c-service-problem__track {
+      flex-direction: row;
+      align-items: flex-start;
+      width: max-content;
+      animation: c-service-problem-scroll-x var(--c-service-problem-duration, 80s) linear infinite;
+    }
+    /* Top row (left column): left → right. */
+    .c-service-problem__track[data-direction="up"] {
+      animation-direction: reverse;
+    }
+    /* Bottom row (right column): right → left. */
+    .c-service-problem__track[data-direction="down"] {
+      animation-direction: normal;
+    }
+
+    /* Padding (not gap) keeps both halves equal, as on desktop. */
+    .c-service-problem__item {
+      flex: 0 0 auto;
+      width: var(--c-service-problem-img);
+      padding-bottom: 0;
+      padding-right: 1.786rem;
     }
   }
 
   @media (max-width: 767px) {
+    .c-service-problem {
+      --c-service-problem-img: 20rem;
+    }
     .c-service-problem :global(.c-container.c-service-problem__container) {
+      gap: 3rem; /* TODO: DS mobile */
       padding-top: 5rem;
       padding-bottom: 5rem;
+    }
+  }
+
+  /* Last, so it wins over the mobile rows too. */
+  @media (prefers-reduced-motion: reduce) {
+    .c-service-problem__track,
+    .c-service-problem__track[data-direction] {
+      animation: none;
     }
   }
 </style>
