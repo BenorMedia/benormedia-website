@@ -6,12 +6,12 @@
  * white / glass button variants. Two decorative line PNGs sit absolutely
  * inside `.c-hero__lines`, aria-hidden.
  *
- * Content stack (2 outer blocks, 116px gap):
- *   Block 1 (24px internal gap)
- *     - title sub-block (eyebrow + h1 + subtitle, 24px gap)
- *     - buttons sub-block
- *   Block 2
- *     - stats
+ * Content stack (24px internal gap):
+ *   - title sub-block (eyebrow row + h1 + subtitle, 24px gap). Eyebrow row:
+ *     "$700M+" eyebrow left of the partner one; stacked on mobile, new on top.
+ *   - buttons sub-block
+ * Stats row removed (lead 2026-09-30); the container's bottom padding keeps
+ * its space for a custom animation (spec pending).
  *
  * No animations wired — `data-anim="..."` hooks are placed for Phase 6.
  *
@@ -21,7 +21,6 @@
  */
 import Button from "../ui/Button.astro";
 import Eyebrow from "../ui/Eyebrow.astro";
-import Stat from "../ui/Stat.astro";
 ---
 
 <section class="c-hero">
@@ -47,9 +46,14 @@ import Stat from "../ui/Stat.astro";
   <div class="c-hero__container">
     <div class="c-hero__block">
       <div class="c-hero__title-block">
-        <Eyebrow variant="default" class="c-hero__eyebrow">
-          6+ YEARS AS A WEBFLOW PROFESSIONAL PARTNER
-        </Eyebrow>
+        <div class="c-hero__eyebrows">
+          <Eyebrow variant="default" class="c-hero__eyebrow">
+            $700M+ RAISED BY OUR CLIENTS
+          </Eyebrow>
+          <Eyebrow variant="default" class="c-hero__eyebrow">
+            6+ YEARS AS A WEBFLOW PROFESSIONAL PARTNER
+          </Eyebrow>
+        </div>
 
         <h1 class="c-hero__title" data-anim="hero-headline">
           We turn your website into a revenue engine.
@@ -65,11 +69,6 @@ import Stat from "../ui/Stat.astro";
         <Button variant="white" class="js-open-contact">Get in Touch</Button>
         <Button variant="glass" href="/work">See Our Work</Button>
       </div>
-    </div>
-
-    <div class="c-hero__stats">
-      <Stat value="$700M+" label="Money raised by our clients" animate />
-      <Stat value="100+" label="Successful site launches" animate />
     </div>
   </div>
 </section>
@@ -126,9 +125,9 @@ import Stat from "../ui/Stat.astro";
     align-self: stretch;
     max-width: 1440px;
     margin: 0 auto;
-    /* Was 5em on body text: same value, expressed from the type token. */
-    padding: 7.8rem 0 calc(5 * var(--fs-p));
-    gap: 8.286rem; /* 116px between the two outer blocks */
+    /* Bottom keeps the removed stats row's space for the upcoming hero
+       animation. Lead 2026-09-30. */
+    padding: 7.8rem 0 20.5rem;
   }
 
   /* --- Block 1: title stack + buttons ---------------------------------- */
@@ -163,7 +162,7 @@ import Stat from "../ui/Stat.astro";
     font-size: 6.286rem;      /* 88px */
     font-weight: 400;
     font-style: normal;
-    line-height: 1;           /* 100% */
+    line-height: 1.2;         /* lead 2026-09-30 */
     letter-spacing: -0.126rem; /* -1.76px */
     text-align: center;
     /* TODO: DS — secondary gradient stop (#8BC1F9) is not in tokens yet.
@@ -183,6 +182,21 @@ import Stat from "../ui/Stat.astro";
     .c-hero__title {
       font-size: var(--fs-text-xxl);
       letter-spacing: -0.08rem;
+    }
+  }
+
+  /* --- Eyebrow row (lead 2026-09-30) --------------------------------- */
+  .c-hero__eyebrows {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 2.143rem; /* 30px ÷14 (1440 root) — lead 2026-09-30 */
+  }
+
+  @media (max-width: 767px) {
+    .c-hero__eyebrows {
+      flex-direction: column;
     }
   }
 
@@ -213,48 +227,6 @@ import Stat from "../ui/Stat.astro";
     }
   }
 
-  /* --- Block 2: stats row ---------------------------------------------- */
-  .c-hero__stats {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: center;
-    /* TODO: DS gap between hero stats — tuned to hero.jpg. */
-    gap: 4rem;
-    width: 100%;
-  }
-
-  @media (max-width: 767px) {
-    .c-hero__stats {
-      gap: 2.5rem;
-      max-width: 90%;
-      flex-wrap: wrap;
-    }
-  }
-
-  /* --- Stat overrides (hero context) -----------------------------------
-     Spec: value at 88px Brulia white, label as c-paragraph @ 60% opacity.
-     The Stat primitive is shared, so we scope hero-specific look here. */
-  .c-hero__stats :global(.c-stat__value) {
-    color: var(--color-white);
-    text-align: center;
-    font-family: var(--font-heading);
-    font-size: 5.25rem;
-    font-weight: 400;
-    font-style: normal;
-    line-height: 1.2;
-    letter-spacing: -0.126rem;
-  }
-  .c-hero__stats :global(.c-stat__label) {
-    /* Match c-paragraph (Acumin, ~1.04rem desktop, 1.5 line-height) then dim. */
-    font-family: var(--font-body);
-    font-size: var(--fs-p);
-    font-weight: 400;
-    line-height: 1.5;
-    color: var(--color-white);
-    opacity: 0.6;
-  }
-
   /* --- Eyebrow on-dark override ----------------------------------------
      Same pattern as CtaBanner. TODO: DS — replace with `is-on-dark` variant
      on the Eyebrow primitive so this scoped override retires. */
@@ -262,9 +234,12 @@ import Stat from "../ui/Stat.astro";
     border-color: rgba(255, 255, 255, 0.4);
     color: var(--color-white);
   }
+  /* Squares: gradient fill + gray border — hero eyebrows only (lead
+     2026-09-30). */
   .c-hero :global(.c-eyebrow.is-default::before),
   .c-hero :global(.c-eyebrow.is-default::after) {
-    background: rgba(255, 255, 255, 0.9);
-    border-color: rgba(255, 255, 255, 0.6);
+    background: var(--gradient-primary);
+    border: 0.5px solid var(--color-gray);
+    border-radius: 1.5px;
   }
 </style>

@@ -41,6 +41,9 @@ importers:
       astro:
         specifier: ^7.3.5
         version: 7.3.5(@types/node@26.6.3)(@vercel/functions@3.9.9(ws@8.21.0))(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
+      gsap:
+        specifier: ^3.15.0
+        version: 3.15.0
       react:
         specifier: ^19.3.0
         version: 19.3.0
@@ -3903,6 +3906,9 @@ packages:
   groq@6.16.0:
     resolution: {integrity: sha512-JEDbocK5tBEV2NGg/UpQ1FCyHM6SNVpp8aBkuR9S7NNKU866AHq3CAoY7R3zGYwrYKPVVMxd78Usd2zBh6qQhA==}
     engines: {node: '>=22.12'}
+
+  gsap@3.15.0:
+    resolution: {integrity: sha512-dMW4CWBTUK1AEEDeZc1g4xpPGIrSf9fJF960qbTZmN/QwZIWY5wgliS6JWl9/25fpTGJrMRtSjGtOmPnfjZB+A==}
 
   gunzip-maybe@1.4.2:
     resolution: {integrity: sha512-4haO1M4mLO91PW57BMsDFf75UmwoRX0GkdD+Faw+Lr+r/OZrOCS0pIBwOL1xCKQqnQzbNFGgK2V2CpBUPeFNTw==}
@@ -10617,6 +10623,8 @@ snapshots:
       obug: 2.2.1
 
   groq@6.16.0: {}
+
+  gsap@3.15.0: {}
 
   gunzip-maybe@1.4.2:
     dependencies:

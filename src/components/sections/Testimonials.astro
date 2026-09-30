@@ -44,6 +44,18 @@ const { testimonials } = Astro.props;
     overflow-x: clip;
   }
 
+  /* Subtitle constraint — every Testimonials section (lead 2026-09-30).
+     Mobile: full width, like the Services / Technologies headers. */
+  .c-testimonials :global(.c-testimonials__header .c-section-header__description) {
+    max-width: 28%;
+  }
+
+  @media (max-width: 767px) {
+    .c-testimonials :global(.c-testimonials__header .c-section-header__description) {
+      max-width: 100%;
+    }
+  }
+
   .c-testimonials__marquee {
     /* TODO: DS space between section header and content. */
     margin-top: 3rem;

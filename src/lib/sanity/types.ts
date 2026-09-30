@@ -51,6 +51,15 @@ export interface SanityImage {
   alt?: string;
 }
 
+/** A `file` field projected with its asset's URL (see VIDEO in queries.ts). */
+export interface SanityVideo {
+  asset?: {
+    _id?: string;
+    url?: string;
+    mimeType?: string;
+  };
+}
+
 /**
  * Minimal shape of a resolved (`->`) reference. Real doc types below extend
  * this via `_type` narrowing on the consumer side.
@@ -177,6 +186,7 @@ export interface Client extends SanityRef<'client'> {
   cardThumbnail?: SanityImage;
   badge?: SanityImage;
   websiteScreenshot?: SanityImage;
+  websiteVideo?: SanityVideo;
   fundsRaised?: string;
   category?: Category;
   websiteUrl?: string;

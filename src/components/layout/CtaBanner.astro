@@ -72,6 +72,7 @@ const badgePool = await getCtaBadgeUrlsCached();
       alt=""
       aria-hidden="true"
       class="c-cta__vector"
+      data-cta-vector
     />
   </div>
   </Container>
@@ -112,7 +113,7 @@ const badgePool = await getCtaBadgeUrlsCached();
     color: var(--color-white);
     max-width: 60%;
   }
-  /* Decorative vector */
+  /* Decorative vector — scroll motion in cta-vector.ts */
   .c-cta__vector {
     position: relative;
     z-index: 0;

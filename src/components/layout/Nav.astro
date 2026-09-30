@@ -2,6 +2,10 @@
 /**
  * Nav — sticky top navigation with Services dropdown + mobile off-canvas menu.
  *
+ * - Floating glass bar (CEO revs 2026-09-30): transparent glass + blur,
+ *   1400px max, rounded; `is-scrolled` drops it 1rem from the top. Entry
+ *   animation + hide on scroll down / show on scroll up: nav-motion.ts.
+ * - The mobile panel renders after <header>, not inside it (see markup).
  * - Nav labels + Services dropdown items are hardcoded (per approved plan).
  * - Logo: siteSettings.logo overrides the static /images/Logo.svg fallback.
  * - "Get in Touch" is a <button> (no href), fires the ContactModal via
@@ -30,10 +34,11 @@ const logoUrl = siteSettings?.logo?.asset
   : "/images/Logo.svg";
 const logoAlt = siteSettings?.logo?.alt ?? siteSettings?.siteName ?? "BenorMedia";
 
+// Icons: 237px sources (4× the 59.2px display), refs in docs/refs/navbar/.
 const services = [
-  { label: "Custom Websites & Migrations", href: "/custom-websites-migrations" },
-  { label: "Growth (AEO/GEO + CRO)", href: "/growth" },
-  { label: "Ongoing Website Support", href: "/ongoing-website-support" },
+  { label: "Custom Websites & Migrations", href: "/custom-websites-migrations", icon: "/images/nav/custom-websites-migrations.png" },
+  { label: "Growth (AEO/GEO + CRO)", href: "/growth", icon: "/images/nav/growth.png" },
+  { label: "Ongoing Website Support", href: "/ongoing-website-support", icon: "/images/nav/ongoing-website-support.png" },
 ];
 
 const primaryLinks = [
@@ -77,6 +82,15 @@ const primaryLinks = [
           >
             {services.map((s) => (
               <a href={s.href} role="menuitem" class="c-nav__panel-link">
+                <img
+                  src={s.icon}
+                  alt=""
+                  width="237"
+                  height="237"
+                  loading="lazy"
+                  decoding="async"
+                  class="c-nav__panel-icon"
+                />
                 {s.label}
               </a>
             ))}
@@ -106,46 +120,48 @@ const primaryLinks = [
       <span class="c-nav__burger-line"></span>
     </button>
   </div>
+</header>
 
-  <div
-    id="nav-mobile-panel"
-    class="c-nav__mobile"
-    role="dialog"
-    aria-modal="true"
-    aria-label="Menu"
-    hidden
-  >
-    <div class="c-nav__mobile-inner">
-      <button
-        type="button"
-        class="c-nav__mobile-close"
-        aria-label="Close menu"
-      >
-        <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
-          <path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-        </svg>
-      </button>
+<!-- Outside <header>: the header's backdrop-filter and GSAP transform would
+     make it the containing block of this fixed, full-screen panel. -->
+<div
+  id="nav-mobile-panel"
+  class="c-nav__mobile"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Menu"
+  hidden
+>
+  <div class="c-nav__mobile-inner">
+    <button
+      type="button"
+      class="c-nav__mobile-close"
+      aria-label="Close menu"
+    >
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+        <path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+      </svg>
+    </button>
 
-      <ul class="c-nav__mobile-list">
-        <li class="c-nav__mobile-group">
-          <div class="c-nav__mobile-group-label">Services</div>
-          <ul class="c-nav__mobile-sublist">
-            {services.map((s) => (
-              <li><a href={s.href} class="c-nav__mobile-sublink">{s.label}</a></li>
-            ))}
-          </ul>
-        </li>
-        {primaryLinks.map((link) => (
-          <li><a href={link.href} class="c-nav__mobile-link">{link.label}</a></li>
-        ))}
-      </ul>
+    <ul class="c-nav__mobile-list">
+      <li class="c-nav__mobile-group">
+        <div class="c-nav__mobile-group-label">Services</div>
+        <ul class="c-nav__mobile-sublist">
+          {services.map((s) => (
+            <li><a href={s.href} class="c-nav__mobile-sublink">{s.label}</a></li>
+          ))}
+        </ul>
+      </li>
+      {primaryLinks.map((link) => (
+        <li><a href={link.href} class="c-nav__mobile-link">{link.label}</a></li>
+      ))}
+    </ul>
 
-      <div class="c-nav__mobile-cta">
-        <Button variant="gradient" class="js-open-contact">Get in Touch</Button>
-      </div>
+    <div class="c-nav__mobile-cta">
+      <Button variant="gradient" class="js-open-contact">Get in Touch</Button>
     </div>
   </div>
-</header>
+</div>
 
 <script>
   // --- Services dropdown (desktop, click/tap fallback) ---------------------
@@ -191,7 +207,9 @@ const primaryLinks = [
     });
   }
 
-  // --- Scroll state (toggles the underline border) ------------------------
+  // --- Scroll state (is-scrolled: sticks 1rem from the top) ---------------
+  // Hide on scroll down / show on scroll up + the entry animation live in
+  // src/scripts/animations/nav-motion.ts.
   const nav = document.querySelector<HTMLElement>(".c-nav");
   if (nav) {
     const SCROLL_THRESHOLD = 4;
@@ -206,7 +224,6 @@ const primaryLinks = [
   const burger = document.querySelector<HTMLButtonElement>(".c-nav__burger");
   const mobile = document.querySelector<HTMLElement>("#nav-mobile-panel");
   const mobileClose = document.querySelector<HTMLButtonElement>(".c-nav__mobile-close");
-  const navInner = document.querySelector<HTMLElement>(".c-nav__inner");
 
   // Elements made inert while the menu is open (everything outside the panel:
   // the header bar behind it, main, CTA banner, footer...). Tracked so we only
@@ -216,12 +233,10 @@ const primaryLinks = [
 
   function setPageInert(on: boolean) {
     if (on) {
-      const header = mobile?.closest("header");
       const targets = Array.from(document.body.children).filter(
         (el): el is HTMLElement =>
-          el instanceof HTMLElement && el !== header && el.tagName !== "SCRIPT",
+          el instanceof HTMLElement && el !== mobile && el.tagName !== "SCRIPT",
       );
-      if (navInner) targets.push(navInner);
       inerted = targets.filter((el) => !el.inert);
       inerted.forEach((el) => (el.inert = true));
     } else {
@@ -306,22 +321,36 @@ const primaryLinks = [
 </script>
 
 <style>
+  /* Floating glass bar — values from CEO revs (2026-09-30). */
   .c-nav {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: var(--color-white);
-    border-bottom: 1px solid transparent;
-    transition: border-color var(--duration-hover) var(--ease-smooth);
+    max-width: 1400px;
+    /* 1.5rem side gap below 1400px + 3rem; centered above (a plain
+       `margin: 0 1.5rem` would pin the bar left on wide screens). */
+    margin: 0 max(1.5rem, (100% - 1400px) / 2);
+    padding: 1rem 2.5rem;
+    background-color: var(--color-surface-glass);
+    -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+    border-radius: 14px;
+    /* transform is excluded: GSAP drives it (nav-motion.ts), and a CSS
+       transition on the same property would lag every tween frame. */
+    transition: all 0.2s ease, transform 0s;
   }
   .c-nav.is-scrolled {
-    border-bottom-color: var(--color-border);
+    top: 1rem;
+  }
+  /* Entry animation pre-state: set by an inline <head> script (BaseLayout)
+     so the bar never flashes before GSAP takes over; removed by the script,
+     or by a timeout if it never loads. */
+  :global(html.is-nav-intro) .c-nav {
+    transform: translateY(calc(-100% - 1rem));
   }
   .c-nav__inner {
     max-width: 1440px;
     margin-inline: auto;
-    /* Figma parity: 16px vertical, 120px horizontal — matches .c-container */
-    padding: 1rem 7.5rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -334,9 +363,9 @@ const primaryLinks = [
   }
   .c-nav__logo img {
     display: block;
-    /* Figma spec: 251.906 × 50 px */
-    width: 15.744rem;
-    height: auto;
+    /* Lead 2026-09-30 */
+    width: auto;
+    height: 2.8rem;
     max-width: 100%;
   }
 
@@ -351,32 +380,39 @@ const primaryLinks = [
     margin: 0;
     display: flex;
     align-items: center;
-    gap: 2.5rem;
+    /* 10px — lead 2026-09-30 */
+    gap: 0.625rem;
   }
   .c-nav__item {
     position: relative;
   }
+  /* Box + text mirror c-tag (Tag.astro) — lead 2026-09-30. Border is
+     transparent at rest and fades to --color-gray on hover / while open. */
   .c-nav__link,
   .c-nav__services {
     background: none;
-    border: 0;
-    padding: 0.5rem 0;
-    color: var(--color-heading);
+    padding: 0.5em 1.05em;
+    border: 0.5px solid transparent;
+    border-radius: 3px;
+    color: var(--color-text);
     font-family: var(--font-body);
-    /* Figma parity: 18px → 1.125rem, "Text S" */
-    font-size: 1.125rem;
+    font-size: 0.9375rem;
     font-weight: 400;
     line-height: normal;
+    letter-spacing: 0.064em;
+    text-transform: uppercase;
+    white-space: nowrap;
     text-decoration: none;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    transition: color var(--duration-hover) var(--ease-smooth);
+    transition: border-color var(--duration-hover) var(--ease-smooth);
   }
   .c-nav__link:hover,
-  .c-nav__services:hover {
-    color: var(--color-accent);
+  .c-nav__services:hover,
+  .c-nav__item.is-open > .c-nav__services {
+    border-color: var(--color-gray);
   }
   .c-nav__caret {
     transition: transform var(--duration-hover) var(--ease-smooth);
@@ -391,14 +427,18 @@ const primaryLinks = [
     top: calc(100% + 0.5rem);
     left: 50%;
     transform: translateX(-50%);
-    min-width: 18rem;
+    /* Ref: docs/refs/navbar/dropdown-content-preview.png — lead 2026-09-30.
+       Figma 15/24px padding, 20px gap (÷16 → rem). */
     background: var(--color-white);
     border: var(--border-default);
-    border-radius: 6px;
-    padding: 0.75rem;
+    border-radius: 8px;
+    box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.15);
+    padding: 0.9375rem 1.5rem;
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 1.25rem;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
@@ -431,21 +471,32 @@ const primaryLinks = [
       transform: rotate(180deg);
     }
   }
+  /* Text mirrors c-tag (Tag.astro) — lead 2026-09-30. */
   .c-nav__panel-link {
-    display: block;
-    padding: 0.75rem 1rem;
-    border-radius: 4px;
-    color: var(--color-heading);
+    display: flex;
+    align-items: center;
+    /* TODO: DS — icon↔label gap not specified; ~10px measured on the ref. */
+    gap: 0.625rem;
+    color: var(--color-text);
     font-family: var(--font-body);
-    font-size: var(--fs-p);
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: 0.064em;
+    text-transform: uppercase;
     text-decoration: none;
     white-space: nowrap;
-    text-align: center;
-    transition: background-color var(--duration-hover) var(--ease-smooth), color var(--duration-hover) var(--ease-smooth);
+    transition: color var(--duration-hover) var(--ease-smooth);
   }
   .c-nav__panel-link:hover {
-    background: var(--color-gray-light);
     color: var(--color-accent);
+  }
+  .c-nav__panel-icon {
+    flex-shrink: 0;
+    /* Figma 59.2px ÷ 16 */
+    width: 3.7rem;
+    height: 3.7rem;
+    border-radius: 5.481px;
   }
 
   /* --- Mobile burger + panel --------------------------------------------- */
@@ -544,12 +595,8 @@ const primaryLinks = [
   }
 
   /* --- Breakpoints -------------------------------------------------------- */
-  @media (max-width: 991px) {
-    .c-nav__list { gap: 1.5rem; }
-  }
   @media (max-width: 767px) {
     /* TODO: DS mobile — see note above */
-    .c-nav__inner { padding: 1rem 2rem; }
     .c-nav__primary,
     .c-nav__cta { display: none; }
     .c-nav__burger { display: inline-flex; }
