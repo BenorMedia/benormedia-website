@@ -150,13 +150,16 @@ const headingId = "work-listing-title";
     const PARAM = "category";
 
     // Reflects the active filter in the URL without adding history entries.
+    // Only touches the URL when `category` actually changes, so other query
+    // parameters keep their exact encoding (QA 2026-09-30).
     const syncUrl = (value: string): void => {
       const url = new URL(window.location.href);
-      if (value === "all") url.searchParams.delete(PARAM);
-      else url.searchParams.set(PARAM, value);
-      if (url.href !== window.location.href) {
-        window.history.replaceState(window.history.state, "", url);
-      }
+      const current = url.searchParams.get(PARAM);
+      const next = value === "all" ? null : value;
+      if (current === next) return;
+      if (next === null) url.searchParams.delete(PARAM);
+      else url.searchParams.set(PARAM, next);
+      window.history.replaceState(window.history.state, "", url);
     };
 
     const apply = (value: string): void => {

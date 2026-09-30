@@ -412,6 +412,25 @@ const headerOptional = {
   }
 
   /* TODO: DS mobile — no ref. */
+  /* ≤991 (QA S1): 9 squares + the active name don't fit the bar below the
+     desktop layout (≈713px needed at the 12px root vs ≈505px at 768), so
+     the bar shows squares only and wraps; the step name is the panel h3. */
+  @media (max-width: 991px) {
+    .c-service-process__tabs {
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: 1rem;
+    }
+    /* Squares only: the active name stays collapsed too. */
+    .c-service-process__tab.is-active {
+      gap: 0;
+    }
+    .c-service-process__tab.is-active .c-service-process__tab-name {
+      max-width: 0;
+      opacity: 0;
+    }
+  }
+
   @media (max-width: 767px) {
     .c-service-process :global(.c-container) {
       padding-top: 5rem;
@@ -421,20 +440,8 @@ const headerOptional = {
       margin-top: 3rem;
       padding: 1rem;
     }
-    /* Squares only, wrapping; the step name is the panel h3. */
     .c-service-process__tabs {
-      flex-wrap: wrap;
-      justify-content: flex-start;
-      gap: 1rem;
       padding: 1.5rem;
-    }
-    /* Squares only: the active name stays collapsed too. */
-    .c-service-process__tab.is-active {
-      gap: 0;
-    }
-    .c-service-process__tab.is-active .c-service-process__tab-name {
-      max-width: 0;
-      opacity: 0;
     }
     .c-service-process__tab-num {
       width: 5rem;

@@ -12,7 +12,11 @@
  * - One open item at a time: the markup uses `<details name>` (native
  *   exclusive accordion without JS). The browser would close the other item
  *   instantly, so on init the `name` moves to `data-accordion-name` and this
- *   script closes the open sibling with the same animation.
+ *   script closes the open sibling with the same animation. If the browser
+ *   opens an item itself (e.g. find-in-page), a `toggle` listener closes
+ *   its open siblings, so one item stays open at a time.
+ * - An interrupted animation (click while opening / closing) continues from
+ *   the current height and answer opacity, so nothing jumps.
  * - Timing: `--duration-hover` + `--ease-smooth` (tokens.css).
  * - Reduced motion: no animation, instant toggle (same exclusivity).
  * - No JS: native `<details>` behavior, nothing here runs.
@@ -57,6 +61,14 @@ export function initAccordion(root: HTMLElement): AccordionController {
   const answerOf = (item: HTMLDetailsElement): HTMLElement | null =>
     item.querySelector<HTMLElement>(":scope > .c-faq__answer");
 
+  // Current answer opacity (mid-animation value), before `stop` cancels it.
+  const answerOpacity = (item: HTMLDetailsElement, fallback: number): number => {
+    const answer = answerOf(item);
+    if (!answer || !running.has(item)) return fallback;
+    const value = Number.parseFloat(getComputedStyle(answer).opacity);
+    return Number.isFinite(value) ? value : fallback;
+  };
+
   const stop = (item: HTMLDetailsElement): void => {
     running.get(item)?.forEach((animation) => animation.cancel());
     running.delete(item);
@@ -79,6 +91,7 @@ export function initAccordion(root: HTMLElement): AccordionController {
       return;
     }
     const from = item.offsetHeight;
+    const fromOpacity = answerOpacity(item, 1);
     stop(item);
     const { duration, easing } = motionSettings();
     item.classList.add("is-closing");
@@ -88,7 +101,7 @@ export function initAccordion(root: HTMLElement): AccordionController {
       { duration, easing },
     );
     const answer = answerOf(item);
-    const fade = answer?.animate({ opacity: [1, 0] }, { duration: duration / 2, easing, fill: "forwards" });
+    const fade = answer?.animate({ opacity: [fromOpacity, 0] }, { duration: duration / 2, easing, fill: "forwards" });
     running.set(item, fade ? [height, fade] : [height]);
     height.onfinish = () => {
       item.open = false;
@@ -102,6 +115,7 @@ export function initAccordion(root: HTMLElement): AccordionController {
     const wasClosing = running.has(item) && item.classList.contains("is-closing");
     if (item.open && !wasClosing) return;
     const from = item.offsetHeight;
+    const fromOpacity = answerOpacity(item, 0);
     stop(item);
     item.classList.remove("is-closing");
     item.open = true;
@@ -114,7 +128,7 @@ export function initAccordion(root: HTMLElement): AccordionController {
     const to = item.offsetHeight;
     const height = item.animate({ height: [`${from}px`, `${to}px`] }, { duration, easing });
     const answer = answerOf(item);
-    const fade = answer?.animate({ opacity: [0, 1] }, { duration, easing });
+    const fade = answer?.animate({ opacity: [fromOpacity, 1] }, { duration, easing });
     running.set(item, fade ? [height, fade] : [height]);
     height.onfinish = () => finish(item);
   };
@@ -137,6 +151,23 @@ export function initAccordion(root: HTMLElement): AccordionController {
       const closing = item.classList.contains("is-closing");
       if (item.open && !closing) collapse(item, !reduceMotion.matches);
       else open(item);
+    });
+
+    // Opened by the browser (find-in-page, fragment): keep one open item.
+    // Siblings this script is already closing (`is-closing`) are left alone.
+    item.addEventListener("toggle", () => {
+      if (!item.open) return;
+      const group = item.dataset["accordionName"];
+      for (const other of items) {
+        if (
+          other !== item &&
+          other.open &&
+          !other.classList.contains("is-closing") &&
+          other.dataset["accordionName"] === group
+        ) {
+          collapse(other, false);
+        }
+      }
     });
   }
 

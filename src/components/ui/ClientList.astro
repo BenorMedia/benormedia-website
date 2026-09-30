@@ -19,6 +19,9 @@
  *   - Missing icon → client initial inside the icon box.
  *   - Funds tag only when `fundsRaised` is set; category tag only when set.
  *   - Row is a link (new tab) only when `websiteUrl` is set; otherwise a div.
+ *     A linked row's accessible name = client name + tags + a visually
+ *     hidden "(opens in a new tab)"; the icon is decorative (`alt=""`), so
+ *     the name isn't read twice (QA 2026-09-30).
  *   - Hover preview only renders when `websiteScreenshot` is set.
  *
  * Hover (lead, visual QA 2026-09-29):
@@ -75,7 +78,6 @@ const rows = (limit === undefined ? clients : clients.slice(0, limit)).map(
       iconUrl: iconAsset
         ? urlFor(client.icon as Source).width(112).fit("max").auto("format").url()
         : undefined,
-      iconAlt: client.icon?.alt ?? client.name,
       initial: client.name?.trim().charAt(0).toUpperCase() ?? "",
       fundsLabel: client.fundsRaised?.trim()
         ? `${client.fundsRaised.trim()} Raised`
@@ -113,7 +115,7 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
           <span class="c-client-list__client">
             <span class="c-client-list__icon">
               {row.iconUrl ? (
-                <img src={row.iconUrl} alt={row.iconAlt} loading="lazy" decoding="async" />
+                <img src={row.iconUrl} alt="" loading="lazy" decoding="async" />
               ) : (
                 <span class="c-client-list__initial c-text_m" aria-hidden="true">
                   {row.initial}
@@ -121,6 +123,8 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
               )}
             </span>
             <span class="c-client-list__name c-text_m">{row.name}</span>
+            {/* TODO: COPY — screen-reader note on linked rows. */}
+            {row.href && <span class="c-client-list__sr-only"> (opens in a new tab)</span>}
           </span>
 
           <span class="c-client-list__tags">
@@ -268,6 +272,20 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
   .c-client-list__initial {
     color: var(--color-heading);
     line-height: 1;
+  }
+
+  /* Visually hidden, still read by screen readers. TODO: switch to a global
+     `cc-sr-only` utility (G-14). */
+  .c-client-list__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
   }
 
   .c-client-list__name {
