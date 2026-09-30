@@ -124,5 +124,18 @@ export default defineConfig({
   ],
   vite: {
     plugins: [benorSanityAliasFix],
+    // Studio → Clients (drag-and-drop list, @sanity/orderable-document-list)
+    // is loaded on demand. Without pre-bundling, the first visit in `astro dev`
+    // makes Vite discover these deps, re-optimize and change the chunk hashes,
+    // so the open Studio fails with "Failed to fetch dynamically imported
+    // module …/.vite/deps/userComponent-….js". Dev only; builds are unaffected.
+    optimizeDeps: {
+      include: [
+        '@sanity/orderable-document-list',
+        'lexorank',
+        '@sanity/orderable-document-list > @hello-pangea/dnd',
+        '@sanity/orderable-document-list > sanity-plugin-utils',
+      ],
+    },
   },
 });

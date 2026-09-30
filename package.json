@@ -17,6 +17,7 @@
     "astro": "astro",
     "seed:categories": "node scripts/seed-categories.mjs",
     "import:clients": "tsx scripts/sanity/import-client-assets.ts",
+    "import:badges": "tsx scripts/sanity/import-client-assets.ts --only=badge --force",
     "schema:deploy": "sanity schema deploy",
     "seed:client-order": "tsx scripts/sanity/seed-client-order.ts"
   },
