@@ -23,7 +23,15 @@ import SectionHeader from "../ui/SectionHeader.astro";
       class="c-tech__header"
     />
 
-    <div class="c-tech__diagram">
+    <!-- ≤767: dedicated mobile diagram (docs/refs/home-diagram-mobile.png,
+         lead 2026-09-30); desktop keeps the SVG. -->
+    <picture class="c-tech__diagram">
+      <source
+        media="(max-width: 767px)"
+        srcset="/images/home/technologies-mobile.png"
+        width="1936"
+        height="3741"
+      />
       <img
         src="/images/home/technologies.svg"
         alt="Diagram: tools for web design and development, CRM and API integrations, SEO / GEO / AEO, CRO optimization, and CMS integrations and migrations connect through BenorMedia into capabilities such as scalable CMS structure, web design and development systems, custom API and CRM integrations, accessibility, GDPR and CCPA, content creation, and CRO, SEO and AEO / GEO analytics."
@@ -33,7 +41,7 @@ import SectionHeader from "../ui/SectionHeader.astro";
         decoding="async"
         data-anim="tech-diagram"
       />
-    </div>
+    </picture>
   </Container>
 </section>
 
@@ -54,12 +62,12 @@ import SectionHeader from "../ui/SectionHeader.astro";
   }
 
   .c-tech__diagram {
+    display: block;
     /* TODO: DS space between section header and content. */
     margin-top: 3rem;
   }
 
-  /* TODO: DS mobile — no mobile design; the diagram scales down with the
-     container, so its labels get small on phones. */
+  /* Full width, natural height: both diagrams show every label. */
   .c-tech__diagram img {
     display: block;
     width: 100%;

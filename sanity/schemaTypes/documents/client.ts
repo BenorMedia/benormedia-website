@@ -127,6 +127,14 @@ export const client = defineType({
       ],
     }),
     defineField({
+      name: 'websiteVideo',
+      title: 'Website video',
+      description:
+        'Short MP4 recording of the client\'s website. Plays (muted, looping) in the Home Featured Work card instead of the screenshot; the screenshot stays as its poster and fallback.',
+      type: 'file',
+      options: { accept: 'video/mp4' },
+    }),
+    defineField({
       name: 'testimonial',
       title: 'Testimonial',
       description:

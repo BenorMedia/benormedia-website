@@ -38,6 +38,11 @@ const IMAGE = /* groq */ `{
   alt
 }`;
 
+/** A video `file` field with its asset URL (played directly from the Sanity CDN). */
+const VIDEO = /* groq */ `{
+  "asset": asset->{ _id, url, mimeType }
+}`;
+
 /** The `seo` object. */
 const SEO = /* groq */ `{
   metaTitle,
@@ -197,6 +202,7 @@ export const CLIENTS_BY_IDS = /* groq */ `
   ${CLIENT_LIST_FIELDS},
   "logo": logo${IMAGE},
   "cardThumbnail": cardThumbnail${IMAGE},
+  "websiteVideo": websiteVideo${VIDEO},
   "testimonial": testimonial->{
     _id,
     _type,

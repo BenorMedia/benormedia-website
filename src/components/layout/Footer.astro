@@ -8,7 +8,8 @@
  *      - SERVICES + ABOUT link columns (Eyebrow labels)
  *      - Partner badges (images) + socials
  *   2. .c-footer__wordmark-strip — FULL-WIDTH strip, height 258px,
- *      border top + bottom, containing the wordmark image.
+ *      border top + bottom, containing the wordmark image (move-in on
+ *      scroll: scripts/animations/footer-wordmark.ts).
  *   3. .c-footer__credit-strip — full-width strip with a .c-container
  *      inside; 30px vertical padding; legal links (left) + copyright (right).
  *
@@ -110,7 +111,12 @@ const legalLinks = [
   </div>
 
   <div class="c-footer__wordmark-strip">
-    <img src="/images/benormedia-footer.png" alt="BenorMedia" class="c-footer__wordmark" />
+    <img
+      src="/images/benormedia-footer.png"
+      alt="BenorMedia"
+      class="c-footer__wordmark"
+      data-footer-wordmark
+    />
   </div>
 
   <div class="c-footer__credit-strip">

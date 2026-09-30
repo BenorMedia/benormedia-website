@@ -2,7 +2,6 @@
    BenorMedia — Design Tokens
    Source of truth: docs/DESIGN_SYSTEM.md (v0.3 DRAFT)
    Do not add hardcoded values elsewhere; reference these tokens via var().
-   No shadows anywhere.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------

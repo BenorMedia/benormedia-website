@@ -41,8 +41,7 @@ The project lead does not read `DECISIONS.md`: the orchestrator relays open ques
 5. Never edit `docs/DESIGN_SYSTEM.md` or `src/styles/tokens.css` without the project lead's confirmation.
 6. Never commit secrets. Env vars live in `.env` (gitignored) and in Vercel.
 7. Check for an existing component, class or token before creating a new one.
-8. No shadows on any element (design rule).
-9. `pnpm run build`, `pnpm run check` and `pnpm run lint` must pass before any handoff.
+8. `pnpm run build`, `pnpm run check` and `pnpm run lint` must pass before any handoff.
 
 ## Class naming convention
 - `c-` component: `c-hero`, `c-nav`

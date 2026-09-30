@@ -14,7 +14,11 @@
  * a category is referenced. Missing thumbnail → empty gray tile.
  *
  * Featured layout (≥992):
- *   [ screenshot ][ testimonial block ]
+ *   [ screenshot / video ][ testimonial block ]
+ *
+ * Media: `websiteVideo` (MP4) when set — muted, looping, playing only while
+ * on screen and never under reduced motion; the screenshot is its poster.
+ * Without a video the screenshot image renders as before.
  *
  * Testimonial block: quote → author row (photo + name + role) → up to 2 KPIs.
  * Any missing field degrades gracefully (see fallbacks below).
@@ -51,6 +55,7 @@ const screenshotUrl = screenshotAsset
   ? urlFor(client.websiteScreenshot as Source).width(960).auto("format").url()
   : undefined;
 const screenshotAlt = client.websiteScreenshot?.alt ?? client.name;
+const videoUrl = client.websiteVideo?.asset?.url;
 
 // Author avatar (96px). If missing we render the first initial in a circle.
 const authorPhotoAsset = testimonial?.authorPhoto?.asset;
@@ -137,7 +142,21 @@ const categoryLabel = client.category?.title;
 {variant === "featured" && (
 <article class={rootClass} data-anim="card-reveal">
   {
-    screenshotUrl ? (
+    videoUrl ? (
+      <div class="c-client-card__screenshot">
+        <video
+          class="c-client-card__video"
+          src={videoUrl}
+          poster={screenshotUrl}
+          aria-label={screenshotAlt}
+          muted
+          loop
+          playsinline
+          preload="none"
+          data-client-video
+        />
+      </div>
+    ) : screenshotUrl ? (
       <div class="c-client-card__screenshot">
         <img src={screenshotUrl} alt={screenshotAlt} loading="lazy" decoding="async" />
       </div>
@@ -235,6 +254,23 @@ const categoryLabel = client.category?.title;
 </article>
 )}
 
+<script>
+  // Featured card videos: play only while on screen, never under reduced
+  // motion (the poster screenshot stays). No JS: poster only.
+  const videos = document.querySelectorAll<HTMLVideoElement>("[data-client-video]");
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  if (videos.length > 0) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(({ target, isIntersecting }) => {
+        const video = target as HTMLVideoElement;
+        if (isIntersecting && !reduced.matches) void video.play().catch(() => {});
+        else video.pause();
+      });
+    });
+    videos.forEach((video) => observer.observe(video));
+  }
+</script>
+
 <style>
   .c-client-card {
     display: grid;
@@ -269,7 +305,8 @@ const categoryLabel = client.category?.title;
     }
   }
 
-  .c-client-card__screenshot img {
+  .c-client-card__screenshot img,
+  .c-client-card__video {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -297,6 +334,24 @@ const categoryLabel = client.category?.title;
     height: 100%;
     /* TODO: DS body internal spacing between quote / author / KPIs. */
     gap: 1.25rem;
+    transition:
+      transform var(--duration-hover) var(--ease-smooth),
+      border-color var(--duration-hover) var(--ease-smooth),
+      box-shadow var(--duration-hover) var(--ease-smooth);
+  }
+
+  /* Hover (lead 2026-09-30): lift + c-button's hover shadow, accent border,
+     arrow turns accent + rotates like ClientList's. */
+  .c-client-card__body:hover {
+    transform: translateY(-3%);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 20px #2223;
+  }
+  .c-client-card__body:hover .c-client-card__arrow {
+    transform: rotate(-30.963deg);
+  }
+  .c-client-card__body:hover .c-client-card__arrow path {
+    fill: var(--color-accent);
   }
 
 
@@ -333,6 +388,10 @@ const categoryLabel = client.category?.title;
     height: 1.143rem;
     flex: 0 0 auto;
     display: block;
+    transition: transform var(--duration-hover) var(--ease-smooth);
+  }
+  .c-client-card__arrow path {
+    transition: fill var(--duration-hover) var(--ease-smooth);
   }
 
   .c-client-card__quote {
@@ -483,5 +542,13 @@ const categoryLabel = client.category?.title;
     flex-wrap: wrap;
     /* TODO: DS gap between tags (ref ≈ 6px). */
     gap: 0.375rem;
+  }
+
+  /* Grid cards only (every page with a clients grid) — lead 2026-09-30.
+     Desktop only: mobile keeps the global 12px c-tag size (.8rem = 7.2px). */
+  @media (min-width: 768px) {
+    .c-client-card.is-grid :global(.c-tag) {
+      font-size: 0.8rem;
+    }
   }
 </style>

@@ -124,6 +124,15 @@ const rootClass = ["c-cta__actions", tone === "light" && "is-light", className]
     gap: 1.071rem; /* 15px (lead visual QA 2026-09-29) */
   }
 
+  /* Mobile: stacked, full wrapper width (lead 2026-09-30, every CTA). */
+  @media (max-width: 767px) {
+    .c-cta__buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
   /* --- Trusted badge (docs/refs/trusted-badge.png) ------------------- */
   .c-cta__badge {
     display: flex;
