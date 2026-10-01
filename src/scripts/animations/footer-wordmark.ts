@@ -4,7 +4,9 @@
  *
  * The wordmark is already cropped by its strip (`overflow: hidden`, bottom
  * edge), so it rises out of that edge: starts 35% lower and transparent,
- * settles into place when the strip is 85% up the viewport. Plays once
+ * settles into place when the strip is 85% up the viewport — clamped to the
+ * page's maximum scroll, so it still fires when the strip can never get that
+ * high (short mobile pages: it used to stay invisible). Plays once
  * (no replay on scroll back) so it stays a quiet sign-off, not a loop.
  *
  * Markup contract (Footer.astro): img[data-footer-wordmark] inside
@@ -34,7 +36,7 @@ export function initFooterWordmark(): void {
         ease: EASE,
         scrollTrigger: {
           trigger: strip,
-          start: "top 85%",
+          start: "clamp(top 85%)",
           once: true,
         },
       });

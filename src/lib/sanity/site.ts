@@ -35,14 +35,18 @@ export function getClientBadgesCached(): Promise<Client[]> {
 }
 
 /**
- * The first testimonial (TESTIMONIALS order: oldest first) for the global
- * ContactModal card, rendered on every page. Same once-per-build cache.
+ * The ContactModal testimonial (global, every page): Surfe's (lead
+ * 2026-09-30), else the first one (TESTIMONIALS order: oldest first). Same
+ * once-per-build cache.
  */
-let firstTestimonialCached: Promise<Testimonial | null> | undefined;
+const CONTACT_TESTIMONIAL_CLIENT_ID = 'client-surfe';
+let contactTestimonialCached: Promise<Testimonial | null> | undefined;
 
-export function getFirstTestimonialCached(): Promise<Testimonial | null> {
-  firstTestimonialCached ??= getTestimonials().then((list) => list[0] ?? null);
-  return firstTestimonialCached;
+export function getContactTestimonialCached(): Promise<Testimonial | null> {
+  contactTestimonialCached ??= getTestimonials().then(
+    (list) => list.find((t) => t.client?._id === CONTACT_TESTIMONIAL_CLIENT_ID) ?? list[0] ?? null,
+  );
+  return contactTestimonialCached;
 }
 
 /**

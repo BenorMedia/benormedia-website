@@ -3,56 +3,84 @@
  * HomeHero — top-of-fold hero for the Home page.
  *
  * Static copy. Hero renders on the blue gradient with white type and
- * white / glass button variants. Two decorative line PNGs sit absolutely
+ * white / glass button variants. Two decorative line images (WebP, 1000w /
+ * 1600w, exported from the 2640px PNGs; QA B1 2026-09-30) sit absolutely
  * inside `.c-hero__lines`, aria-hidden.
  *
  * Content stack (24px internal gap):
  *   - title sub-block (eyebrow row + h1 + subtitle, 24px gap). Eyebrow row:
  *     "$700M+" eyebrow left of the partner one; stacked on mobile, new on top.
- *   - buttons sub-block
+ *   - `CtaActions` (lead 2026-09-30): the CTA banner's buttons + rotating
+ *     "Trusted by" badge (`c-cta__actions`, dark tone on the gradient), with
+ *     the hero's buttons: white "Get in Touch" + glass "See Our Work".
  * Stats row removed (lead 2026-09-30); the container's bottom padding is the
- * resting space of the client icon pile:
+ * resting space of the client icon pile.
  *
  * Physics pile (`.c-hero__physics`, lead 2026-09-30): one ClientIcon tile per
  * client with an icon (same tile as ClientList). hero-physics.ts (Matter.js)
  * drops them into the hero, where they can be dragged and thrown. Without JS
  * or under reduced motion they render as a static wrapped row at the bottom.
  * Decorative (`aria-hidden`): the logos are in the LogoStrip below.
+ * The content block stays above the tiles (lead 2026-09-30, Q2): on short
+ * viewports the pile can reach the buttons, so the tiles pass behind it.
+ * The container is click-through outside the block, so tiles beside the
+ * text column can still be grabbed.
  *
- * No animations wired — `data-anim="..."` hooks are placed for Phase 6.
- *
- * The "Get in Touch" button opens the ContactModal via the shared
- * `.js-open-contact` hook (Button doesn't spread unknown attrs — Nav / Cta
- * use the same fallback).
+ * "Get in Touch" is a `contact` link: CtaActions renders it as a
+ * `.js-open-contact` button (opens the ContactModal).
  */
-import Button from "../ui/Button.astro";
 import Eyebrow from "../ui/Eyebrow.astro";
 import ClientIcon from "../ui/ClientIcon.astro";
-import type { Client } from "../../lib/sanity/types";
+import CtaActions from "../ui/CtaActions.astro";
+import type { Button as ButtonType, Client } from "../../lib/sanity/types";
+import { getCtaBadgeUrlsCached } from "../../lib/sanity/site";
 
 interface Props {
   clients?: Client[];
 }
 
 const { clients = [] } = Astro.props;
+
+const BUTTONS: ButtonType[] = [
+  { variant: "white", link: { label: "Get in Touch", type: "contact" } },
+  {
+    variant: "glass",
+    link: {
+      label: "See Our Work",
+      type: "internal",
+      internalRef: { _id: "workPage", _type: "workPage", title: "Work" },
+    },
+  },
+];
+const badges = await getCtaBadgeUrlsCached();
 ---
 
 <section class="c-hero">
   <div class="c-hero__lines" aria-hidden="true">
     <img
       class="c-hero__lines-img is-left"
-      src="/images/home/hero-lines-left.png"
+      src="/images/home/hero-lines-left.webp"
+      srcset="/images/home/hero-lines-left.webp 1000w, /images/home/hero-lines-left@1600.webp 1600w"
+      sizes="35vw"
+      width="1000"
+      height="1002"
       alt=""
       data-anim="hero-lines"
       loading="eager"
+      fetchpriority="low"
       decoding="async"
     />
     <img
       class="c-hero__lines-img is-right"
-      src="/images/home/hero-lines-right.png"
+      src="/images/home/hero-lines-right.webp"
+      srcset="/images/home/hero-lines-right.webp 1000w, /images/home/hero-lines-right@1600.webp 1600w"
+      sizes="35vw"
+      width="1000"
+      height="1002"
       alt=""
       data-anim="hero-lines"
       loading="eager"
+      fetchpriority="low"
       decoding="async"
     />
   </div>
@@ -70,19 +98,16 @@ const { clients = [] } = Astro.props;
         </div>
 
         <h1 class="c-hero__title" data-anim="hero-headline">
-          We turn your website into a revenue engine.
+          We turn your website into a revenue engine built to scale.
         </h1>
 
         <p class="c-paragraph_m c-hero__desc">
-          Your website should be your hardest working asset. We accelerate B2B
-          growth through website strategy and execution, AEO, and SEO.
+          We create high-converting and AEO optimized websites that anyone in
+          your team can update, maintain, and scale.
         </p>
       </div>
 
-      <div class="c-hero__buttons">
-        <Button variant="white" class="js-open-contact">Get in Touch</Button>
-        <Button variant="glass" href="/work">See Our Work</Button>
-      </div>
+      <CtaActions buttons={BUTTONS} badges={badges} class="c-hero__actions" />
     </div>
   </div>
 
@@ -93,6 +118,7 @@ const { clients = [] } = Astro.props;
           client={client}
           class="c-hero__physics-item"
           imgLoading="eager"
+          imgFetchPriority="low"
           data-hero-physics-item
         />
       ))}
@@ -102,10 +128,15 @@ const { clients = [] } = Astro.props;
 
 <style>
   /* --- Section shell ---------------------------------------------------- */
+  /* Box: lead visual QA 2026-09-30 (was 1.429rem side margins, 5.714rem
+     bottom, no max-width / min-height). */
   .c-hero {
     position: relative;
     overflow: hidden;
-    margin: 0 1.429rem 5.714rem;
+    width: 98%;
+    max-width: 1440px;
+    min-height: 90vh;
+    margin: 0 auto 1.5rem;
     border-radius: 15px;
     /* Base gradient (101deg, blue → blue-light). Solid white behind it as a
        fallback for very old renderers, per spec. */
@@ -145,16 +176,18 @@ const { clients = [] } = Astro.props;
   /* --- Container -------------------------------------------------------- */
   .c-hero__container {
     position: relative;
-    z-index: 1;
+    /* Above the physics layer (z-index 2): the block covers the tiles.
+       Click-through except the block itself. Lead 2026-09-30 (Q2). */
+    z-index: 3;
+    pointer-events: none;
     display: flex;
     flex-direction: column;
     align-items: center;
     align-self: stretch;
-    max-width: 1440px;
     margin: 0 auto;
-    /* Bottom keeps the removed stats row's space for the upcoming hero
-       animation. Lead 2026-09-30. */
-    padding: 7.8rem 0 20.5rem;
+    /* Bottom = the resting space of the physics pile. The max-width moved
+       to `.c-hero`. Lead visual QA 2026-09-30. */
+    padding: 4.8rem 2rem 20.5rem;
   }
 
   /* --- Block 1: title stack + buttons ---------------------------------- */
@@ -164,7 +197,8 @@ const { clients = [] } = Astro.props;
     align-items: center;
     gap: 2.25rem;
     width: 100%;
-    max-width: 60%;
+    max-width: 70%; /* lead visual QA 2026-09-30 (was 60%) */
+    pointer-events: auto;
   }
 
   @media (max-width: 767px) {
@@ -186,7 +220,7 @@ const { clients = [] } = Astro.props;
   .c-hero__title {
     margin: 0;
     font-family: var(--font-heading);
-    font-size: 6.286rem;      /* 88px */
+    font-size: 5.5rem;        /* lead visual QA 2026-09-30 (was 6.286rem) */
     font-weight: 400;
     font-style: normal;
     line-height: 1.2;         /* lead 2026-09-30 */
@@ -230,28 +264,13 @@ const { clients = [] } = Astro.props;
   .c-hero__desc {
     color: var(--color-white);
     margin: 0;
-    max-width: 42rem;
+    max-width: 34rem; /* lead visual QA 2026-09-30 (was 42rem) */
     text-align: center;
   }
 
-  /* --- Buttons row ----------------------------------------------------- */
-  .c-hero__buttons {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    justify-content: center;
-    /* TODO: DS gap between hero CTAs. */
-    gap: 1rem;
-  }
-
-  @media (max-width: 991px) {
-    .c-hero__buttons {
-      flex-direction: column;
-      width: 100%;
-    }
-    .c-hero__buttons :global(.c-button) {
-      width: 100%;
-    }
+  /* --- CTA actions (shared CtaActions; its own layout and ≤767 stack) --- */
+  .c-hero :global(.c-cta__actions.c-hero__actions) {
+    margin-top: 0;
   }
 
   /* --- Physics pile (hero-physics.ts) ---------------------------------
@@ -307,8 +326,11 @@ const { clients = [] } = Astro.props;
     left: 0;
     pointer-events: auto;
     cursor: grab;
-    touch-action: none;
+    /* Touch scrolls the page; a press-and-hold drags (hero-physics.ts). */
+    touch-action: manipulation;
     user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
     will-change: transform;
   }
   .c-hero__physics.is-live :global(.c-hero__physics-item.is-dragging) {

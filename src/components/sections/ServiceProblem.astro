@@ -5,7 +5,11 @@
  * at the 1920 frame, 1 ref px = 1/14 rem).
  *
  * Center: Eyebrow "The Problem" + `problemTitle` (accentTitle segments) +
- * `problemDescription`, via the shared `SectionHeader` (h2, centered).
+ * `problemDescription`, via the shared `SectionHeader` (h2, centered). The
+ * description's blank-line-separated paragraphs render as separate `<p>`s
+ * (the copy, including any closing "Learn how.", comes from Sanity). A
+ * static gradient down arrow sits below the description on every service
+ * (lead 2026-09-30; decorative, no link, no animation).
  *
  * Frame (decorative, `aria-hidden`): two thin vertical lines around the
  * center column with square nodes, as in the ref. The section's bottom border
@@ -115,6 +119,11 @@ const SECONDS_PER_IMAGE = 20;
 
 const hasTitle = title.trim().length > 0;
 const hasDescription = !!description?.trim();
+// Same paragraph split as SectionHeader (description-only fallback below).
+const descriptionParagraphs = (description ?? "")
+  .split(/\n\s*\n/)
+  .map((paragraph) => paragraph.trim())
+  .filter(Boolean);
 const shouldRender = hasTitle || hasDescription;
 const hasCarousels = columns.length > 0;
 
@@ -172,9 +181,40 @@ const headerOptional = {
           <header class="c-section-header">
             <Eyebrow variant="default">The Problem</Eyebrow>
             <div class="c-section-header__text">
-              <p class="c-section-header__description c-paragraph_m">{description}</p>
+              {descriptionParagraphs.map((paragraph) => (
+                <p class="c-section-header__description c-paragraph_m">{paragraph}</p>
+              ))}
             </div>
           </header>
+        )}
+        {hasDescription && (
+          <svg
+            class="c-service-problem__arrow"
+            aria-hidden="true"
+            width="16"
+            height="21"
+            viewBox="0 0 16 21"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M8.82993 16.704L13.1819 12.352C13.2918 12.2341 13.4243 12.1395 13.5715 12.074C13.7187 12.0084 13.8776 11.9731 14.0387 11.9703C14.1998 11.9674 14.3599 11.9971 14.5093 12.0574C14.6587 12.1178 14.7944 12.2076 14.9084 12.3215C15.0223 12.4355 15.1122 12.5712 15.1725 12.7206C15.2329 12.8701 15.2625 13.0301 15.2597 13.1912C15.2568 13.3524 15.2216 13.5113 15.156 13.6585C15.0904 13.8057 14.9958 13.9381 14.8779 14.048L8.47793 20.448C8.25293 20.6727 7.94793 20.7989 7.62993 20.7989C7.31193 20.7989 7.00693 20.6727 6.78193 20.448L0.381933 14.048C0.264034 13.9381 0.16947 13.8057 0.103883 13.6585C0.0382961 13.5113 0.00302961 13.3524 0.000186756 13.1912C-0.0026561 13.0301 0.0269829 12.8701 0.0873366 12.7206C0.14769 12.5712 0.237522 12.4355 0.351472 12.3215C0.465422 12.2076 0.601156 12.1178 0.750577 12.0574C0.899998 11.9971 1.06004 11.9674 1.22117 11.9703C1.38229 11.9731 1.5412 12.0084 1.68839 12.074C1.83559 12.1395 1.96807 12.2341 2.07793 12.352L6.42993 16.704V1.2C6.42993 0.88174 6.55636 0.576515 6.78141 0.351472C7.00645 0.126428 7.31167 0 7.62993 0C7.94819 0 8.25342 0.126428 8.47846 0.351472C8.7035 0.576515 8.82993 0.88174 8.82993 1.2V16.704Z"
+              fill="url(#c-service-problem-arrow-gradient)"
+            />
+            <defs>
+              <linearGradient
+                id="c-service-problem-arrow-gradient"
+                x1="0"
+                y1="2.68653"
+                x2="17.6719"
+                y2="6.41031"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop style="stop-color: var(--color-blue)" />
+                <stop offset="1" style="stop-color: var(--color-blue-light)" />
+              </linearGradient>
+            </defs>
+          </svg>
         )}
       </div>
     </Container>
@@ -208,6 +248,15 @@ const headerOptional = {
     z-index: 1;
     max-width: var(--c-service-problem-frame);
     margin-inline: auto;
+  }
+
+  /* Static down arrow under the description (lead 2026-09-30): 16×21px
+     (÷14). Gap = the header's eyebrow → text gap. TODO: DS */
+  .c-service-problem__arrow {
+    display: block;
+    width: 1.143rem;
+    height: 1.5rem;
+    margin: 1.5rem auto 0;
   }
 
   /* --- Frame ------------------------------------------------------------ */

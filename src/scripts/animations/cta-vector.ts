@@ -1,9 +1,13 @@
 /**
  * CTA vector — scroll-linked rise (every CtaBanner; lead 2026-09-30).
  *
- * The decorative vector starts a bit lower (clipped by the banner's
- * `overflow: hidden`) and rises to its resting position as the banner
- * scrolls into view; scrolling back up reverses it (scrubbed).
+ * The decorative vector moves with the scroll the whole time the banner is
+ * on screen, in both directions (scrubbed parallax; lead 2026-09-30 — it
+ * used to move only while the banner entered the viewport): it is lower
+ * (clipped by the banner's `overflow: hidden`) when the banner enters at the
+ * bottom of the viewport and reaches its resting position as the banner
+ * leaves at the top. It never goes above rest, so no gap opens under it
+ * (it sits on the banner's bottom edge).
  *
  * Markup contract (CtaBanner.astro): img[data-cta-vector] inside `.c-cta`.
  *
@@ -14,8 +18,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-/* TODO: DS — offset and smoothing are proposals (no motion spec). */
-const START_OFFSET_PERCENT = 15;
+/* TODO: DS — offset and smoothing are proposals (no motion spec). 20%
+   (was 15%) because the travel now spans the whole viewport passage. */
+const START_OFFSET_PERCENT = 20;
 const SCRUB_SMOOTHING = 1;
 
 export function initCtaVector(): void {
@@ -32,7 +37,7 @@ export function initCtaVector(): void {
           scrollTrigger: {
             trigger: banner,
             start: "top bottom",
-            end: "bottom bottom",
+            end: "bottom top",
             scrub: SCRUB_SMOOTHING,
           },
         },

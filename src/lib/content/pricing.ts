@@ -28,7 +28,6 @@ export const PRICING_PLANS: readonly PricingPlan[] = [
     features: [
       "Unlimited development requests",
       "Unlimited web and marketing design requests",
-      "Unlimited technical SEO requests and consultancy",
       "Unlimited revisions",
       "Unlimited projects",
       "Fast turnaround",
@@ -38,8 +37,9 @@ export const PRICING_PLANS: readonly PricingPlan[] = [
     ],
   },
   {
-    // Canonical service name (lead, 2026-09-29): nav + footer use the same.
-    name: "Growth (AEO/GEO + CRO)",
+    // Canonical service name (lead, 2026-09-30): nav, footer, Home Services
+    // and the Sanity `service-growth` document use the same.
+    name: "Growth (SEO/GEO + CRO)",
     description:
       "Technical AEO, AI search analytics, content creation, and ongoing optimization to improve your LLMs visibility and web conversion rate.",
     price: "€2,500",

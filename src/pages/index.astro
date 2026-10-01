@@ -40,7 +40,8 @@ const [heroClients, logoClients, featuredClients, workClients, workListClients, 
 
 <BaseLayout pageSeo={home?.seo ?? null}>
   <HomeHero clients={heroClients} />
-  <LogoStrip clients={logoClients} />
+  {/* Hidden on Home only (lead 2026-09-30). */}
+  <LogoStrip clients={logoClients} hidden />
   <FeaturedWork clients={featuredClients} />
   <Services />
   <OurWork clients={workClients} listClients={workListClients} />

@@ -53,7 +53,8 @@ const metaDescription =
     <PricingPlans plans={PRICING_PLANS} />
   </div>
   {logoClients.length > 0 && <LogoStrip clients={logoClients} />}
-  <FaqSection title="Frequently asked questions." groups={PRICING_FAQ_GROUPS} scrollTabs />
+  {/* FAQs hidden for now (lead 2026-09-30). */}
+  <FaqSection title="Frequently asked questions." groups={PRICING_FAQ_GROUPS} scrollTabs hidden />
   <Testimonials testimonials={testimonials} />
   {(workClients.length > 0 || workListClients.length > 0) && (
     <OurWork clients={workClients} listClients={workListClients} />

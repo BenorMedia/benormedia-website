@@ -20,6 +20,7 @@ import Nav from "../components/layout/Nav.astro";
 import Footer from "../components/layout/Footer.astro";
 import CtaBanner from "../components/layout/CtaBanner.astro";
 import ContactModal from "../components/layout/ContactModal.astro";
+import CookieConsent from "../components/layout/CookieConsent.astro";
 
 type OgImage = SanityImage | string;
 
@@ -47,6 +48,40 @@ const {
 const noIndexResolved = noIndex ?? noindex ?? false;
 
 const siteSettings: SiteSettings | null = await getSiteSettingsCached();
+
+// --- Google Tag Manager (lead 2026-09-30) ----------------------------------
+// Production only (`PUBLIC_SITE_ENV`, the same switch Seo uses for noindex):
+// previews and local dev never load it.
+// Loaded only after consent (lead 2026-09-30, "basic" consent mode): this
+// inline script defines `window.bmLoadGtm()` (the official GTM snippet,
+// verbatim, inside it) and calls it at once when the `bm_consent=granted`
+// cookie is set. Otherwise CookieConsent.astro calls it on "Accept all".
+// Consent Mode is set to granted right before GTM starts, so tags with
+// consent checks fire. The GTM `<noscript>` iframe is left out on purpose:
+// without JS there is no way to ask for consent.
+// Keep the cookie name in sync with src/scripts/ui/cookie-consent.ts.
+const GTM_ID = "GTM-M4MHRTDM";
+const loadGtm = import.meta.env["PUBLIC_SITE_ENV"] === "production";
+const gtmHead = `<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+window.bmLoadGtm = function () {
+  if (window.bmGtmLoaded) return;
+  window.bmGtmLoaded = true;
+  gtag('consent', 'default', {
+    ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted',
+    analytics_storage: 'granted', functionality_storage: 'granted', security_storage: 'granted'
+  });
+  // Google Tag Manager (official snippet)
+  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','${GTM_ID}');
+  // End Google Tag Manager
+};
+if (document.cookie.split('; ').indexOf('bm_consent=granted') !== -1) window.bmLoadGtm();
+</script>`;
 
 // --- Organization JSON-LD --------------------------------------------------
 type OrganizationLd = {
@@ -107,6 +142,7 @@ if (siteSettings) {
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    {loadGtm && <Fragment set:html={gtmHead} />}
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
@@ -130,7 +166,6 @@ if (siteSettings) {
       type="font/woff2"
       crossorigin
     />
-    <!-- TODO: FONTS Adobe kit <link> pending kit ID -->
 
     <Seo
       title={title}
@@ -153,6 +188,7 @@ if (siteSettings) {
     {showCtaBanner && <CtaBanner siteSettings={siteSettings} />}
     <Footer siteSettings={siteSettings} />
     <ContactModal siteSettings={siteSettings} />
+    <CookieConsent />
     <script>
       // Animations — one file per animation in src/scripts/animations/.
       import { initNavMotion } from "../scripts/animations/nav-motion";

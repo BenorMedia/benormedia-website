@@ -23,14 +23,17 @@ import SectionHeader from "../ui/SectionHeader.astro";
       class="c-tech__header"
     />
 
-    <!-- ≤767: dedicated mobile diagram (docs/refs/home-diagram-mobile.png,
+    <!-- ≤767: dedicated mobile diagram (docs/refs/home-diagram-mobile.png as
+         WebP 1125w / 1536w, QA S5 2026-09-30;
          lead 2026-09-30); desktop keeps the SVG. -->
     <picture class="c-tech__diagram">
       <source
         media="(max-width: 767px)"
-        srcset="/images/home/technologies-mobile.png"
-        width="1936"
-        height="3741"
+        srcset="/images/home/technologies-mobile.webp 1125w, /images/home/technologies-mobile@1536.webp 1536w"
+        sizes="100vw"
+        type="image/webp"
+        width="1125"
+        height="2174"
       />
       <img
         src="/images/home/technologies.svg"

@@ -50,7 +50,7 @@
  * never blank. No JS → no previews (decorative, `aria-hidden`).
  */
 import type { Client } from "../../lib/sanity/types";
-import { urlFor, type Source } from "../../lib/sanity/image";
+import { urlFor, assetDimensions, type Source } from "../../lib/sanity/image";
 import Tag from "./Tag.astro";
 import ClientIcon from "./ClientIcon.astro";
 
@@ -61,11 +61,6 @@ interface Props {
 }
 
 const { clients, limit, class: className } = Astro.props;
-
-function assetSize(id?: string): { width: number; height: number } | undefined {
-  const match = id?.match(/-(\d+)x(\d+)-[a-z0-9]+$/i);
-  return match ? { width: Number(match[1]), height: Number(match[2]) } : undefined;
-}
 
 const rows = (limit === undefined ? clients : clients.slice(0, limit)).map(
   (client) => {
@@ -90,7 +85,7 @@ const rows = (limit === undefined ? clients : clients.slice(0, limit)).map(
         : undefined,
       // Intrinsic size from the asset id (`image-<hash>-<w>x<h>-<ext>`) so the
       // browser knows the ratio before the file loads.
-      previewSize: assetSize(client.websiteScreenshot?.asset?._id),
+      previewSize: assetDimensions(client.websiteScreenshot?.asset?._id),
     };
   },
 );
