@@ -32,7 +32,7 @@ const COMPACT_LOGOS = new Set(["client-surfe", "client-arrows"]);
     <SectionHeader
       eyebrow="Our Work"
       title={"From growing B2B\ncompanies to large enterprises."}
-      description="100+ launches for B2B teams across sales tech, fintech, HR tech, cleantech, and venture capital."
+      description="6+ years of experience and 100+ launches speak for themselves."
       class="c-work__header"
     />
 
@@ -75,11 +75,8 @@ const COMPACT_LOGOS = new Set(["client-surfe", "client-arrows"]);
     background: var(--color-white);
   }
 
-  /* Subtitle wraps after "sales tech," in the ref (≈ 522px at the 1920 frame). */
-  .c-work :global(.c-work__header .c-section-header__description) {
-    max-width: 35rem;
-  }
-
+  /* Description: SectionHeader's default width (the 35rem cap was removed,
+     lead 2026-10-01, every page); full width on phones. */
   @media (max-width: 767px) {
     .c-work :global(.c-work__header .c-section-header__description) {
       max-width: 100%;

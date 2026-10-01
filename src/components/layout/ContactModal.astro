@@ -8,7 +8,12 @@
  * - Panel: 753px wide, full viewport height, right-anchored, white bg.
  * - Header (title + subtitle) hardcoded per Figma; siteSettings.contactModal
  *   is NOT read in this iteration — content is the exact Figma copy.
- * - Form is UI-only for Phase 3 (submit stubbed, wired Day 6).
+ * - Form → POST /api/contact (src/pages/api/contact.ts, Vercel function +
+ *   Google Workspace SMTP; lead 2026-10-01): emails every field to
+ *   info@benor.media. Native
+ *   validation (name, email, company, budget required), a hidden honeypot
+ *   field against bots, the button disabled while sending, and a status
+ *   line (`role="status"`) with the result; the form resets on success.
  * - Testimonial card (bottom): Surfe's Sanity testimonial (else the first) as the shared
  *   TestimonialCard, styled like the Testimonials page grid (full width,
  *   solid white). Hidden when there are no testimonials. Lead 2026-09-30.
@@ -63,7 +68,7 @@ const testimonial = await getContactTestimonialCached();
         <legend class="c-contact-modal__label">Engagement Budget*</legend>
         <div class="c-contact-modal__budget-options">
           <label class="c-contact-modal__budget-option">
-            <input type="radio" name="budget" value="<5000" />
+            <input type="radio" name="budget" value="<5000" required />
             <span>&lt;5000</span>
           </label>
           <label class="c-contact-modal__budget-option">
@@ -86,7 +91,17 @@ const testimonial = await getContactTestimonialCached();
         <textarea name="message" rows="3"></textarea>
       </label>
 
+      {/* Honeypot: hidden from people (and screen readers); bots fill it. */}
+      <div class="c-contact-modal__hp" aria-hidden="true">
+        <label>
+          Website
+          <input type="text" name="website" tabindex="-1" autocomplete="off" />
+        </label>
+      </div>
+
       <Button variant="gradient" type="submit" class="c-contact-modal__submit">Submit</Button>
+      {/* TODO: COPY — status messages are set by the script below. */}
+      <p class="c-contact-modal__status c-paragraph_s" role="status" aria-live="polite" data-contact-status></p>
     </form>
 
     {testimonial && (
@@ -157,11 +172,47 @@ const testimonial = await getContactTestimonialCached();
     closeModal();
   });
 
-  // Form submit: UI only for Phase 3. Submission is wired Day 6.
-  form?.addEventListener("submit", (e) => {
+  // --- Form submit → /api/contact (lead 2026-10-01) -----------------------
+  // TODO: COPY — status messages.
+  const MESSAGES = {
+    sending: "Sending…",
+    success: "Thanks! We'll be in touch within 24 hours.",
+    error: "Something went wrong. Please try again or email us at info@benor.media.",
+  };
+  const status = form?.querySelector<HTMLElement>("[data-contact-status]");
+  const submit = form?.querySelector<HTMLButtonElement>('button[type="submit"]');
+
+  const setStatus = (message: string, state: "sending" | "success" | "error"): void => {
+    if (!status) return;
+    status.textContent = message;
+    status.dataset["state"] = state;
+  };
+
+  form?.addEventListener("submit", async (e) => {
     e.preventDefault();
-    // TODO: SUBMIT wire endpoint Day 6
-    console.log("Contact form submitted (stub — endpoint pending Day 6).");
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+    const data = Object.fromEntries(new FormData(form).entries());
+    if (submit) submit.disabled = true;
+    form.setAttribute("aria-busy", "true");
+    setStatus(MESSAGES.sending, "sending");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      form.reset();
+      setStatus(MESSAGES.success, "success");
+    } catch {
+      setStatus(MESSAGES.error, "error");
+    } finally {
+      if (submit) submit.disabled = false;
+      form.removeAttribute("aria-busy");
+    }
   });
 </script>
 
@@ -332,6 +383,31 @@ const testimonial = await getContactTestimonialCached();
   /* Submit — inherit gradient Button, force full width */
   :global(.c-contact-modal__submit) {
     width: 100%;
+  }
+  :global(.c-contact-modal__submit:disabled) {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  /* Submit result (TODO: DS — no design). Empty = takes no space. */
+  .c-contact-modal__status {
+    margin: 0;
+    color: var(--color-text);
+  }
+  .c-contact-modal__status:empty {
+    display: none;
+  }
+  .c-contact-modal__status[data-state="success"] {
+    color: var(--color-accent);
+  }
+
+  /* Honeypot: off-screen, not focusable (tabindex -1), hidden from AT. */
+  .c-contact-modal__hp {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
   }
 
   /* --- Testimonial card --------------------------------------------------

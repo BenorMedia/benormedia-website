@@ -11,8 +11,9 @@
  * Rows overlap by their extra bottom padding (30px bottom vs 14px top) so the
  * list reads as a stacked deck; later rows paint over earlier ones.
  *
- * Filtering hook: each `<li>` carries `data-category="<category slug>"` when
- * the client has a category. A page script can set `hidden` on rows; the
+ * Filtering hooks: each `<li>` carries `data-category="<category slug>"` and
+ * `data-sector="<sector>"` when the client has them (the Work page filters
+ * by sector, lead 2026-10-01). A page script can set `hidden` on rows; the
  * overlap only applies after a visible row, so hidden rows leave no gap.
  *
  * Fallbacks:
@@ -74,6 +75,7 @@ const rows = (limit === undefined ? clients : clients.slice(0, limit)).map(
         : undefined,
       categoryLabel: client.category?.title,
       categorySlug: client.category?.slug?.current,
+      sector: client.sector,
       // Height only (≈249px preview at 2x density) — no width, so the
       // builder never crops; the full screenshot is always shown.
       previewUrl: client.websiteScreenshot?.asset
@@ -100,7 +102,7 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
       ? { href: row.href, target: "_blank", rel: "noopener noreferrer" }
       : {};
     return (
-      <li class="c-client-list__item" data-category={row.categorySlug}>
+      <li class="c-client-list__item" data-category={row.categorySlug} data-sector={row.sector}>
         <RowTag class="c-client-list__row" {...linkAttrs}>
           <span class="c-client-list__client">
             <ClientIcon client={row.client} />

@@ -18,6 +18,7 @@
     "seed:categories": "node scripts/seed-categories.mjs",
     "import:clients": "tsx scripts/sanity/import-client-assets.ts",
     "import:badges": "tsx scripts/sanity/import-client-assets.ts --only=badge --force",
+    "import:icons": "tsx scripts/sanity/import-client-assets.ts --only=icons --force --create-missing",
     "schema:deploy": "sanity schema deploy",
     "seed:client-order": "tsx scripts/sanity/seed-client-order.ts"
   },
@@ -35,6 +36,7 @@
     "astro": "^7.3.5",
     "gsap": "^3.15.0",
     "matter-js": "^0.20.0",
+    "nodemailer": "^10.0.13",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-is": "^19.3.0",
@@ -48,6 +50,7 @@
     "@astrojs/check": "^0.9.10",
     "@types/matter-js": "^0.20.2",
     "@types/node": "^26.6.3",
+    "@types/nodemailer": "^8.0.2",
     "@typescript-eslint/eslint-plugin": "^8.70.1",
     "@typescript-eslint/parser": "^8.70.1",
     "dotenv": "^18.0.3",

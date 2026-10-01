@@ -45,10 +45,12 @@ const aboutLinks: Array<{ label: string; href: string; openContact?: boolean; hi
 // --- Legal links (bottom strip) -------------------------------------------
 // Legal pages (placeholder copy for now): src/pages/{privacy-policy,
 // terms-conditions,cookie-policy}.astro via LegalPage.
-const legalLinks = [
+// `hidden`: kept in the markup, not shown. Cookie Policy hidden for now
+// (lead 2026-10-01; the cookie banner is hidden too).
+const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   { label: "Privacy Policy", href: "/privacy-policy" },
   { label: "Terms & Conditions", href: "/terms-conditions" },
-  { label: "Cookie Policy", href: "/cookie-policy" },
+  { label: "Cookie Policy", href: "/cookie-policy", hidden: true },
 ];
 ---
 
@@ -94,6 +96,11 @@ const legalLinks = [
       </div>
 
       <div class="c-footer__side">
+        {/* Badges first, then socials (lead 2026-10-01, swapped back). */}
+        <div class="c-footer__badges">
+          <img src="/images/webflow-partner.png" alt="Official Webflow Partner" class="c-footer__badge-img" />
+          <img src="/images/claude-partner.png" alt="Claude Partner Network" class="c-footer__badge-img" />
+        </div>
         <div class="c-footer__socials">
           <a href="https://www.linkedin.com/company/benormedia" class="c-footer__social" aria-label="BenorMedia on LinkedIn" target="_blank" rel="noopener">
             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 29 29" fill="none" aria-hidden="true">
@@ -105,10 +112,6 @@ const legalLinks = [
               <path d="M4.08571 0C1.83219 0 0 1.83219 0 4.08571V24.5143C0 26.7678 1.83219 28.6 4.08571 28.6H24.5143C26.7678 28.6 28.6 26.7678 28.6 24.5143V4.08571C28.6 1.83219 26.7678 0 24.5143 0H4.08571ZM23.0524 5.3625L16.4258 12.9338L24.2206 23.2375H18.1176L13.3424 16.9876L7.87138 23.2375H4.83902L11.9252 15.1363L4.4496 5.3625H10.7058L15.0278 11.0761L20.02 5.3625H23.0524ZM20.6392 21.4245L9.79295 7.07978H7.98629L18.9539 21.4245H20.6329H20.6392Z" fill="currentColor"/>
             </svg>
           </a>
-        </div>
-        <div class="c-footer__badges">
-          <img src="/images/webflow-partner.png" alt="Official Webflow Partner" class="c-footer__badge-img" />
-          <img src="/images/claude-partner.png" alt="Claude Partner Network" class="c-footer__badge-img" />
         </div>
       </div>
     </div>
@@ -127,7 +130,7 @@ const legalLinks = [
     <div class="c-container c-footer__credit">
       <ul class="c-footer__legal">
         {legalLinks.map((l) => (
-          <li><a href={l.href} class="c-footer__legal-link">{l.label}</a></li>
+          <li hidden={l.hidden}><a href={l.href} class="c-footer__legal-link">{l.label}</a></li>
         ))}
       </ul>
       <span class="c-footer__copyright">All rights reserved. BenorMedia.</span>
@@ -257,8 +260,9 @@ const legalLinks = [
   .c-footer__side {
     display: flex;
     flex-direction: column;
-    /* Was 9.5em on body text: same value, expressed from the type token. */
-    gap: calc(9.5 * var(--fs-p));
+    justify-content: space-between;
+    gap: 1rem; /* lead 2026-10-01 (was 9.5 × --fs-p) */
+    height: 100%;
     align-items: flex-end;
   }
   .c-footer__badges {

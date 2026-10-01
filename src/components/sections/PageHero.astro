@@ -29,9 +29,11 @@ interface Props {
   titleSegments?: readonly { text: string; accent?: boolean }[];
   description?: string;
   class?: string;
+  /** Inline style on the section, e.g. CSS custom properties for a variant. */
+  style?: string;
 }
 
-const { eyebrow, title, accent, titleSegments, description, class: className } = Astro.props;
+const { eyebrow, title, accent, titleSegments, description, class: className, style } = Astro.props;
 const rootClass = ["c-page-hero", className].filter(Boolean).join(" ");
 
 // Forward only the optional props that are set (exactOptionalPropertyTypes).
@@ -43,7 +45,7 @@ const optional = {
 };
 ---
 
-<section class={rootClass} data-anim="page-hero">
+<section class={rootClass} style={style} data-anim="page-hero">
   <Container>
     {Astro.slots.has("top") && <slot name="top" />}
     <SectionHeader

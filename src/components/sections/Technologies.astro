@@ -18,8 +18,7 @@ import SectionHeader from "../ui/SectionHeader.astro";
   <Container>
     <SectionHeader
       eyebrow="Technologies"
-      title={"Connected tools.\nClear revenue impact."}
-      description="We connect your CRM, analytics, and website into a single closed loop - so every visit, form fill, and conversion traces back to pipeline."
+      title={"We deal with everything,\nso you don’t have to."}
       class="c-tech__header"
     />
 
@@ -53,21 +52,23 @@ import SectionHeader from "../ui/SectionHeader.astro";
     background: var(--color-white);
   }
 
-  /* Subtitle wraps after "single closed" in the ref (≈ 718px at the 1920 frame). */
-  .c-tech :global(.c-tech__header .c-section-header__description) {
-    max-width: 46rem;
-  }
-
-  @media (max-width: 767px) {
-    .c-tech :global(.c-tech__header .c-section-header__description) {
-      max-width: 100%;
-    }
-  }
-
   .c-tech__diagram {
     display: block;
     /* TODO: DS space between section header and content. */
     margin-top: 3rem;
+  }
+  /* Mobile: the diagram spans the whole screen width, outside the
+     container's side padding; the header stays in the container (lead
+     2026-10-01). Negative margins = the container's mobile side padding
+     (utilities.css, 2rem); `100vw` was wider than the page when a scrollbar
+     takes space, which cut the image on the right. `max-width: none`
+     lifts base.css's `picture { max-width: 100% }`, which otherwise kept
+     the box at the content width (shifted left, short on the right). */
+  @media (max-width: 767px) {
+    .c-tech__diagram {
+      max-width: none;
+      margin-inline: -2rem;
+    }
   }
 
   /* Full width, natural height: both diagrams show every label. */

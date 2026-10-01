@@ -179,6 +179,9 @@ export interface Testimonial extends SanityRef<'testimonial'> {
  * array anymore — Home holds only SEO). Kept for future Work-page and
  * featured-work queries.
  */
+/** `client.sector` values (SCHEMAS v0.9). */
+export type ClientSector = 'agency' | 'professional-services' | 'saas';
+
 export interface Client extends SanityRef<'client'> {
   name: string;
   logo?: SanityImage;
@@ -190,6 +193,7 @@ export interface Client extends SanityRef<'client'> {
   websiteVideoPoster?: SanityImage;
   fundsRaised?: string;
   category?: Category;
+  sector?: ClientSector;
   websiteUrl?: string;
   testimonial?: Testimonial;
 }

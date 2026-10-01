@@ -175,5 +175,12 @@ export default defineConfig({
         'matter-js',
       ],
     },
+    // Contact endpoint (src/pages/api/contact.ts): bundle `nodemailer` into
+    // the Vercel function instead of copying it from node_modules. The
+    // adapter copies external deps with symlinks, which Windows blocks
+    // without Developer Mode (EPERM), so local builds failed (2026-10-01).
+    ssr: {
+      noExternal: ['nodemailer'],
+    },
   },
 });
