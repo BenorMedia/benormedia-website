@@ -4,7 +4,7 @@
  *
  * - When the hero is on screen, every tile drops from above the hero (random
  *   x, height and angle), falls through it and piles up on its bottom edge,
- *   in the space the hero container keeps free (`padding-bottom`).
+ *   in the space the hero leaves below its content (fixed hero height).
  * - Tiles are dragged and thrown with a pointer (mouse, touch, pen): a
  *   spring constraint pulls the grabbed point towards the pointer, so an
  *   off-center grab swings the tile and releasing keeps its momentum.

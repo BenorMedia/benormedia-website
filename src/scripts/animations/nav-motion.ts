@@ -1,22 +1,40 @@
 /**
  * Nav motion — entry animation, hide on scroll down / show on scroll up, and
- * the scrolled state (CEO revs 2026-09-30; scroll sequence lead 2026-09-30).
+ * the scrolled state (CEO revs 2026-09-30; scroll sequence lead 2026-09-30,
+ * revised 2026-10-01).
  *
  * - Entry: on page load the bar slides down from above the viewport to its
  *   position. The pre-state (`html.is-nav-intro`, bar translated off-screen)
  *   is set by an inline <head> script in BaseLayout so the bar never flashes
  *   in place before this module runs; that script also removes the class
  *   after a timeout, so the bar shows even if this module never loads.
- * - Scrolled state (`is-scrolled` on `.c-nav`: `top: 1rem` + the solid bar,
- *   Nav.astro styles) is owned here, so it never shows as a step of its own:
- *   - first scroll down from the top: the bar stays at `top: 0` until it has
- *     scrolled past its own height, then just slides up out of view;
- *   - `is-scrolled` is added while the bar is off-screen (end of the hide),
- *     so scrolling up brings it back already at `top: 1rem`;
- *   - back at the very top (≤ SCROLL_THRESHOLD) `is-scrolled` is removed.
- *   Loaded mid-page: starts in the scrolled state.
+ * - Three states:
+ *   - `flow` (at the top of the page): `is-flow` makes the bar
+ *     `position: relative`, so it scrolls away natively with the page, like
+ *     a normal header (lead 2026-10-01: the sticky bar stood still for a
+ *     moment on the first scroll before it hid, so it looked like it moved
+ *     down). Same slot in the layout as sticky, so switching never shifts
+ *     the page. Once the page has scrolled past the bar it is off-screen →
+ *     `hidden` (sticky again, translated above the viewport) with
+ *     `is-scrolled` for the way back. Scrolling back up while still in
+ *     `flow` brings it back with the page.
+ *   - `shown`: floating at `top: 1rem` with the solid bar (`is-scrolled`,
+ *     Nav.astro styles). Scrolling down hides it.
+ *   - `hidden`: above the viewport. Scrolling up shows it.
+ *   Hide / show: 0.3s linear (lead 2026-10-01; was 1s power3.out). Back at
+ *   the very top (scroll 0) the bar returns to `flow` and drops
+ *   `is-scrolled`. Loaded mid-page: starts `shown`.
+ * - Near the top (lead 2026-10-01: `top: 1rem` → 0 showed as a jump when
+ *   the bar came back on the way up and the page reached the top):
+ *   `is-near-top` while the scroll is within the top 10% of a screen
+ *   (NEAR_TOP_VIEWPORTS × the viewport height) drops the 1rem offset
+ *   (Nav.astro): a floating bar glides up 1rem (CSS transition) just
+ *   before the top instead of at it, and one that shows up inside the zone
+ *   is already at `top: 0`, so the switch to `flow` at the top changes
+ *   nothing. Above the zone the bar always floats 1rem from the top.
  * - Never hides while the Services dropdown is open (by click or by hover)
- *   or focus is inside the bar (keyboard users tabbing into it bring it back).
+ *   or focus is inside the bar (keyboard users tabbing into it bring it back);
+ *   in `flow` it then stays sticky at the top instead of moving with the page.
  * - The entry runs only while the pre-state is still set: if this module
  *   loads after the inline fallback timeout already showed the bar, the bar
  *   stays put (no second slide-in).
@@ -33,20 +51,30 @@ gsap.registerPlugin(ScrollTrigger);
 
 const INTRO_CLASS = "is-nav-intro";
 const SCROLLED_CLASS = "is-scrolled";
+const FLOW_CLASS = "is-flow";
+const NEAR_TOP_CLASS = "is-near-top";
 /** px from the top that still count as "at the top". */
 const SCROLL_THRESHOLD = 4;
-/* Durations: lead 2026-09-30. TODO: DS easing — power3.out ≈ --ease-smooth. */
+/** Near-top zone, in viewport heights: 10% of a screen (lead 2026-10-01). */
+const NEAR_TOP_VIEWPORTS = 0.1;
+/* Entry: lead 2026-09-30. TODO: DS easing — power3.out ≈ --ease-smooth. */
 const ENTRY_DURATION = 1;
-const TOGGLE_DURATION = 1;
 const EASE = "power3.out";
+/* Hide / show on scroll: 0.3s linear, lead 2026-10-01. */
+const TOGGLE_DURATION = 0.3;
+const TOGGLE_EASE = "none";
+
+type NavState = "flow" | "shown" | "hidden";
 
 /** Fully off-screen: its own height + the 1rem `is-scrolled` top offset. */
 const hiddenVars = (): gsap.TweenVars => ({
   yPercent: -100,
-  y: -parseFloat(getComputedStyle(document.documentElement).fontSize),
+  y: -remPx(),
 });
 
 const atTop = (): boolean => window.scrollY <= SCROLL_THRESHOLD;
+
+const remPx = (): number => parseFloat(getComputedStyle(document.documentElement).fontSize);
 
 let introDone = false;
 
@@ -61,40 +89,66 @@ export function initNavMotion(): void {
   const setScrolled = (on: boolean): void => {
     nav.classList.toggle(SCROLLED_CLASS, on);
   };
+  const setFlow = (on: boolean): void => {
+    nav.classList.toggle(FLOW_CLASS, on);
+  };
 
   const mm = gsap.matchMedia();
 
   mm.add("(prefers-reduced-motion: no-preference)", () => {
-    let isHidden = false;
-    setScrolled(!atTop());
+    let state: NavState = atTop() ? "flow" : "shown";
+    setScrolled(state !== "flow");
+    setFlow(state === "flow");
+
+    const setNearTop = (scroll: number): void => {
+      nav.classList.toggle(NEAR_TOP_CLASS, scroll < window.innerHeight * NEAR_TOP_VIEWPORTS);
+    };
+    setNearTop(window.scrollY);
+
+    const isPinned = (): boolean =>
+      nav.matches(":focus-within") ||
+      nav.querySelector(".c-nav__item.is-open, .c-nav__item.is-has-menu:hover") !== null;
 
     const show = (): void => {
-      if (!isHidden) return;
-      isHidden = false;
-      // Normally already set at the end of the hide; covers a show that
-      // interrupts the hide tween before it completed.
-      if (!atTop()) setScrolled(true);
-      gsap.to(nav, { yPercent: 0, y: 0, duration: TOGGLE_DURATION, ease: EASE, overwrite: true });
+      if (state === "shown" || (state === "flow" && atTop())) return;
+      state = "shown";
+      setFlow(false);
+      setScrolled(true);
+      gsap.to(nav, {
+        yPercent: 0,
+        y: 0,
+        duration: TOGGLE_DURATION,
+        ease: TOGGLE_EASE,
+        overwrite: true,
+      });
     };
     const hide = (): void => {
-      if (isHidden) return;
-      if (
-        nav.matches(":focus-within") ||
-        nav.querySelector(".c-nav__item.is-open, .c-nav__item.is-has-menu:hover")
-      ) {
-        return;
-      }
-      isHidden = true;
+      if (state !== "shown" || isPinned()) return;
+      state = "hidden";
       gsap.to(nav, {
         ...hiddenVars(),
         duration: TOGGLE_DURATION,
-        ease: EASE,
+        ease: TOGGLE_EASE,
         overwrite: true,
-        // Off-screen now: take the scrolled position for the way back.
-        onComplete: () => {
-          if (isHidden && !atTop()) setScrolled(true);
-        },
       });
+    };
+    /** `flow`, scrolled a bit: the page carries the bar until it is gone. */
+    const follow = (scroll: number): void => {
+      if (isPinned()) {
+        setFlow(false);
+        if (scroll >= nav.offsetHeight) show();
+        return;
+      }
+      if (scroll >= nav.offsetHeight) {
+        // Off-screen now: sticky + translated out, scrolled look for the way
+        // back. Both positions are off-screen, so the switch is invisible.
+        state = "hidden";
+        gsap.set(nav, { ...hiddenVars(), overwrite: true });
+        setFlow(false);
+        setScrolled(true);
+      } else {
+        setFlow(true);
+      }
     };
 
     if (!introDone && root.classList.contains(INTRO_CLASS)) {
@@ -109,17 +163,36 @@ export function initNavMotion(): void {
       end: "max",
       onUpdate: (self) => {
         const scroll = self.scroll();
-        if (scroll <= SCROLL_THRESHOLD) {
-          setScrolled(false);
-          show();
-        } else if (scroll <= nav.offsetHeight) show();
+        setNearTop(scroll);
+        // Exactly 0: the only scroll where the sticky (top 0) and the resting
+        // bar sit in the same spot, so the switch never shows a step.
+        if (scroll <= 0) {
+          if (state !== "flow") {
+            state = "flow";
+            setScrolled(false);
+            setFlow(true);
+            gsap.to(nav, {
+              yPercent: 0,
+              y: 0,
+              duration: TOGGLE_DURATION,
+              ease: TOGGLE_EASE,
+              overwrite: true,
+            });
+          } else {
+            follow(scroll);
+          }
+        } else if (state === "flow") follow(scroll);
         else if (self.direction === 1) hide();
         else show();
       },
     });
 
     nav.addEventListener("focusin", show);
-    return () => nav.removeEventListener("focusin", show);
+    return () => {
+      nav.removeEventListener("focusin", show);
+      setFlow(false);
+      nav.classList.remove(NEAR_TOP_CLASS);
+    };
   });
 
   mm.add("(prefers-reduced-motion: reduce)", () => {

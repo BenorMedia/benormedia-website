@@ -10,11 +10,19 @@
  * Content stack (24px internal gap):
  *   - title sub-block (eyebrow row + h1 + subtitle, 24px gap). Eyebrow row:
  *     "$700M+" eyebrow left of the partner one; stacked on mobile, new on top.
- *   - `CtaActions` (lead 2026-09-30): the CTA banner's buttons + rotating
+ *   - `CtaActions` (lead 2026-09-30): the CTA banner's buttons + the
  *     "Trusted by" badge (`c-cta__actions`, dark tone on the gradient), with
- *     the hero's buttons: white "Get in Touch" + glass "See Our Work".
- * Stats row removed (lead 2026-09-30); the container's bottom padding is the
- * resting space of the client icon pile.
+ *     the hero's buttons: white "Get in Touch" + glass "See Our Work". Hero
+ *     only (lead 2026-10-01): text-only badge (no client circles), centered
+ *     under the buttons, scoped styles below.
+ * Stats row removed (lead 2026-09-30).
+ *
+ * Height (lead 2026-10-01): the box always fits the first view — 87svh, or
+ * the viewport minus the nav bar above it when that is smaller (short laptop
+ * screens; `--c-nav-height` is set by Nav.astro). The content sits at the
+ * top and the space left below it is the pile's resting space; on short
+ * screens the pile reaches up behind the content (Q2). Only if the content
+ * itself does not fit does the box grow (`min-height: max-content`).
  *
  * Physics pile (`.c-hero__physics`, lead 2026-09-30): one ClientIcon tile per
  * client with an icon (same tile as ClientList). hero-physics.ts (Matter.js)
@@ -33,7 +41,6 @@ import Eyebrow from "../ui/Eyebrow.astro";
 import ClientIcon from "../ui/ClientIcon.astro";
 import CtaActions from "../ui/CtaActions.astro";
 import type { Button as ButtonType, Client } from "../../lib/sanity/types";
-import { getCtaBadgeUrlsCached } from "../../lib/sanity/site";
 
 interface Props {
   clients?: Client[];
@@ -52,7 +59,6 @@ const BUTTONS: ButtonType[] = [
     },
   },
 ];
-const badges = await getCtaBadgeUrlsCached();
 ---
 
 <section class="c-hero">
@@ -107,7 +113,13 @@ const badges = await getCtaBadgeUrlsCached();
         </p>
       </div>
 
-      <CtaActions buttons={BUTTONS} badges={badges} class="c-hero__actions" />
+      <CtaActions
+        buttons={BUTTONS}
+        badges={[]}
+        circles={false}
+        trustedText="Trusted by +100 B2B companies:"
+        class="c-hero__actions"
+      />
     </div>
   </div>
 
@@ -129,13 +141,21 @@ const badges = await getCtaBadgeUrlsCached();
 <style>
   /* --- Section shell ---------------------------------------------------- */
   /* Box: lead visual QA 2026-09-30 (was 1.429rem side margins, 5.714rem
-     bottom, no max-width / min-height). */
+     bottom, no max-width / min-height). Height: lead 2026-10-01 (was
+     `min-height: 90vh`, which grew past the first view on laptops): 87vh
+     (lead 2026-10-01, was 90vh), never taller than the viewport under the nav minus the box's own 1.5rem
+     bottom margin (lead 2026-10-01: it touched the bottom edge on a laptop;
+     the gap keeps the same space under the box on every screen height),
+     grows only if the content itself does not fit (see the header
+     comment). */
   .c-hero {
     position: relative;
     overflow: hidden;
     width: 98%;
     max-width: 1440px;
-    min-height: 90vh;
+    height: 87vh;
+    height: min(87svh, 100svh - var(--c-nav-height, 0px) - 1.5rem);
+    min-height: max-content;
     margin: 0 auto 1.5rem;
     border-radius: 15px;
     /* Base gradient (101deg, blue → blue-light). Solid white behind it as a
@@ -148,6 +168,15 @@ const badges = await getCtaBadgeUrlsCached();
       ),
       var(--color-white);
     color: var(--color-white);
+  }
+
+  /* Mobile (lead 2026-10-01). */
+  @media (max-width: 767px) {
+    .c-hero {
+      width: 95%;
+      height: 93vh;
+      height: min(93svh, 100svh - var(--c-nav-height, 0px));
+    }
   }
 
   /* --- Decorative lines ------------------------------------------------- */
@@ -185,9 +214,11 @@ const badges = await getCtaBadgeUrlsCached();
     align-items: center;
     align-self: stretch;
     margin: 0 auto;
-    /* Bottom = the resting space of the physics pile. The max-width moved
-       to `.c-hero`. Lead visual QA 2026-09-30. */
-    padding: 4.8rem 2rem 20.5rem;
+    /* The max-width moved to `.c-hero` (lead visual QA 2026-09-30). Bottom
+       2rem (was 20.5rem, the pile's fixed resting space): the hero's fixed
+       height now leaves the pile the space below the content (lead
+       2026-10-01). */
+    padding: 4.8rem 2rem 2rem;
   }
 
   /* --- Block 1: title stack + buttons ---------------------------------- */
@@ -268,9 +299,23 @@ const badges = await getCtaBadgeUrlsCached();
     text-align: center;
   }
 
-  /* --- CTA actions (shared CtaActions; its own layout and ≤767 stack) --- */
+  /* --- CTA actions (shared CtaActions; its own layout and ≤767 stack) ---
+     Hero only (lead 2026-10-01): wider buttons → badge gap, no stretch, and
+     the text-only badge centered under the buttons. Other CtaActions
+     unchanged. */
   .c-hero :global(.c-cta__actions.c-hero__actions) {
     margin-top: 0;
+    align-items: normal; /* shared value is `stretch` */
+    gap: 5.8rem; /* lead 2026-10-01 (was 4.071rem) */
+  }
+  .c-hero :global(.c-hero__actions .c-cta__badge) {
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    margin: 0 auto;
+  }
+  .c-hero :global(.c-hero__actions .c-cta__badge-text) {
+    text-align: center;
   }
 
   /* --- Physics pile (hero-physics.ts) ---------------------------------
@@ -290,7 +335,7 @@ const badges = await getCtaBadgeUrlsCached();
     /* TODO: DS static pile spacing. */
     gap: 0.5rem;
     padding: 1.5rem;
-    max-height: 20.5rem; /* = the container's bottom padding */
+    max-height: 20.5rem; /* the former bottom padding (pile space) */
     overflow: hidden;
     pointer-events: none;
   }

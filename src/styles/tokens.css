@@ -43,6 +43,7 @@
   /* Neutrals */
   --color-gray: #C9CEDA;
   --color-gray-light: #F0F0F0;
+  --color-grey-700: #3B3B3B; /* Figma Grey-700 — Services diagram labels (lead 2026-10-01) */
 
   /* Surfaces — glass (cards, FAQ rows over line art; lead 2026-09-29) */
   --color-surface-glass: rgba(255, 255, 255, 0.05);
