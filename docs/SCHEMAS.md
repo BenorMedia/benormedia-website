@@ -1,8 +1,17 @@
-# Sanity ↔ Astro Data Contract (v0.7, approved)
+# Sanity ↔ Astro Data Contract (v0.8, approved)
 
-Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) approved 2026-09-29. v0.7 (`client.orderRank`) requested by the lead 2026-09-29.
+Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) approved 2026-09-29. v0.7 (`client.orderRank`) requested by the lead 2026-09-29. v0.8 (`client.websiteVideo`) requested by the lead 2026-09-30. v0.9 (`client.sector`) requested by the lead 2026-10-01.
+
+### v0.9 changes vs v0.8 (2026-10-01)
+- **`client.sector`** (optional `string`, dropdown, one value): `agency` (Agency), `professional-services` (Professional Services), `saas` (SaaS). Projected in `CLIENT_LIST_FIELDS` (so `CLIENTS_BY_IDS` + `ALL_CLIENTS`). The Work page filters by it (View All · Agency · Professional Services · SaaS); `category` no longer drives any filter. Values are filled in Studio / MCP by the lead.
 
 Approach: **repeatable data lives in Sanity documents; page copy is authored directly in Astro components.** Page singletons exist only to hold per-page SEO metadata. Global chrome (nav, footer) is authored in Astro components too.
+
+### v0.8 changes vs v0.7 (2026-09-30)
+- **`client.websiteVideo`** (optional `file`, `accept: video/mp4`): uploaded directly in Studio. Projected as `{ asset->{ _id, url, mimeType } }` in `CLIENTS_BY_IDS`. Home Featured Work cards play it (muted, looping, whole frame, never cropped) while the card is on screen, on every device; `preload="none"`; never under reduced motion or Data Saver. `websiteScreenshot` is the fallback when no video is set (lead 2026-09-30, QA S3/S4).
+- **`client.websiteVideoPoster`** (optional image, lead 2026-09-30): the video's native `poster` (cropped 16:9), shown until the first frame and instead of the video under reduced motion / Data Saver. Falls back to the top of `websiteScreenshot`. Projected in `CLIENTS_BY_IDS`.
+- **`SERVICE_CARDS`** (query, 2026-09-30): `_id`, `_type`, `name`, `slug`, `subtitle` of the published services in `$slugs`; `getServiceCards(slugs)` restores the given order. Feeds the Home Services cards.
+- **`ALL_CLIENTS_WITH_ICON`** (query, 2026-09-30): every published client with an `icon` asset, `order(name asc)`, projecting `_id`, `_type`, `name`, `icon` only. Feeds the Home hero physics pile (`HomeHero` → `ClientIcon`).
 
 ### v0.7 changes vs v0.6 (2026-09-29)
 - **`client.orderRank`** (hidden, read-only string) from `@sanity/orderable-document-list`: Studio → Clients is now a drag-and-drop list. New clients go to the end. Initial order = the Work page reference (`docs/refs/work/work-list.jpg`), seeded with `pnpm seed:client-order`.
@@ -35,9 +44,12 @@ Approach: **repeatable data lives in Sanity documents; page copy is authored dir
 | Badge | `badge` | image (no hotspot) | optional. Alt auto = "<name> badge" (required if image is set and alt blank) |
 | Card Thumbnail | `cardThumbnail` | image (hotspot) | optional. Alt required if image is set |
 | Website Screenshot | `websiteScreenshot` | image (hotspot) | optional. Alt required if image is set |
+| Website Video | `websiteVideo` | file (`video/mp4`) | optional. Featured Work card media, plays while the card is on screen; the screenshot gives its accessible name and is the fallback |
+| Website Video Poster | `websiteVideoPoster` | image | optional. Native video poster until the first frame (and under reduced motion); falls back to `websiteScreenshot` |
 | Testimonial | `testimonial` | reference → `testimonial` | optional |
 | Funds Raised | `fundsRaised` | string | optional. e.g. `$25.0M`. Template appends "Raised" |
 | Category | `category` | reference → `category` | optional |
+| Sector | `sector` | string, dropdown: `agency` · `professional-services` · `saas` | optional, one value. Work page filters (v0.9) |
 | Website URL | `websiteUrl` | url | optional |
 | Order Rank | `orderRank` | string (LexoRank) | hidden, read-only. Set by the Studio drag-and-drop list (`@sanity/orderable-document-list`). Only the Work page listing sorts by it |
 
