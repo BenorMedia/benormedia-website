@@ -33,9 +33,11 @@ interface Props {
   badges: readonly string[];
   /** BreadcrumbList JSON-LD levels (absolute URLs), when the site URL is known. */
   breadcrumbLd?: readonly { name: string; url: string }[] | undefined;
+  /** Description max-width for this service (SERVICE_LAYOUT); default 30rem. */
+  descriptionWidth?: string | undefined;
 }
 
-const { name, title, titleSegments, subtitle, badges, breadcrumbLd } = Astro.props;
+const { name, title, titleSegments, subtitle, badges, breadcrumbLd, descriptionWidth } = Astro.props;
 
 // Ref buttons (services-hero.jpg). Copy mirrors the ref ("Get In Touch").
 const BUTTONS: ButtonType[] = [
@@ -53,6 +55,7 @@ const BUTTONS: ButtonType[] = [
 const heroOptional = {
   ...(titleSegments !== undefined && { titleSegments }),
   ...(subtitle ? { description: subtitle } : {}),
+  ...(descriptionWidth ? { style: `--c-service-hero-desc: ${descriptionWidth};` } : {}),
 };
 ---
 
@@ -80,10 +83,11 @@ const heroOptional = {
     padding-bottom: 7.857rem;
   }
 
-  /* Subtitle width (lead visual QA 2026-09-29): 40% on this hero only;
-     full width on phones (40% of 375px would be ≈150px). */
+  /* Subtitle width on this hero only: 30rem (lead 2026-10-01; was 40%), or
+     the service's own width (`--c-service-hero-desc`, SERVICE_LAYOUT);
+     full width on phones. */
   :global(section.c-page-hero.c-service-hero .c-section-header__description) {
-    max-width: 40%;
+    max-width: var(--c-service-hero-desc, 30rem);
   }
 
   /* Breadcrumb sits where the eyebrow would: same 24px gap as SectionHeader. */

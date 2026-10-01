@@ -37,8 +37,11 @@ const rawTitle =
 const description =
   pageSeo?.metaDescription ?? descriptionProp ?? siteSettings?.defaultMetaDescription ?? undefined;
 
-const ogImageResolved: OgImage | undefined =
-  pageSeo?.ogImage ?? ogImageProp ?? siteSettings?.defaultOgImage ?? undefined;
+// Last fallback: the static brand image (docs/refs/benor/open-graph.png as a
+// 1200×630 JPEG, lead 2026-10-01).
+const DEFAULT_OG_IMAGE = "/images/og-default.jpg";
+const ogImageResolved: OgImage =
+  pageSeo?.ogImage ?? ogImageProp ?? siteSettings?.defaultOgImage ?? DEFAULT_OG_IMAGE;
 
 // Title template ------------------------------------------------------------
 const template = siteSettings?.titleTemplate ?? "%s | BenorMedia";
@@ -70,10 +73,16 @@ const canonical = canonicalUrlProp
       : undefined);
 
 // OG image URL --------------------------------------------------------------
-function resolveOgImage(img: OgImage | undefined): string | undefined {
-  if (!img) return undefined;
-  if (typeof img === "string") return img;
-  if (!img.asset) return undefined;
+// Every source is 1200×630 (Sanity crops to it). Site paths ("/images/…")
+// need an absolute URL: same base as the canonical; without one they are
+// omitted (no localhost URLs), like the canonical.
+const siteBase = siteUrl ?? (Astro.site ? Astro.site.toString().replace(/\/$/, "") : undefined);
+function resolveOgImage(img: OgImage): string | undefined {
+  if (typeof img === "string") {
+    if (/^https?:\/\//.test(img)) return img;
+    return siteBase ? `${siteBase}${img.startsWith("/") ? "" : "/"}${img}` : undefined;
+  }
+  if (!img.asset) return resolveOgImage(DEFAULT_OG_IMAGE);
   return urlFor(img).width(1200).height(630).fit("crop").url();
 }
 const ogImageUrl = resolveOgImage(ogImageResolved);
@@ -92,6 +101,8 @@ const googleSiteVerification = siteSettings?.googleSiteVerification;
 <meta property="og:title" content={title} />
 {description && <meta property="og:description" content={description} />}
 {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
+{ogImageUrl && <meta property="og:image:width" content="1200" />}
+{ogImageUrl && <meta property="og:image:height" content="630" />}
 {canonical && <meta property="og:url" content={canonical} />}
 <meta property="og:type" content={ogType} />
 <meta property="og:site_name" content={siteName} />

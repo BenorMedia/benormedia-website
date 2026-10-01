@@ -10,6 +10,10 @@
  *     (`is-active`, lead 2026-10-01) until another card is hovered, so the
  *     card always matches the ring lit in the diagram. Starts on the first
  *     card (JS only; no JS = plain hover).
+ *   - Mobile (≤767, lead 2026-10-01): no diagram (its text was too small);
+ *     one static image per card (`docs/refs/services-images/animation/
+ *     mobile-static/drop1–3.png` as WebP 800w / 1200w), swapped when a card
+ *     opens. Desktop / tablet keep the diagram below.
  *   - Illustration = `ServicesDiagram` (lead 2026-10-01): the three
  *     `tab1–3` illustrations rebuilt as one HTML / CSS element (it replaced
  *     three stacked WebP images whose crossfade showed where they differ).
@@ -47,6 +51,12 @@ import { getServiceCards } from "../../lib/sanity/queries";
 // `name`, copy = `subtitle`, link = the service page.
 const SERVICE_SLUGS = ["custom-websites-migrations", "growth", "ongoing-website-support"] as const;
 // Diagram ring lit by each service's card (lead 2026-10-01).
+// Mobile static image per service (`<base>.webp` 800w, `<base>@1200.webp`).
+const MOBILE_IMAGES: Record<string, string> = {
+  "custom-websites-migrations": "/images/home/services-mobile-1",
+  growth: "/images/home/services-mobile-2",
+  "ongoing-website-support": "/images/home/services-mobile-3",
+};
 const RINGS: Record<string, "outer" | "middle" | "inner"> = {
   "custom-websites-migrations": "outer",
   growth: "middle",
@@ -58,6 +68,8 @@ interface Item {
   body: string;
   href: string;
   ring: "outer" | "middle" | "inner";
+  /** Mobile image base path. */
+  mobileImage: string;
 }
 
 const services = await getServiceCards(SERVICE_SLUGS);
@@ -67,6 +79,7 @@ const items: Item[] = services.map((service) => ({
   body: service.subtitle?.trim() ?? "",
   href: `/${service.slug}`,
   ring: RINGS[service.slug] ?? "outer",
+  mobileImage: MOBILE_IMAGES[service.slug] ?? MOBILE_IMAGES["custom-websites-migrations"]!,
 }));
 
 const BUTTONS: ButtonType[] = [
@@ -100,7 +113,26 @@ const badges = await getCtaBadgeUrlsCached();
       <span class="c-services__node is-br" aria-hidden="true"></span>
 
       <div class="c-services__col-left" aria-hidden="true">
-        <ServicesDiagram active={items[0]?.ring ?? "outer"} />
+        <div class="c-services__diagram">
+          <ServicesDiagram active={items[0]?.ring ?? "outer"} />
+        </div>
+        {/* Mobile only: one static image per card, the open card's shows. */}
+        <div class="c-services__mobile-images">
+          {items.map((item, i) => (
+            <img
+              class:list={["c-services__mobile-image", { "is-active": i === 0 }]}
+              src={`${item.mobileImage}.webp`}
+              srcset={`${item.mobileImage}.webp 800w, ${item.mobileImage}@1200.webp 1200w`}
+              sizes="100vw"
+              width="800"
+              height="590"
+              alt=""
+              loading="lazy"
+              decoding="async"
+              data-c-services-mobile-image
+            />
+          ))}
+        </div>
       </div>
 
       <div class="c-services__col-right">
@@ -193,11 +225,52 @@ const badges = await getCtaBadgeUrlsCached();
     }
   }
 
-  /* --- Left column (ServicesDiagram) ----------------------------------- */
+  /* --- Left column (ServicesDiagram; static images on mobile) --------- */
   .c-services__col-left {
     position: relative;
     display: grid;
     place-items: center;
+  }
+  .c-services__diagram {
+    width: 100%;
+  }
+  /* Stacked in one cell; the open card's image crossfades in over the
+     current one (lead 2026-10-01). The outgoing image stays fully visible
+     underneath (`is-previous`) until the fade ends, so the section never
+     shows through. Reduced motion: instant. */
+  .c-services__mobile-images {
+    display: none;
+    width: 100%;
+  }
+  .c-services__mobile-image {
+    grid-area: 1 / 1;
+    display: block;
+    width: 100%;
+    height: auto;
+    opacity: 0;
+    transition: opacity var(--duration-hover) var(--ease-smooth);
+  }
+  .c-services__mobile-image.is-previous {
+    z-index: 1;
+    opacity: 1;
+    transition: none;
+  }
+  .c-services__mobile-image.is-active {
+    z-index: 2;
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .c-services__mobile-image {
+      transition: none;
+    }
+  }
+  @media (max-width: 767px) {
+    .c-services__diagram {
+      display: none;
+    }
+    .c-services__mobile-images {
+      display: grid;
+    }
   }
 
   /* --- Right column (service cards) ------------------------------------ */
@@ -501,10 +574,31 @@ const badges = await getCtaBadgeUrlsCached();
 <script>
   // Desktop: card hover / focus → light that card's ring in the diagram
   // (ServicesDiagram, CSS transitions). Mobile accordion: opening a card
-  // does the same.
+  // does the same and shows that card's static image.
   document.querySelectorAll<HTMLElement>("[data-c-services]").forEach((root) => {
     const diagram = root.querySelector<HTMLElement>("[data-c-services-diagram]");
+    const mobileImages = Array.from(root.querySelectorAll<HTMLElement>("[data-c-services-mobile-image]"));
     const items = Array.from(root.querySelectorAll<HTMLElement>("[data-c-services-item]"));
+
+    // Mobile image crossfade: the new image fades in over the current one,
+    // which keeps `is-previous` (opaque, underneath) until the fade ends.
+    let currentImage = 0;
+    const showImage = (index: number): void => {
+      const next = mobileImages[index];
+      const prev = mobileImages[currentImage];
+      if (!next || !prev || index === currentImage) return;
+      mobileImages.forEach((img) => img.classList.remove("is-previous"));
+      prev.classList.remove("is-active");
+      prev.classList.add("is-previous");
+      next.classList.add("is-active");
+      currentImage = index;
+      const done = (): void => {
+        if (mobileImages[currentImage] === next) prev.classList.remove("is-previous");
+      };
+      next.addEventListener("transitionend", done, { once: true });
+      // Reduced motion (no transition) or an interrupted fade: clear anyway.
+      window.setTimeout(done, 1000);
+    };
 
     // The hovered / focused card keeps its hover look (`is-active`) until
     // another card takes over, matching the lit ring (lead 2026-10-01).
@@ -512,6 +606,7 @@ const badges = await getCtaBadgeUrlsCached();
       const ring = items[index]?.dataset["cServicesRing"];
       if (diagram && ring) diagram.dataset["active"] = ring;
       items.forEach((item, i) => item.classList.toggle("is-active", i === index));
+      showImage(index);
     };
 
     // Accordion (only visible ≤767): one card open at a time; a second tap

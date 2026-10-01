@@ -8,6 +8,9 @@ import { orderRankField, orderRankOrdering } from '@sanity/orderable-document-li
  * Referenced from Home (featured work, work cards/list, logo strip) and
  * from the Work page.
  *
+ * `sector` (SCHEMAS v0.9, lead 2026-10-01): one of a fixed list; drives the
+ * Work page filters.
+ *
  * `orderRank` (hidden, @sanity/orderable-document-list): drag-and-drop order
  * of the Studio "Clients" list. Only the Work page listing sorts by it; Home,
  * Pricing and service pages keep their own order (SCHEMAS.md v0.7).
@@ -161,6 +164,20 @@ export const client = defineType({
       description: 'The industry this client belongs to. Pick exactly one.',
       type: 'reference',
       to: [{ type: 'category' }],
+    }),
+    defineField({
+      name: 'sector',
+      title: 'Sector',
+      description: 'The sector this client belongs to. Pick one. Drives the Work page filters.',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Agency', value: 'agency' },
+          { title: 'Professional Services', value: 'professional-services' },
+          { title: 'SaaS', value: 'saas' },
+        ],
+        layout: 'dropdown',
+      },
     }),
     defineField({
       name: 'websiteUrl',

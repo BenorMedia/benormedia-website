@@ -15,6 +15,21 @@
  *               Only process these folders (logos, icons, ss, card, badge);
  *               the other asset types are left untouched, even with --force.
  *               e.g. `--only=badge --force` re-uploads the badges only.
+ *   --create-missing
+ *               Create a published `client-<slug>` document (name + the
+ *               asset fields) for every file slug with no client, at the end
+ *               of the Studio drag-and-drop order (`orderRank`). Names come
+ *               from NEW_CLIENT_NAMES, else the slug in title case.
+ *
+ * Filename check (always, before matching; lead 2026-10-01): every file in
+ * a processed folder is renamed on disk to `<prefix>-<client slug>.<ext>`:
+ *   - normalized: lowercase, spaces / underscores → `-`, prefix added if
+ *     missing, lowercase extension;
+ *   - matched to a client when the slug isn't a client `_id` yet: the one
+ *     client whose slug starts with `<slug>-` (`bambi` → `bambi-health`) or
+ *     whose name, letters and digits only, equals the slug's.
+ * Ambiguous or unknown slugs keep their name (reported as unmatched, or
+ * created with --create-missing). Dry-run only prints the planned renames.
  *
  * Env (fail-fast, never printed):
  *   PUBLIC_SANITY_PROJECT_ID
@@ -26,11 +41,14 @@
  *   pnpm import:clients            (project lead only)
  *   pnpm import:badges --dry-run   (= --only=badge --force, preview)
  *   pnpm import:badges             (re-upload every badge, project lead only)
+ *   pnpm import:icons --dry-run    (= --only=icons --force --create-missing)
+ *   pnpm import:icons              (re-upload every icon + create new clients)
  */
 import 'dotenv/config';
 import { createClient, type SanityDocument } from '@sanity/client';
 import { createReadStream } from 'node:fs';
-import { readdir, stat } from 'node:fs/promises';
+import { readdir, rename, stat } from 'node:fs/promises';
+import { LexoRank } from 'lexorank';
 import { basename, extname, join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -54,6 +72,7 @@ const args = process.argv.slice(2);
 const argv = new Set(args);
 const DRY_RUN = argv.has('--dry-run');
 const FORCE = argv.has('--force');
+const CREATE_MISSING = argv.has('--create-missing');
 const PREFIX = DRY_RUN ? '[DRY] ' : '';
 // `--only=badge,logos` → Set { 'badge', 'logos' }; empty = every folder.
 const ONLY = new Set(
@@ -93,6 +112,11 @@ const FOLDERS: FolderSpec[] = ONLY.size
   : ALL_FOLDERS;
 
 const ACCEPTED_EXTS = new Set(['.png', '.jpg', '.jpeg', '.svg']);
+
+/** Display names for clients created with --create-missing (slug → name). */
+const NEW_CLIENT_NAMES: Record<string, string> = {
+  pagonxt: 'PagoNxt',
+};
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -185,6 +209,38 @@ interface ClientMeta {
   name: string;
 }
 
+/** Lowercase, spaces / underscores → `-`, collapsed and trimmed hyphens. */
+function normalizeStem(stem: string): string {
+  return stem
+    .toLowerCase()
+    .replace(/[\s_]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+/** Letters and digits only, lowercase (name ↔ slug comparison). */
+function compact(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+/** The existing client slug a file slug refers to, if exactly one fits. */
+function matchClientSlug(slug: string, bySlug: Map<string, ClientMeta>): string | undefined {
+  if (bySlug.has(slug)) return slug;
+  const candidates = new Set<string>();
+  for (const [clientSlug, meta] of bySlug) {
+    if (clientSlug.startsWith(`${slug}-`)) candidates.add(clientSlug);
+    if (compact(meta.name ?? '') === compact(slug)) candidates.add(clientSlug);
+  }
+  return candidates.size === 1 ? [...candidates][0] : undefined;
+}
+
+function titleCase(slug: string): string {
+  return slug
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
 type ClientDoc = SanityDocument & {
   [K in ClientField]?: { asset?: { _ref?: string } };
 };
@@ -211,7 +267,43 @@ async function main(): Promise<void> {
   );
   console.log('');
 
-  // 1. Discover files from disk.
+  // 0. Clients from Sanity (needed by the filename check).
+  const clientsFromSanity: Array<{ _id: string; name: string }> = await client.fetch(
+    '*[_type=="client" && !(_id in path("drafts.**"))]{_id, name}',
+  );
+  const bySlug = new Map<string, ClientMeta>();
+  for (const c of clientsFromSanity) {
+    if (!c._id.startsWith('client-')) continue;
+    const slug = c._id.slice('client-'.length);
+    bySlug.set(slug, { id: c._id, name: c.name });
+  }
+
+  // 0b. Filename check: normalize and match every file to a client slug.
+  let renamedTotal = 0;
+  for (const spec of FOLDERS) {
+    const dir = join(CONTENT_ROOT, spec.folder);
+    for (const filename of await listTopLevelFiles(dir)) {
+      const ext = extname(filename).toLowerCase();
+      if (!ACCEPTED_EXTS.has(ext)) continue;
+      let stem = normalizeStem(filename.slice(0, filename.length - extname(filename).length));
+      if (!stem.startsWith(`${spec.expectedPrefix}-`)) stem = `${spec.expectedPrefix}-${stem}`;
+      const fileSlug = stem.slice(spec.expectedPrefix.length + 1);
+      const clientSlug = matchClientSlug(fileSlug, bySlug) ?? fileSlug;
+      const target = `${spec.expectedPrefix}-${clientSlug}${ext}`;
+      if (target === filename) continue;
+      const exists = (await listTopLevelFiles(dir)).includes(target);
+      if (exists) {
+        console.log(`${PREFIX}RENAME skipped: ${spec.folder}/${filename} → ${target} (target exists)`);
+        continue;
+      }
+      console.log(`${PREFIX}RENAME: ${spec.folder}/${filename} → ${target}`);
+      if (!DRY_RUN) await rename(join(dir, filename), join(dir, target));
+      renamedTotal += 1;
+    }
+  }
+  if (renamedTotal) console.log('');
+
+  // 1. Discover files from disk (dry-run: with the planned names).
   const parsed: ParsedFile[] = [];
   const unmatched: UnmatchedFile[] = [];
 
@@ -220,7 +312,17 @@ async function main(): Promise<void> {
     const files = await listTopLevelFiles(dir);
     // Deterministic order.
     files.sort((a, b) => a.localeCompare(b));
-    for (const filename of files) {
+    for (const original of files) {
+      // Dry-run: the rename above was only planned; parse the planned name
+      // but keep reading the original file.
+      let filename = original;
+      if (DRY_RUN) {
+        const e = extname(original).toLowerCase();
+        let stem = normalizeStem(original.slice(0, original.length - extname(original).length));
+        if (!stem.startsWith(`${spec.expectedPrefix}-`)) stem = `${spec.expectedPrefix}-${stem}`;
+        const fileSlug = stem.slice(spec.expectedPrefix.length + 1);
+        filename = `${spec.expectedPrefix}-${matchClientSlug(fileSlug, bySlug) ?? fileSlug}${e}`;
+      }
       const ext = extname(filename).toLowerCase();
       const relPath = `${spec.folder}/${filename}`;
       if (!ACCEPTED_EXTS.has(ext)) {
@@ -234,7 +336,7 @@ async function main(): Promise<void> {
       }
       parsed.push({
         filename,
-        fullPath: join(dir, filename),
+        fullPath: join(dir, original),
         slug: parsedName.slug,
         ext,
         field: spec.field,
@@ -243,15 +345,29 @@ async function main(): Promise<void> {
     }
   }
 
-  // 2. Fetch clients from Sanity.
-  const clientsFromSanity: Array<{ _id: string; name: string }> = await client.fetch(
-    '*[_type=="client" && !(_id in path("drafts.**"))]{_id, name}',
-  );
-  const bySlug = new Map<string, ClientMeta>();
-  for (const c of clientsFromSanity) {
-    if (!c._id.startsWith('client-')) continue;
-    const slug = c._id.slice('client-'.length);
-    bySlug.set(slug, { id: c._id, name: c.name });
+  // 2. --create-missing: a published client for every file slug with none,
+  //    appended to the drag-and-drop order.
+  const created: string[] = [];
+  if (CREATE_MISSING) {
+    const newSlugs = [...new Set(parsed.map((f) => f.slug).filter((slug) => !bySlug.has(slug)))].sort();
+    if (newSlugs.length) {
+      const lastRank: string | null = await client.fetch(
+        '*[_type=="client" && defined(orderRank)] | order(orderRank desc)[0].orderRank',
+      );
+      let rank = lastRank ? LexoRank.parse(lastRank) : LexoRank.min();
+      for (const slug of newSlugs) {
+        rank = rank.genNext().genNext();
+        const id = `client-${slug}`;
+        const name = NEW_CLIENT_NAMES[slug] ?? titleCase(slug);
+        console.log(`${PREFIX}CREATE: ${id} ("${name}")`);
+        if (!DRY_RUN) {
+          await client.createIfNotExists({ _id: id, _type: 'client', name, orderRank: rank.toString() });
+        }
+        bySlug.set(slug, { id, name });
+        created.push(slug);
+      }
+      console.log('');
+    }
   }
 
   // 3. Bucket parsed files by slug, mark files whose slug doesn't exist.
@@ -306,6 +422,9 @@ async function main(): Promise<void> {
         failedTotal += 1;
       }
       continue;
+    }
+    if (!published && DRY_RUN && created.includes(slug)) {
+      published = { _id: meta.id, _type: 'client' } as ClientDoc;
     }
     if (!published) {
       // Shouldn't happen — unmatched check above uses the same "no drafts" query.
@@ -415,7 +534,9 @@ async function main(): Promise<void> {
     console.log('');
   }
 
-  console.log(`${PREFIX}Totals: uploaded=${uploadedTotal}, skipped=${skippedTotal}, failed=${failedTotal}`);
+  console.log(
+    `${PREFIX}Totals: renamed=${renamedTotal}, created=${created.length}, uploaded=${uploadedTotal}, skipped=${skippedTotal}, failed=${failedTotal}`,
+  );
   console.log('');
 
   // Unmatched.

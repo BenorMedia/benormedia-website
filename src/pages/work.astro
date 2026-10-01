@@ -19,8 +19,9 @@ const [clients, testimonials] = await Promise.all([
   getTestimonials(),
 ]);
 
+// Lead 2026-10-01.
 const heroDescription =
-  "We work with enterprises and startups alike, driving growth through website transformation and optimization. We specialize in B2B technology, financial services, and professional services.";
+  "A collection of the dozens of clients that trust us for their website growth.";
 
 // TODO: COPY — meta title / description (≤160 characters).
 const metaTitle = "Our Work";
@@ -32,8 +33,22 @@ const metaDescription =
   <PageHero
     eyebrow="Our Work"
     title={"Websites\nwe've launched."}
+    accent="launched."
     description={heroDescription}
+    class="c-work-hero"
   />
   <WorkListing clients={clients} />
   <Testimonials testimonials={testimonials} />
 </BaseLayout>
+
+<style>
+  /* Work hero description width (lead 2026-10-01); full width on phones. */
+  :global(.c-work-hero .c-section-header__description) {
+    max-width: 22rem;
+  }
+  @media (max-width: 767px) {
+    :global(.c-work-hero .c-section-header__description) {
+      max-width: 100%;
+    }
+  }
+</style>

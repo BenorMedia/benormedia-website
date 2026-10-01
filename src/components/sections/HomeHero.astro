@@ -17,12 +17,21 @@
  *     under the buttons, scoped styles below.
  * Stats row removed (lead 2026-09-30).
  *
- * Height (lead 2026-10-01): the box always fits the first view — 87svh, or
- * the viewport minus the nav bar above it when that is smaller (short laptop
- * screens; `--c-nav-height` is set by Nav.astro). The content sits at the
- * top and the space left below it is the pile's resting space; on short
- * screens the pile reaches up behind the content (Q2). Only if the content
- * itself does not fit does the box grow (`min-height: max-content`).
+ * Height (lead 2026-10-01) = content + pile room, capped to the first view,
+ * never below the content:
+ *   height = max(C, min(CAP, C + PILE_ROOM))
+ *   - C = the content column's height (`--c-hero-content`, measured by the
+ *     inline script below; it includes the container's 2rem bottom padding,
+ *     the minimum space under the badge).
+ *   - PILE_ROOM = 18.5rem of room for the icon pile under the content (rem,
+ *     so it scales with the content at any zoom level: the old fixed 87svh
+ *     left a huge empty box when zoomed out / on tall screens).
+ *   - CAP = 87svh, or the viewport minus the nav and the box's 1.5rem bottom
+ *     margin when that is smaller (`--c-nav-height`, Nav.astro); mobile
+ *     93svh / viewport minus the nav.
+ * Zoomed in / short screens: the cap wins and the pile reaches up behind the
+ * content (Q2); if even the content doesn't fit, the box grows to it (C).
+ * No JS: CAP, growing with the content (`min-height: max-content`).
  *
  * Physics pile (`.c-hero__physics`, lead 2026-09-30): one ClientIcon tile per
  * client with an icon (same tile as ClientList). hero-physics.ts (Matter.js)
@@ -138,23 +147,39 @@ const BUTTONS: ButtonType[] = [
   )}
 </section>
 
+{/* Measures the content column for the hero height (see the header
+    comment). Inline right after the markup, so the first paint already has
+    it; ResizeObserver follows fonts loading, resizes and zoom. */}
+<script is:inline>
+  (function () {
+    var hero = document.querySelector(".c-hero");
+    var content = hero && hero.querySelector(".c-hero__container");
+    if (!hero || !content || typeof ResizeObserver === "undefined") return;
+    var set = function () {
+      hero.style.setProperty("--c-hero-content", content.offsetHeight + "px");
+      hero.classList.add("is-measured");
+    };
+    set();
+    new ResizeObserver(set).observe(content);
+  })();
+</script>
+
 <style>
   /* --- Section shell ---------------------------------------------------- */
   /* Box: lead visual QA 2026-09-30 (was 1.429rem side margins, 5.714rem
-     bottom, no max-width / min-height). Height: lead 2026-10-01 (was
-     `min-height: 90vh`, which grew past the first view on laptops): 87vh
-     (lead 2026-10-01, was 90vh), never taller than the viewport under the nav minus the box's own 1.5rem
-     bottom margin (lead 2026-10-01: it touched the bottom edge on a laptop;
-     the gap keeps the same space under the box on every screen height),
-     grows only if the content itself does not fit (see the header
-     comment). */
+     bottom, no max-width / min-height). Height: lead 2026-10-01, see the
+     header comment — content + 18.5rem pile room, capped to the first view
+     (87svh / viewport minus nav minus the 1.5rem bottom margin), never
+     below the content. */
   .c-hero {
+    --c-hero-cap: min(87svh, 100svh - var(--c-nav-height, 0px) - 1.5rem);
+    --c-hero-pile-room: 18.5rem;
     position: relative;
     overflow: hidden;
     width: 98%;
     max-width: 1440px;
     height: 87vh;
-    height: min(87svh, 100svh - var(--c-nav-height, 0px) - 1.5rem);
+    height: var(--c-hero-cap);
     min-height: max-content;
     margin: 0 auto 1.5rem;
     border-radius: 15px;
@@ -173,10 +198,31 @@ const BUTTONS: ButtonType[] = [
   /* Mobile (lead 2026-10-01). */
   @media (max-width: 767px) {
     .c-hero {
+      --c-hero-cap: min(93svh, 100svh - var(--c-nav-height, 0px));
       width: 95%;
       height: 93vh;
-      height: min(93svh, 100svh - var(--c-nav-height, 0px));
+      height: var(--c-hero-cap);
     }
+  }
+
+  /* Large screens only (≥1800px wide: 1920 monitors; laptops, incl. the
+     1728px MacBook Pro 16", stay untouched). Lead 2026-10-01: +10% — the
+     87svh cap and the pile room × 1.1. The box still never goes past the
+     first view (viewport − nav − 1.5rem), so on a ~950px-tall 1920 window
+     that limit is what it reaches (≈ +3%). */
+  @media (min-width: 1800px) {
+    .c-hero {
+      --c-hero-cap: min(95.7svh, 100svh - var(--c-nav-height, 0px) - 1.5rem);
+      --c-hero-pile-room: 20.35rem;
+    }
+  }
+
+  /* Content measured (inline script): content + pile room, capped. */
+  .c-hero.is-measured {
+    height: max(
+      var(--c-hero-content),
+      min(var(--c-hero-cap), var(--c-hero-content) + var(--c-hero-pile-room))
+    );
   }
 
   /* --- Decorative lines ------------------------------------------------- */
@@ -313,6 +359,10 @@ const BUTTONS: ButtonType[] = [
     align-items: center;
     width: fit-content;
     margin: 0 auto;
+    /* Glass, like the "See Our Work" button (`is-glass`: white 10% + 10px
+       blur); the 10% white fill comes from CtaActions. Lead 2026-10-01. */
+    -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
   }
   .c-hero :global(.c-hero__actions .c-cta__badge-text) {
     text-align: center;

@@ -54,9 +54,12 @@ interface Props {
   titleSegments?: readonly TitleSegment[];
   description?: string | null | undefined;
   clients: readonly Client[];
+  /** Description paragraph widths, in order (SERVICE_LAYOUT); the last one
+   *  repeats; default 24.5rem each. */
+  paragraphWidths?: readonly string[] | undefined;
 }
 
-const { title, titleSegments, description, clients } = Astro.props;
+const { title, titleSegments, description, clients, paragraphWidths } = Astro.props;
 
 // Rendered image box: 453.172px in the ref → 32.369rem (TODO: DS). The
 // `width`/`height` attributes carry the intrinsic ratio at that width.
@@ -124,6 +127,17 @@ const descriptionParagraphs = (description ?? "")
   .split(/\n\s*\n/)
   .map((paragraph) => paragraph.trim())
   .filter(Boolean);
+
+// Per-service paragraph widths → `--c-service-problem-pN` (up to 6 rules in
+// the styles below); the last given width repeats for later paragraphs.
+const paragraphCount = Math.min(Math.max(descriptionParagraphs.length, 1), 6);
+const paragraphStyle =
+  paragraphWidths && paragraphWidths.length > 0
+    ? Array.from({ length: paragraphCount }, (_, i) => {
+        const width = paragraphWidths[Math.min(i, paragraphWidths.length - 1)];
+        return `--c-service-problem-p${i + 1}: ${width};`;
+      }).join(" ")
+    : undefined;
 const shouldRender = hasTitle || hasDescription;
 const hasCarousels = columns.length > 0;
 
@@ -134,7 +148,10 @@ const headerOptional = {
 ---
 
 {shouldRender && (
-  <section class={["c-service-problem", hasCarousels && "is-carousels"].filter(Boolean).join(" ")}>
+  <section
+    class={["c-service-problem", hasCarousels && "is-carousels"].filter(Boolean).join(" ")}
+    style={paragraphStyle}
+  >
     <Container class="c-service-problem__container">
       {hasCarousels && (
         <div class="c-service-problem__frame" aria-hidden="true">
@@ -248,6 +265,39 @@ const headerOptional = {
     z-index: 1;
     max-width: var(--c-service-problem-frame);
     margin-inline: auto;
+  }
+
+  /* Description paragraphs with the carousels (lead 2026-10-01): 24.5rem;
+     full width on phones. */
+  .c-service-problem.is-carousels :global(.c-section-header__description) {
+    max-width: 24.5rem;
+  }
+  /* Per-service widths, paragraph by paragraph (`--c-service-problem-pN`,
+     set from SERVICE_LAYOUT; lead 2026-10-01). Paragraphs are the only <p>s
+     in the header text, so nth-of-type counts them. */
+  .c-service-problem.is-carousels :global(.c-section-header__description:nth-of-type(1)) {
+    max-width: var(--c-service-problem-p1, 24.5rem);
+  }
+  .c-service-problem.is-carousels :global(.c-section-header__description:nth-of-type(2)) {
+    max-width: var(--c-service-problem-p2, 24.5rem);
+  }
+  .c-service-problem.is-carousels :global(.c-section-header__description:nth-of-type(3)) {
+    max-width: var(--c-service-problem-p3, 24.5rem);
+  }
+  .c-service-problem.is-carousels :global(.c-section-header__description:nth-of-type(4)) {
+    max-width: var(--c-service-problem-p4, 24.5rem);
+  }
+  .c-service-problem.is-carousels :global(.c-section-header__description:nth-of-type(5)) {
+    max-width: var(--c-service-problem-p5, 24.5rem);
+  }
+  .c-service-problem.is-carousels :global(.c-section-header__description:nth-of-type(6)) {
+    max-width: var(--c-service-problem-p6, 24.5rem);
+  }
+  @media (max-width: 767px) {
+    .c-service-problem.is-carousels :global(.c-section-header__description),
+    .c-service-problem.is-carousels :global(.c-section-header__description:nth-of-type(n)) {
+      max-width: 100%;
+    }
   }
 
   /* Static down arrow under the description (lead 2026-09-30): 16×21px

@@ -165,7 +165,7 @@ export const SITE_SETTINGS_QUERY = /* groq */ `
 
 /**
  * Fields the shared `ClientList` rows render (icon, name, funds tag, category
- * tag, website link, hover screenshot). Shared by CLIENTS_BY_IDS and
+ * tag, website link, hover screenshot) + `sector` (Work page filters). Shared by CLIENTS_BY_IDS and
  * ALL_CLIENTS so the list projection is defined once.
  */
 const CLIENT_LIST_FIELDS = /* groq */ `
@@ -176,6 +176,7 @@ const CLIENT_LIST_FIELDS = /* groq */ `
   "websiteScreenshot": websiteScreenshot${IMAGE},
   fundsRaised,
   websiteUrl,
+  sector,
   "category": category->{
     _id,
     _type,

@@ -36,6 +36,7 @@ import type { Client, Service } from "../lib/sanity/types";
 import type { FaqGroup } from "../lib/content/faqs";
 import { OUR_WORK_GRID_IDS, OUR_WORK_LIST_IDS } from "../lib/content/our-work";
 import ServiceHero from "../components/sections/ServiceHero.astro";
+import { SERVICE_LAYOUT } from "../lib/content/service-layout";
 import LogoStrip from "../components/sections/LogoStrip.astro";
 import ServiceProblem from "../components/sections/ServiceProblem.astro";
 import ServiceProcess from "../components/sections/ServiceProcess.astro";
@@ -113,6 +114,8 @@ function clamp(text: string, max = 160): string {
   return `${cut.slice(0, cut.lastIndexOf(" ")).replace(/[\s,;:.]+$/, "")}…`;
 }
 const metaDescription = service.subtitle ? clamp(service.subtitle) : undefined;
+// Per-service text widths (lead 2026-10-01); none = template defaults.
+const layout = SERVICE_LAYOUT[service.slug] ?? {};
 const layoutOptional = metaDescription ? { description: metaDescription } : {};
 ---
 
@@ -125,6 +128,7 @@ const layoutOptional = metaDescription ? { description: metaDescription } : {};
       subtitle={service.subtitle}
       badges={badges}
       breadcrumbLd={breadcrumbLd}
+      descriptionWidth={layout.heroDescription}
     />
     {logoClients.length > 0 && <LogoStrip clients={logoClients} />}
   </div>
@@ -134,6 +138,7 @@ const layoutOptional = metaDescription ? { description: metaDescription } : {};
     titleSegments={problemSegments}
     description={service.problemDescription}
     clients={relatedClients}
+    paragraphWidths={layout.problemParagraphs}
   />
 
   <ServiceProcess

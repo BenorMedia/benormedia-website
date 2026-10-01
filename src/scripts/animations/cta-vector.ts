@@ -18,9 +18,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-/* TODO: DS — offset and smoothing are proposals (no motion spec). 20%
-   (was 15%) because the travel now spans the whole viewport passage. */
-const START_OFFSET_PERCENT = 20;
+/* TODO: DS — offset and smoothing are proposals (no motion spec). 40%
+   (lead 2026-10-01: more visible movement; was 20%, 15% before that). */
+const START_OFFSET_PERCENT = 40;
 const SCRUB_SMOOTHING = 1;
 
 export function initCtaVector(): void {
