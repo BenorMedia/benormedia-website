@@ -4,7 +4,8 @@
  *
  * - Floating glass bar (CEO revs 2026-09-30): transparent glass + blur,
  *   1400px max, rounded; `is-scrolled` drops it 1rem from the top. Entry
- *   animation + hide on scroll down / show on scroll up: nav-motion.ts.
+ *   animation, hide on scroll down / show on scroll up and `is-scrolled`
+ *   itself: nav-motion.ts.
  * - The mobile panel renders after <header>, not inside it (see markup).
  * - Nav labels + Services dropdown items are hardcoded (per approved plan).
  * - Logo: siteSettings.logo overrides the static /images/Logo.svg fallback.
@@ -34,17 +35,19 @@ const logoUrl = siteSettings?.logo?.asset
   : "/images/Logo.svg";
 const logoAlt = siteSettings?.logo?.alt ?? siteSettings?.siteName ?? "BenorMedia";
 
-// Icons: 237px sources (4× the 59.2px display), refs in docs/refs/navbar/.
+// Icons: 180px WebP (5× the 35.52px display), refs in docs/refs/navbar/.
 const services = [
-  { label: "Custom Websites & Migrations", href: "/custom-websites-migrations", icon: "/images/nav/custom-websites-migrations.png" },
-  { label: "Growth (AEO/GEO + CRO)", href: "/growth", icon: "/images/nav/growth.png" },
-  { label: "Ongoing Website Support", href: "/ongoing-website-support", icon: "/images/nav/ongoing-website-support.png" },
+  { label: "Custom Websites & Migrations", href: "/custom-websites-migrations", icon: "/images/nav/custom-websites-migrations.webp" },
+  { label: "Growth (SEO/GEO + CRO)", href: "/growth", icon: "/images/nav/growth.webp" },
+  { label: "Ongoing Website Support", href: "/ongoing-website-support", icon: "/images/nav/ongoing-website-support.webp" },
 ];
 
-const primaryLinks = [
+// `hidden`: kept in the markup but not shown (desktop bar + mobile menu).
+// Testimonials stays out of production for now — lead 2026-09-30.
+const primaryLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   { label: "Work", href: "/work" },
   { label: "Pricing", href: "/pricing" },
-  { label: "Testimonials", href: "/testimonials" },
+  { label: "Testimonials", href: "/testimonials", hidden: true },
 ];
 ---
 
@@ -85,8 +88,8 @@ const primaryLinks = [
                 <img
                   src={s.icon}
                   alt=""
-                  width="237"
-                  height="237"
+                  width="180"
+                  height="180"
                   loading="lazy"
                   decoding="async"
                   class="c-nav__panel-icon"
@@ -97,7 +100,7 @@ const primaryLinks = [
           </div>
         </li>
         {primaryLinks.map((link) => (
-          <li class="c-nav__item">
+          <li class="c-nav__item" hidden={link.hidden}>
             <a href={link.href} class="c-nav__link">{link.label}</a>
           </li>
         ))}
@@ -153,7 +156,7 @@ const primaryLinks = [
         </ul>
       </li>
       {primaryLinks.map((link) => (
-        <li><a href={link.href} class="c-nav__mobile-link">{link.label}</a></li>
+        <li hidden={link.hidden}><a href={link.href} class="c-nav__mobile-link">{link.label}</a></li>
       ))}
     </ul>
 
@@ -207,18 +210,9 @@ const primaryLinks = [
     });
   }
 
-  // --- Scroll state (is-scrolled: sticks 1rem from the top) ---------------
-  // Hide on scroll down / show on scroll up + the entry animation live in
-  // src/scripts/animations/nav-motion.ts.
-  const nav = document.querySelector<HTMLElement>(".c-nav");
-  if (nav) {
-    const SCROLL_THRESHOLD = 4;
-    const updateScrolled = () => {
-      nav.classList.toggle("is-scrolled", window.scrollY > SCROLL_THRESHOLD);
-    };
-    updateScrolled();
-    window.addEventListener("scroll", updateScrolled, { passive: true });
-  }
+  // Scroll state (`is-scrolled`: 1rem from the top, solid bar), hide on
+  // scroll down / show on scroll up and the entry animation all live in
+  // src/scripts/animations/nav-motion.ts (they depend on each other).
 
   // --- Mobile off-canvas panel --------------------------------------------
   const burger = document.querySelector<HTMLButtonElement>(".c-nav__burger");
@@ -339,8 +333,12 @@ const primaryLinks = [
        transition on the same property would lag every tween frame. */
     transition: all 0.2s ease, transform 0s;
   }
+  /* Scrolled: a more solid bar so the grey links stay readable over the
+     blue hero / CTA banner (white 80% ≈ 5:1 for --color-text over
+     --color-blue). Navbar only, no token — lead 2026-09-30 (QA Q7c). */
   .c-nav.is-scrolled {
     top: 1rem;
+    background-color: rgba(255, 255, 255, 0.8);
   }
   /* Entry animation pre-state: set by an inline <head> script (BaseLayout)
      so the bar never flashes before GSAP takes over; removed by the script,
@@ -471,12 +469,18 @@ const primaryLinks = [
       transform: rotate(180deg);
     }
   }
-  /* Text mirrors c-tag (Tag.astro) — lead 2026-09-30. */
+  /* Text mirrors c-tag (Tag.astro) — lead 2026-09-30. Box (lead visual QA
+     2026-09-30, px ÷14): 6px padding, 10px gap, 1px transparent border,
+     3px radius; hover = c-nav__link's (border → --color-gray #C9CEDA, text
+     unchanged). */
   .c-nav__panel-link {
     display: flex;
+    padding: 0.429rem;
     align-items: center;
-    /* TODO: DS — icon↔label gap not specified; ~10px measured on the ref. */
-    gap: 0.625rem;
+    gap: 0.714rem;
+    align-self: stretch;
+    border: 1px solid transparent;
+    border-radius: 3px;
     color: var(--color-text);
     font-family: var(--font-body);
     font-size: 0.9375rem;
@@ -486,16 +490,16 @@ const primaryLinks = [
     text-transform: uppercase;
     text-decoration: none;
     white-space: nowrap;
-    transition: color var(--duration-hover) var(--ease-smooth);
+    transition: border-color var(--duration-hover) var(--ease-smooth);
   }
   .c-nav__panel-link:hover {
-    color: var(--color-accent);
+    border-color: var(--color-gray);
   }
   .c-nav__panel-icon {
     flex-shrink: 0;
-    /* Figma 59.2px ÷ 16 */
-    width: 3.7rem;
-    height: 3.7rem;
+    /* 35.52px ÷ 14 — lead visual QA 2026-09-30 (was 59.2px) */
+    width: 2.537rem;
+    height: 2.537rem;
     border-radius: 5.481px;
   }
 

@@ -25,13 +25,16 @@ import { urlFor, assetDimensions, type Source } from "../../lib/sanity/image";
 
 interface Props {
   clients: Client[];
+  /** Render `hidden` (kept in the markup, not shown). Home only, lead
+   *  2026-09-30; other pages keep the strip. */
+  hidden?: boolean;
 }
 
-const { clients } = Astro.props;
+const { clients, hidden = false } = Astro.props;
 const track = [...clients, ...clients];
 ---
 
-<section class="c-logos">
+<section class="c-logos" hidden={hidden}>
   <div class="c-logos__container">
     <div class="c-logos__title-wrap">
       <Eyebrow variant="default" class="c-logos__title">

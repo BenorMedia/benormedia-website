@@ -1,0 +1,16 @@
+---
+/**
+ * Privacy Policy page — placeholder legal copy (lead 2026-09-30), from
+ * `src/lib/content/legal.ts`. `noindex` until the final copy lands.
+ * PageHero (eyebrow "Legal" — TODO: COPY, h1, intro) + LegalContent.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHero from "../components/sections/PageHero.astro";
+import LegalContent from "../components/sections/LegalContent.astro";
+import { PRIVACY_POLICY as doc } from "../lib/content/legal";
+---
+
+<BaseLayout title={doc.title} description={doc.description} noIndex={true}>
+  <PageHero eyebrow="Legal" title={doc.title} description={doc.intro} />
+  <LegalContent sections={doc.sections} />
+</BaseLayout>

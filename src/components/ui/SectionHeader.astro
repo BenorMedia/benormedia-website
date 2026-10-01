@@ -19,7 +19,9 @@
  * `title` + `accent` rendering; `\n` inside a run is still a line break.
  * `title` stays required (plain text of the same heading).
  *
- * `description` may contain `\n` for a forced line break (`<br />`).
+ * `description` may contain `\n` for a forced line break (`<br />`) and a
+ * blank line (`\n\n`) between paragraphs: each paragraph renders as its own
+ * `<p>` (Sanity service descriptions, lead 2026-09-30).
  */
 import Eyebrow from "./Eyebrow.astro";
 
@@ -79,7 +81,13 @@ const segments: Segment[] =
   titleSegments && titleSegments.length > 0
     ? titleSegments.map((s) => ({ lines: s.text.split("\n"), isAccent: s.accent === true }))
     : toSegments(title, accent);
-const descriptionLines = description ? description.split("\n") : [];
+const descriptionParagraphs = description
+  ? description
+      .split(/\n\s*\n/)
+      .map((paragraph) => paragraph.trim())
+      .filter(Boolean)
+      .map((paragraph) => paragraph.split("\n"))
+  : [];
 const rootClass = ["c-section-header", className].filter(Boolean).join(" ");
 const titleClassList = ["c-section-header__title", titleClass]
   .filter(Boolean)
@@ -104,16 +112,16 @@ const titleClassList = ["c-section-header__title", titleClass]
         );
       })}
     </HeadingTag>
-    {description && (
+    {descriptionParagraphs.map((lines) => (
       <p class="c-section-header__description c-paragraph_m">
-        {descriptionLines.map((line, i) => (
+        {lines.map((line, i) => (
           <>
             {i > 0 && <br />}
             {line}
           </>
         ))}
       </p>
-    )}
+    ))}
   </div>
 </header>
 
@@ -135,7 +143,9 @@ const titleClassList = ["c-section-header__title", titleClass]
     justify-content: center;
     text-align: center;
     width: 100%;
-    gap: 0.714rem; /* 10px between title and description */
+    /* 10px between title and description, and between description
+       paragraphs (TODO: DS paragraph spacing). */
+    gap: 0.714rem;
   }
 
   .c-section-header__title {

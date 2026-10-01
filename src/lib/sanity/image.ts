@@ -23,7 +23,7 @@ export function urlFor(source: Source): ImageUrlBuilder {
 /**
  * Intrinsic size from a Sanity image asset id
  * (`image-<hash>-<width>x<height>-<ext>`), for `<img width height>` without
- * an extra metadata query. Same parsing as `ClientList`'s local helper.
+ * an extra metadata query.
  */
 export function assetDimensions(
   id: string | undefined | null,

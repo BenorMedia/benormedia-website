@@ -25,6 +25,10 @@
  * Emits FAQPage JSON-LD from the same data (questions with an answer only);
  * `jsonLd={false}` turns it off (e.g. if a page already emits one).
  *
+ * `hidden`: renders the section with `hidden` (kept in the markup, not
+ * shown) and drops the FAQPage JSON-LD, since structured data must match
+ * visible content. Pricing uses it for now (lead 2026-09-30).
+ *
  * `background` (default true): the wireframe globe from
  * `docs/refs/pricing/faqs-bg.png`, exported as `public/images/pricing/faqs-bg{,@2x}.webp`
  * (1920 / 3840 wide, flattened on white). The export is the whole section at
@@ -49,6 +53,8 @@ interface Props {
   id?: string;
   /** ≤767: tabs on one scrollable row instead of wrapping. Default false. */
   scrollTabs?: boolean;
+  /** Render hidden (no JSON-LD either). Default false. */
+  hidden?: boolean;
   class?: string;
 }
 
@@ -60,6 +66,7 @@ const {
   background = true,
   id = "faq",
   scrollTabs = false,
+  hidden = false,
   class: className,
 } = Astro.props;
 
@@ -84,7 +91,7 @@ const answered = visibleGroups.flatMap((group) =>
   group.items.filter((item) => item.answer.trim().length > 0),
 );
 const ldJson =
-  jsonLd && answered.length > 0
+  jsonLd && !hidden && answered.length > 0
     ? JSON.stringify({
         "@context": "https://schema.org",
         "@type": "FAQPage",
@@ -101,7 +108,7 @@ const ldJson =
 ---
 
 {visibleGroups.length > 0 && (
-  <section class={rootClass} aria-labelledby={headingId} data-faq-section>
+  <section class={rootClass} aria-labelledby={headingId} data-faq-section hidden={hidden}>
     <Container>
       <div class="c-faq-section__header" id={headingId}>
         <SectionHeader title={title} />

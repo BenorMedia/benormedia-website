@@ -12,6 +12,10 @@
  *
  * BaseLayout owns Nav, CtaBanner, Footer and ContactModal.
  *
+ * `noindex` and out of the sitemap for now (lead 2026-09-30): production
+ * ships without testimonials (the section and the nav / footer links are
+ * hidden).
+ *
  * TODO: COPY — fallback meta title / description until testimonialsPage.seo
  * is filled in Sanity (kept here, not as an HTML comment, so it doesn't ship).
  */
@@ -34,6 +38,7 @@ const metaDescription =
   pageSeo={testimonialsPage?.seo ?? null}
   title="Testimonials"
   description={metaDescription}
+  noIndex={true}
 >
   <PageHero
     eyebrow="Testimonials"

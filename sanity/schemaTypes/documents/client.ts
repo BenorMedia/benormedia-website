@@ -130,7 +130,7 @@ export const client = defineType({
       name: 'websiteVideo',
       title: 'Website video',
       description:
-        'Short MP4 recording of the client\'s website. Plays (muted, looping) in the Home Featured Work card instead of the screenshot; the screenshot stays as its poster and fallback.',
+        'Short MP4 recording of the client\'s website. Use 16:9, no audio, ideally 2–5 MB. Plays muted and looping in the Home Featured Work card while the card is on screen, shown whole (never cropped). Nothing downloads until then.',
       type: 'file',
       options: { accept: 'video/mp4' },
     }),
@@ -138,7 +138,7 @@ export const client = defineType({
       name: 'websiteVideoPoster',
       title: 'Website video poster',
       description:
-        'Still image shown over the website video until the card is hovered (then it fades out and the video plays). Falls back to the website screenshot when empty.',
+        'Still image shown in the video frame until the video starts, and instead of the video for visitors who turn off motion. Cropped to 16:9. Falls back to the top of the website screenshot when empty.',
       type: 'image',
     }),
     defineField({

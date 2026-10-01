@@ -119,6 +119,13 @@ const rootClass = ["c-pricing-card", className].filter(Boolean).join(" ");
   .c-pricing-card__feature {
     color: var(--color-black-secondary);
   }
+  /* Scoped size (lead visual QA 2026-09-30). ≥768 only: at the 9px mobile
+     root 0.9rem would be 8.1px (same rule as the KPI / grid tags). */
+  @media (min-width: 768px) {
+    .c-pricing-card__feature {
+      font-size: 0.9rem;
+    }
+  }
 
   /* The period always sits right of the amount (no wrapping). */
   .c-pricing-card__price {

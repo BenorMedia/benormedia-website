@@ -1,0 +1,89 @@
+---
+/**
+ * LegalContent — body of the legal pages (Privacy Policy, Terms &
+ * Conditions, Cookie Policy). No Figma design: built from the existing
+ * typography classes and tokens only (lead 2026-09-30, placeholder copy).
+ *
+ * One `<h2>` per section (`c-text_m`) followed by its paragraphs
+ * (`c-paragraph_m`); a blank line in `body` starts a new paragraph. Content
+ * comes from `src/lib/content/legal.ts`. The page hero (PageHero, h1) sits
+ * above; BaseLayout owns the CTA banner and footer below.
+ */
+import Container from "../ui/Container.astro";
+import type { LegalSection } from "../../lib/content/legal";
+
+interface Props {
+  sections: readonly LegalSection[];
+}
+
+const { sections } = Astro.props;
+
+const blocks = sections.map((section) => ({
+  heading: section.heading,
+  paragraphs: section.body
+    .split(/\n\s*\n/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean),
+}));
+---
+
+<section class="c-legal">
+  <Container>
+    <div class="c-legal__body">
+      {blocks.map((block) => (
+        <div class="c-legal__section">
+          <h2 class="c-legal__heading c-text_m">{block.heading}</h2>
+          {block.paragraphs.map((paragraph) => (
+            <p class="c-legal__paragraph c-paragraph_m">{paragraph}</p>
+          ))}
+        </div>
+      ))}
+    </div>
+  </Container>
+</section>
+
+<style>
+  .c-legal {
+    background: var(--color-white);
+  }
+
+  /* No design: PageHero has no bottom padding, so this section owns the
+     space hero → body; bottom matches the 404 page's 8rem. TODO: DS */
+  .c-legal :global(.c-container) {
+    padding-top: 5rem;
+    padding-bottom: 8rem;
+  }
+
+  /* Reading width = SectionHeader's description width (42rem). TODO: DS */
+  .c-legal__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2.25rem; /* = hero block gap. TODO: DS */
+    max-width: 42rem;
+    margin-inline: auto;
+  }
+
+  .c-legal__section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.714rem; /* = SectionHeader title → description gap */
+  }
+
+  .c-legal__heading {
+    margin: 0;
+    color: var(--color-heading);
+  }
+
+  .c-legal__paragraph {
+    margin: 0;
+    color: var(--color-text);
+  }
+
+  /* TODO: DS mobile — no mobile ref. */
+  @media (max-width: 767px) {
+    .c-legal :global(.c-container) {
+      padding-top: 3rem;
+      padding-bottom: 5rem;
+    }
+  }
+</style>

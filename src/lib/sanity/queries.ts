@@ -316,6 +316,21 @@ export const SERVICE_SLUGS = /* groq */ `
 `;
 
 /**
+ * Home Services cards (lead 2026-09-30): name + slug + subtitle of the
+ * published services whose slug is in `$slugs` (order restored by the
+ * fetcher).
+ */
+export const SERVICE_CARDS = /* groq */ `
+*[_type == "service" && slug.current in $slugs && !(_id in path("drafts.**"))]{
+  _id,
+  _type,
+  name,
+  "slug": slug.current,
+  subtitle
+}
+`;
+
+/**
  * One published service. Related clients only project what the Problem
  * carousels render (name + website screenshot). FAQ answers are Portable
  * Text (same shape as `post` FAQs).
@@ -461,6 +476,16 @@ export async function getAllClients(): Promise<Client[]> {
 export async function getServiceSlugs(): Promise<string[]> {
   const result = await sanityClient.fetch<(string | null)[]>(SERVICE_SLUGS);
   return result.filter((slug): slug is string => typeof slug === 'string' && slug.length > 0);
+}
+
+export type ServiceCard = Pick<Service, '_id' | '_type' | 'name' | 'slug' | 'subtitle'>;
+
+/** Services by slug, in the order of `slugs`; unpublished / missing slugs are dropped. */
+export async function getServiceCards(slugs: readonly string[]): Promise<ServiceCard[]> {
+  if (slugs.length === 0) return [];
+  const result = await sanityClient.fetch<ServiceCard[]>(SERVICE_CARDS, { slugs: [...slugs] });
+  const bySlug = new Map(result.map((service) => [service.slug, service]));
+  return slugs.flatMap((slug) => bySlug.get(slug) ?? []);
 }
 
 /** One published service by slug, or `null`. */

@@ -1,48 +1,77 @@
 ---
 /**
- * Services — 3 static service cards + illustration + 2 CTAs.
+ * Services — one static illustration + 3 service cards, then the CTA actions.
  *
- * Each card is a click target. The active card:
- *   - gets a blue border + soft shadow (approved by CEO 2026-09-26; this is
- *     the sole exception to the "no shadows" rule — see docs/DECISIONS.md).
- *   - swaps the left illustration to that item's image via `data-image`.
- *   - shows the trigger icon in the primary gradient and rotates it -25deg.
+ * Lead visual QA 2026-09-30:
+ *   - Cards are links to the service pages (no tabs, no active state). The
+ *     former active look is now the hover / focus state: blue border + soft
+ *     shadow (CEO-approved shadow exception 2026-09-26, see DECISIONS) and
+ *     the arrow in the primary gradient, rotated -25deg.
+ *   - One illustration per card (`docs/refs/services-images/tab1–3.png` as
+ *     WebP 1000w / 1600w). Hovering (or focusing) a card crossfades its image
+ *     in over the current one (`--duration-hover` `--ease-smooth`); the last
+ *     one stays until another card is hovered. Starts on the first image.
+ *     No JS: first image only. Reduced motion: instant swap.
+ *   - Buttons moved below the grid as the shared `CtaActions` (light tone,
+ *     with the rotating "Trusted by" badge), same variants as before:
+ *     gradient "Get in Touch" (contact modal) + gradient-outline "See Pricing".
  *
- * Body copy is always visible on all three cards (no accordion hide).
+ * Mobile ≤767 (lead 2026-09-30, `docs/refs/services-images/
+ * mobile-services-preview.jpg`): an accordion inside a thin frame with
+ * corner nodes — illustration on top, then the cards. Each card header is a
+ * toggle button with a "+" circle (filled accent when open); the open card
+ * shows its copy and a "Learn More →" link to the service page. One card
+ * open at a time (the first by default); opening a card crossfades its
+ * illustration. CTA actions go full width. No JS: every card is open.
+ * Desktop / tablet keep the hover-link cards (the toggle and "Learn More"
+ * are not rendered visible there).
  *
- * `.js-open-contact` on the "Get in Touch" button wires it to the shared
- * ContactModal — see HomeHero for the same pattern.
+ * Cards = the 3 Sanity services (lead 2026-09-30): `name` as title,
+ * `subtitle` as copy (`TODO: COPY`), linked to `/<slug>`. A missing /
+ * unpublished service drops its card. Body copy is always visible.
  */
 import Container from "../ui/Container.astro";
 import SectionHeader from "../ui/SectionHeader.astro";
-import Button from "../ui/Button.astro";
+import CtaActions from "../ui/CtaActions.astro";
+import type { Button as ButtonType } from "../../lib/sanity/types";
+import { getCtaBadgeUrlsCached } from "../../lib/sanity/site";
+import { getServiceCards } from "../../lib/sanity/queries";
+
+// The 3 services, in this order (lead 2026-09-30). Card title = Sanity
+// `name`, copy = `subtitle`, link = the service page. Illustration i = card i.
+const SERVICE_SLUGS = ["custom-websites-migrations", "growth", "ongoing-website-support"] as const;
+const IMAGES = ["/images/home/services-tab1", "/images/home/services-tab2", "/images/home/services-tab3"];
+const IMAGE_SIZES = "(max-width: 991px) 100vw, 57vw";
 
 interface Item {
   title: string;
   body: string;
+  href: string;
+  /** Illustration base path (`<base>.webp` 1000w, `<base>@1600.webp`). */
   image: string;
 }
 
-const items: [Item, Item, Item] = [
+const services = await getServiceCards(SERVICE_SLUGS);
+const items: Item[] = services.map((service, i) => ({
+  title: service.name,
+  // TODO: COPY — the service `subtitle` until card copy is written.
+  body: service.subtitle?.trim() ?? "",
+  href: `/${service.slug}`,
+  image: IMAGES[i] ?? IMAGES[0]!,
+}));
+
+const BUTTONS: ButtonType[] = [
+  { variant: "gradient", link: { label: "Get in Touch", type: "contact" } },
   {
-    title: "Web Design",
-    body:
-      "We work as an extension of your company’s marketing team to build a website driven by intuitive UX and engaging UI.",
-    image: "/images/home/services.png",
-  },
-  {
-    title: "Web Development",
-    body:
-      "Through our custom development systems, we build secure, scalable, conversion-optimized websites using the right technologies for your business.",
-    image: "/images/home/services-2.png",
-  },
-  {
-    title: "Web Growth (SEO + GEO + CRO)",
-    body:
-      "We turn your website into a revenue engine through CRO, A/B testing, SEO, and AI search optimization.",
-    image: "/images/home/services.png",
+    variant: "gradient-outline",
+    link: {
+      label: "See Pricing",
+      type: "internal",
+      internalRef: { _id: "pricingPage", _type: "pricingPage", title: "Pricing" },
+    },
   },
 ];
+const badges = await getCtaBadgeUrlsCached();
 ---
 
 <section class="c-services" data-c-services>
@@ -55,49 +84,73 @@ const items: [Item, Item, Item] = [
     />
 
     <div class="c-services__grid">
-      <div class="c-services__col-left">
-        <img
-          class="c-services__image"
-          src={items[0].image}
-          alt=""
-          aria-hidden="true"
-          data-anim="services-image"
-          data-c-services-image
-          loading="lazy"
-          decoding="async"
-        />
+      {/* Mobile frame corners (decorative). */}
+      <span class="c-services__node is-tl" aria-hidden="true"></span>
+      <span class="c-services__node is-tr" aria-hidden="true"></span>
+      <span class="c-services__node is-bl" aria-hidden="true"></span>
+      <span class="c-services__node is-br" aria-hidden="true"></span>
 
-        <div class="c-services__buttons">
-          <Button variant="gradient" class="js-open-contact">Get in Touch</Button>
-          <Button variant="gradient-outline" href="/pricing">See Pricing</Button>
-        </div>
+      <div class="c-services__col-left" aria-hidden="true">
+        {items.map((item, i) => (
+          <img
+            class:list={["c-services__image", { "is-active": i === 0 }]}
+            src={`${item.image}.webp`}
+            srcset={`${item.image}.webp 1000w, ${item.image}@1600.webp 1600w`}
+            sizes={IMAGE_SIZES}
+            width="1000"
+            height="736"
+            alt=""
+            data-anim="services-image"
+            data-c-services-image
+            loading="lazy"
+            decoding="async"
+          />
+        ))}
       </div>
 
       <div class="c-services__col-right">
         <div class="c-services__accordion">
           {items.map((item, i) => (
-            <div
-              class:list={["c-services__item", { "is-active": i === 0 }]}
-              data-index={i}
-              data-image={item.image}
-            >
+            <div class:list={["c-services__item", { "is-open": i === 0 }]} data-c-services-item={i}>
               <h3 class="c-services__heading">
-                <button
-                  type="button"
-                  class="c-services__trigger"
-                  aria-pressed={i === 0 ? "true" : "false"}
-                >
+                {/* Desktop / tablet: the whole card links to the service. */}
+                <a href={item.href} class="c-services__trigger">
                   <span class="c-services__trigger-label">{item.title}</span>
                   <span class="c-services__trigger-icon" aria-hidden="true"></span>
+                </a>
+                {/* Mobile: accordion toggle. */}
+                <button
+                  type="button"
+                  class="c-services__toggle"
+                  id={`c-services-toggle-${i}`}
+                  aria-expanded={i === 0 ? "true" : "false"}
+                  aria-controls={`c-services-panel-${i}`}
+                  data-c-services-toggle
+                >
+                  <span class="c-services__trigger-label">{item.title}</span>
+                  <span class="c-services__plus" aria-hidden="true"></span>
                 </button>
               </h3>
-              <div class="c-services__panel">
-                <p class="c-paragraph">{item.body}</p>
+              <div class="c-services__panel" id={`c-services-panel-${i}`}>
+                <div class="c-services__panel-inner">
+                  <p class="c-paragraph">{item.body}</p>
+                  <a href={item.href} class="c-services__more c-paragraph">
+                    Learn More
+                    <svg class="c-services__more-icon" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M19 12L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M15 7L19.2929 11.2929C19.6262 11.6262 19.7929 11.7929 19.7929 12C19.7929 12.2071 19.6262 12.3738 19.2929 12.7071L15 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </a>
+                </div>
               </div>
             </div>
           ))}
         </div>
       </div>
+    </div>
+
+    <div class="c-services__actions">
+      <CtaActions buttons={BUTTONS} badges={badges} tone="light" />
     </div>
   </Container>
 </section>
@@ -112,7 +165,9 @@ const items: [Item, Item, Item] = [
     max-width: 40%; /* lead 2026-09-30 */
   }
 
-  @media (max-width: 767px) {
+  /* Tablet + mobile: full width (lead 2026-09-30, QA Q6 — the % width came
+     out at ≈190–300px at 768–991). */
+  @media (max-width: 991px) {
     .c-services :global(.c-services__header .c-section-header__description) {
       max-width: 100%;
     }
@@ -134,20 +189,38 @@ const items: [Item, Item, Item] = [
     }
   }
 
-  /* --- Left column (image + absolute buttons) -------------------------- */
+  /* --- Left column (illustration) --------------------------------------- */
+  /* Stacked illustrations: one grid cell, every image in it (same size).
+     The active one fades in over the previous one, which stays fully
+     visible underneath until the fade ends (`is-previous`, script below). */
   .c-services__col-left {
     position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    place-items: center;
     overflow: hidden;
   }
-
   .c-services__image {
+    grid-area: 1 / 1;
     display: block;
     width: 100%;
     height: auto;
     max-width: 100%;
+    opacity: 0;
+    transition: opacity var(--duration-hover) var(--ease-smooth);
+  }
+  .c-services__image.is-previous {
+    z-index: 1;
+    opacity: 1;
+    transition: none;
+  }
+  .c-services__image.is-active {
+    z-index: 2;
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .c-services__image {
+      transition: none;
+    }
   }
 
   /* --- Right column (service cards) ------------------------------------ */
@@ -164,9 +237,9 @@ const items: [Item, Item, Item] = [
     gap: 1rem;
   }
 
-  /* Card wrapper. The title <button> is stretched over the whole card via
-     ::after (see .c-services__trigger), so the card stays one click target
-     while the button's accessible name is just the title. */
+  /* Card wrapper. The title link is stretched over the whole card via
+     ::after (see .c-services__trigger), so the card is one link whose
+     accessible name is just the title. */
   .c-services__item {
     position: relative;
     display: flex;
@@ -188,17 +261,28 @@ const items: [Item, Item, Item] = [
       box-shadow var(--duration-hover) var(--ease-smooth);
   }
 
-  /* Focus ring draws on the card, driven by the stretched button. */
+  /* Focus ring draws on the card, driven by the stretched link. */
   .c-services__item:has(.c-services__trigger:focus-visible) {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
 
-  /* Active card — CEO-approved shadow exception, see DECISIONS.md */
-  .c-services__item.is-active {
-    border: 1px solid var(--color-blue);
-    background: var(--color-white);
-    box-shadow: 0 0 1.25rem 0 rgba(0, 0, 0, 0.05); /* 20px blur */
+  /* Hover / focus = the former active look — CEO-approved shadow
+     exception, see DECISIONS.md. Hover only on hover-capable devices, so a
+     tap on mobile leaves no sticky highlight. */
+  @media (hover: hover) {
+    .c-services__item:hover {
+      border-color: var(--color-blue);
+      box-shadow: 0 0 1.25rem 0 rgba(0, 0, 0, 0.05); /* 20px blur */
+    }
+    .c-services__item:hover .c-services__trigger-icon {
+      background: var(--gradient-primary);
+      transform: rotate(-25deg);
+    }
+  }
+  .c-services__item:has(.c-services__trigger:focus-visible) {
+    border-color: var(--color-blue);
+    box-shadow: 0 0 1.25rem 0 rgba(0, 0, 0, 0.05);
   }
 
   .c-services__heading {
@@ -217,6 +301,7 @@ const items: [Item, Item, Item] = [
     background: none;
     text-align: left;
     color: var(--color-heading);
+    text-decoration: none;
     cursor: pointer;
   }
 
@@ -242,7 +327,7 @@ const items: [Item, Item, Item] = [
   }
 
   /* Arrow glyph — solid gray by default. Uses CSS mask so we can paint it
-     with the primary gradient in the active state. */
+     with the primary gradient on hover / focus. */
   .c-services__trigger-icon {
     display: inline-block;
     width: 1rem; /* 16px */
@@ -256,7 +341,7 @@ const items: [Item, Item, Item] = [
       transform var(--duration-hover) var(--ease-smooth);
   }
 
-  .c-services__item.is-active .c-services__trigger-icon {
+  .c-services__item:has(.c-services__trigger:focus-visible) .c-services__trigger-icon {
     background: var(--gradient-primary);
     transform: rotate(-25deg);
   }
@@ -264,76 +349,226 @@ const items: [Item, Item, Item] = [
   .c-services__panel {
     color: var(--color-text);
   }
-  .c-services__panel > p {
+  .c-services__panel-inner p {
     margin: 0;
   }
 
-  /* --- Buttons — absolute at bottom center of left column -------------- */
-  .c-services__buttons {
-    position: absolute;
-    left: 50%;
-    bottom: 1rem;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    /* TODO: DS gap between service CTAs. */
-    gap: 1rem;
-    z-index: 1;
+  /* Mobile-only parts: hidden on desktop / tablet. */
+  .c-services__toggle,
+  .c-services__more,
+  .c-services__node {
+    display: none;
   }
 
-  @media (max-width: 991px) {
-    .c-services__buttons {
-      position: static;
-      transform: none;
-      flex-direction: column;
-      align-items: stretch;
+  /* --- Mobile accordion (≤767) ------------------------------------------
+     Measured on mobile-services-preview.jpg relative to its width
+     (TODO: DS mobile — values are proposals). */
+  @media (max-width: 767px) {
+    /* Frame: thin border around illustration + cards, square corner nodes
+       (same node look as the service Problem frame). Cards paint over the
+       side lines. */
+    .c-services__grid {
+      position: relative;
+      gap: 1.333rem; /* ≈12px */
+    }
+    .c-services__grid::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: var(--border-default);
+      pointer-events: none;
+    }
+    .c-services__node {
+      display: block;
+      position: absolute;
+      z-index: 1;
+      width: 1.5rem;
+      height: 1.5rem;
+      border: var(--border-default);
+      border-radius: 2px;
+      background: var(--color-white);
+      transform: translate(-50%, -50%);
+    }
+    .c-services__node.is-tl { top: 0; left: 0; }
+    .c-services__node.is-tr { top: 0; left: 100%; }
+    .c-services__node.is-bl { top: 100%; left: 0; }
+    .c-services__node.is-br { top: 100%; left: 100%; }
+
+    .c-services__accordion {
+      grid-template-rows: none;
+      gap: 1.333rem;
+    }
+    .c-services__item {
+      min-height: 0;
+      padding: 2.333rem 2.333rem; /* ≈21px */
+      cursor: auto;
+    }
+
+    /* Header: the toggle replaces the card link. */
+    .c-services__trigger {
+      display: none;
+    }
+    .c-services__toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
       width: 100%;
-      margin-top: 1.5rem;
+      padding: 0;
+      border: 0;
+      background: none;
+      text-align: left;
+      cursor: pointer;
     }
-    .c-services__buttons :global(.c-button) {
+    .c-services__toggle:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+
+    /* "+" circle: outlined; filled accent with a white "+" when open. */
+    .c-services__plus {
+      position: relative;
+      flex: 0 0 auto;
+      width: 2.333rem; /* ≈21px */
+      height: 2.333rem;
+      border: 1px solid var(--color-gray);
+      border-radius: 50%;
+      color: var(--color-text);
+      transition:
+        background-color var(--duration-hover) var(--ease-smooth),
+        border-color var(--duration-hover) var(--ease-smooth),
+        color var(--duration-hover) var(--ease-smooth);
+    }
+    .c-services__plus::before,
+    .c-services__plus::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 40%;
+      height: 1px;
+      background: currentColor;
+      transform: translate(-50%, -50%);
+    }
+    .c-services__plus::after {
+      transform: translate(-50%, -50%) rotate(90deg);
+    }
+    .c-services__item.is-open .c-services__plus {
+      background-color: var(--color-accent);
+      border-color: var(--color-accent);
+      color: var(--color-white);
+    }
+
+    /* Panel: copy + "Learn More". Collapsed with JS only (no JS: open). */
+    .c-services__panel {
+      display: grid;
+      grid-template-rows: 1fr;
+      transition:
+        grid-template-rows var(--duration-hover) var(--ease-smooth),
+        visibility 0s linear 0s;
+    }
+    .c-services__panel-inner {
+      min-height: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+      padding-top: 1.5rem;
+    }
+    .c-services.is-enhanced .c-services__item:not(.is-open) .c-services__panel {
+      grid-template-rows: 0fr;
+      visibility: hidden;
+      transition:
+        grid-template-rows var(--duration-hover) var(--ease-smooth),
+        visibility 0s linear var(--duration-hover);
+    }
+
+    .c-services__more {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--color-blue);
+      text-decoration: none;
+    }
+    .c-services__more-icon {
+      width: 1.75em;
+      height: 1.75em;
+      flex: 0 0 auto;
+    }
+
+    /* CTA actions full width, as in the ref. */
+    .c-services__actions :global(.c-cta__actions) {
       width: 100%;
     }
-    .c-services__col-left {
-      flex-direction: column;
+  }
+  @media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+    .c-services__panel,
+    .c-services.is-enhanced .c-services__item:not(.is-open) .c-services__panel {
+      transition: none;
     }
+  }
+
+  /* --- CTA actions (shared CtaActions) below the grid, centered ---------- */
+  .c-services__actions {
+    display: flex;
+    justify-content: center;
+    /* = header → grid space. TODO: DS */
+    margin-top: 3rem;
   }
 </style>
 
 <script>
-  // Click-to-activate service cards. Swaps the left illustration and toggles
-  // the active state on the clicked card. Scoped to each `[data-c-services]`
-  // root so multiple instances on the page stay independent.
-  const roots = document.querySelectorAll<HTMLElement>("[data-c-services]");
+  // Desktop: card hover / focus → crossfade that card's illustration in over
+  // the current one. Mobile accordion: opening a card does the same. The
+  // outgoing image keeps `is-previous` (opaque, under the incoming one) until
+  // the fade ends, so the section never shows through.
+  document.querySelectorAll<HTMLElement>("[data-c-services]").forEach((root) => {
+    const images = Array.from(root.querySelectorAll<HTMLImageElement>("[data-c-services-image]"));
+    const items = Array.from(root.querySelectorAll<HTMLElement>("[data-c-services-item]"));
 
-  roots.forEach((root) => {
-    const items = Array.from(
-      root.querySelectorAll<HTMLElement>(".c-services__item"),
-    );
-    const image = root.querySelector<HTMLImageElement>("[data-c-services-image]");
-    if (items.length === 0 || !image) return;
-
-    const activate = (index: number) => {
-      items.forEach((item, i) => {
-        const isActive = i === index;
-        item.classList.toggle("is-active", isActive);
-        item
-          .querySelector(".c-services__trigger")
-          ?.setAttribute("aria-pressed", isActive ? "true" : "false");
-        if (isActive) {
-          const nextSrc = item.dataset.image;
-          if (nextSrc && nextSrc !== image.getAttribute("src")) {
-            image.setAttribute("src", nextSrc);
-          }
-        }
-      });
+    let current = 0;
+    const show = (index: number): void => {
+      const next = images[index];
+      const prev = images[current];
+      if (!next || !prev || index === current) return;
+      images.forEach((img) => img.classList.remove("is-previous"));
+      prev.classList.remove("is-active");
+      prev.classList.add("is-previous");
+      next.classList.add("is-active");
+      current = index;
+      const done = (): void => {
+        if (images[current] === next) prev.classList.remove("is-previous");
+      };
+      next.addEventListener("transitionend", done, { once: true });
+      // Reduced motion (no transition) or an interrupted fade: clear anyway.
+      window.setTimeout(done, 1000);
     };
 
-    items.forEach((item, i) => {
-      item
-        .querySelector<HTMLButtonElement>(".c-services__trigger")
-        ?.addEventListener("click", () => activate(i));
+    // Accordion (only visible ≤767): one card open at a time; a second tap
+    // on the open card closes it.
+    const setOpen = (index: number | null): void => {
+      items.forEach((item, i) => {
+        const open = i === index;
+        item.classList.toggle("is-open", open);
+        item.querySelector("[data-c-services-toggle]")?.setAttribute("aria-expanded", String(open));
+      });
+      if (index !== null) show(index);
+    };
+
+    items.forEach((item) => {
+      const index = Number(item.dataset["cServicesItem"]);
+      // Mouse / pen hover only: a tap must not swap the image on mobile.
+      item.addEventListener("pointerenter", (event) => {
+        if (event.pointerType !== "touch") show(index);
+      });
+      item.querySelector(".c-services__trigger")?.addEventListener("focus", () => show(index));
+      item.querySelector("[data-c-services-toggle]")?.addEventListener("click", () => {
+        setOpen(item.classList.contains("is-open") ? null : index);
+      });
     });
+
+    root.classList.add("is-enhanced");
   });
 </script>

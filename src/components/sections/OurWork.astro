@@ -120,6 +120,13 @@ const COMPACT_LOGOS = new Set(["client-surfe", "client-arrows"]);
     display: block;
     width: 1.5rem; /* 24px */
     height: 1.5rem;
+    transition: transform var(--duration-hover) var(--ease-smooth);
+  }
+  /* Hover: the arrow tilts up like every other arrow icon (ClientCard,
+     ClientList: −30.963deg). Lead 2026-09-30. */
+  .c-work__cta :global(.c-button:hover) .c-work__cta-icon,
+  .c-work__cta :global(.c-button:focus-visible) .c-work__cta-icon {
+    transform: rotate(-30.963deg);
   }
 
   @media (max-width: 767px) {

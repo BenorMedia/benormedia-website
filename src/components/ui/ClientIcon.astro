@@ -14,9 +14,11 @@ import { urlFor, type Source } from "../../lib/sanity/image";
 interface Props extends HTMLAttributes<"span"> {
   client: Pick<Client, "name" | "icon">;
   imgLoading?: "lazy" | "eager";
+  /** `low` for decorative tiles that load eagerly (the hero pile, S7). */
+  imgFetchPriority?: "high" | "low" | "auto";
 }
 
-const { client, imgLoading = "lazy", class: className, ...attrs } = Astro.props;
+const { client, imgLoading = "lazy", imgFetchPriority, class: className, ...attrs } = Astro.props;
 
 // 56px box at 2x density. Width only: passing width + height makes the
 // builder crop a square `rect`, clipping wide icons (e.g. DarwinCX).
@@ -28,7 +30,7 @@ const initial = client.name?.trim().charAt(0).toUpperCase() ?? "";
 
 <span class:list={["c-client-icon", className]} {...attrs}>
   {iconUrl ? (
-    <img src={iconUrl} alt="" loading={imgLoading} decoding="async" draggable="false" />
+    <img src={iconUrl} alt="" loading={imgLoading} fetchpriority={imgFetchPriority} decoding="async" draggable="false" />
   ) : (
     <span class="c-client-icon__initial c-text_m" aria-hidden="true">{initial}</span>
   )}

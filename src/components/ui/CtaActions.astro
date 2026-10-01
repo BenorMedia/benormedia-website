@@ -155,6 +155,13 @@ const rootClass = ["c-cta__actions", tone === "light" && "is-light", className]
     /* TODO: DS gap text → circles (ref ≈ 14px). */
     gap: 0.875rem;
   }
+  /* Mobile: centered in the (full-width) badge — every CtaActions, lead
+     visual QA 2026-09-30. */
+  @media (max-width: 767px) {
+    .c-cta__badge-row {
+      margin: 0 auto;
+    }
+  }
 
   .c-cta__badge-text {
     margin: 0;
