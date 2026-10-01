@@ -341,10 +341,12 @@ const testimonial = await getContactTestimonialCached();
   }
   .c-contact-modal__testimonial :global(.c-testimonial-card) {
     width: 100%;
-    /* Half the card's 2.714rem / 2.429rem padding; height 19rem (was
-       23.03rem). Lead visual QA 2026-09-30. */
+    /* Half the card's 2.714rem / 2.429rem padding (lead visual QA
+       2026-09-30); height 100% (was 19rem) + gap 2rem (was 1.714rem),
+       lead visual QA 2026-10-01. */
     padding: 1.357rem 1.214rem;
-    height: 19rem;
+    height: 100%;
+    gap: 2rem;
     background: var(--color-white);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;

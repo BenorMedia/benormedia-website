@@ -214,6 +214,17 @@ const primaryLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   // scroll down / show on scroll up and the entry animation all live in
   // src/scripts/animations/nav-motion.ts (they depend on each other).
 
+  // `--c-nav-height` on <html>: the bar's height in the page flow, so the
+  // Home hero can fit the first view under it (lead 2026-10-01).
+  const navBar = document.querySelector<HTMLElement>(".c-nav");
+  if (navBar) {
+    const setNavHeight = (): void => {
+      document.documentElement.style.setProperty("--c-nav-height", `${navBar.offsetHeight}px`);
+    };
+    setNavHeight();
+    new ResizeObserver(setNavHeight).observe(navBar);
+  }
+
   // --- Mobile off-canvas panel --------------------------------------------
   const burger = document.querySelector<HTMLButtonElement>(".c-nav__burger");
   const mobile = document.querySelector<HTMLElement>("#nav-mobile-panel");
@@ -333,12 +344,25 @@ const primaryLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
        transition on the same property would lag every tween frame. */
     transition: all 0.2s ease, transform 0s;
   }
+  /* At the top of the page (nav-motion.ts, lead 2026-10-01): the bar
+     scrolls away with the page; sticky again once it is off-screen. */
+  .c-nav.is-flow {
+    position: relative;
+  }
   /* Scrolled: a more solid bar so the grey links stay readable over the
      blue hero / CTA banner (white 80% ≈ 5:1 for --color-text over
      --color-blue). Navbar only, no token — lead 2026-09-30 (QA Q7c). */
   .c-nav.is-scrolled {
     top: 1rem;
     background-color: rgba(255, 255, 255, 0.8);
+  }
+  /* Within the top 10% of a screen (nav-motion.ts): no 1rem offset, so
+     a bar that shows up on the way back to the top is already at its
+     resting spot and nothing changes when the page reaches the top (lead
+     2026-10-01). A floating bar that scrolls into this zone glides up
+     (0.2s) just before the top instead of at it. */
+  .c-nav.is-scrolled.is-near-top {
+    top: 0;
   }
   /* Entry animation pre-state: set by an inline <head> script (BaseLayout)
      so the bar never flashes before GSAP takes over; removed by the script,

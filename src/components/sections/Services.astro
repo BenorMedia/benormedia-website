@@ -3,15 +3,20 @@
  * Services — one static illustration + 3 service cards, then the CTA actions.
  *
  * Lead visual QA 2026-09-30:
- *   - Cards are links to the service pages (no tabs, no active state). The
- *     former active look is now the hover / focus state: blue border + soft
- *     shadow (CEO-approved shadow exception 2026-09-26, see DECISIONS) and
- *     the arrow in the primary gradient, rotated -25deg.
- *   - One illustration per card (`docs/refs/services-images/tab1–3.png` as
- *     WebP 1000w / 1600w). Hovering (or focusing) a card crossfades its image
- *     in over the current one (`--duration-hover` `--ease-smooth`); the last
- *     one stays until another card is hovered. Starts on the first image.
- *     No JS: first image only. Reduced motion: instant swap.
+ *   - Cards are links to the service pages. The former active look is the
+ *     hover / focus state: blue border + soft shadow (CEO-approved shadow
+ *     exception 2026-09-26, see DECISIONS) and the arrow in the primary
+ *     gradient, rotated -25deg. It stays on the last hovered / focused card
+ *     (`is-active`, lead 2026-10-01) until another card is hovered, so the
+ *     card always matches the ring lit in the diagram. Starts on the first
+ *     card (JS only; no JS = plain hover).
+ *   - Illustration = `ServicesDiagram` (lead 2026-10-01): the three
+ *     `tab1–3` illustrations rebuilt as one HTML / CSS element (it replaced
+ *     three stacked WebP images whose crossfade showed where they differ).
+ *     Hovering (or focusing) a card lights that service's ring
+ *     (`data-active`, CSS transitions `--duration-hover` `--ease-smooth`);
+ *     the last one stays until another card is hovered. Starts on the first
+ *     card's ring. No JS: first ring. Reduced motion: instant.
  *   - Buttons moved below the grid as the shared `CtaActions` (light tone,
  *     with the rotating "Trusted by" badge), same variants as before:
  *     gradient "Get in Touch" (contact modal) + gradient-outline "See Pricing".
@@ -21,8 +26,8 @@
  * corner nodes — illustration on top, then the cards. Each card header is a
  * toggle button with a "+" circle (filled accent when open); the open card
  * shows its copy and a "Learn More →" link to the service page. One card
- * open at a time (the first by default); opening a card crossfades its
- * illustration. CTA actions go full width. No JS: every card is open.
+ * open at a time (the first by default); opening a card lights its ring in
+ * the diagram. CTA actions go full width. No JS: every card is open.
  * Desktop / tablet keep the hover-link cards (the toggle and "Learn More"
  * are not rendered visible there).
  *
@@ -33,31 +38,35 @@
 import Container from "../ui/Container.astro";
 import SectionHeader from "../ui/SectionHeader.astro";
 import CtaActions from "../ui/CtaActions.astro";
+import ServicesDiagram from "./ServicesDiagram.astro";
 import type { Button as ButtonType } from "../../lib/sanity/types";
 import { getCtaBadgeUrlsCached } from "../../lib/sanity/site";
 import { getServiceCards } from "../../lib/sanity/queries";
 
 // The 3 services, in this order (lead 2026-09-30). Card title = Sanity
-// `name`, copy = `subtitle`, link = the service page. Illustration i = card i.
+// `name`, copy = `subtitle`, link = the service page.
 const SERVICE_SLUGS = ["custom-websites-migrations", "growth", "ongoing-website-support"] as const;
-const IMAGES = ["/images/home/services-tab1", "/images/home/services-tab2", "/images/home/services-tab3"];
-const IMAGE_SIZES = "(max-width: 991px) 100vw, 57vw";
+// Diagram ring lit by each service's card (lead 2026-10-01).
+const RINGS: Record<string, "outer" | "middle" | "inner"> = {
+  "custom-websites-migrations": "outer",
+  growth: "middle",
+  "ongoing-website-support": "inner",
+};
 
 interface Item {
   title: string;
   body: string;
   href: string;
-  /** Illustration base path (`<base>.webp` 1000w, `<base>@1600.webp`). */
-  image: string;
+  ring: "outer" | "middle" | "inner";
 }
 
 const services = await getServiceCards(SERVICE_SLUGS);
-const items: Item[] = services.map((service, i) => ({
+const items: Item[] = services.map((service) => ({
   title: service.name,
   // TODO: COPY — the service `subtitle` until card copy is written.
   body: service.subtitle?.trim() ?? "",
   href: `/${service.slug}`,
-  image: IMAGES[i] ?? IMAGES[0]!,
+  ring: RINGS[service.slug] ?? "outer",
 }));
 
 const BUTTONS: ButtonType[] = [
@@ -78,8 +87,8 @@ const badges = await getCtaBadgeUrlsCached();
   <Container>
     <SectionHeader
       eyebrow="Services"
-      title="From site launch to closed deal."
-      description="We work closely with B2B companies to strategize, design, develop and grow scalable and easy-to-maintain websites."
+      title="Your website doesn't stop at launch."
+      description="A site your team can run on its own, and a growth program that keeps it bringing in pipeline long after launch."
       class="c-services__header"
     />
 
@@ -91,27 +100,17 @@ const badges = await getCtaBadgeUrlsCached();
       <span class="c-services__node is-br" aria-hidden="true"></span>
 
       <div class="c-services__col-left" aria-hidden="true">
-        {items.map((item, i) => (
-          <img
-            class:list={["c-services__image", { "is-active": i === 0 }]}
-            src={`${item.image}.webp`}
-            srcset={`${item.image}.webp 1000w, ${item.image}@1600.webp 1600w`}
-            sizes={IMAGE_SIZES}
-            width="1000"
-            height="736"
-            alt=""
-            data-anim="services-image"
-            data-c-services-image
-            loading="lazy"
-            decoding="async"
-          />
-        ))}
+        <ServicesDiagram active={items[0]?.ring ?? "outer"} />
       </div>
 
       <div class="c-services__col-right">
         <div class="c-services__accordion">
           {items.map((item, i) => (
-            <div class:list={["c-services__item", { "is-open": i === 0 }]} data-c-services-item={i}>
+            <div
+              class:list={["c-services__item", { "is-open": i === 0 }]}
+              data-c-services-item={i}
+              data-c-services-ring={item.ring}
+            >
               <h3 class="c-services__heading">
                 {/* Desktop / tablet: the whole card links to the service. */}
                 <a href={item.href} class="c-services__trigger">
@@ -160,6 +159,11 @@ const badges = await getCtaBadgeUrlsCached();
     background: var(--color-white);
   }
 
+  /* Title width — only on the Services header (lead 2026-10-01). */
+  .c-services :global(.c-services__header .c-section-header__title) {
+    max-width: 40rem;
+  }
+
   /* Subtitle constraint — only on the Services header. */
   .c-services :global(.c-services__header .c-section-header__description) {
     max-width: 40%; /* lead 2026-09-30 */
@@ -189,38 +193,11 @@ const badges = await getCtaBadgeUrlsCached();
     }
   }
 
-  /* --- Left column (illustration) --------------------------------------- */
-  /* Stacked illustrations: one grid cell, every image in it (same size).
-     The active one fades in over the previous one, which stays fully
-     visible underneath until the fade ends (`is-previous`, script below). */
+  /* --- Left column (ServicesDiagram) ----------------------------------- */
   .c-services__col-left {
     position: relative;
     display: grid;
     place-items: center;
-    overflow: hidden;
-  }
-  .c-services__image {
-    grid-area: 1 / 1;
-    display: block;
-    width: 100%;
-    height: auto;
-    max-width: 100%;
-    opacity: 0;
-    transition: opacity var(--duration-hover) var(--ease-smooth);
-  }
-  .c-services__image.is-previous {
-    z-index: 1;
-    opacity: 1;
-    transition: none;
-  }
-  .c-services__image.is-active {
-    z-index: 2;
-    opacity: 1;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .c-services__image {
-      transition: none;
-    }
   }
 
   /* --- Right column (service cards) ------------------------------------ */
@@ -271,11 +248,13 @@ const badges = await getCtaBadgeUrlsCached();
      exception, see DECISIONS.md. Hover only on hover-capable devices, so a
      tap on mobile leaves no sticky highlight. */
   @media (hover: hover) {
-    .c-services__item:hover {
+    .c-services__item:hover,
+    .c-services__item.is-active {
       border-color: var(--color-blue);
       box-shadow: 0 0 1.25rem 0 rgba(0, 0, 0, 0.05); /* 20px blur */
     }
-    .c-services__item:hover .c-services__trigger-icon {
+    .c-services__item:hover .c-services__trigger-icon,
+    .c-services__item.is-active .c-services__trigger-icon {
       background: var(--gradient-primary);
       transform: rotate(-25deg);
     }
@@ -520,30 +499,19 @@ const badges = await getCtaBadgeUrlsCached();
 </style>
 
 <script>
-  // Desktop: card hover / focus → crossfade that card's illustration in over
-  // the current one. Mobile accordion: opening a card does the same. The
-  // outgoing image keeps `is-previous` (opaque, under the incoming one) until
-  // the fade ends, so the section never shows through.
+  // Desktop: card hover / focus → light that card's ring in the diagram
+  // (ServicesDiagram, CSS transitions). Mobile accordion: opening a card
+  // does the same.
   document.querySelectorAll<HTMLElement>("[data-c-services]").forEach((root) => {
-    const images = Array.from(root.querySelectorAll<HTMLImageElement>("[data-c-services-image]"));
+    const diagram = root.querySelector<HTMLElement>("[data-c-services-diagram]");
     const items = Array.from(root.querySelectorAll<HTMLElement>("[data-c-services-item]"));
 
-    let current = 0;
+    // The hovered / focused card keeps its hover look (`is-active`) until
+    // another card takes over, matching the lit ring (lead 2026-10-01).
     const show = (index: number): void => {
-      const next = images[index];
-      const prev = images[current];
-      if (!next || !prev || index === current) return;
-      images.forEach((img) => img.classList.remove("is-previous"));
-      prev.classList.remove("is-active");
-      prev.classList.add("is-previous");
-      next.classList.add("is-active");
-      current = index;
-      const done = (): void => {
-        if (images[current] === next) prev.classList.remove("is-previous");
-      };
-      next.addEventListener("transitionend", done, { once: true });
-      // Reduced motion (no transition) or an interrupted fade: clear anyway.
-      window.setTimeout(done, 1000);
+      const ring = items[index]?.dataset["cServicesRing"];
+      if (diagram && ring) diagram.dataset["active"] = ring;
+      items.forEach((item, i) => item.classList.toggle("is-active", i === index));
     };
 
     // Accordion (only visible ≤767): one card open at a time; a second tap
@@ -559,7 +527,7 @@ const badges = await getCtaBadgeUrlsCached();
 
     items.forEach((item) => {
       const index = Number(item.dataset["cServicesItem"]);
-      // Mouse / pen hover only: a tap must not swap the image on mobile.
+      // Mouse / pen hover only: a tap must not change the diagram on mobile.
       item.addEventListener("pointerenter", (event) => {
         if (event.pointerType !== "touch") show(index);
       });
@@ -569,6 +537,7 @@ const badges = await getCtaBadgeUrlsCached();
       });
     });
 
+    show(0);
     root.classList.add("is-enhanced");
   });
 </script>

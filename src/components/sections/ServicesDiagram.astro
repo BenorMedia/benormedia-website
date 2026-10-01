@@ -1,0 +1,378 @@
+---
+/**
+ * ServicesDiagram — c-services-diagram (Home Services, left column).
+ *
+ * HTML / CSS rebuild of the three Services illustrations
+ * (`docs/refs/services-images/tab1–3.png`, lead 2026-10-01): one element
+ * whose state follows the hovered service card, instead of three stacked
+ * images crossfading (the swap was visible where the images differ).
+ *
+ * Layers, back to front (geometry measured on the 3677 × 2708 refs, kept in
+ * that coordinate space as percentages, so the diagram scales like the image
+ * did): outer disc (the band), middle disc (white), divider lines, inner
+ * disc, center disc + glow + center icon, then the 14 steps (icon tile +
+ * label) on their rings.
+ *
+ * Rings ↔ services (lead 2026-10-01, final order and names):
+ *   - `outer`  → Custom Websites & Migrations (5 steps)
+ *   - `middle` → Growth (4 steps)
+ *   - `inner`  → Ongoing Website Support (5 steps)
+ * `data-active` on the root = the active ring (Services.astro sets it on
+ * card hover / focus / mobile accordion open). The active ring's disc and
+ * steps show at full strength; every other ring and step fades to opacity
+ * 0.4 (lead). The center disc and the white middle disc never fade. Default
+ * (and no JS): `outer`, like the first illustration.
+ *
+ * Styles from the lead: lines / borders #AEBDDA at 0.5; outer disc 244deg
+ * accent gradient at 0.2; middle disc white; inner disc white → #AEBDDA
+ * gradient over the brand gradient with a 1px #AEBDDA border; center disc
+ * `--gradient-primary` with a blurred gradient glow and the center icon.
+ * Label, tile and tile glow: lead's Figma values (2026-10-01), converted to
+ * the diagram width (see FIGMA_WIDTH below). Tile radius and label spacing
+ * read from the refs (TODO: DS).
+ *
+ * Sizes inside the frame use container units (`cqw` of the diagram width)
+ * on purpose: the diagram is an illustration that must scale exactly like
+ * the image it replaces, at every column width. Figma px → cqw:
+ * px / FIGMA_WIDTH × 100, FIGMA_WIDTH = 929px (the 41.44px tile = 4.46% of
+ * the frame in the refs).
+ *
+ * Labels: final names and order from the lead (2026-10-01). A `\n` in a
+ * label is a forced line break.
+ *
+ * Tag carousels: `ServicesDiagramTags` (own component + scoped styles), a
+ * layer clipped to the center disc's circle, on top of the disc and behind
+ * the glow and the center icon. The disc itself is untouched.
+ * Decorative (`aria-hidden`): the services themselves are the cards.
+ */
+import ServicesDiagramTags from "./ServicesDiagramTags.astro";
+
+type Ring = "outer" | "middle" | "inner";
+
+interface Step {
+  ring: Ring;
+  label: string;
+  icon: string;
+  /** Tile center in ref px (3677 × 2708). */
+  x: number;
+  y: number;
+}
+
+const W = 3677;
+const H = 2708;
+const px = (x: number): string => `${((x / W) * 100).toFixed(3)}%`;
+const py = (y: number): string => `${((y / H) * 100).toFixed(3)}%`;
+
+/** Disc box from its center + radius (ref px). */
+const disc = (cx: number, cy: number, r: number): string =>
+  `left:${px(cx - r)};top:${py(cy - r)};width:${px(2 * r)};`;
+
+const ICON_DIR = "/images/home/services-diagram";
+
+// Center disc: 2 points narrower than measured (39.4% → 37.4% of the width,
+// lead 2026-10-01), same center, so it stays centered.
+const CENTER_DISC = { cx: 1838.5, cy: 2644, r: 724 - (0.02 * W) / 2 };
+const CENTER_DISC_TOP = CENTER_DISC.cy - CENTER_DISC.r;
+
+// Center icon: 14% of the width (lead 2026-10-01: 17% then −3), a bit below
+// the middle of the visible part of the center disc (its top → the frame
+// bottom; 55% down instead of 50%). The glow follows it.
+const CENTER_ICON_WIDTH = "14%";
+const CENTER_Y = CENTER_DISC_TOP + (H - CENTER_DISC_TOP) * 0.55;
+
+// Tile positions = the tile centers in tab1–3; left → right per ring.
+// Names + order: lead 2026-10-01.
+const STEPS: Step[] = [
+  { ring: "outer", label: "UX Research and Strategy", icon: "ux-research-and-strategy", x: 400, y: 737 },
+  { ring: "outer", label: "Scalable Systems", icon: "scalable-systems", x: 1063.5, y: 370 },
+  { ring: "outer", label: "Custom Graphics and Videos", icon: "custom-graphics-and-videos", x: 1875, y: 255 },
+  { ring: "outer", label: "Technical SEO and AEO Optimization", icon: "technical-seo-and-aeo-optimization", x: 2687.5, y: 424 },
+  { ring: "outer", label: "CMS Setup and\nMigrations", icon: "crm-setup-and-integrations", x: 3307.5, y: 792 },
+  { ring: "middle", label: "SEO / GEO Research", icon: "seo-geo-research", x: 341, y: 1932 },
+  { ring: "middle", label: "AI Visibility", icon: "ai-visibility", x: 1190, y: 1023 },
+  { ring: "middle", label: "Content Production", icon: "content-production", x: 2445, y: 1023 },
+  { ring: "middle", label: "CRO Strategy", icon: "cro-strategy", x: 3278, y: 1926 },
+  { ring: "inner", label: "Analytics", icon: "analytics", x: 895, y: 2222 },
+  { ring: "inner", label: "Reporting & Planning", icon: "reporting-and-planning", x: 1270, y: 1783 },
+  { ring: "inner", label: "CRO Insights & Experiments", icon: "cro-insights-and-experiments", x: 1820.5, y: 1604 },
+  { ring: "inner", label: "Content", icon: "content", x: 2408, y: 1747 },
+  { ring: "inner", label: "Daily Updates", icon: "daily-updates", x: 2758, y: 2258 },
+];
+
+// Icon file sizes (for width / height attributes; WebP exports of the refs).
+const ICON_SIZES: Record<string, [number, number]> = {
+  "ux-research-and-strategy": [109, 112],
+  "scalable-systems": [147, 112],
+  "crm-setup-and-integrations": [117, 109],
+  "technical-seo-and-aeo-optimization": [117, 132],
+  "custom-graphics-and-videos": [117, 112],
+  "daily-updates": [99, 112],
+  content: [98, 112],
+  "reporting-and-planning": [95, 112],
+  "cro-insights-and-experiments": [97, 112],
+  "seo-geo-research": [83, 112],
+  "ai-visibility": [119, 112],
+  analytics: [74, 112],
+  "content-production": [96, 112],
+  "cro-strategy": [110, 112],
+};
+
+interface Props {
+  /** Ring shown before any interaction. Default `outer` (first card). */
+  active?: Ring;
+}
+
+const { active = "outer" } = Astro.props;
+
+// Tag carousels (ServicesDiagramTags): the same steps, one-line labels.
+const tagSteps = STEPS.map((step) => {
+  const [width, height] = ICON_SIZES[step.icon] ?? [112, 112];
+  return { label: step.label.replace(/\n/g, " "), src: `${ICON_DIR}/${step.icon}.webp`, width, height };
+});
+// Rows block centered on the center icon, as a % of the center disc's height.
+const TAGS_TOP = `${(((CENTER_Y - CENTER_DISC_TOP) / (2 * CENTER_DISC.r)) * 100).toFixed(3)}%`;
+---
+
+<div class="c-services-diagram" aria-hidden="true">
+  <div class="c-services-diagram__frame" data-active={active} data-c-services-diagram>
+    <div class="c-services-diagram__disc is-outer" style={disc(1838.5, 2638, 2352)}></div>
+    <div class="c-services-diagram__disc is-middle" style={disc(1838.5, 2555, 1931)}></div>
+
+    <svg
+      class="c-services-diagram__lines"
+      viewBox={`0 0 ${W} ${H}`}
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <line x1="1843" y1="624" x2="1843" y2="1394" />
+      <line x1="430.6" y1="1233.4" x2="945.7" y2="1779.8" />
+      <line x1="3246.4" y1="1233.4" x2="2731.3" y2="1779.8" />
+    </svg>
+
+    <div class="c-services-diagram__disc is-inner" style={disc(1838.5, 2620, 1226)}></div>
+    <div class="c-services-diagram__disc is-center" style={disc(CENTER_DISC.cx, CENTER_DISC.cy, CENTER_DISC.r)}></div>
+    <ServicesDiagramTags
+      steps={tagSteps}
+      style={`${disc(CENTER_DISC.cx, CENTER_DISC.cy, CENTER_DISC.r)}height:${py(2 * CENTER_DISC.r)};`}
+      rowsTop={TAGS_TOP}
+    />
+    {/* Center glow (lead's SVG, verbatim), centered on the center icon. */}
+    <svg
+      class="c-services-diagram__glow"
+      style={`left:${px(1363.5)};top:${py(CENTER_Y - 353)};width:${px(954)};`}
+      xmlns="http://www.w3.org/2000/svg"
+      width="318"
+      height="198"
+      viewBox="0 0 318 198"
+      fill="none"
+    >
+      <g filter="url(#filter0_f_3567_8518)">
+        <circle cx="158.509" cy="117.756" r="108.509" fill="url(#paint0_linear_3567_8518)" />
+      </g>
+      <defs>
+        <filter id="filter0_f_3567_8518" x="0" y="-40.7532" width="317.018" height="317.018" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+          <feFlood flood-opacity="0" result="BackgroundImageFix" />
+          <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+          <feGaussianBlur stdDeviation="25" result="effect1_foregroundBlur_3567_8518" />
+        </filter>
+        <linearGradient id="paint0_linear_3567_8518" x1="50" y1="37.2783" x2="292.478" y2="106.919" gradientUnits="userSpaceOnUse">
+          <stop stop-color="#6275F6" />
+          <stop offset="1" stop-color="#6BB0F7" />
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <img
+      class="c-services-diagram__center-icon"
+      style={`left:${px(1838.5)};top:${py(CENTER_Y)};width:${CENTER_ICON_WIDTH};`}
+      src={`${ICON_DIR}/center-bottom-icon.webp`}
+      width="288"
+      height="295"
+      alt=""
+      loading="lazy"
+      decoding="async"
+    />
+
+    {STEPS.map((step) => {
+      const [iw, ih] = ICON_SIZES[step.icon] ?? [112, 112];
+      return (
+        <div
+          class="c-services-diagram__step"
+          data-ring={step.ring}
+          style={`left:${px(step.x)};top:${py(step.y)};`}
+        >
+          <span class="c-services-diagram__tile">
+            <img
+              class="c-services-diagram__icon"
+              src={`${ICON_DIR}/${step.icon}.webp`}
+              width={iw}
+              height={ih}
+              alt=""
+              loading="lazy"
+              decoding="async"
+            />
+          </span>
+          <span class="c-services-diagram__label">{step.label}</span>
+        </div>
+      );
+    })}
+  </div>
+</div>
+
+<style>
+  /* Container for the cqw sizes below (an element can't size itself in
+     its own container units, so the frame sits inside it). */
+  .c-services-diagram {
+    container-type: inline-size;
+    width: 100%;
+  }
+
+  .c-services-diagram__frame {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 3677 / 2708;
+    border: var(--border-default);
+    border-radius: 0.8cqw; /* ≈ the ref's frame radius. TODO: DS */
+    background: var(--color-white);
+  }
+
+  /* --- Discs ------------------------------------------------------------ */
+  .c-services-diagram__disc {
+    position: absolute;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    transition: opacity var(--duration-hover) var(--ease-smooth);
+  }
+  /* Band: lead's gradient at 0.2; inactive 0.2 × 0.4. */
+  .c-services-diagram__disc.is-outer {
+    opacity: 0.08;
+    background: linear-gradient(
+      244deg,
+      transparent 13.2%,
+      var(--color-accent) 24.99%,
+      var(--color-accent) 55.1%,
+      transparent 70.37%
+    );
+  }
+  [data-active="outer"] > .c-services-diagram__disc.is-outer {
+    opacity: 0.2;
+  }
+  /* White, never fades (the band would show through). Line color #AEBDDA
+     at 0.5 (lead; not a token). */
+  .c-services-diagram__disc.is-middle {
+    border: 1px solid rgba(174, 189, 218, 0.5);
+    background: var(--color-white);
+  }
+  .c-services-diagram__disc.is-inner {
+    opacity: 0.4;
+    border: 1px solid rgba(174, 189, 218, 0.5);
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(174, 189, 218, 0.9) 100%),
+      var(--gradient-primary);
+  }
+  [data-active="inner"] > .c-services-diagram__disc.is-inner {
+    opacity: 1;
+  }
+  .c-services-diagram__disc.is-center {
+    background: var(--gradient-primary);
+  }
+
+  /* --- Divider lines (#AEBDDA at 0.5, lead) ------------------------------ */
+  .c-services-diagram__lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+  .c-services-diagram__lines line {
+    stroke: #AEBDDA;
+    stroke-opacity: 0.5;
+    stroke-width: 1px;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* --- Center glow + icon ----------------------------------------------- */
+  .c-services-diagram__glow,
+  .c-services-diagram__center-icon {
+    position: absolute;
+    height: auto;
+    display: block;
+  }
+  .c-services-diagram__center-icon {
+    transform: translate(-50%, -50%);
+  }
+
+  /* --- Steps -------------------------------------------------------------
+     `left` / `top` = the tile center. Figma values (lead 2026-10-01) as cqw
+     of the 929px frame: tile 41.44px = 4.46cqw, label 14px = 1.507cqw,
+     glow blur 30.1px = 3.24cqw. Tile radius + label gap from the refs
+     (TODO: DS). */
+  .c-services-diagram__step {
+    --tile: 4.46cqw;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 17cqw;
+    transform: translate(-50%, calc(var(--tile) / -2));
+    opacity: 0.4;
+    transition: opacity var(--duration-hover) var(--ease-smooth);
+  }
+  .c-services-diagram__tile {
+    display: grid;
+    place-items: center;
+    width: var(--tile);
+    height: var(--tile);
+    border: var(--border-default);
+    border-radius: 0.33cqw;
+    background: var(--color-white);
+    transition: box-shadow var(--duration-hover) var(--ease-smooth);
+  }
+  .c-services-diagram__icon {
+    display: block;
+    width: 85%; /* lead 2026-10-01 */
+    height: 80%;
+    object-fit: contain;
+    object-position: center;
+  }
+  .c-services-diagram__label {
+    margin-top: 1.63cqw;
+    font-family: var(--font-body);
+    font-size: 1.507cqw; /* 14px in Figma */
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    text-transform: uppercase;
+    text-wrap: balance;
+    white-space: pre-line; /* `\n` in a label = forced break */
+    color: var(--color-grey-700); /* Figma Grey-700 */
+  }
+  @media (max-width: 767px) {
+    .c-services-diagram__label {
+      font-size: 0.75rem; /* lead 2026-10-01 */
+    }
+  }
+
+  /* Active ring: full strength + the soft blue tile glow (TODO: DS). */
+  [data-active="outer"] > .c-services-diagram__step[data-ring="outer"],
+  [data-active="middle"] > .c-services-diagram__step[data-ring="middle"],
+  [data-active="inner"] > .c-services-diagram__step[data-ring="inner"] {
+    opacity: 1;
+  }
+  [data-active="outer"] > .c-services-diagram__step[data-ring="outer"] .c-services-diagram__tile,
+  [data-active="middle"] > .c-services-diagram__step[data-ring="middle"] .c-services-diagram__tile,
+  [data-active="inner"] > .c-services-diagram__step[data-ring="inner"] .c-services-diagram__tile {
+    /* 0 0 30.1px 0 rgba(52, 103, 229, 0.5) in Figma (accent at 50%). */
+    box-shadow: 0 0 3.24cqw 0 color-mix(in srgb, var(--color-accent) 50%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .c-services-diagram__disc,
+    .c-services-diagram__step,
+    .c-services-diagram__tile {
+      transition: none;
+    }
+  }
+</style>

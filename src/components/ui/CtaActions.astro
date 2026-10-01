@@ -17,6 +17,8 @@
  * 2026-09-29). Each client circle sits in a `__badge-slot` so the new badge
  * crossfades in on top of the old one (no empty moment). No JS / reduced
  * motion: the first 6 stay.
+ * `circles={false}` (Home hero, lead 2026-10-01): text-only badge — no
+ * circles and no `data-cta-badges`, so cta-badges.ts skips it.
  *
  * `tone`:
  *   - `dark` (default): on the gradient CTA banner (translucent white badge,
@@ -40,6 +42,8 @@ interface Props {
   /** Badge copy. Default "Trusted by +100 companies". */
   trustedText?: string | undefined;
   tone?: "dark" | "light";
+  /** Render the rotating client circles. Default true. */
+  circles?: boolean;
   class?: string;
 }
 
@@ -48,6 +52,7 @@ const {
   badges,
   trustedText = "Trusted by +100 companies",
   tone = "dark",
+  circles = true,
   class: className,
 } = Astro.props;
 
@@ -81,23 +86,25 @@ const rootClass = ["c-cta__actions", tone === "light" && "is-light", className]
   </div>
 )}
 
-<div class="c-cta__badge" data-cta-badges={JSON.stringify(badges)}>
+<div class="c-cta__badge" data-cta-badges={circles ? JSON.stringify(badges) : undefined}>
   <div class="c-cta__badge-row">
     <p class="c-cta__badge-text c-paragraph">
       <span class="c-cta__badge-star" aria-hidden="true">★</span>{" "}{trustedText}
     </p>
-    <span class="c-cta__badge-circles" aria-hidden="true">
-      {badgesInitial.length > 0 && (
-        <span class="c-cta__badge-group" data-cta-badges-group>
-          {badgesInitial.map((src) => (
-            <span class="c-cta__badge-slot" data-cta-badge>
-              <img class="c-cta__badge-circle" src={src} alt="" width="32" height="32" loading="lazy" decoding="async" />
-            </span>
-          ))}
-        </span>
-      )}
-      <img class="c-cta__badge-circle is-more" src="/images/more-badge.png" alt="" width="32" height="32" loading="lazy" decoding="async" />
-    </span>
+    {circles && (
+      <span class="c-cta__badge-circles" aria-hidden="true">
+        {badgesInitial.length > 0 && (
+          <span class="c-cta__badge-group" data-cta-badges-group>
+            {badgesInitial.map((src) => (
+              <span class="c-cta__badge-slot" data-cta-badge>
+                <img class="c-cta__badge-circle" src={src} alt="" width="32" height="32" loading="lazy" decoding="async" />
+              </span>
+            ))}
+          </span>
+        )}
+        <img class="c-cta__badge-circle is-more" src="/images/more-badge.png" alt="" width="32" height="32" loading="lazy" decoding="async" />
+      </span>
+    )}
   </div>
 </div>
 </div>

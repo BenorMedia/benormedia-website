@@ -1,0 +1,179 @@
+---
+/**
+ * ServicesDiagramTags — c-services-diagram-tags (inside ServicesDiagram).
+ *
+ * Tag carousels in the center disc (lead 2026-10-01,
+ * `docs/refs/services-images/animation/disc-center-preview.jpg`): rows of
+ * small tags (icon + label, the diagram's 14 steps), each row an infinite
+ * CSS marquee — row 1 left → right, row 2 right → left, and so on. 4 rows,
+ * 2 on mobile (tags twice the size there). 20% opacity. They never change
+ * with the active ring. Each row starts a few steps further, so the rows
+ * don't line up. Reduced motion: static rows.
+ *
+ * The root is its own layer with the center disc's box (`style`, set by
+ * ServicesDiagram) and clips the rows to the circle; the disc element is not
+ * touched. Placed after the disc and before the glow + center icon, so it
+ * sits behind them.
+ *
+ * Sizes read from the preview as cqw of the diagram (ServicesDiagram is the
+ * container), on the 929px Figma frame. TODO: DS (sizes + speed).
+ */
+
+interface TagStep {
+  label: string;
+  src: string;
+  width: number;
+  height: number;
+}
+
+interface Props {
+  steps: TagStep[];
+  /** Box of the center disc in the diagram frame (left / top / width / height). */
+  style: string;
+  /** Rows block center, as a % of the box height (the center icon). */
+  rowsTop: string;
+}
+
+const { steps, style, rowsTop } = Astro.props;
+
+const ROWS = 4;
+const ROW_SHIFT = 4;
+const rows = Array.from({ length: ROWS }, (_, r) => {
+  const shift = steps.length > 0 ? (r * ROW_SHIFT) % steps.length : 0;
+  return [...steps.slice(shift), ...steps.slice(0, shift)];
+});
+---
+
+{steps.length > 0 && (
+  <div class="c-services-diagram-tags" style={style} aria-hidden="true">
+    <div class="c-services-diagram-tags__rows" style={`top:${rowsTop};`}>
+      {rows.map((row, r) => (
+        <div class:list={["c-services-diagram-tags__row", r % 2 === 0 ? "is-ltr" : "is-rtl"]}>
+          <div class="c-services-diagram-tags__track">
+            {/* Two copies: the track moves by -50% for a seamless loop. */}
+            {[...row, ...row].map((step) => (
+              <span class="c-services-diagram-tags__tag">
+                <span class="c-services-diagram-tags__icon">
+                  <img
+                    src={step.src}
+                    width={step.width}
+                    height={step.height}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
+                {step.label}
+              </span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
+<style>
+  /* Layer = the center disc's box, clipped to its circle. */
+  .c-services-diagram-tags {
+    --tag-scale: 1;
+    position: absolute;
+    overflow: hidden;
+    border-radius: 50%;
+    clip-path: circle(50%);
+    pointer-events: none;
+  }
+
+  .c-services-diagram-tags__rows {
+    position: absolute;
+    right: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: calc(0.78cqw * var(--tag-scale));
+    transform: translateY(-50%);
+    opacity: 0.2; /* lead */
+  }
+
+  .c-services-diagram-tags__row {
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* One copy every 80s (no spec; TODO: DS). */
+  .c-services-diagram-tags__track {
+    display: flex;
+    flex: 0 0 auto;
+    width: max-content;
+    animation: c-services-diagram-tags-rtl 80s linear infinite;
+  }
+  .c-services-diagram-tags__row.is-ltr .c-services-diagram-tags__track {
+    animation-name: c-services-diagram-tags-ltr;
+  }
+  @keyframes c-services-diagram-tags-rtl {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes c-services-diagram-tags-ltr {
+    from { transform: translateX(-50%); }
+    to { transform: translateX(0); }
+  }
+
+  /* Tag: trailing margin instead of a flex gap, so -50% is the exact loop
+     point. Preview sizes: 24px tall, icon box 17px, text ≈ 5.7px. */
+  .c-services-diagram-tags__tag {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: calc(0.61cqw * var(--tag-scale));
+    height: calc(2.62cqw * var(--tag-scale));
+    margin-right: calc(0.68cqw * var(--tag-scale));
+    padding:
+      calc(0.38cqw * var(--tag-scale))
+      calc(0.75cqw * var(--tag-scale))
+      calc(0.38cqw * var(--tag-scale))
+      calc(0.38cqw * var(--tag-scale));
+    border: var(--border-default);
+    border-radius: calc(0.32cqw * var(--tag-scale));
+    background: var(--color-white);
+    font-family: var(--font-body);
+    font-size: calc(0.61cqw * var(--tag-scale));
+    font-weight: 400;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--color-grey-700);
+  }
+
+  .c-services-diagram-tags__icon {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: calc(1.8cqw * var(--tag-scale));
+    height: calc(1.8cqw * var(--tag-scale));
+    border-radius: calc(0.2cqw * var(--tag-scale));
+    background: var(--color-gray-light);
+  }
+  .c-services-diagram-tags__icon img {
+    display: block;
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
+  }
+
+  /* Mobile: 2 rows, tags twice the size. */
+  @media (max-width: 767px) {
+    .c-services-diagram-tags {
+      --tag-scale: 2;
+    }
+    .c-services-diagram-tags__row:nth-child(n + 3) {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .c-services-diagram-tags__track {
+      animation: none;
+    }
+  }
+</style>
