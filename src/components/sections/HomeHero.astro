@@ -1,0 +1,453 @@
+---
+/**
+ * HomeHero — top-of-fold hero for the Home page.
+ *
+ * Static copy. Hero renders on the blue gradient with white type and
+ * white / glass button variants. Two decorative line images (WebP, 1000w /
+ * 1600w, exported from the 2640px PNGs; QA B1 2026-09-30) sit absolutely
+ * inside `.c-hero__lines`, aria-hidden.
+ *
+ * Content stack (24px internal gap):
+ *   - title sub-block (eyebrow row + h1 + subtitle, 24px gap). Eyebrow row:
+ *     "$700M+" eyebrow left of the partner one; stacked on mobile, new on top.
+ *   - `CtaActions` (lead 2026-09-30): the CTA banner's buttons + the
+ *     "Trusted by" badge (`c-cta__actions`, dark tone on the gradient), with
+ *     the hero's buttons: white "Get in Touch" + glass "See Our Work". Hero
+ *     only (lead 2026-10-01): text-only badge (no client circles), centered
+ *     under the buttons, scoped styles below.
+ * Stats row removed (lead 2026-09-30).
+ *
+ * Height (lead 2026-10-01) = content + pile room, capped to the first view,
+ * never below the content:
+ *   height = max(C, min(CAP, C + PILE_ROOM))
+ *   - C = the content column's height (`--c-hero-content`, measured by the
+ *     inline script below; it includes the container's 2rem bottom padding,
+ *     the minimum space under the badge).
+ *   - PILE_ROOM = 18.5rem of room for the icon pile under the content (rem,
+ *     so it scales with the content at any zoom level: the old fixed 87svh
+ *     left a huge empty box when zoomed out / on tall screens).
+ *   - CAP = 87svh, or the viewport minus the nav and the box's 1.5rem bottom
+ *     margin when that is smaller (`--c-nav-height`, Nav.astro); mobile
+ *     93svh / viewport minus the nav.
+ * Zoomed in / short screens: the cap wins and the pile reaches up behind the
+ * content (Q2); if even the content doesn't fit, the box grows to it (C).
+ * No JS: CAP, growing with the content (`min-height: max-content`).
+ *
+ * Physics pile (`.c-hero__physics`, lead 2026-09-30): one ClientIcon tile per
+ * client with an icon (same tile as ClientList). hero-physics.ts (Matter.js)
+ * drops them into the hero, where they can be dragged and thrown. Without JS
+ * or under reduced motion they render as a static wrapped row at the bottom.
+ * Decorative (`aria-hidden`): the logos are in the LogoStrip below.
+ * The content block stays above the tiles (lead 2026-09-30, Q2): on short
+ * viewports the pile can reach the buttons, so the tiles pass behind it.
+ * The container is click-through outside the block, so tiles beside the
+ * text column can still be grabbed.
+ *
+ * "Get in Touch" is a `contact` link: CtaActions renders it as a
+ * `.js-open-contact` button (opens the ContactModal).
+ */
+import Eyebrow from "../ui/Eyebrow.astro";
+import ClientIcon from "../ui/ClientIcon.astro";
+import CtaActions from "../ui/CtaActions.astro";
+import type { Button as ButtonType, Client } from "../../lib/sanity/types";
+
+interface Props {
+  clients?: Client[];
+}
+
+const { clients = [] } = Astro.props;
+
+const BUTTONS: ButtonType[] = [
+  { variant: "white", link: { label: "Get in Touch", type: "contact" } },
+  {
+    variant: "glass",
+    link: {
+      label: "See Our Work",
+      type: "internal",
+      internalRef: { _id: "workPage", _type: "workPage", title: "Work" },
+    },
+  },
+];
+---
+
+<section class="c-hero">
+  <div class="c-hero__lines" aria-hidden="true">
+    <img
+      class="c-hero__lines-img is-left"
+      src="/images/home/hero-lines-left.webp"
+      srcset="/images/home/hero-lines-left.webp 1000w, /images/home/hero-lines-left@1600.webp 1600w"
+      sizes="35vw"
+      width="1000"
+      height="1002"
+      alt=""
+      data-anim="hero-lines"
+      loading="eager"
+      fetchpriority="low"
+      decoding="async"
+    />
+    <img
+      class="c-hero__lines-img is-right"
+      src="/images/home/hero-lines-right.webp"
+      srcset="/images/home/hero-lines-right.webp 1000w, /images/home/hero-lines-right@1600.webp 1600w"
+      sizes="35vw"
+      width="1000"
+      height="1002"
+      alt=""
+      data-anim="hero-lines"
+      loading="eager"
+      fetchpriority="low"
+      decoding="async"
+    />
+  </div>
+
+  <div class="c-hero__container">
+    <div class="c-hero__block">
+      <div class="c-hero__title-block">
+        <div class="c-hero__eyebrows">
+          <Eyebrow variant="default" class="c-hero__eyebrow">
+            $700M+ RAISED BY OUR CLIENTS
+          </Eyebrow>
+          <Eyebrow variant="default" class="c-hero__eyebrow">
+            6+ YEARS AS A WEBFLOW PROFESSIONAL PARTNER
+          </Eyebrow>
+        </div>
+
+        <h1 class="c-hero__title" data-anim="hero-headline">
+          We turn your website into a revenue engine built to scale.
+        </h1>
+
+        <p class="c-paragraph_m c-hero__desc">
+          We create high-converting and AEO optimized websites that anyone in
+          your team can update, maintain, and scale.
+        </p>
+      </div>
+
+      <CtaActions
+        buttons={BUTTONS}
+        badges={[]}
+        circles={false}
+        trustedText="Trusted by +100 B2B companies:"
+        class="c-hero__actions"
+      />
+    </div>
+  </div>
+
+  {clients.length > 0 && (
+    <div class="c-hero__physics" data-hero-physics aria-hidden="true">
+      {clients.map((client) => (
+        <ClientIcon
+          client={client}
+          class="c-hero__physics-item"
+          imgLoading="eager"
+          imgFetchPriority="low"
+          data-hero-physics-item
+        />
+      ))}
+    </div>
+  )}
+</section>
+
+{/* Measures the content column for the hero height (see the header
+    comment). Inline right after the markup, so the first paint already has
+    it; ResizeObserver follows fonts loading, resizes and zoom. */}
+<script is:inline>
+  (function () {
+    var hero = document.querySelector(".c-hero");
+    var content = hero && hero.querySelector(".c-hero__container");
+    if (!hero || !content || typeof ResizeObserver === "undefined") return;
+    var set = function () {
+      hero.style.setProperty("--c-hero-content", content.offsetHeight + "px");
+      hero.classList.add("is-measured");
+    };
+    set();
+    new ResizeObserver(set).observe(content);
+  })();
+</script>
+
+<style>
+  /* --- Section shell ---------------------------------------------------- */
+  /* Box: lead visual QA 2026-09-30 (was 1.429rem side margins, 5.714rem
+     bottom, no max-width / min-height). Height: lead 2026-10-01, see the
+     header comment — content + 18.5rem pile room, capped to the first view
+     (87svh / viewport minus nav minus the 1.5rem bottom margin), never
+     below the content. */
+  .c-hero {
+    --c-hero-cap: min(87svh, 100svh - var(--c-nav-height, 0px) - 1.5rem);
+    --c-hero-pile-room: 18.5rem;
+    position: relative;
+    overflow: hidden;
+    width: 98%;
+    max-width: 1440px;
+    height: 87vh;
+    height: var(--c-hero-cap);
+    min-height: max-content;
+    margin: 0 auto 1.5rem;
+    border-radius: 15px;
+    /* Base gradient (101deg, blue → blue-light). Solid white behind it as a
+       fallback for very old renderers, per spec. */
+    background:
+      linear-gradient(
+        101deg,
+        var(--color-blue) 6.56%,
+        var(--color-blue-light) 93.44%
+      ),
+      var(--color-white);
+    color: var(--color-white);
+  }
+
+  /* Mobile (lead 2026-10-01). */
+  @media (max-width: 767px) {
+    .c-hero {
+      --c-hero-cap: min(93svh, 100svh - var(--c-nav-height, 0px));
+      width: 95%;
+      height: 93vh;
+      height: var(--c-hero-cap);
+    }
+  }
+
+  /* Large screens only (≥1800px wide: 1920 monitors; laptops, incl. the
+     1728px MacBook Pro 16", stay untouched). Lead 2026-10-01: +10% — the
+     87svh cap and the pile room × 1.1. The box still never goes past the
+     first view (viewport − nav − 1.5rem), so on a ~950px-tall 1920 window
+     that limit is what it reaches (≈ +3%). */
+  @media (min-width: 1800px) {
+    .c-hero {
+      --c-hero-cap: min(95.7svh, 100svh - var(--c-nav-height, 0px) - 1.5rem);
+      --c-hero-pile-room: 20.35rem;
+    }
+  }
+
+  /* Content measured (inline script): content + pile room, capped. */
+  .c-hero.is-measured {
+    height: max(
+      var(--c-hero-content),
+      min(var(--c-hero-cap), var(--c-hero-content) + var(--c-hero-pile-room))
+    );
+  }
+
+  /* --- Decorative lines ------------------------------------------------- */
+  .c-hero__lines {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    border-radius: inherit;
+  }
+  .c-hero__lines-img {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    height: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 35%;
+    max-width: none;
+    display: block;
+    object-fit: cover;
+  }
+  .c-hero__lines-img.is-left { left: 0; }
+  .c-hero__lines-img.is-right { right: 0; }
+
+  /* --- Container -------------------------------------------------------- */
+  .c-hero__container {
+    position: relative;
+    /* Above the physics layer (z-index 2): the block covers the tiles.
+       Click-through except the block itself. Lead 2026-09-30 (Q2). */
+    z-index: 3;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: stretch;
+    margin: 0 auto;
+    /* The max-width moved to `.c-hero` (lead visual QA 2026-09-30). Bottom
+       2rem (was 20.5rem, the pile's fixed resting space): the hero's fixed
+       height now leaves the pile the space below the content (lead
+       2026-10-01). */
+    padding: 4.8rem 2rem 2rem;
+  }
+
+  /* --- Block 1: title stack + buttons ---------------------------------- */
+  .c-hero__block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.25rem;
+    width: 100%;
+    max-width: 70%; /* lead visual QA 2026-09-30 (was 60%) */
+    pointer-events: auto;
+  }
+
+  @media (max-width: 767px) {
+    .c-hero__block {
+      max-width: 90%;
+    }
+  }
+
+  .c-hero__title-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.15rem;
+    width: 100%;
+  }
+
+  /* --- Title (gradient text) ------------------------------------------- */
+  .c-hero__title {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 5.5rem;        /* lead visual QA 2026-09-30 (was 6.286rem) */
+    font-weight: 400;
+    font-style: normal;
+    line-height: 1.2;         /* lead 2026-09-30 */
+    letter-spacing: -0.126rem; /* -1.76px */
+    text-align: center;
+    /* TODO: DS — secondary gradient stop (#8BC1F9) is not in tokens yet.
+       Kept inline with white so the title reads as spec on the blue bg. */
+    background: linear-gradient(108deg, var(--color-white) 59.9%, #8BC1F9 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    /* Fallback for browsers without background-clip: text */
+    color: var(--color-white);
+  }
+
+  /* Mobile: DS mobile H1 size (§3.2 `--fs-text-xxl` = 4rem ≈ 36px) instead of
+     the fixed desktop 6.286rem; letter-spacing scaled by the same ratio.
+     Lead request 2026-09-29. */
+  @media (max-width: 767px) {
+    .c-hero__title {
+      font-size: var(--fs-text-xxl);
+      letter-spacing: -0.08rem;
+    }
+  }
+
+  /* --- Eyebrow row (lead 2026-09-30) --------------------------------- */
+  .c-hero__eyebrows {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 2.143rem; /* 30px ÷14 (1440 root) — lead 2026-09-30 */
+  }
+
+  @media (max-width: 767px) {
+    .c-hero__eyebrows {
+      flex-direction: column;
+    }
+  }
+
+  .c-hero__desc {
+    color: var(--color-white);
+    margin: 0;
+    max-width: 34rem; /* lead visual QA 2026-09-30 (was 42rem) */
+    text-align: center;
+  }
+
+  /* --- CTA actions (shared CtaActions; its own layout and ≤767 stack) ---
+     Hero only (lead 2026-10-01): wider buttons → badge gap, no stretch, and
+     the text-only badge centered under the buttons. Other CtaActions
+     unchanged. */
+  .c-hero :global(.c-cta__actions.c-hero__actions) {
+    margin-top: 0;
+    align-items: normal; /* shared value is `stretch` */
+    gap: 5.8rem; /* lead 2026-10-01 (was 4.071rem) */
+  }
+  .c-hero :global(.c-hero__actions .c-cta__badge) {
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    margin: 0 auto;
+    /* Glass, like the "See Our Work" button (`is-glass`: white 10% + 10px
+       blur); the 10% white fill comes from CtaActions. Lead 2026-10-01. */
+    -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+  }
+  .c-hero :global(.c-hero__actions .c-cta__badge-text) {
+    text-align: center;
+  }
+
+  /* --- Physics pile (hero-physics.ts) ---------------------------------
+     Static (no JS / reduced motion): a wrapped row in the bottom space,
+     clipped to it so it never reaches the buttons. Live (`is-live`): the
+     layer covers the whole hero and each tile is placed by transform. */
+  .c-hero__physics {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: flex-end;
+    /* TODO: DS static pile spacing. */
+    gap: 0.5rem;
+    padding: 1.5rem;
+    max-height: 20.5rem; /* the former bottom padding (pile space) */
+    overflow: hidden;
+    pointer-events: none;
+  }
+  /* Hero tiles: the ClientIcon tile scaled +15% (box, padding and radius,
+     so the icon grows in proportion). Lead 2026-09-30. */
+  .c-hero__physics :global(.c-hero__physics-item) {
+    width: 4.025rem;   /* 3.5rem x 1.15 */
+    height: 4.025rem;
+    padding: 0.575rem; /* 0.5rem x 1.15 */
+    border-radius: 0.575rem;
+  }
+  @media (max-width: 767px) {
+    .c-hero__physics :global(.c-hero__physics-item) {
+      width: 3rem;  /* lead 2026-09-30 */
+      height: 3rem;
+    }
+  }
+  /* JS on: the static row stays hidden until the physics goes live (no
+     flash of the fallback before the drop; see hero-physics.ts). */
+  :global(html.is-hero-pending) .c-hero__physics:not(.is-live) {
+    visibility: hidden;
+  }
+  .c-hero__physics.is-live {
+    top: 0;
+    display: block;
+    padding: 0;
+    max-height: none;
+    overflow: visible;
+  }
+  .c-hero__physics.is-live :global(.c-hero__physics-item) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: auto;
+    cursor: grab;
+    /* Touch scrolls the page; a press-and-hold drags (hero-physics.ts). */
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    will-change: transform;
+  }
+  .c-hero__physics.is-live :global(.c-hero__physics-item.is-dragging) {
+    cursor: grabbing;
+  }
+  .c-hero__physics :global(.c-hero__physics-item.is-off) {
+    display: none;
+  }
+
+  /* --- Eyebrow on-dark override ----------------------------------------
+     Same pattern as CtaBanner. TODO: DS — replace with `is-on-dark` variant
+     on the Eyebrow primitive so this scoped override retires. */
+  .c-hero :global(.c-eyebrow.is-default) {
+    border-color: rgba(255, 255, 255, 0.4);
+    color: var(--color-white);
+  }
+  /* Squares: gradient fill + gray border — hero eyebrows only (lead
+     2026-09-30). */
+  .c-hero :global(.c-eyebrow.is-default::before),
+  .c-hero :global(.c-eyebrow.is-default::after) {
+    background: var(--gradient-primary);
+    border: 0.5px solid var(--color-gray);
+    border-radius: 1.5px;
+  }
+</style>

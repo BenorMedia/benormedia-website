@@ -1,0 +1,117 @@
+---
+/**
+ * ServiceHero — hero of the service template (`src/pages/[service].astro`).
+ * Ref: `docs/refs/services-template/services-hero.jpg` (1920 frame,
+ * 1 ref px = 1/14 rem).
+ *
+ * Built on the shared `PageHero` (centered `SectionHeader as="h1"`):
+ *   - top slot: breadcrumb "Services" › service name (`Breadcrumbs`).
+ *     "Services" has no index page, so it is plain text.
+ *   - h1: Sanity `headline` (`accentTitle`) as `titleSegments`.
+ *   - description: `subtitle`.
+ *   - default slot: `CtaActions tone="light"` (the CTA banner's buttons +
+ *     rotating "Trusted by" badge) with the ref's buttons: gradient
+ *     "Get In Touch" (contact modal) + gradient-outline "See Pricing".
+ *
+ * The line art behind the hero bottom + logo strip is painted by the page
+ * wrapper (`.c-service-intro`), because it spans both sections.
+ */
+import PageHero from "./PageHero.astro";
+import Breadcrumbs from "../layout/Breadcrumbs.astro";
+import CtaActions from "../ui/CtaActions.astro";
+import type { Button as ButtonType } from "../../lib/sanity/types";
+import type { TitleSegment } from "../../lib/sanity/portable-text";
+
+interface Props {
+  /** Service name (breadcrumb current page). */
+  name: string;
+  /** Plain h1 text (`\n` = line break). */
+  title: string;
+  titleSegments?: readonly TitleSegment[] | undefined;
+  subtitle?: string | null | undefined;
+  /** Client badge URLs for the trusted badge rotation. */
+  badges: readonly string[];
+  /** BreadcrumbList JSON-LD levels (absolute URLs), when the site URL is known. */
+  breadcrumbLd?: readonly { name: string; url: string }[] | undefined;
+  /** Description max-width for this service (SERVICE_LAYOUT); default 30rem. */
+  descriptionWidth?: string | undefined;
+}
+
+const { name, title, titleSegments, subtitle, badges, breadcrumbLd, descriptionWidth } = Astro.props;
+
+// Ref buttons (services-hero.jpg). Copy mirrors the ref ("Get In Touch").
+const BUTTONS: ButtonType[] = [
+  { variant: "gradient", link: { label: "Get In Touch", type: "contact" } },
+  {
+    variant: "gradient-outline",
+    link: {
+      label: "See Pricing",
+      type: "internal",
+      internalRef: { _id: "pricingPage", _type: "pricingPage", title: "Pricing" },
+    },
+  },
+];
+
+const heroOptional = {
+  ...(titleSegments !== undefined && { titleSegments }),
+  ...(subtitle ? { description: subtitle } : {}),
+  ...(descriptionWidth ? { style: `--c-service-hero-desc: ${descriptionWidth};` } : {}),
+};
+---
+
+<PageHero title={title} {...heroOptional} class="c-service-hero">
+  <Breadcrumbs
+    slot="top"
+    class="c-service-hero__breadcrumbs"
+    items={[{ label: "Services" }, { label: name }]}
+    ld={breadcrumbLd}
+  />
+  <div class="c-service-hero__actions">
+    <CtaActions buttons={BUTTONS} badges={badges} tone="light" />
+  </div>
+</PageHero>
+
+<style>
+  /* PageHero is rendered by another component, so these selectors are
+     global but namespaced by `.c-service-hero`. */
+  :global(section.c-page-hero.c-service-hero) {
+    background: transparent; /* the page wrapper paints white + line art */
+  }
+
+  :global(section.c-page-hero.c-service-hero .c-container) {
+    /* Trusted badge → logo strip ≈ 111px in the ref. TODO: DS */
+    padding-bottom: 7.857rem;
+  }
+
+  /* Subtitle width on this hero only: 30rem (lead 2026-10-01; was 40%), or
+     the service's own width (`--c-service-hero-desc`, SERVICE_LAYOUT);
+     full width on phones. */
+  :global(section.c-page-hero.c-service-hero .c-section-header__description) {
+    max-width: var(--c-service-hero-desc, 30rem);
+  }
+
+  /* Breadcrumb sits where the eyebrow would: same 24px gap as SectionHeader. */
+  :global(.c-breadcrumbs.c-service-hero__breadcrumbs) {
+    margin-bottom: 1.714rem;
+  }
+
+  .c-service-hero__actions {
+    display: flex;
+    justify-content: center;
+    /* Subtitle → buttons ≈ 40px in the ref (CtaActions adds 0.5rem). TODO: DS */
+    margin-top: 2.357rem;
+  }
+
+  /* TODO: DS mobile — no mobile ref. */
+  @media (max-width: 767px) {
+    :global(section.c-page-hero.c-service-hero .c-container) {
+      padding-bottom: 5rem;
+    }
+    :global(section.c-page-hero.c-service-hero .c-section-header__description) {
+      max-width: 100%;
+    }
+    .c-service-hero__actions {
+      margin-top: 2rem;
+    }
+  }
+</style>

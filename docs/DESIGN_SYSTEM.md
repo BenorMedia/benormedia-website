@@ -31,6 +31,8 @@ html { font-size: 1vw; }
 - Exception: internal padding of components whose padding must follow their own text size (buttons, tags) uses `em` on purpose.
 - `px` only for: border widths, border-radius, blur, and fixed media-query values.
 
+**Ref px → rem base (lead, 2026-09-29):** Converting reference px to rem uses a 14px base. This applies only to new changes and new pages from 2026-09-29 on. Existing values stay as they are; the lead reviews them in visual QA and asks for specific changes. The fluid root (1vw) is unchanged.
+
 ---
 
 ## 2. Fonts
@@ -119,7 +121,16 @@ Font assignment assumption: `c-text_*` = Brulia Display, `c-paragraph_*` + `c-bu
 Global defaults: `body` uses `c-paragraph` values + `--color-text`; `h1–h6` use `--font-heading`, weight 400, `--color-heading`, margin 0.
 
 ### 3.3 Eyebrow / label pattern
-Small uppercase label with border ("CASE STUDIES", "SERVICES"). TODO: text class, tracking, radius, padding.
+Small uppercase label with border ("CASE STUDIES", "SERVICES"). Two variants: `is-default` and `is-accent`. Locked 2026-09-25.
+
+Shared box: `padding: 0.5em 1.05em` (project-lead adjustment 2026-09-25 from Figma 10/16/8/16 px), `border-radius: 3px`, `border: 0.5px solid`, `font-family: var(--font-body)`, `font-size: 0.9375rem` (15 px), `line-height: normal`, `letter-spacing: 0.064em` (0.96 px), `text-transform: uppercase`, `display: inline-flex; align-items: center`.
+
+| Variant | Border | Background | Text | Weight | Squares |
+|---|---|---|---|---|---|
+| `is-default` | `var(--color-gray)` | none | `var(--color-text)` | 400 | Yes, both sides |
+| `is-accent` | `var(--color-accent)` | `color-mix(in srgb, var(--color-accent) 8%, transparent)` | `var(--color-accent)` | 600 | No |
+
+Default squares (`::before` left, `::after` right): 0.625rem × 0.625rem, `background: var(--color-white)`, `border: 0.5px solid var(--color-gray)`, `border-radius: 1.5px`, `position: absolute`, vertically centered via `top: 50%; transform: translateY(-50%)`, `left: -0.344rem` / `right: -0.281rem`.
 
 ---
 
@@ -148,6 +159,11 @@ Small uppercase label with border ("CASE STUDIES", "SERVICES"). TODO: text class
   /* Neutrals */
   --color-gray: #C9CEDA;
   --color-gray-light: #F0F0F0;
+  --color-grey-700: #3B3B3B;        /* Figma Grey-700 — Services diagram labels (lead, 2026-10-01) */
+
+  /* Surfaces — glass (lead, 2026-09-29): pricing cards, FAQ rows; used with
+     backdrop-filter: blur(10px) over line art */
+  --color-surface-glass: rgba(255, 255, 255, 0.05);
 
   /* Borders */
   --color-border: #E4E6EA;
@@ -163,7 +179,7 @@ Small uppercase label with border ("CASE STUDIES", "SERVICES"). TODO: text class
 
 - **Borders:** default `var(--border-default)`. Some elements differ; defined per component.
 - **Border radius:** varies per element; defined per component at build time (no global scale).
-- **Shadows:** none. Do not add shadows to any element.
+- **Shadows:** allowed where the lead specifies them; values defined per component (lead 2026-09-30, replaces the former "no shadows" rule).
 
 ---
 
@@ -223,9 +239,9 @@ Gradient border assumed (Figma `var(--Gradient, #6275F6)`, #6275F6 = fallback). 
   font-weight: 400;
   line-height: 1.5;
   text-decoration: none;
-  transition: transform var(--duration-hover) var(--ease-smooth);
+  transition: transform var(--duration-hover) var(--ease-smooth), box-shadow var(--duration-hover) var(--ease-smooth);
 }
-.c-button:hover { transform: translateY(-7%); }
+.c-button:hover { transform: translateY(-7%); box-shadow: 0 0 20px #2223; /* lead 2026-09-30 */ }
 .c-button:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
 
 /* Text: color only */
@@ -314,7 +330,7 @@ TODO: columns, gutters, standard gaps.
 | # | Section | Component | Dynamic (Sanity) | Motion (TBD) |
 |---|---|---|---|---|
 | 1 | Nav (Services dropdown, Work, Pricing, Testimonials, CTA) | `c-nav` | siteSettings | Dropdown |
-| 2 | Hero: eyebrow, H1, lead, 2 CTAs, social proof, 2 stats | `c-hero` | homePage | Counter? bg pattern? |
+| 2 | Hero: 2 eyebrows, H1, lead, 2 CTAs, client icon pile (stats removed 2026-09-30) | `c-hero` | client (icons) | Physics pile (Matter.js) |
 | 3 | Logo strip "Trusted by 100+ B2B teams" | `c-logos` | client | Marquee |
 | 4 | Featured Work: 2 case cards (quote, author, 2 stats) | `c-featured` | caseStudy | — |
 | 5 | Services: 3 accordion items + diagram, 2 CTAs | `c-services` | service | Accordion |

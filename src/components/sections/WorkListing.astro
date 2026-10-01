@@ -1,0 +1,226 @@
+---
+/**
+ * WorkListing — Work page: sector filter + every client in the shared
+ * `ClientList`. Ref: `docs/refs/work/work-list.jpg`.
+ *
+ * Data: `getAllClients()` in `src/pages/work.astro`. No fetching here.
+ *
+ * Filtering (progressive enhancement):
+ *   - Without JS every row shows and the filter bar stays `hidden`, so there
+ *     are no dead buttons. The script below un-hides it.
+ *   - Each filter = one `client.sector` value (lead 2026-10-01; supersedes
+ *     the category-slug filters). "all" shows every client.
+ *   - Every filter always renders, even with no client in that sector yet
+ *     (sectors are being filled in Studio): it then shows an empty list.
+ *   - Click → `aria-pressed` + `is-active` on every item, `hidden` on the rows
+ *     that don't match (`ClientList` emits `data-sector` per row), and the
+ *     visually hidden live region announces the new count.
+ *   - URL state (W-7): the active filter is `?sector=<filter value>`; "all"
+ *     has no parameter. Loading a URL with the parameter opens that filter.
+ *     Changes use `history.replaceState` (no history entries). An unknown
+ *     value falls back to "all" and the parameter is removed. Other query
+ *     parameters are kept.
+ *
+ * Tabs (lead, 2026-10-01):
+ *   View All              → every client (no parameter)
+ *   Agency                → sector `agency`
+ *   Professional Services → sector `professional-services`
+ *   SaaS                  → sector `saas`
+ *
+ * Order: the rows keep the `getAllClients()` order (Studio drag-and-drop
+ * `orderRank`); filtering only hides rows.
+ *
+ * Hides entirely when there are no clients.
+ */
+import Container from "../ui/Container.astro";
+import ClientList from "../ui/ClientList.astro";
+import SegmentedControl from "../ui/SegmentedControl.astro";
+import type { Client, ClientSector } from "../../lib/sanity/types";
+
+interface Props {
+  clients: Client[];
+}
+
+const { clients } = Astro.props;
+
+interface Filter {
+  label: string;
+  /** "all" or a `client.sector` value; also the `?sector=` URL value. */
+  value: "all" | ClientSector;
+}
+
+// Tabs (lead, 2026-10-01; see the header comment). Always rendered.
+const filters: Filter[] = [
+  { label: "View All", value: "all" },
+  { label: "Agency", value: "agency" },
+  { label: "Professional Services", value: "professional-services" },
+  { label: "SaaS", value: "saas" },
+];
+
+const headingId = "work-listing-title";
+---
+
+{clients.length > 0 && (
+  <section
+    class="c-work-listing"
+    aria-labelledby={headingId}
+    data-work-listing
+  >
+    <Container>
+      {/* TODO: COPY — section heading (visually hidden; keeps the outline h1 → h2). */}
+      <h2 id={headingId} class="c-work-listing__sr-only">All projects</h2>
+
+      <div class="c-work-listing__filters" data-work-filters hidden>
+        <SegmentedControl
+          items={filters.map(({ label, value }) => ({ label, value }))}
+          active="all"
+          label="Filter projects by sector"
+          squares
+        />
+      </div>
+
+      {/* TODO: COPY — filter announcement. `{shown}` / `{total}` are replaced by the script. */}
+      <p
+        class="c-work-listing__sr-only"
+        role="status"
+        aria-live="polite"
+        data-work-status
+        data-template="Showing {shown} of {total} projects"
+      ></p>
+
+      <div class="c-work-listing__list" data-anim="work-list">
+        <ClientList clients={clients} />
+      </div>
+    </Container>
+  </section>
+)}
+
+<script>
+  function initWorkListing(root: HTMLElement): void {
+    const filters = root.querySelector<HTMLElement>("[data-work-filters]");
+    if (!filters) return;
+
+    const buttons = Array.from(
+      filters.querySelectorAll<HTMLButtonElement>("button[data-value]"),
+    );
+    const rows = Array.from(root.querySelectorAll<HTMLElement>(".c-client-list__item"));
+    const status = root.querySelector<HTMLElement>("[data-work-status]");
+    if (buttons.length === 0 || rows.length === 0) return;
+
+    const PARAM = "sector";
+
+    // Reflects the active filter in the URL without adding history entries.
+    // Only touches the URL when `sector` actually changes, so other query
+    // parameters keep their exact encoding (QA 2026-09-30).
+    const syncUrl = (value: string): void => {
+      const url = new URL(window.location.href);
+      const current = url.searchParams.get(PARAM);
+      const next = value === "all" ? null : value;
+      if (current === next) return;
+      if (next === null) url.searchParams.delete(PARAM);
+      else url.searchParams.set(PARAM, next);
+      window.history.replaceState(window.history.state, "", url);
+    };
+
+    const apply = (value: string): void => {
+      let shown = 0;
+      for (const row of rows) {
+        const match = value === "all" || row.dataset["sector"] === value;
+        row.hidden = !match;
+        if (match) shown += 1;
+      }
+      for (const button of buttons) {
+        const active = button.dataset["value"] === value;
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+        button.classList.toggle("is-active", active);
+      }
+      if (status) {
+        const template = status.dataset["template"] ?? "{shown} / {total}";
+        status.textContent = template
+          .replace("{shown}", String(shown))
+          .replace("{total}", String(rows.length));
+      }
+    };
+
+    filters.addEventListener("click", (event) => {
+      const target = event.target instanceof Element ? event.target : null;
+      const button = target?.closest<HTMLButtonElement>("button[data-value]");
+      const value = button?.dataset["value"];
+      if (!value) return;
+      apply(value);
+      syncUrl(value);
+    });
+
+    // Initial filter from `?sector=`; unknown values fall back to "all".
+    const requested = new URL(window.location.href).searchParams.get(PARAM);
+    const initial =
+      requested && buttons.some((button) => button.dataset["value"] === requested)
+        ? requested
+        : "all";
+    if (initial !== "all") apply(initial);
+    syncUrl(initial);
+
+    filters.hidden = false;
+  }
+
+  document
+    .querySelectorAll<HTMLElement>("[data-work-listing]")
+    .forEach((root) => initWorkListing(root));
+</script>
+
+<style>
+  .c-work-listing {
+    background: var(--color-white);
+  }
+
+  .c-work-listing :global(.c-container) {
+    /* Hero description → filters (lead, visual QA 2026-09-29). */
+    padding-top: 7.5rem;
+  }
+
+  .c-work-listing__filters {
+    display: flex;
+    justify-content: center;
+  }
+
+  .c-work-listing__filters[hidden] {
+    display: none;
+  }
+
+  .c-work-listing__list {
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Filters → first row (lead, visual QA 2026-09-29). */
+  .c-work-listing__filters + .c-work-listing__sr-only + .c-work-listing__list {
+    margin-top: 3rem;
+  }
+
+  /* Without JS the filter bar is hidden: hero → list keeps the hero spacing
+     only. */
+  .c-work-listing__filters[hidden] + .c-work-listing__sr-only + .c-work-listing__list {
+    margin-top: 0;
+  }
+
+  /* Visually hidden, still read by screen readers. TODO: move to a global
+     utility (`cc-sr-only`) — requested from @ui. */
+  .c-work-listing__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* TODO: DS mobile — no mobile ref. */
+  @media (max-width: 767px) {
+    .c-work-listing :global(.c-container) {
+      padding-top: 5rem;
+    }
+  }
+</style>

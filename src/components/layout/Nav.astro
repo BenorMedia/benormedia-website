@@ -1,0 +1,635 @@
+---
+/**
+ * Nav — sticky top navigation with Services dropdown + mobile off-canvas menu.
+ *
+ * - Floating glass bar (CEO revs 2026-09-30): transparent glass + blur,
+ *   1400px max, rounded; `is-scrolled` drops it 1rem from the top. Entry
+ *   animation, hide on scroll down / show on scroll up and `is-scrolled`
+ *   itself: nav-motion.ts.
+ * - The mobile panel renders after <header>, not inside it (see markup).
+ * - Nav labels + Services dropdown items are hardcoded (per approved plan).
+ * - Logo: siteSettings.logo overrides the static /images/Logo.svg fallback.
+ * - "Get in Touch" is a <button> (no href), fires the ContactModal via
+ *   [data-open-contact] — wired globally in ContactModal.astro.
+ * - Services dropdown: hover on hover-capable devices; click toggle for touch
+ *   and keyboard; Esc closes and restores focus; outside click and focus
+ *   leaving the dropdown close it.
+ * - Mobile (≤767): hamburger opens full-height off-canvas panel (a modal
+ *   dialog). While open: body scroll is locked, the rest of the page is
+ *   `inert`, focus moves to the close button. Close via X, Esc, backdrop or
+ *   link click; focus returns to the burger. The menu's "Get in Touch" closes
+ *   the menu before the ContactModal opens.
+ */
+import type { SiteSettings } from "../../lib/sanity/types";
+import { urlFor } from "../../lib/sanity/image";
+import Button from "../ui/Button.astro";
+
+interface Props {
+  siteSettings?: SiteSettings | null | undefined;
+}
+
+const { siteSettings } = Astro.props;
+
+const logoUrl = siteSettings?.logo?.asset
+  ? urlFor(siteSettings.logo).width(504).auto("format").url()
+  : "/images/Logo.svg";
+const logoAlt = siteSettings?.logo?.alt ?? siteSettings?.siteName ?? "BenorMedia";
+
+// Icons: 180px WebP (5× the 35.52px display), refs in docs/refs/navbar/.
+const services = [
+  { label: "Custom Websites & Migrations", href: "/custom-websites-migrations", icon: "/images/nav/custom-websites-migrations.webp" },
+  { label: "Growth (SEO/GEO + CRO)", href: "/growth", icon: "/images/nav/growth.webp" },
+  { label: "Ongoing Website Support", href: "/ongoing-website-support", icon: "/images/nav/ongoing-website-support.webp" },
+];
+
+// `hidden`: kept in the markup but not shown (desktop bar + mobile menu).
+// Testimonials stays out of production for now — lead 2026-09-30.
+const primaryLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
+  { label: "Work", href: "/work" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "Testimonials", href: "/testimonials", hidden: true },
+];
+---
+
+<header class="c-nav">
+  <div class="c-nav__inner">
+    <a href="/" class="c-nav__logo" aria-label="BenorMedia home">
+      <img src={logoUrl} alt={logoAlt} width="252" height="50" />
+    </a>
+
+    <nav class="c-nav__primary" aria-label="Primary">
+      <ul class="c-nav__list">
+        <li class="c-nav__item is-has-menu">
+          <button
+            type="button"
+            class="c-nav__services"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="nav-services-panel"
+          >
+            Services
+            <svg
+              class="c-nav__caret"
+              aria-hidden="true"
+              viewBox="0 0 12 8"
+              width="12"
+              height="8"
+            >
+              <path d="M1 1.5L6 6.5L11 1.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <div
+            id="nav-services-panel"
+            class="c-nav__panel"
+            role="menu"
+          >
+            {services.map((s) => (
+              <a href={s.href} role="menuitem" class="c-nav__panel-link">
+                <img
+                  src={s.icon}
+                  alt=""
+                  width="180"
+                  height="180"
+                  loading="lazy"
+                  decoding="async"
+                  class="c-nav__panel-icon"
+                />
+                {s.label}
+              </a>
+            ))}
+          </div>
+        </li>
+        {primaryLinks.map((link) => (
+          <li class="c-nav__item" hidden={link.hidden}>
+            <a href={link.href} class="c-nav__link">{link.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="c-nav__cta">
+      <Button variant="gradient" class="c-nav__cta-button js-open-contact">Get in Touch</Button>
+    </div>
+
+    <button
+      type="button"
+      class="c-nav__burger"
+      aria-label="Open menu"
+      aria-expanded="false"
+      aria-controls="nav-mobile-panel"
+    >
+      <span class="c-nav__burger-line"></span>
+      <span class="c-nav__burger-line"></span>
+      <span class="c-nav__burger-line"></span>
+    </button>
+  </div>
+</header>
+
+<!-- Outside <header>: the header's backdrop-filter and GSAP transform would
+     make it the containing block of this fixed, full-screen panel. -->
+<div
+  id="nav-mobile-panel"
+  class="c-nav__mobile"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Menu"
+  hidden
+>
+  <div class="c-nav__mobile-inner">
+    <button
+      type="button"
+      class="c-nav__mobile-close"
+      aria-label="Close menu"
+    >
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+        <path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+      </svg>
+    </button>
+
+    <ul class="c-nav__mobile-list">
+      <li class="c-nav__mobile-group">
+        <div class="c-nav__mobile-group-label">Services</div>
+        <ul class="c-nav__mobile-sublist">
+          {services.map((s) => (
+            <li><a href={s.href} class="c-nav__mobile-sublink">{s.label}</a></li>
+          ))}
+        </ul>
+      </li>
+      {primaryLinks.map((link) => (
+        <li hidden={link.hidden}><a href={link.href} class="c-nav__mobile-link">{link.label}</a></li>
+      ))}
+    </ul>
+
+    <div class="c-nav__mobile-cta">
+      <Button variant="gradient" class="js-open-contact">Get in Touch</Button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // --- Services dropdown (desktop, click/tap fallback) ---------------------
+  const services = document.querySelector<HTMLElement>(".c-nav__item.is-has-menu");
+  const trigger = services?.querySelector<HTMLButtonElement>(".c-nav__services");
+  const panel = services?.querySelector<HTMLElement>(".c-nav__panel");
+
+  function closeServices() {
+    if (!services || !trigger) return;
+    services.classList.remove("is-open");
+    trigger.setAttribute("aria-expanded", "false");
+  }
+  function openServices() {
+    if (!services || !trigger) return;
+    services.classList.add("is-open");
+    trigger.setAttribute("aria-expanded", "true");
+  }
+
+  if (trigger && services && panel) {
+    trigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = services.classList.contains("is-open");
+      if (isOpen) closeServices();
+      else openServices();
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!services.contains(e.target as Node)) closeServices();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && services.classList.contains("is-open")) {
+        closeServices();
+        trigger.focus();
+      }
+    });
+
+    // Close when keyboard focus leaves the trigger + panel (e.g. Tab past
+    // the last link), so the panel and aria-expanded stay in sync.
+    services.addEventListener("focusout", (e) => {
+      const next = e.relatedTarget as Node | null;
+      if (!next || !services.contains(next)) closeServices();
+    });
+  }
+
+  // Scroll state (`is-scrolled`: 1rem from the top, solid bar), hide on
+  // scroll down / show on scroll up and the entry animation all live in
+  // src/scripts/animations/nav-motion.ts (they depend on each other).
+
+  // `--c-nav-height` on <html>: the bar's height in the page flow, so the
+  // Home hero can fit the first view under it (lead 2026-10-01).
+  const navBar = document.querySelector<HTMLElement>(".c-nav");
+  if (navBar) {
+    const setNavHeight = (): void => {
+      document.documentElement.style.setProperty("--c-nav-height", `${navBar.offsetHeight}px`);
+    };
+    setNavHeight();
+    new ResizeObserver(setNavHeight).observe(navBar);
+  }
+
+  // --- Mobile off-canvas panel --------------------------------------------
+  const burger = document.querySelector<HTMLButtonElement>(".c-nav__burger");
+  const mobile = document.querySelector<HTMLElement>("#nav-mobile-panel");
+  const mobileClose = document.querySelector<HTMLButtonElement>(".c-nav__mobile-close");
+
+  // Elements made inert while the menu is open (everything outside the panel:
+  // the header bar behind it, main, CTA banner, footer...). Tracked so we only
+  // restore what we changed.
+  let inerted: HTMLElement[] = [];
+  let mobileOpen = false;
+
+  function setPageInert(on: boolean) {
+    if (on) {
+      const targets = Array.from(document.body.children).filter(
+        (el): el is HTMLElement =>
+          el instanceof HTMLElement && el !== mobile && el.tagName !== "SCRIPT",
+      );
+      inerted = targets.filter((el) => !el.inert);
+      inerted.forEach((el) => (el.inert = true));
+    } else {
+      inerted.forEach((el) => (el.inert = false));
+      inerted = [];
+    }
+  }
+
+  function openMobile() {
+    if (!mobile || !burger || mobileOpen) return;
+    mobileOpen = true;
+    mobile.hidden = false;
+    // Allow next paint to apply the transition
+    requestAnimationFrame(() => mobile.classList.add("is-open"));
+    burger.setAttribute("aria-expanded", "true");
+    document.body.style.overflow = "hidden";
+    setPageInert(true);
+    mobileClose?.focus();
+  }
+  function closeMobile() {
+    if (!mobile || !burger || !mobileOpen) return;
+    mobileOpen = false;
+    mobile.classList.remove("is-open");
+    burger.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+    setPageInert(false);
+    burger.focus();
+    // Hide after transition; keep simple + immediate for reduced motion
+    window.setTimeout(() => {
+      if (mobile && !mobile.classList.contains("is-open")) mobile.hidden = true;
+    }, 250);
+  }
+
+  if (burger && mobile) {
+    burger.addEventListener("click", () => {
+      if (mobileOpen) closeMobile();
+      else openMobile();
+    });
+    mobileClose?.addEventListener("click", closeMobile);
+    mobile.addEventListener("click", (e) => {
+      if (e.target === mobile) closeMobile();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && mobileOpen) closeMobile();
+    });
+    // Close on nav link click (so anchor navigation shows the destination page cleanly)
+    mobile.querySelectorAll("a").forEach((a) => {
+      a.addEventListener("click", () => closeMobile());
+    });
+
+    // Menu "Get in Touch": close the menu first (capture phase, so it runs
+    // before ContactModal's own click listener) so the modal never stacks on
+    // an open menu and the page is no longer inert when the modal opens.
+    let contactFromMenu = false;
+    mobile.addEventListener(
+      "click",
+      (e) => {
+        if ((e.target as Element).closest(".js-open-contact")) {
+          contactFromMenu = true;
+          closeMobile();
+        }
+      },
+      { capture: true },
+    );
+    // ContactModal restores focus to its opener, which here is the now-hidden
+    // menu button. If focus was lost, land it on the burger instead.
+    document.querySelector("#contact-modal")?.addEventListener("close", () => {
+      if (!contactFromMenu) return;
+      contactFromMenu = false;
+      const active = document.activeElement as HTMLElement | null;
+      if (!active || active === document.body || !active.checkVisibility()) {
+        burger.focus();
+      }
+    });
+
+    // Leaving the mobile breakpoint hides the panel via CSS; reset state so
+    // the page is not left inert.
+    window.matchMedia("(min-width: 768px)").addEventListener("change", (e) => {
+      if (e.matches && mobileOpen) closeMobile();
+    });
+  }
+</script>
+
+<style>
+  /* Floating glass bar — values from CEO revs (2026-09-30). */
+  .c-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    max-width: 1400px;
+    /* 1.5rem side gap below 1400px + 3rem; centered above (a plain
+       `margin: 0 1.5rem` would pin the bar left on wide screens). */
+    margin: 0 max(1.5rem, (100% - 1400px) / 2);
+    padding: 1rem 2.5rem;
+    background-color: var(--color-surface-glass);
+    -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+    border-radius: 14px;
+    /* transform is excluded: GSAP drives it (nav-motion.ts), and a CSS
+       transition on the same property would lag every tween frame. */
+    transition: all 0.2s ease, transform 0s;
+  }
+  /* At the top of the page (nav-motion.ts, lead 2026-10-01): the bar
+     scrolls away with the page; sticky again once it is off-screen. */
+  .c-nav.is-flow {
+    position: relative;
+  }
+  /* Scrolled: a more solid bar so the grey links stay readable over the
+     blue hero / CTA banner (white 80% ≈ 5:1 for --color-text over
+     --color-blue). Navbar only, no token — lead 2026-09-30 (QA Q7c). */
+  .c-nav.is-scrolled {
+    top: 1rem;
+    background-color: rgba(255, 255, 255, 0.8);
+  }
+  /* Within the top 10% of a screen (nav-motion.ts): no 1rem offset, so
+     a bar that shows up on the way back to the top is already at its
+     resting spot and nothing changes when the page reaches the top (lead
+     2026-10-01). A floating bar that scrolls into this zone glides up
+     (0.2s) just before the top instead of at it. */
+  .c-nav.is-scrolled.is-near-top {
+    top: 0;
+  }
+  /* Entry animation pre-state: set by an inline <head> script (BaseLayout)
+     so the bar never flashes before GSAP takes over; removed by the script,
+     or by a timeout if it never loads. */
+  :global(html.is-nav-intro) .c-nav {
+    transform: translateY(calc(-100% - 1rem));
+  }
+  .c-nav__inner {
+    max-width: 1440px;
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+  }
+  .c-nav__logo {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+  }
+  .c-nav__logo img {
+    display: block;
+    /* Lead 2026-09-30 */
+    width: auto;
+    height: 2.8rem;
+    max-width: 100%;
+  }
+
+  .c-nav__primary {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+  .c-nav__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    /* 10px — lead 2026-09-30 */
+    gap: 0.625rem;
+  }
+  .c-nav__item {
+    position: relative;
+  }
+  /* Box + text mirror c-tag (Tag.astro) — lead 2026-09-30. Border is
+     transparent at rest and fades to --color-gray on hover / while open. */
+  .c-nav__link,
+  .c-nav__services {
+    background: none;
+    padding: 0.5em 1.05em;
+    border: 0.5px solid transparent;
+    border-radius: 3px;
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: 0.064em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: border-color var(--duration-hover) var(--ease-smooth);
+  }
+  .c-nav__link:hover,
+  .c-nav__services:hover,
+  .c-nav__item.is-open > .c-nav__services {
+    border-color: var(--color-gray);
+  }
+  .c-nav__caret {
+    transition: transform var(--duration-hover) var(--ease-smooth);
+  }
+  .c-nav__item.is-open .c-nav__caret {
+    transform: rotate(180deg);
+  }
+
+  /* --- Services dropdown panel ------------------------------------------- */
+  .c-nav__panel {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    /* Ref: docs/refs/navbar/dropdown-content-preview.png — lead 2026-09-30.
+       Figma 15/24px padding, 20px gap (÷16 → rem). */
+    background: var(--color-white);
+    border: var(--border-default);
+    border-radius: 8px;
+    box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.15);
+    padding: 0.9375rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 1.25rem;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 200ms var(--ease-smooth), visibility 200ms var(--ease-smooth);
+  }
+  /* Invisible bridge that spans the visual 0.5rem gap between trigger and
+     panel — keeps :hover on the parent li active while the cursor crosses. */
+  .c-nav__panel::before {
+    content: "";
+    position: absolute;
+    top: -0.5rem;
+    left: 0;
+    right: 0;
+    height: 0.5rem;
+  }
+  .c-nav__item.is-open > .c-nav__panel {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  /* Hover open on hover-capable devices. Keyboard open/close is driven only
+     by `is-open` (script), so Esc and focus-out visibly close the panel. */
+  @media (hover: hover) {
+    .c-nav__item.is-has-menu:hover > .c-nav__panel {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+    .c-nav__item.is-has-menu:hover .c-nav__caret {
+      transform: rotate(180deg);
+    }
+  }
+  /* Text mirrors c-tag (Tag.astro) — lead 2026-09-30. Box (lead visual QA
+     2026-09-30, px ÷14): 6px padding, 10px gap, 1px transparent border,
+     3px radius; hover = c-nav__link's (border → --color-gray #C9CEDA, text
+     unchanged). */
+  .c-nav__panel-link {
+    display: flex;
+    padding: 0.429rem;
+    align-items: center;
+    gap: 0.714rem;
+    align-self: stretch;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: 0.064em;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: border-color var(--duration-hover) var(--ease-smooth);
+  }
+  .c-nav__panel-link:hover {
+    border-color: var(--color-gray);
+  }
+  .c-nav__panel-icon {
+    flex-shrink: 0;
+    /* 35.52px ÷ 14 — lead visual QA 2026-09-30 (was 59.2px) */
+    width: 2.537rem;
+    height: 2.537rem;
+    border-radius: 5.481px;
+  }
+
+  /* --- Mobile burger + panel --------------------------------------------- */
+  /* TODO: DS mobile — no dedicated mobile nav design provided; built functional with DS tokens. */
+  .c-nav__burger {
+    display: none;
+    background: none;
+    border: 0;
+    padding: 0.5rem;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .c-nav__burger-line {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--color-heading);
+    border-radius: 1px;
+  }
+  .c-nav__mobile {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: var(--color-white);
+    opacity: 0;
+    transition: opacity 200ms var(--ease-smooth);
+    overflow-y: auto;
+  }
+  .c-nav__mobile.is-open {
+    opacity: 1;
+  }
+  .c-nav__mobile-inner {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    min-height: 100%;
+  }
+  .c-nav__mobile-close {
+    align-self: flex-end;
+    background: none;
+    border: 0;
+    padding: 0.5rem;
+    color: var(--color-heading);
+    cursor: pointer;
+  }
+  .c-nav__mobile-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .c-nav__mobile-link,
+  .c-nav__mobile-sublink {
+    display: block;
+    color: var(--color-heading);
+    font-family: var(--font-body);
+    font-size: var(--fs-p-m);
+    text-decoration: none;
+    padding: 0.5rem 0;
+  }
+  .c-nav__mobile-group-label {
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--fs-p-s);
+    text-transform: uppercase;
+    letter-spacing: 0.064em;
+    margin-bottom: 0.75rem;
+  }
+  .c-nav__mobile-sublist {
+    list-style: none;
+    padding: 0 0 0 1rem;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .c-nav__mobile-sublink {
+    font-size: var(--fs-p);
+  }
+  .c-nav__mobile-cta {
+    margin-top: auto;
+    padding-top: 2rem;
+  }
+
+  /* --- Nav CTA button ----------------------------------------------------- */
+  /* Scoped override of .c-button padding for the Get in Touch CTA per Figma:
+     16 / 30 / 14 / 30 px. Uses :global because Astro's per-file scoping
+     doesn't reach into the <Button> component's rendered element. */
+  :global(.c-nav__cta-button) {
+    padding: 0.7rem 1.875rem;
+    gap: 0.5rem;
+  }
+
+  /* --- Breakpoints -------------------------------------------------------- */
+  @media (max-width: 767px) {
+    /* TODO: DS mobile — see note above */
+    .c-nav__primary,
+    .c-nav__cta { display: none; }
+    .c-nav__burger { display: inline-flex; }
+  }
+  @media (min-width: 768px) {
+    .c-nav__mobile { display: none !important; }
+  }
+</style>

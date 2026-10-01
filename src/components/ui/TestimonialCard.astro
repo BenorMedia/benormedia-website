@@ -1,0 +1,157 @@
+---
+/**
+ * TestimonialCard — quote on top, author row at the bottom.
+ *
+ * Author row: [ photo · name · role/company ] ........ [ client logo ]
+ * Logo = the client that references this testimonial; falls back to the
+ * testimonial's own `companyLogo`, then to nothing.
+ *
+ * Fallbacks: missing photo → author initial in a circle; missing role → name only.
+ */
+import type { Testimonial } from "../../lib/sanity/types";
+import { urlFor, type Source } from "../../lib/sanity/image";
+
+interface Props {
+  testimonial: Testimonial;
+  class?: string;
+}
+
+const { testimonial: t, class: className } = Astro.props;
+
+const photoUrl = t.authorPhoto?.asset
+  ? urlFor(t.authorPhoto as Source).width(96).height(96).fit("crop").auto("format").url()
+  : undefined;
+const initial = t.authorName?.trim().charAt(0).toUpperCase() ?? "";
+
+const logoSource = t.client?.logo?.asset ? t.client.logo : t.companyLogo?.asset ? t.companyLogo : undefined;
+const logoUrl = logoSource
+  ? urlFor(logoSource as Source).height(64).fit("max").auto("format").url()
+  : undefined;
+const logoAlt = logoSource?.alt ?? t.client?.name ?? "";
+
+const rootClass = ["c-testimonial-card", className].filter(Boolean).join(" ");
+---
+
+<article class={rootClass}>
+  <blockquote class="c-testimonial-card__quote c-paragraph">&ldquo;{t.quote}&rdquo;</blockquote>
+
+  <footer class="c-testimonial-card__author">
+    <div class="c-testimonial-card__person">
+      {photoUrl ? (
+        <img
+          class="c-testimonial-card__photo"
+          src={photoUrl}
+          alt={t.authorPhoto?.alt ?? t.authorName}
+          width="48"
+          height="48"
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <span class="c-testimonial-card__photo is-empty" aria-hidden="true">{initial}</span>
+      )}
+      <span class="c-testimonial-card__meta">
+        <span class="c-testimonial-card__name c-paragraph_s">{t.authorName}</span>
+        {t.authorRole && (
+          <span class="c-testimonial-card__role c-paragraph_s">{t.authorRole}</span>
+        )}
+      </span>
+    </div>
+
+    {logoUrl && (
+      <img class="c-testimonial-card__logo" src={logoUrl} alt={logoAlt} loading="lazy" decoding="async" />
+    )}
+  </footer>
+</article>
+
+<style>
+  /* Shared by every TestimonialMarquee (Home, Work, Pricing, service) and the
+     Testimonials grid. Padding, gap and radius: lead visual QA 2026-09-29,
+     px → rem at 1/14. Size is still the marquee size at 1/16 rem. */
+  .c-testimonial-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-shrink: 0;
+    gap: 1.714rem; /* 24px */
+    width: 34rem; /* 544px at 1/16 */
+    height: 23.03rem; /* 368.484px at 1/16 */
+    padding: 2.714rem 2.429rem; /* 38px 34px */
+    border-radius: 14px;
+    border: var(--border-default);
+    background: var(--color-surface-glass);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+
+  .c-testimonial-card__quote {
+    margin: 0;
+    color: var(--color-text);
+  }
+
+  /* --- Author row ------------------------------------------------------ */
+  .c-testimonial-card__author {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .c-testimonial-card__person {
+    display: flex;
+    align-items: center;
+    /* TODO: DS gap photo → name (ref ≈ 15px). */
+    gap: 0.9375rem;
+    min-width: 0;
+  }
+
+  /* TODO: DS author photo size (ref ≈ 44px). */
+  .c-testimonial-card__photo {
+    flex: 0 0 auto;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 999px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .c-testimonial-card__photo.is-empty {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-gray-light);
+    color: var(--color-heading);
+    font-family: var(--font-heading);
+    font-size: var(--fs-text);
+    line-height: 1;
+  }
+
+  .c-testimonial-card__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    min-width: 0;
+  }
+
+  .c-testimonial-card__name {
+    color: var(--color-heading);
+    font-weight: 700;
+  }
+
+  .c-testimonial-card__role {
+    color: var(--color-text);
+  }
+
+  /* TODO: DS client logo size in testimonial cards (ref ≈ 29px tall). */
+  .c-testimonial-card__logo {
+    flex: 0 0 auto;
+    display: block;
+    height: 1.8rem;
+    width: auto;
+    max-width: 8.75rem;
+    object-fit: contain;
+    object-position: right center;
+  }
+</style>

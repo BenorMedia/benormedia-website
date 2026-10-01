@@ -1,0 +1,80 @@
+---
+/**
+ * Technologies — Home "Technologies" section.
+ *
+ * Section header + static diagram (tool categories → BenorMedia mark →
+ * capabilities). Design-only for now: the animation spec is pending from
+ * the design team; the image carries `data-anim="tech-diagram"` as the hook.
+ *
+ * `/images/home/technologies.svg` is an optimized copy of
+ * `docs/refs/technologies-image.svg` (embedded bitmaps downscaled to WebP;
+ * vectors untouched) — 20 MB → ~0.4 MB.
+ */
+import Container from "../ui/Container.astro";
+import SectionHeader from "../ui/SectionHeader.astro";
+---
+
+<section class="c-tech">
+  <Container>
+    <SectionHeader
+      eyebrow="Technologies"
+      title={"We deal with everything,\nso you don’t have to."}
+      class="c-tech__header"
+    />
+
+    <!-- ≤767: dedicated mobile diagram (docs/refs/home-diagram-mobile.png as
+         WebP 1125w / 1536w, QA S5 2026-09-30;
+         lead 2026-09-30); desktop keeps the SVG. -->
+    <picture class="c-tech__diagram">
+      <source
+        media="(max-width: 767px)"
+        srcset="/images/home/technologies-mobile.webp 1125w, /images/home/technologies-mobile@1536.webp 1536w"
+        sizes="100vw"
+        type="image/webp"
+        width="1125"
+        height="2174"
+      />
+      <img
+        src="/images/home/technologies.svg"
+        alt="Diagram: tools for web design and development, CRM and API integrations, SEO / GEO / AEO, CRO optimization, and CMS integrations and migrations connect through BenorMedia into capabilities such as scalable CMS structure, web design and development systems, custom API and CRM integrations, accessibility, GDPR and CCPA, content creation, and CRO, SEO and AEO / GEO analytics."
+        width="1680"
+        height="1107"
+        loading="lazy"
+        decoding="async"
+        data-anim="tech-diagram"
+      />
+    </picture>
+  </Container>
+</section>
+
+<style>
+  .c-tech {
+    background: var(--color-white);
+  }
+
+  .c-tech__diagram {
+    display: block;
+    /* TODO: DS space between section header and content. */
+    margin-top: 3rem;
+  }
+  /* Mobile: the diagram spans the whole screen width, outside the
+     container's side padding; the header stays in the container (lead
+     2026-10-01). Negative margins = the container's mobile side padding
+     (utilities.css, 2rem); `100vw` was wider than the page when a scrollbar
+     takes space, which cut the image on the right. `max-width: none`
+     lifts base.css's `picture { max-width: 100% }`, which otherwise kept
+     the box at the content width (shifted left, short on the right). */
+  @media (max-width: 767px) {
+    .c-tech__diagram {
+      max-width: none;
+      margin-inline: -2rem;
+    }
+  }
+
+  /* Full width, natural height: both diagrams show every label. */
+  .c-tech__diagram img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+</style>

@@ -29,7 +29,9 @@ Design is approved in Figma. Build it faithfully. Never redesign, never prototyp
 | Decisions and open questions | `docs/DECISIONS.md` |
 | Task reports | `docs/handoffs/` |
 
-If code and docs disagree, docs win. If docs are missing a value: STOP, log it in `DECISIONS.md` under "Open questions", and use the closest existing token as a placeholder marked `/* TODO: DS */`.
+If code and docs disagree, docs win. If docs are missing a value: STOP, log it in `DECISIONS.md` (Global or the page section → Open questions → category, following "How this file works" at the top of that file), and use the closest existing token as a placeholder marked `/* TODO: DS */`.
+
+The project lead does not read `DECISIONS.md`: the orchestrator relays open questions to the lead in chat, numbered and grouped by who answers.
 
 ## Hard rules
 1. Never deploy to production. Never push or merge to `main`. Production is released by the project lead only.
@@ -39,8 +41,7 @@ If code and docs disagree, docs win. If docs are missing a value: STOP, log it i
 5. Never edit `docs/DESIGN_SYSTEM.md` or `src/styles/tokens.css` without the project lead's confirmation.
 6. Never commit secrets. Env vars live in `.env` (gitignored) and in Vercel.
 7. Check for an existing component, class or token before creating a new one.
-8. No shadows on any element (design rule).
-9. `pnpm run build`, `pnpm run check` and `pnpm run lint` must pass before any handoff.
+8. `pnpm run build`, `pnpm run check` and `pnpm run lint` must pass before any handoff.
 
 ## Class naming convention
 - `c-` component: `c-hero`, `c-nav`
@@ -78,6 +79,7 @@ If code and docs disagree, docs win. If docs are missing a value: STOP, log it i
    ├─ pages/
    ├─ styles/               tokens.css, base.css, typography.css, buttons.css, utilities.css
    ├─ scripts/animations/   one file per animation, initialized from BaseLayout
+   ├─ scripts/ui/           shared UI behaviors (tabs.ts, client-previews.ts), imported by components
    └─ lib/sanity/           client.ts, queries.ts, types.ts, image.ts
 ```
 

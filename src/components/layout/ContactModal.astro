@@ -1,0 +1,443 @@
+---
+/**
+ * ContactModal — c-contact-modal
+ *
+ * Right-side slide-in panel built on a native <dialog>.
+ * - Opened by any [data-open-contact] or .js-open-contact element site-wide.
+ * - Backdrop: rgba(255,255,255,0.05) + backdrop-filter: blur(12px).
+ * - Panel: 753px wide, full viewport height, right-anchored, white bg.
+ * - Header (title + subtitle) hardcoded per Figma; siteSettings.contactModal
+ *   is NOT read in this iteration — content is the exact Figma copy.
+ * - Form → POST /api/contact (src/pages/api/contact.ts, Vercel function +
+ *   Google Workspace SMTP; lead 2026-10-01): emails every field to
+ *   info@benor.media. Native
+ *   validation (name, email, company, budget required), a hidden honeypot
+ *   field against bots, the button disabled while sending, and a status
+ *   line (`role="status"`) with the result; the form resets on success.
+ * - Testimonial card (bottom): Surfe's Sanity testimonial (else the first) as the shared
+ *   TestimonialCard, styled like the Testimonials page grid (full width,
+ *   solid white). Hidden when there are no testimonials. Lead 2026-09-30.
+ */
+import Button from "../ui/Button.astro";
+import TestimonialCard from "../ui/TestimonialCard.astro";
+import { getContactTestimonialCached } from "../../lib/sanity/site";
+
+const testimonial = await getContactTestimonialCached();
+---
+
+<dialog id="contact-modal" class="c-contact-modal" aria-labelledby="contact-modal-title">
+  <div class="c-contact-modal__panel">
+    <button
+      type="button"
+      class="c-contact-modal__close"
+      data-close-contact
+      aria-label="Close"
+    >
+      <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+        <path d="M6 6L18 18M6 18L18 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+      </svg>
+    </button>
+
+    <header class="c-contact-modal__header">
+      <h2 id="contact-modal-title" class="c-text_xl c-contact-modal__title">Let's work together.</h2>
+      <p class="c-contact-modal__subtitle">
+        Please fill out the form below and one of our team members will be in touch
+        with you within 24 hours. You can also reach out at{" "}
+        <a href="mailto:info@benor.media">info@benor.media</a>
+      </p>
+    </header>
+
+    <form class="c-contact-modal__form" novalidate>
+      <div class="c-contact-modal__row">
+        <label class="c-contact-modal__field">
+          <span class="c-contact-modal__label">Name*</span>
+          <input type="text" name="name" required autofocus />
+        </label>
+        <label class="c-contact-modal__field">
+          <span class="c-contact-modal__label">Email*</span>
+          <input type="email" name="email" required />
+        </label>
+      </div>
+
+      <label class="c-contact-modal__field">
+        <span class="c-contact-modal__label">Company*</span>
+        <input type="text" name="company" required />
+      </label>
+
+      <fieldset class="c-contact-modal__field c-contact-modal__budget">
+        <legend class="c-contact-modal__label">Engagement Budget*</legend>
+        <div class="c-contact-modal__budget-options">
+          <label class="c-contact-modal__budget-option">
+            <input type="radio" name="budget" value="<5000" required />
+            <span>&lt;5000</span>
+          </label>
+          <label class="c-contact-modal__budget-option">
+            <input type="radio" name="budget" value="5000-15000" />
+            <span>5,000 - 15,000</span>
+          </label>
+          <label class="c-contact-modal__budget-option">
+            <input type="radio" name="budget" value="15000-30000" />
+            <span>15,000 - 30,000</span>
+          </label>
+          <label class="c-contact-modal__budget-option">
+            <input type="radio" name="budget" value="30000+" />
+            <span>30,000+</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <label class="c-contact-modal__field">
+        <span class="c-contact-modal__label">Message</span>
+        <textarea name="message" rows="3"></textarea>
+      </label>
+
+      {/* Honeypot: hidden from people (and screen readers); bots fill it. */}
+      <div class="c-contact-modal__hp" aria-hidden="true">
+        <label>
+          Website
+          <input type="text" name="website" tabindex="-1" autocomplete="off" />
+        </label>
+      </div>
+
+      <Button variant="gradient" type="submit" class="c-contact-modal__submit">Submit</Button>
+      {/* TODO: COPY — status messages are set by the script below. */}
+      <p class="c-contact-modal__status c-paragraph_s" role="status" aria-live="polite" data-contact-status></p>
+    </form>
+
+    {testimonial && (
+      <div class="c-contact-modal__testimonial">
+        <TestimonialCard testimonial={testimonial} />
+      </div>
+    )}
+  </div>
+</dialog>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>("#contact-modal");
+  const closeBtn = dialog?.querySelector<HTMLButtonElement>("[data-close-contact]");
+  const form = dialog?.querySelector<HTMLFormElement>(".c-contact-modal__form");
+
+  // Track the element that opened the modal so we can restore focus on close.
+  let opener: HTMLElement | null = null;
+
+  function openModal(trigger: HTMLElement) {
+    if (!dialog) return;
+    opener = trigger;
+    dialog.showModal();
+    // Next paint applies the slide-in transform.
+    requestAnimationFrame(() => dialog.classList.add("is-visible"));
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeModal() {
+    if (!dialog) return;
+    // All exit animations run in parallel: blur fades, panel slides right,
+    // page scroll returns — all at the same time.
+    dialog.classList.add("is-closing");
+    dialog.classList.remove("is-visible");
+    document.body.style.overflow = "";
+    // After the longest transition finishes (panel slide = 400ms), close the
+    // dialog and reset state.
+    window.setTimeout(() => {
+      dialog.close();
+      dialog.classList.remove("is-closing");
+      opener?.focus();
+      opener = null;
+    }, 400);
+  }
+
+  // --- Wiring -------------------------------------------------------------
+
+  // Open triggers: [data-open-contact] on native elements, .js-open-contact
+  // on wrapped Button components (see Nav CTA, Footer Contact link, styleguide).
+  document
+    .querySelectorAll<HTMLElement>("[data-open-contact], .js-open-contact")
+    .forEach((el) => {
+      el.addEventListener("click", (e) => {
+        e.preventDefault();
+        openModal(el);
+      });
+    });
+
+  closeBtn?.addEventListener("click", closeModal);
+
+  // Backdrop click closes (event.target is the dialog itself when clicking the backdrop).
+  dialog?.addEventListener("click", (e) => {
+    if (e.target === dialog) closeModal();
+  });
+
+  // Esc: intercept native close so we can play the exit animation.
+  dialog?.addEventListener("cancel", (e) => {
+    e.preventDefault();
+    closeModal();
+  });
+
+  // --- Form submit → /api/contact (lead 2026-10-01) -----------------------
+  // TODO: COPY — status messages.
+  const MESSAGES = {
+    sending: "Sending…",
+    success: "Thanks! We'll be in touch within 24 hours.",
+    error: "Something went wrong. Please try again or email us at info@benor.media.",
+  };
+  const status = form?.querySelector<HTMLElement>("[data-contact-status]");
+  const submit = form?.querySelector<HTMLButtonElement>('button[type="submit"]');
+
+  const setStatus = (message: string, state: "sending" | "success" | "error"): void => {
+    if (!status) return;
+    status.textContent = message;
+    status.dataset["state"] = state;
+  };
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+    const data = Object.fromEntries(new FormData(form).entries());
+    if (submit) submit.disabled = true;
+    form.setAttribute("aria-busy", "true");
+    setStatus(MESSAGES.sending, "sending");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      form.reset();
+      setStatus(MESSAGES.success, "success");
+    } catch {
+      setStatus(MESSAGES.error, "error");
+    } finally {
+      if (submit) submit.disabled = false;
+      form.removeAttribute("aria-busy");
+    }
+  });
+</script>
+
+<style>
+  /* --- Dialog frame + backdrop -------------------------------------------
+     The <dialog> itself is invisible/transparent; the visible slide-in is
+     the .c-contact-modal__panel inside it. */
+  .c-contact-modal {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+    margin: 0;
+    position: fixed;
+    inset: 0;
+    overflow: visible;
+  }
+  .c-contact-modal::backdrop {
+    /* TODO: DS on-dark tokens — rgba literal here mirrors the Figma spec
+       (backdrop scrim). See DECISIONS.md "on-dark surface tokens". */
+    background: rgba(255, 255, 255, 0.05);
+    -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+    transition: background 200ms var(--ease-smooth),
+                -webkit-backdrop-filter 200ms var(--ease-smooth),
+                backdrop-filter 200ms var(--ease-smooth);
+  }
+  .c-contact-modal.is-closing::backdrop {
+    background: transparent;
+    -webkit-backdrop-filter: blur(0);
+            backdrop-filter: blur(0);
+  }
+
+  /* --- Slide-in panel ---------------------------------------------------- */
+  .c-contact-modal__panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 47.0625rem; /* 753px */
+    max-width: 100%;
+    padding: 1.875rem 2.675rem 2.572rem 2.675rem; /* 30 / 42.797 / 41.151 */
+    border: 0;
+    border-right: 1px solid var(--color-border);
+    background: var(--color-white);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.875rem; /* 30px */
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 400ms var(--ease-smooth);
+    will-change: transform;
+  }
+  .c-contact-modal.is-visible .c-contact-modal__panel {
+    transform: translateX(0);
+  }
+
+  /* --- Close button ------------------------------------------------------ */
+  .c-contact-modal__close {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.5rem;
+    background: none;
+    border: 0;
+    padding: 0.25rem;
+    color: var(--color-heading);
+    cursor: pointer;
+  }
+  .c-contact-modal__close:hover {
+    color: var(--color-accent);
+  }
+
+  /* --- Header ------------------------------------------------------------ */
+  .c-contact-modal__header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-right: 2.5rem; /* leave room for the close button */
+  }
+  .c-contact-modal__title {
+    /* Figma #222 → closest token. TODO: DS confirm modal title color. */
+    color: var(--color-black-secondary);
+  }
+  /* Scoped text style (lead 2026-09-30): 20.1px / 34.238px line-height,
+     then −30% (lead visual QA 2026-09-30): 1.436rem × 0.7. */
+  .c-contact-modal__subtitle {
+    color: var(--color-black-secondary); /* #222 → closest token */
+    font-family: var(--font-body);
+    font-size: 1.005rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.703; /* 34.238 / 20.1 */
+  }
+  .c-contact-modal__subtitle a {
+    color: inherit;
+    text-decoration: underline;
+  }
+
+  /* --- Form -------------------------------------------------------------- */
+  .c-contact-modal__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .c-contact-modal__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  .c-contact-modal__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    min-width: 0;
+  }
+  .c-contact-modal__label {
+    font-family: var(--font-body);
+    font-size: var(--fs-p-s);
+    color: var(--color-text);
+  }
+  .c-contact-modal__field input[type="text"],
+  .c-contact-modal__field input[type="email"],
+  .c-contact-modal__field textarea {
+    border: 0;
+    border-bottom: 1px solid var(--color-border);
+    padding: 0.5rem 0;
+    font-family: var(--font-body);
+    font-size: var(--fs-p);
+    color: var(--color-heading);
+    background: transparent;
+    outline: none;
+    width: 100%;
+    resize: vertical;
+    transition: border-color var(--duration-hover) var(--ease-smooth);
+  }
+  .c-contact-modal__field input:focus,
+  .c-contact-modal__field textarea:focus {
+    border-bottom-color: var(--color-accent);
+  }
+
+  /* Budget radios */
+  .c-contact-modal__budget-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.25rem;
+    padding-top: 0.5rem;
+  }
+  .c-contact-modal__budget-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--font-body);
+    font-size: var(--fs-p-s);
+    color: var(--color-heading);
+    cursor: pointer;
+  }
+  .c-contact-modal__budget-option input {
+    accent-color: var(--color-accent);
+  }
+
+  /* Submit — inherit gradient Button, force full width */
+  :global(.c-contact-modal__submit) {
+    width: 100%;
+  }
+  :global(.c-contact-modal__submit:disabled) {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  /* Submit result (TODO: DS — no design). Empty = takes no space. */
+  .c-contact-modal__status {
+    margin: 0;
+    color: var(--color-text);
+  }
+  .c-contact-modal__status:empty {
+    display: none;
+  }
+  .c-contact-modal__status[data-state="success"] {
+    color: var(--color-accent);
+  }
+
+  /* Honeypot: off-screen, not focusable (tabindex -1), hidden from AT. */
+  .c-contact-modal__hp {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  /* --- Testimonial card --------------------------------------------------
+     Same look as the Testimonials page grid: full width, solid white. */
+  .c-contact-modal__testimonial {
+    width: 100%;
+  }
+  .c-contact-modal__testimonial :global(.c-testimonial-card) {
+    width: 100%;
+    /* Half the card's 2.714rem / 2.429rem padding (lead visual QA
+       2026-09-30); height 100% (was 19rem) + gap 2rem (was 1.714rem),
+       lead visual QA 2026-10-01. */
+    padding: 1.357rem 1.214rem;
+    height: 100%;
+    gap: 2rem;
+    background: var(--color-white);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  /* --- Breakpoints ------------------------------------------------------- */
+  @media (max-width: 767px) {
+    /* TODO: DS mobile — no dedicated mobile design; panel goes near-full-width. */
+    .c-contact-modal__panel {
+      width: 100vw;
+      padding: 1.5rem 1.25rem 2rem 1.25rem;
+      gap: 1.5rem;
+    }
+    .c-contact-modal__row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

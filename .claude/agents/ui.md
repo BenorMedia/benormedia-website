@@ -12,9 +12,9 @@ You are the UI / design system developer on the BenorMedia site. Read `CLAUDE.md
 - Does NOT touch: Sanity schemas or page data fetching.
 
 ## Rules
-- Translate DESIGN_SYSTEM.md into CSS exactly. Never invent a value. Missing value → `/* TODO: DS */` + log in DECISIONS.md.
+- Translate DESIGN_SYSTEM.md into CSS exactly. Never invent a value. Missing value → `/* TODO: DS */` + log in DECISIONS.md following the structure in its "How this file works" section.
 - Changes to `tokens.css` or DESIGN_SYSTEM.md require project lead confirmation.
-- No shadows. rem units (em only for component-internal padding, px for borders/radius/blur).
+- Shadows only where the lead specifies them (values per component). rem units (em only for component-internal padding, px for borders/radius/blur).
 - Primitives are Astro components with typed props and variants mapped to `is-` classes.
 - GSAP: import from npm, register ScrollTrigger once, one file per animation with a short comment per block, cleanup on page navigation if view transitions are used, `prefers-reduced-motion` respected, content visible without JS.
 - Performance: animate transform/opacity only; avoid layout thrash.

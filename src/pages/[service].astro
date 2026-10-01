@@ -1,0 +1,180 @@
+---
+/**
+ * Service template — Phase 5. One static page per published Sanity `service`
+ * (`/<slug>`; today only `/custom-websites-migrations`). Refs:
+ * `docs/refs/services-template/` (`services-template-preview.jpg`).
+ *
+ * Sections (lead brief: 3 custom sections, the rest reused):
+ *   1. ServiceHero     — breadcrumb, h1 `headline`, `subtitle`, CtaActions (light)
+ *   2. LogoStrip       — same as Home (`getAllClientsWithLogo`)
+ *      (1 + 2 share the `.c-service-intro` wrapper, which paints the line art
+ *      `service-mid-hero-bg` across the hero bottom and the logo strip)
+ *   3. ServiceProblem  — `problemTitle` / `problemDescription` + vertical
+ *                        screenshot carousels of the related `clients`
+ *   4. ServiceProcess  — `processTitle` / `processDescription` + step tabs
+ *   5. OurWork         — same pins as Home (`src/lib/content/our-work.ts`)
+ *   6. Testimonials    — same as Home
+ *   7. FaqSection      — the service's `faqSections` (answers: Portable Text →
+ *                        plain paragraphs), FAQPage JSON-LD
+ *   8. CTA banner + footer — BaseLayout default
+ *
+ * SEO: `service.seo` → title = `name`, description = `subtitle` (≤160 chars)
+ * → siteSettings defaults. BreadcrumbList JSON-LD (Home → service) when the
+ * site URL is known.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import {
+  getAllClientsWithLogo,
+  getClientsByIds,
+  getServiceBySlug,
+  getServiceSlugs,
+  getTestimonials,
+} from "../lib/sanity/queries";
+import { getCtaBadgeUrlsCached, getSiteSettingsCached } from "../lib/sanity/site";
+import { accentTitleSegments, accentTitleText, portableTextToPlain } from "../lib/sanity/portable-text";
+import type { Client, Service } from "../lib/sanity/types";
+import type { FaqGroup } from "../lib/content/faqs";
+import { OUR_WORK_GRID_IDS, OUR_WORK_LIST_IDS } from "../lib/content/our-work";
+import ServiceHero from "../components/sections/ServiceHero.astro";
+import { SERVICE_LAYOUT } from "../lib/content/service-layout";
+import LogoStrip from "../components/sections/LogoStrip.astro";
+import ServiceProblem from "../components/sections/ServiceProblem.astro";
+import ServiceProcess from "../components/sections/ServiceProcess.astro";
+import OurWork from "../components/sections/OurWork.astro";
+import Testimonials from "../components/sections/Testimonials.astro";
+import FaqSection from "../components/sections/FaqSection.astro";
+
+export async function getStaticPaths() {
+  const slugs = await getServiceSlugs();
+  const services = await Promise.all(slugs.map((slug) => getServiceBySlug(slug)));
+  return services
+    .filter((service): service is Service => service !== null)
+    .map((service) => ({ params: { service: service.slug }, props: { service } }));
+}
+
+interface Props {
+  service: Service;
+}
+
+const { service } = Astro.props;
+
+const [logoClients, testimonials, workClients, workListClients, badges, siteSettings] = await Promise.all([
+  getAllClientsWithLogo(),
+  getTestimonials(),
+  getClientsByIds(OUR_WORK_GRID_IDS),
+  getClientsByIds(OUR_WORK_LIST_IDS),
+  getCtaBadgeUrlsCached(),
+  getSiteSettingsCached(),
+]);
+
+// --- Hero -------------------------------------------------------------------
+const headlineSegments = accentTitleSegments(service.headline);
+const headlineText = accentTitleText(service.headline) || service.name;
+const heroSegments = headlineSegments.length > 0 ? headlineSegments : undefined;
+
+// BreadcrumbList JSON-LD needs absolute URLs; skipped when no site URL is set.
+const siteBase = (siteSettings?.siteUrl ?? Astro.site?.toString() ?? "").replace(/\/$/, "");
+const breadcrumbLd = siteBase
+  ? [
+      { name: "Home", url: `${siteBase}/` },
+      { name: service.name, url: `${siteBase}/${service.slug}` },
+    ]
+  : undefined;
+
+// --- Problem / Process --------------------------------------------------------
+const relatedClients = (service.clients ?? []).filter((c): c is Client => c !== null);
+const problemSegments = accentTitleSegments(service.problemTitle);
+const processSegments = accentTitleSegments(service.processTitle);
+
+// --- FAQs: Sanity faqSections → FaqSection groups ----------------------------
+const slugify = (text: string): string =>
+  text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const usedValues = new Set<string>();
+const faqGroups: FaqGroup[] = (service.faqSections ?? []).flatMap((section, i) => {
+  const label = section.title?.trim();
+  if (!label) return [];
+  let value = slugify(label) || `section-${i + 1}`;
+  if (usedValues.has(value)) value = `${value}-${i + 1}`;
+  usedValues.add(value);
+  const items = (section.faqs ?? [])
+    .map((faq) => ({ question: faq.question?.trim() ?? "", answer: portableTextToPlain(faq.answer) }))
+    .filter((item) => item.question.length > 0);
+  return [{ label, value, items }];
+});
+
+// --- SEO fallback --------------------------------------------------------------
+function clamp(text: string, max = 160): string {
+  const clean = text.replace(/\s+/g, " ").trim();
+  if (clean.length <= max) return clean;
+  const cut = clean.slice(0, max - 1);
+  return `${cut.slice(0, cut.lastIndexOf(" ")).replace(/[\s,;:.]+$/, "")}…`;
+}
+const metaDescription = service.subtitle ? clamp(service.subtitle) : undefined;
+// Per-service text widths (lead 2026-10-01); none = template defaults.
+const layout = SERVICE_LAYOUT[service.slug] ?? {};
+const layoutOptional = metaDescription ? { description: metaDescription } : {};
+---
+
+<BaseLayout pageSeo={service.seo ?? null} title={service.name} {...layoutOptional}>
+  <div class="c-service-intro">
+    <ServiceHero
+      name={service.name}
+      title={headlineText}
+      titleSegments={heroSegments}
+      subtitle={service.subtitle}
+      badges={badges}
+      breadcrumbLd={breadcrumbLd}
+      descriptionWidth={layout.heroDescription}
+    />
+    {logoClients.length > 0 && <LogoStrip clients={logoClients} />}
+  </div>
+
+  <ServiceProblem
+    title={accentTitleText(service.problemTitle)}
+    titleSegments={problemSegments}
+    description={service.problemDescription}
+    clients={relatedClients}
+    paragraphWidths={layout.problemParagraphs}
+  />
+
+  <ServiceProcess
+    title={accentTitleText(service.processTitle)}
+    titleSegments={processSegments}
+    description={service.processDescription}
+    steps={service.steps ?? []}
+  />
+
+  {(workClients.length > 0 || workListClients.length > 0) && (
+    <OurWork clients={workClients} listClients={workListClients} />
+  )}
+  <Testimonials testimonials={testimonials} />
+  <FaqSection title="Frequently asked questions." groups={faqGroups} />
+</BaseLayout>
+
+<style>
+  /* Line art (docs/refs/services-template/service-mid-hero-bg.svg, 1920×747,
+     exported as 1x/2x WebP flattened on white) behind the hero bottom and
+     the logo strip. In the preview its box ends ≈65px below the strip's
+     bottom border (the art itself ends above it), so it is anchored to the
+     wrapper bottom at the 1920 frame width (137.143rem). TODO: DS */
+  .c-service-intro {
+    background-color: var(--color-white);
+    background-image: url("/images/services/service-mid-hero-bg.webp");
+    background-image: image-set(
+      url("/images/services/service-mid-hero-bg.webp") 1x,
+      url("/images/services/service-mid-hero-bg@2x.webp") 2x
+    );
+    background-repeat: no-repeat;
+    background-position: center calc(100% + 4.643rem);
+    background-size: 137.143rem auto;
+  }
+
+  /* Let the line art show through the reused logo strip. */
+  .c-service-intro :global(.c-logos) {
+    background: transparent;
+  }
+</style>

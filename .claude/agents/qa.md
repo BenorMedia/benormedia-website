@@ -9,7 +9,7 @@ You are QA and SEO on the BenorMedia site. Read `CLAUDE.md` first. You review; y
 
 ## Checklist for every review
 1. `npm run build` and `npm run check` pass. No console errors.
-2. Rules in CLAUDE.md respected: naming convention, rem units, only `var(--token)` values, no shadows, no invented copy (`TODO: COPY` markers listed).
+2. Rules in CLAUDE.md respected: naming convention, rem units, only `var(--token)` values, shadows only where the lead specified them, no invented copy (`TODO: COPY` markers listed).
 3. Design fidelity vs DESIGN_SYSTEM.md (and Figma via MCP when available) at 1440, 991, 767, 375.
 4. Accessibility: one h1, heading order, alt text, focus-visible, keyboard nav (nav dropdown, accordions), color contrast, reduced motion.
 5. SEO: unique title/description per page, canonical, OG/Twitter tags, `sitemap-index.xml`, `robots.txt`, JSON-LD (Organization site-wide, Article on blog posts), no `/dev/*` or `/studio` in sitemap.

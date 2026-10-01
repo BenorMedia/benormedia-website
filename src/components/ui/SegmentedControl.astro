@@ -1,0 +1,220 @@
+---
+/**
+ * SegmentedControl — bordered switcher with a light gray pill on the active item.
+ * Refs: `docs/refs/work/work-list.jpg` (Work filters, with corner squares) and
+ * `docs/refs/pricing/FAQs.jpg` (FAQ tabs, no squares).
+ *
+ * Markup only: callers wire the behavior.
+ *   - `mode="toggle"` → `role="group"` + `<button aria-pressed>` items (Work filters).
+ *     The caller updates `aria-pressed` + `is-active` on click.
+ *   - `mode="tabs"`   → `role="tablist"` + `<button role="tab">` items (FAQ tabs).
+ *     Each item needs `controls` (the id of its tabpanel). Tab id defaults to
+ *     `<controls>-tab`, so panels can use `aria-labelledby="<controls>-tab"`.
+ *     Behavior: `initTabs(el)` from `src/scripts/ui/tabs.ts`.
+ *     The tablist renders `hidden`, so there are no dead tabs without JS (every
+ *     panel stays visible). `initTabs` removes `hidden` once the tabs work.
+ *
+ * `squares` adds the two decorative corner squares seen on the Work filters
+ * (top-left + bottom-right, same box as the Eyebrow squares, DESIGN_SYSTEM §3.3).
+ *
+ * `scroll` (opt-in, lead 2026-09-29): at ≤767 the items stay on one row and
+ * the control scrolls horizontally instead of wrapping (Pricing FAQ tabs).
+ * `initTabs` scrolls the selected tab into view. Without it, items wrap.
+ */
+interface Item {
+  label: string;
+  value: string;
+  /** Tabs mode: id of the tabpanel this tab controls. */
+  controls?: string;
+  /** Tabs mode: tab id. Defaults to `<controls>-tab`. */
+  id?: string;
+}
+
+type Mode = "toggle" | "tabs";
+
+interface Props {
+  items: Item[];
+  /** Value of the active item. Defaults to the first item. */
+  active?: string;
+  /** Accessible name (aria-label) of the group / tablist. */
+  label: string;
+  mode?: Mode;
+  squares?: boolean;
+  /** ≤767: one row that scrolls horizontally instead of wrapping. */
+  scroll?: boolean;
+  class?: string;
+}
+
+const {
+  items,
+  active,
+  label,
+  mode = "toggle",
+  squares = false,
+  scroll = false,
+  class: className,
+} = Astro.props;
+
+const activeValue = items.some((item) => item.value === active) ? active : items[0]?.value;
+const isTabs = mode === "tabs";
+
+if (isTabs && import.meta.env.DEV) {
+  for (const item of items) {
+    if (!item.controls) {
+      console.warn(`[SegmentedControl] tabs item "${item.value}" has no \`controls\` panel id.`);
+    }
+  }
+}
+
+const rootClass = ["c-segmented", squares && "is-squared", scroll && "is-scroll", className]
+  .filter(Boolean)
+  .join(" ");
+---
+
+{
+  items.length > 0 && (
+    <div
+      class={rootClass}
+      role={isTabs ? "tablist" : "group"}
+      aria-label={label}
+      aria-orientation={isTabs ? "horizontal" : undefined}
+      hidden={isTabs}
+      data-anim="segmented"
+    >
+      {items.map((item) => {
+        const isActive = item.value === activeValue;
+        const itemClass = ["c-segmented__item", "c-paragraph", isActive && "is-active"]
+          .filter(Boolean)
+          .join(" ");
+        return isTabs ? (
+          <button
+            type="button"
+            role="tab"
+            id={item.id ?? (item.controls ? `${item.controls}-tab` : undefined)}
+            class={itemClass}
+            aria-selected={isActive ? "true" : "false"}
+            aria-controls={item.controls}
+            tabindex={isActive ? 0 : -1}
+            data-value={item.value}
+          >
+            {item.label}
+          </button>
+        ) : (
+          <button
+            type="button"
+            class={itemClass}
+            aria-pressed={isActive ? "true" : "false"}
+            data-value={item.value}
+          >
+            {item.label}
+          </button>
+        );
+      })}
+    </div>
+  )
+}
+
+<style>
+  /* Measured from the refs (1920 frame, 1 ref px = 1/14 rem at the ≥1440 root).
+     TODO: DS — radius, paddings and gaps below are not in DESIGN_SYSTEM. */
+  .c-segmented {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.714rem; /* ≈10px between items — TODO: DS */
+    padding: 0.357rem; /* 5px — TODO: DS */
+    border: var(--border-default);
+    border-radius: 6px; /* TODO: DS */
+    background: var(--color-white);
+  }
+
+  /* Tabs mode ships `hidden` until `initTabs` runs; the `display` above would
+     otherwise override the attribute. */
+  .c-segmented[hidden] {
+    display: none;
+  }
+
+  .c-segmented__item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0.934rem 1.714rem; /* 48px tall pill, 24px sides — TODO: DS */
+    border: 0;
+    border-radius: 5px; /* TODO: DS */
+    background: transparent;
+    color: var(--color-text);
+    white-space: nowrap;
+    cursor: pointer;
+    /* Active pill fades between items instead of jumping (lead, 2026-09-29).
+       Reduced motion: base.css shortens every transition. */
+    transition:
+      background-color var(--duration-hover) var(--ease-smooth),
+      color var(--duration-hover) var(--ease-smooth);
+  }
+
+  .c-segmented__item:hover {
+    color: var(--color-black-secondary); /* TODO: DS — no hover state in refs */
+  }
+
+  .c-segmented__item.is-active {
+    /* TODO: DS — ref pill is #F5F5F5; closest token is --color-gray-light (#F0F0F0). */
+    background: var(--color-gray-light);
+    color: var(--color-black-secondary);
+  }
+
+  .c-segmented__item:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* Corner squares (Work filters): Eyebrow square box (§3.3), centered on the
+     top-left and bottom-right corners of the border. */
+  .c-segmented.is-squared::before,
+  .c-segmented.is-squared::after {
+    content: "";
+    position: absolute;
+    width: 0.625rem;
+    height: 0.625rem;
+    background: var(--color-white);
+    border: 0.5px solid var(--color-gray);
+    border-radius: 1.5px;
+    pointer-events: none;
+  }
+  .c-segmented.is-squared::before {
+    top: -1px;
+    left: -1px;
+    transform: translate(-50%, -50%);
+  }
+  .c-segmented.is-squared::after {
+    right: -1px;
+    bottom: -1px;
+    transform: translate(50%, 50%);
+  }
+
+  /* TODO: DS mobile — no mobile refs. Items wrap and center instead of
+     overflowing the viewport. */
+  @media (max-width: 767px) {
+    .c-segmented {
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 100%;
+    }
+
+    /* Opt-in: one row that scrolls sideways (scrollbar hidden; the cut-off
+       item at the edge shows there is more). */
+    .c-segmented.is-scroll {
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+    }
+    .c-segmented.is-scroll::-webkit-scrollbar {
+      display: none;
+    }
+    .c-segmented.is-scroll .c-segmented__item {
+      flex: 0 0 auto;
+    }
+  }
+</style>

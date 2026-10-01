@@ -1,0 +1,214 @@
+---
+/**
+ * BaseLayout — global shell for every page.
+ * Fetches siteSettings once via cache and threads it into Nav, Footer,
+ * CtaBanner and ContactModal. Seo renders <head> meta with fallback chain
+ * pageSeo → props → siteSettings defaults.
+ */
+import "../styles/tokens.css";
+import "../styles/base.css";
+import "../styles/typography.css";
+import "../styles/buttons.css";
+import "../styles/utilities.css";
+
+import type { Seo as SeoData, SanityImage, SiteSettings } from "../lib/sanity/types";
+import { getSiteSettingsCached } from "../lib/sanity/site";
+import { urlFor } from "../lib/sanity/image";
+
+import Seo from "../components/layout/Seo.astro";
+import Nav from "../components/layout/Nav.astro";
+import Footer from "../components/layout/Footer.astro";
+import CtaBanner from "../components/layout/CtaBanner.astro";
+import ContactModal from "../components/layout/ContactModal.astro";
+// CookieConsent.astro (+ src/scripts/ui/cookie-consent.ts) is kept but not
+// rendered: banner hidden for now, lead 2026-10-01.
+
+type OgImage = SanityImage | string;
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: OgImage;
+  noIndex?: boolean;
+  /** Legacy alias — accept lowercase form to stay compatible with earlier pages. */
+  noindex?: boolean;
+  pageSeo?: SeoData | null;
+  showCtaBanner?: boolean;
+}
+
+const {
+  title,
+  description,
+  ogImage,
+  noIndex,
+  noindex,
+  pageSeo,
+  showCtaBanner = true,
+} = Astro.props;
+
+const noIndexResolved = noIndex ?? noindex ?? false;
+
+const siteSettings: SiteSettings | null = await getSiteSettingsCached();
+
+// --- Google Tag Manager (lead 2026-09-30) ----------------------------------
+// Production only (`PUBLIC_SITE_ENV`, the same switch Seo uses for noindex):
+// previews and local dev never load it.
+// Loads on every page view (lead 2026-10-01: the cookie banner is hidden
+// for now). This inline script defines `window.bmLoadGtm()` (the official
+// GTM snippet, verbatim, inside it) and calls it at once; the `<noscript>`
+// iframe is back first in <body>. To bring consent back: render
+// <CookieConsent /> again, drop the `<noscript>` and call `bmLoadGtm()` only
+// when the `bm_consent=granted` cookie is set (cookie-consent.ts calls it on
+// "Accept all"). Consent Mode is set to granted right before GTM starts.
+// Keep the cookie name in sync with src/scripts/ui/cookie-consent.ts.
+const GTM_ID = "GTM-M4MHRTDM";
+const loadGtm = import.meta.env["PUBLIC_SITE_ENV"] === "production";
+const gtmHead = `<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+window.bmLoadGtm = function () {
+  if (window.bmGtmLoaded) return;
+  window.bmGtmLoaded = true;
+  gtag('consent', 'default', {
+    ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted',
+    analytics_storage: 'granted', functionality_storage: 'granted', security_storage: 'granted'
+  });
+  // Google Tag Manager (official snippet)
+  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','${GTM_ID}');
+  // End Google Tag Manager
+};
+window.bmLoadGtm();
+</script>`;
+const gtmBody = `<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->`;
+
+// --- Organization JSON-LD --------------------------------------------------
+type OrganizationLd = {
+  "@context": "https://schema.org";
+  "@type": "Organization";
+  name: string;
+  url?: string;
+  logo?: string;
+  description?: string;
+  sameAs?: string[];
+  foundingDate?: string;
+  address?: {
+    "@type": "PostalAddress";
+    streetAddress?: string;
+    addressLocality?: string;
+    addressRegion?: string;
+    postalCode?: string;
+    addressCountry?: string;
+  };
+};
+
+let orgLd: OrganizationLd | null = null;
+if (siteSettings) {
+  const orgName = siteSettings.legalName ?? siteSettings.siteName;
+  if (orgName) {
+    const ld: OrganizationLd = {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: orgName,
+    };
+    if (siteSettings.siteUrl) ld.url = siteSettings.siteUrl;
+    if (siteSettings.orgLogo?.asset) {
+      ld.logo = urlFor(siteSettings.orgLogo).width(512).height(512).fit("crop").url();
+    }
+    if (siteSettings.orgDescription) ld.description = siteSettings.orgDescription;
+    if (siteSettings.sameAs && siteSettings.sameAs.length > 0) ld.sameAs = siteSettings.sameAs;
+    if (siteSettings.foundingYear) ld.foundingDate = String(siteSettings.foundingYear);
+    if (siteSettings.address) {
+      const a = siteSettings.address;
+      const hasAny = a.street || a.city || a.region || a.postalCode || a.country;
+      if (hasAny) {
+        ld.address = {
+          "@type": "PostalAddress",
+          ...(a.street && { streetAddress: a.street }),
+          ...(a.city && { addressLocality: a.city }),
+          ...(a.region && { addressRegion: a.region }),
+          ...(a.postalCode && { postalCode: a.postalCode }),
+          ...(a.country && { addressCountry: a.country }),
+        };
+      }
+    }
+    orgLd = ld;
+  }
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    {loadGtm && <Fragment set:html={gtmHead} />}
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Brand icons (docs/refs/benor, lead 2026-10-01): favicon 32px PNG +
+         ICO (16/32), web clip = 180px apple-touch-icon on white. -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Animation pre-states, set before first paint so nothing flashes:
+         nav entry (nav-motion.ts) and the hero pile's static fallback
+         (hero-physics.ts). The timeouts show both if the modules fail. -->
+    <script is:inline>
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        const root = document.documentElement;
+        root.classList.add("is-nav-intro", "is-hero-pending");
+        window.setTimeout(() => root.classList.remove("is-nav-intro"), 3000);
+        window.setTimeout(() => root.classList.remove("is-hero-pending"), 5000);
+      }
+    </script>
+
+    <link
+      rel="preload"
+      href="/fonts/brulia-display.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <Seo
+      title={title}
+      description={description}
+      ogImage={ogImage}
+      noIndex={noIndexResolved}
+      pageSeo={pageSeo}
+      siteSettings={siteSettings}
+    />
+
+    {orgLd && (
+      <script type="application/ld+json" set:html={JSON.stringify(orgLd)} />
+    )}
+
+    <meta name="generator" content={Astro.generator} />
+  </head>
+  <body>
+    {loadGtm && <Fragment set:html={gtmBody} />}
+    <Nav siteSettings={siteSettings} />
+    <main><slot /></main>
+    {showCtaBanner && <CtaBanner siteSettings={siteSettings} />}
+    <Footer siteSettings={siteSettings} />
+    <ContactModal siteSettings={siteSettings} />
+    <script>
+      // Animations — one file per animation in src/scripts/animations/.
+      import { initNavMotion } from "../scripts/animations/nav-motion";
+      import { initCtaBadges } from "../scripts/animations/cta-badges";
+      import { initCtaVector } from "../scripts/animations/cta-vector";
+      import { initFooterWordmark } from "../scripts/animations/footer-wordmark";
+      import { initHeroPhysics } from "../scripts/animations/hero-physics";
+      initNavMotion();
+      initHeroPhysics();
+      initCtaBadges();
+      initCtaVector();
+      initFooterWordmark();
+    </script>
+  </body>
+</html>

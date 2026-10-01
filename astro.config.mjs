@@ -6,16 +6,30 @@ import { createRequire } from 'node:module';
 import vercel from '@astrojs/vercel';
 import react from '@astrojs/react';
 import sanity from '@sanity/astro';
+import sitemap from '@astrojs/sitemap';
 
-/** @type {{ env: { NODE_ENV?: string }, cwd(): string }} */
+/** @type {{ env: { NODE_ENV?: string }, cwd(): string, argv: string[] }} */
 const proc = /** @type {any} */ (globalThis).process;
+
+// `astro dev` vs every other command (build, check, preview). They get
+// separate Vite caches (see `vite.cacheDir`).
+const isDevServer = proc.argv.includes('dev');
 
 const env = loadEnv(proc.env.NODE_ENV ?? 'development', proc.cwd(), '');
 const projectId = env['PUBLIC_SANITY_PROJECT_ID'] ?? '';
 const dataset = env['PUBLIC_SANITY_DATASET'] ?? '';
+// Production URL (e.g. https://benor.media). Unset until the domain is
+// confirmed; Seo then omits canonical/og:url instead of emitting localhost.
+const siteUrl = env['PUBLIC_SITE_URL'] || undefined;
 
 const require = createRequire(import.meta.url);
 const sanityEntry = require.resolve('sanity');
+// `sanity/structure` is aliased the same way: as a bare id in
+// `optimizeDeps.include` Vite resolved it to this repo's own
+// `sanity/structure.ts` (the desk structure, same path under the project
+// root) and pre-bundled that file, so `structureTool` was missing and the
+// Studio failed to hydrate (2026-09-30).
+const sanityStructureEntry = require.resolve('sanity/structure');
 const styledComponentsEntry = require.resolve('styled-components');
 
 // TODO: remove when @sanity/astro fixes Windows path-strip in sanity:module-dedupe (see handoff 2026-09-25).
@@ -27,6 +41,7 @@ const benorSanityAliasFix = {
       resolve: {
         alias: [
           { find: /^sanity$/, replacement: sanityEntry },
+          { find: /^sanity\/structure$/, replacement: sanityStructureEntry },
           { find: /^styled-components$/, replacement: styledComponentsEntry },
         ],
       },
@@ -45,6 +60,7 @@ const benorSanityAliasFix = {
    */
   resolveId(/** @type {string} */ id) {
     if (id === 'sanity') return sanityEntry;
+    if (id === 'sanity/structure') return sanityStructureEntry;
     if (id === 'styled-components') return styledComponentsEntry;
     if (typeof id === 'string' && /[\\/]sanity[\\/]package\.json$/.test(id)) {
       return sanityEntry;
@@ -81,6 +97,7 @@ const benorSanityAliasFix = {
     /** @param {any} aliases */
     const patch = (aliases) => {
       patchOne(aliases, 'sanity', sanityEntry);
+      patchOne(aliases, 'sanity/structure', sanityStructureEntry);
       patchOne(aliases, 'styled-components', styledComponentsEntry);
     };
     patch(resolved.resolve?.alias);
@@ -95,7 +112,13 @@ const benorSanityAliasFix = {
 
 // https://astro.build/config
 export default defineConfig({
+  ...(siteUrl ? { site: siteUrl } : {}),
   output: 'static',
+  // No trailing slashes site-wide (lead, 2026-09-29). The Vercel adapter turns
+  // this into `trailingSlash: false` routes (308 `/work/` → `/work`); it also
+  // forces `build.format: 'directory'`, so `Astro.url.pathname` still ends in
+  // `/` at build time: Seo strips it for canonical / og:url.
+  trailingSlash: 'never',
   adapter: vercel({ imageService: true }),
   integrations: [
     sanity({
@@ -106,8 +129,58 @@ export default defineConfig({
       studioBasePath: '/studio',
     }),
     react(),
+    // Needs `site` (PUBLIC_SITE_URL): skipped with a warning until the
+    // production domain is set. Dev pages, Studio and the 404 are left out,
+    // and so are the legal pages while they are noindex placeholders and
+    // /testimonials while testimonials are off (lead 2026-09-30; drop them
+    // from this list when they go live).
+    sitemap({
+      filter: (page) =>
+        !/\/(dev|studio)(\/|$)|\/404$|^\/(privacy-policy|terms-conditions|cookie-policy|testimonials)\/?$/.test(
+          new URL(page).pathname,
+        ),
+    }),
   ],
   vite: {
     plugins: [benorSanityAliasFix],
+    // Studio "Failed to fetch dynamically imported module …/.vite/deps/…"
+    // (2026-09-25, again 2026-09-30). Two causes, both fixed here:
+    //  1. `astro build` / `check` re-optimized deps into the SAME cache as a
+    //     running `astro dev` ("Re-optimizing dependencies because vite
+    //     config has changed"), deleting the chunks an open Studio was using.
+    //     Non-dev commands now use their own cache dir.
+    //  2. Deps found only at runtime (the whole `sanity` package when /studio
+    //     opens, the Clients drag-and-drop list, gsap / matter-js on the site)
+    //     made `astro dev` re-optimize mid-session, change the chunk hashes
+    //     and reload, so in-flight dynamic imports in the Studio failed. They
+    //     are pre-bundled at server start instead. Dev only; builds are
+    //     unaffected.
+    cacheDir: isDevServer ? 'node_modules/.vite' : 'node_modules/.vite-build',
+    optimizeDeps: {
+      include: [
+        // Studio (sanity.config.ts, sanity/)
+        'sanity',
+        // Aliased to the package file (see `sanityStructureEntry` above).
+        'sanity/structure',
+        '@sanity/table',
+        'styled-components',
+        // Studio → Clients (drag-and-drop list)
+        '@sanity/orderable-document-list',
+        'lexorank',
+        '@sanity/orderable-document-list > @hello-pangea/dnd',
+        '@sanity/orderable-document-list > sanity-plugin-utils',
+        // Site animations
+        'gsap',
+        'gsap/ScrollTrigger',
+        'matter-js',
+      ],
+    },
+    // Contact endpoint (src/pages/api/contact.ts): bundle `nodemailer` into
+    // the Vercel function instead of copying it from node_modules. The
+    // adapter copies external deps with symlinks, which Windows blocks
+    // without Developer Mode (EPERM), so local builds failed (2026-10-01).
+    ssr: {
+      noExternal: ['nodemailer'],
+    },
   },
 });

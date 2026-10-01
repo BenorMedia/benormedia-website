@@ -1,6 +1,6 @@
 # Handoff — <agent> — <task>
 
-Date: YYYY-MM-DD · Branch: `feat/...` · Status: DONE / BLOCKED / PARTIAL
+Date: YYYY-MM-DD · Author: <name or agent> · Branch: `feat/...` · Status: DONE / BLOCKED / PARTIAL
 
 ## What I did
 -

@@ -1,0 +1,638 @@
+---
+/**
+ * Services — one static illustration + 3 service cards, then the CTA actions.
+ *
+ * Lead visual QA 2026-09-30:
+ *   - Cards are links to the service pages. The former active look is the
+ *     hover / focus state: blue border + soft shadow (CEO-approved shadow
+ *     exception 2026-09-26, see DECISIONS) and the arrow in the primary
+ *     gradient, rotated -25deg. It stays on the last hovered / focused card
+ *     (`is-active`, lead 2026-10-01) until another card is hovered, so the
+ *     card always matches the ring lit in the diagram. Starts on the first
+ *     card (JS only; no JS = plain hover).
+ *   - Mobile (≤767, lead 2026-10-01): no diagram (its text was too small);
+ *     one static image per card (`docs/refs/services-images/animation/
+ *     mobile-static/drop1–3.png` as WebP 800w / 1200w), swapped when a card
+ *     opens. Desktop / tablet keep the diagram below.
+ *   - Illustration = `ServicesDiagram` (lead 2026-10-01): the three
+ *     `tab1–3` illustrations rebuilt as one HTML / CSS element (it replaced
+ *     three stacked WebP images whose crossfade showed where they differ).
+ *     Hovering (or focusing) a card lights that service's ring
+ *     (`data-active`, CSS transitions `--duration-hover` `--ease-smooth`);
+ *     the last one stays until another card is hovered. Starts on the first
+ *     card's ring. No JS: first ring. Reduced motion: instant.
+ *   - Buttons moved below the grid as the shared `CtaActions` (light tone,
+ *     with the rotating "Trusted by" badge), same variants as before:
+ *     gradient "Get in Touch" (contact modal) + gradient-outline "See Pricing".
+ *
+ * Mobile ≤767 (lead 2026-09-30, `docs/refs/services-images/
+ * mobile-services-preview.jpg`): an accordion inside a thin frame with
+ * corner nodes — illustration on top, then the cards. Each card header is a
+ * toggle button with a "+" circle (filled accent when open); the open card
+ * shows its copy and a "Learn More →" link to the service page. One card
+ * open at a time (the first by default); opening a card lights its ring in
+ * the diagram. CTA actions go full width. No JS: every card is open.
+ * Desktop / tablet keep the hover-link cards (the toggle and "Learn More"
+ * are not rendered visible there).
+ *
+ * Cards = the 3 Sanity services (lead 2026-09-30): `name` as title,
+ * `subtitle` as copy (`TODO: COPY`), linked to `/<slug>`. A missing /
+ * unpublished service drops its card. Body copy is always visible.
+ */
+import Container from "../ui/Container.astro";
+import SectionHeader from "../ui/SectionHeader.astro";
+import CtaActions from "../ui/CtaActions.astro";
+import ServicesDiagram from "./ServicesDiagram.astro";
+import type { Button as ButtonType } from "../../lib/sanity/types";
+import { getCtaBadgeUrlsCached } from "../../lib/sanity/site";
+import { getServiceCards } from "../../lib/sanity/queries";
+
+// The 3 services, in this order (lead 2026-09-30). Card title = Sanity
+// `name`, copy = `subtitle`, link = the service page.
+const SERVICE_SLUGS = ["custom-websites-migrations", "growth", "ongoing-website-support"] as const;
+// Diagram ring lit by each service's card (lead 2026-10-01).
+// Mobile static image per service (`<base>.webp` 800w, `<base>@1200.webp`).
+const MOBILE_IMAGES: Record<string, string> = {
+  "custom-websites-migrations": "/images/home/services-mobile-1",
+  growth: "/images/home/services-mobile-2",
+  "ongoing-website-support": "/images/home/services-mobile-3",
+};
+const RINGS: Record<string, "outer" | "middle" | "inner"> = {
+  "custom-websites-migrations": "outer",
+  growth: "middle",
+  "ongoing-website-support": "inner",
+};
+
+interface Item {
+  title: string;
+  body: string;
+  href: string;
+  ring: "outer" | "middle" | "inner";
+  /** Mobile image base path. */
+  mobileImage: string;
+}
+
+const services = await getServiceCards(SERVICE_SLUGS);
+const items: Item[] = services.map((service) => ({
+  title: service.name,
+  // TODO: COPY — the service `subtitle` until card copy is written.
+  body: service.subtitle?.trim() ?? "",
+  href: `/${service.slug}`,
+  ring: RINGS[service.slug] ?? "outer",
+  mobileImage: MOBILE_IMAGES[service.slug] ?? MOBILE_IMAGES["custom-websites-migrations"]!,
+}));
+
+const BUTTONS: ButtonType[] = [
+  { variant: "gradient", link: { label: "Get in Touch", type: "contact" } },
+  {
+    variant: "gradient-outline",
+    link: {
+      label: "See Pricing",
+      type: "internal",
+      internalRef: { _id: "pricingPage", _type: "pricingPage", title: "Pricing" },
+    },
+  },
+];
+const badges = await getCtaBadgeUrlsCached();
+---
+
+<section class="c-services" data-c-services>
+  <Container>
+    <SectionHeader
+      eyebrow="Services"
+      title="Your website doesn't stop at launch."
+      description="A site your team can run on its own, and a growth program that keeps it bringing in pipeline long after launch."
+      class="c-services__header"
+    />
+
+    <div class="c-services__grid">
+      {/* Mobile frame corners (decorative). */}
+      <span class="c-services__node is-tl" aria-hidden="true"></span>
+      <span class="c-services__node is-tr" aria-hidden="true"></span>
+      <span class="c-services__node is-bl" aria-hidden="true"></span>
+      <span class="c-services__node is-br" aria-hidden="true"></span>
+
+      <div class="c-services__col-left" aria-hidden="true">
+        <div class="c-services__diagram">
+          <ServicesDiagram active={items[0]?.ring ?? "outer"} />
+        </div>
+        {/* Mobile only: one static image per card, the open card's shows. */}
+        <div class="c-services__mobile-images">
+          {items.map((item, i) => (
+            <img
+              class:list={["c-services__mobile-image", { "is-active": i === 0 }]}
+              src={`${item.mobileImage}.webp`}
+              srcset={`${item.mobileImage}.webp 800w, ${item.mobileImage}@1200.webp 1200w`}
+              sizes="100vw"
+              width="800"
+              height="590"
+              alt=""
+              loading="lazy"
+              decoding="async"
+              data-c-services-mobile-image
+            />
+          ))}
+        </div>
+      </div>
+
+      <div class="c-services__col-right">
+        <div class="c-services__accordion">
+          {items.map((item, i) => (
+            <div
+              class:list={["c-services__item", { "is-open": i === 0 }]}
+              data-c-services-item={i}
+              data-c-services-ring={item.ring}
+            >
+              <h3 class="c-services__heading">
+                {/* Desktop / tablet: the whole card links to the service. */}
+                <a href={item.href} class="c-services__trigger">
+                  <span class="c-services__trigger-label">{item.title}</span>
+                  <span class="c-services__trigger-icon" aria-hidden="true"></span>
+                </a>
+                {/* Mobile: accordion toggle. */}
+                <button
+                  type="button"
+                  class="c-services__toggle"
+                  id={`c-services-toggle-${i}`}
+                  aria-expanded={i === 0 ? "true" : "false"}
+                  aria-controls={`c-services-panel-${i}`}
+                  data-c-services-toggle
+                >
+                  <span class="c-services__trigger-label">{item.title}</span>
+                  <span class="c-services__plus" aria-hidden="true"></span>
+                </button>
+              </h3>
+              <div class="c-services__panel" id={`c-services-panel-${i}`}>
+                <div class="c-services__panel-inner">
+                  <p class="c-paragraph">{item.body}</p>
+                  <a href={item.href} class="c-services__more c-paragraph">
+                    Learn More
+                    <svg class="c-services__more-icon" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M19 12L4 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                      <path d="M15 7L19.2929 11.2929C19.6262 11.6262 19.7929 11.7929 19.7929 12C19.7929 12.2071 19.6262 12.3738 19.2929 12.7071L15 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div class="c-services__actions">
+      <CtaActions buttons={BUTTONS} badges={badges} tone="light" />
+    </div>
+  </Container>
+</section>
+
+<style>
+  .c-services {
+    background: var(--color-white);
+  }
+
+  /* Title width — only on the Services header (lead 2026-10-01). */
+  .c-services :global(.c-services__header .c-section-header__title) {
+    max-width: 40rem;
+  }
+
+  /* Subtitle constraint — only on the Services header. */
+  .c-services :global(.c-services__header .c-section-header__description) {
+    max-width: 40%; /* lead 2026-09-30 */
+  }
+
+  /* Tablet + mobile: full width (lead 2026-09-30, QA Q6 — the % width came
+     out at ≈190–300px at 768–991). */
+  @media (max-width: 991px) {
+    .c-services :global(.c-services__header .c-section-header__description) {
+      max-width: 100%;
+    }
+  }
+
+  .c-services__grid {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: 1rem;
+    align-items: stretch;
+    /* TODO: DS space between section header and grid. */
+    margin-top: 3rem;
+  }
+
+  @media (max-width: 991px) {
+    .c-services__grid {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+  }
+
+  /* --- Left column (ServicesDiagram; static images on mobile) --------- */
+  .c-services__col-left {
+    position: relative;
+    display: grid;
+    place-items: center;
+  }
+  .c-services__diagram {
+    width: 100%;
+  }
+  /* Stacked in one cell; the open card's image crossfades in over the
+     current one (lead 2026-10-01). The outgoing image stays fully visible
+     underneath (`is-previous`) until the fade ends, so the section never
+     shows through. Reduced motion: instant. */
+  .c-services__mobile-images {
+    display: none;
+    width: 100%;
+  }
+  .c-services__mobile-image {
+    grid-area: 1 / 1;
+    display: block;
+    width: 100%;
+    height: auto;
+    opacity: 0;
+    transition: opacity var(--duration-hover) var(--ease-smooth);
+  }
+  .c-services__mobile-image.is-previous {
+    z-index: 1;
+    opacity: 1;
+    transition: none;
+  }
+  .c-services__mobile-image.is-active {
+    z-index: 2;
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .c-services__mobile-image {
+      transition: none;
+    }
+  }
+  @media (max-width: 767px) {
+    .c-services__diagram {
+      display: none;
+    }
+    .c-services__mobile-images {
+      display: grid;
+    }
+  }
+
+  /* --- Right column (service cards) ------------------------------------ */
+  .c-services__col-right {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .c-services__accordion {
+    height: 100%;
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr;
+    /* TODO: DS gap between service cards. */
+    gap: 1rem;
+  }
+
+  /* Card wrapper. The title link is stretched over the whole card via
+     ::after (see .c-services__trigger), so the card is one link whose
+     accessible name is just the title. */
+  .c-services__item {
+    position: relative;
+    display: flex;
+    padding: 1.3125rem; /* 21px */
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+    align-self: stretch;
+    min-height: 10.625rem; /* 170px */
+    border-radius: 0.5rem; /* 8px */
+    border: 1px solid var(--color-border);
+    background: var(--color-white);
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+    color: inherit;
+    transition:
+      border-color var(--duration-hover) var(--ease-smooth),
+      box-shadow var(--duration-hover) var(--ease-smooth);
+  }
+
+  /* Focus ring draws on the card, driven by the stretched link. */
+  .c-services__item:has(.c-services__trigger:focus-visible) {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* Hover / focus = the former active look — CEO-approved shadow
+     exception, see DECISIONS.md. Hover only on hover-capable devices, so a
+     tap on mobile leaves no sticky highlight. */
+  @media (hover: hover) {
+    .c-services__item:hover,
+    .c-services__item.is-active {
+      border-color: var(--color-blue);
+      box-shadow: 0 0 1.25rem 0 rgba(0, 0, 0, 0.05); /* 20px blur */
+    }
+    .c-services__item:hover .c-services__trigger-icon,
+    .c-services__item.is-active .c-services__trigger-icon {
+      background: var(--gradient-primary);
+      transform: rotate(-25deg);
+    }
+  }
+  .c-services__item:has(.c-services__trigger:focus-visible) {
+    border-color: var(--color-blue);
+    box-shadow: 0 0 1.25rem 0 rgba(0, 0, 0, 0.05);
+  }
+
+  .c-services__heading {
+    margin: 0;
+    width: 100%;
+  }
+
+  .c-services__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    text-align: left;
+    color: var(--color-heading);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .c-services__trigger:focus-visible {
+    outline: none;
+  }
+
+  /* Stretch the hit area over the whole card. */
+  .c-services__trigger::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+
+  .c-services__trigger-label {
+    color: var(--color-black-secondary);
+    font-family: var(--font-heading);
+    font-size: var(--fs-text-m);
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.4;
+  }
+
+  /* Arrow glyph — solid gray by default. Uses CSS mask so we can paint it
+     with the primary gradient on hover / focus. */
+  .c-services__trigger-icon {
+    display: inline-block;
+    width: 1rem; /* 16px */
+    height: 1rem; /* 16px */
+    flex: 0 0 auto;
+    background: var(--color-text);
+    -webkit-mask: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15 15'%3E%3Cpath d='M0.000296913 6.53401H11.6643C10.0983 5.20201 7.2543 2.52001 5.4903 0.918009L6.3543 8.58307e-06L14.0583 7.16401V7.21801L6.3543 14.472L5.4903 13.536C7.2723 11.898 10.0803 9.28801 11.6643 7.84801H0.000296913V6.53401Z'/%3E%3C/svg%3E") no-repeat center / contain;
+    mask: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15 15'%3E%3Cpath d='M0.000296913 6.53401H11.6643C10.0983 5.20201 7.2543 2.52001 5.4903 0.918009L6.3543 8.58307e-06L14.0583 7.16401V7.21801L6.3543 14.472L5.4903 13.536C7.2723 11.898 10.0803 9.28801 11.6643 7.84801H0.000296913V6.53401Z'/%3E%3C/svg%3E") no-repeat center / contain;
+    transition:
+      background var(--duration-hover) var(--ease-smooth),
+      transform var(--duration-hover) var(--ease-smooth);
+  }
+
+  .c-services__item:has(.c-services__trigger:focus-visible) .c-services__trigger-icon {
+    background: var(--gradient-primary);
+    transform: rotate(-25deg);
+  }
+
+  .c-services__panel {
+    color: var(--color-text);
+  }
+  .c-services__panel-inner p {
+    margin: 0;
+  }
+
+  /* Mobile-only parts: hidden on desktop / tablet. */
+  .c-services__toggle,
+  .c-services__more,
+  .c-services__node {
+    display: none;
+  }
+
+  /* --- Mobile accordion (≤767) ------------------------------------------
+     Measured on mobile-services-preview.jpg relative to its width
+     (TODO: DS mobile — values are proposals). */
+  @media (max-width: 767px) {
+    /* Frame: thin border around illustration + cards, square corner nodes
+       (same node look as the service Problem frame). Cards paint over the
+       side lines. */
+    .c-services__grid {
+      position: relative;
+      gap: 1.333rem; /* ≈12px */
+    }
+    .c-services__grid::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: var(--border-default);
+      pointer-events: none;
+    }
+    .c-services__node {
+      display: block;
+      position: absolute;
+      z-index: 1;
+      width: 1.5rem;
+      height: 1.5rem;
+      border: var(--border-default);
+      border-radius: 2px;
+      background: var(--color-white);
+      transform: translate(-50%, -50%);
+    }
+    .c-services__node.is-tl { top: 0; left: 0; }
+    .c-services__node.is-tr { top: 0; left: 100%; }
+    .c-services__node.is-bl { top: 100%; left: 0; }
+    .c-services__node.is-br { top: 100%; left: 100%; }
+
+    .c-services__accordion {
+      grid-template-rows: none;
+      gap: 1.333rem;
+    }
+    .c-services__item {
+      min-height: 0;
+      padding: 2.333rem 2.333rem; /* ≈21px */
+      cursor: auto;
+    }
+
+    /* Header: the toggle replaces the card link. */
+    .c-services__trigger {
+      display: none;
+    }
+    .c-services__toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      width: 100%;
+      padding: 0;
+      border: 0;
+      background: none;
+      text-align: left;
+      cursor: pointer;
+    }
+    .c-services__toggle:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+
+    /* "+" circle: outlined; filled accent with a white "+" when open. */
+    .c-services__plus {
+      position: relative;
+      flex: 0 0 auto;
+      width: 2.333rem; /* ≈21px */
+      height: 2.333rem;
+      border: 1px solid var(--color-gray);
+      border-radius: 50%;
+      color: var(--color-text);
+      transition:
+        background-color var(--duration-hover) var(--ease-smooth),
+        border-color var(--duration-hover) var(--ease-smooth),
+        color var(--duration-hover) var(--ease-smooth);
+    }
+    .c-services__plus::before,
+    .c-services__plus::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 40%;
+      height: 1px;
+      background: currentColor;
+      transform: translate(-50%, -50%);
+    }
+    .c-services__plus::after {
+      transform: translate(-50%, -50%) rotate(90deg);
+    }
+    .c-services__item.is-open .c-services__plus {
+      background-color: var(--color-accent);
+      border-color: var(--color-accent);
+      color: var(--color-white);
+    }
+
+    /* Panel: copy + "Learn More". Collapsed with JS only (no JS: open). */
+    .c-services__panel {
+      display: grid;
+      grid-template-rows: 1fr;
+      transition:
+        grid-template-rows var(--duration-hover) var(--ease-smooth),
+        visibility 0s linear 0s;
+    }
+    .c-services__panel-inner {
+      min-height: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+      padding-top: 1.5rem;
+    }
+    .c-services.is-enhanced .c-services__item:not(.is-open) .c-services__panel {
+      grid-template-rows: 0fr;
+      visibility: hidden;
+      transition:
+        grid-template-rows var(--duration-hover) var(--ease-smooth),
+        visibility 0s linear var(--duration-hover);
+    }
+
+    .c-services__more {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--color-blue);
+      text-decoration: none;
+    }
+    .c-services__more-icon {
+      width: 1.75em;
+      height: 1.75em;
+      flex: 0 0 auto;
+    }
+
+    /* CTA actions full width, as in the ref. */
+    .c-services__actions :global(.c-cta__actions) {
+      width: 100%;
+    }
+  }
+  @media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+    .c-services__panel,
+    .c-services.is-enhanced .c-services__item:not(.is-open) .c-services__panel {
+      transition: none;
+    }
+  }
+
+  /* --- CTA actions (shared CtaActions) below the grid, centered ---------- */
+  .c-services__actions {
+    display: flex;
+    justify-content: center;
+    /* = header → grid space. TODO: DS */
+    margin-top: 3rem;
+  }
+</style>
+
+<script>
+  // Desktop: card hover / focus → light that card's ring in the diagram
+  // (ServicesDiagram, CSS transitions). Mobile accordion: opening a card
+  // does the same and shows that card's static image.
+  document.querySelectorAll<HTMLElement>("[data-c-services]").forEach((root) => {
+    const diagram = root.querySelector<HTMLElement>("[data-c-services-diagram]");
+    const mobileImages = Array.from(root.querySelectorAll<HTMLElement>("[data-c-services-mobile-image]"));
+    const items = Array.from(root.querySelectorAll<HTMLElement>("[data-c-services-item]"));
+
+    // Mobile image crossfade: the new image fades in over the current one,
+    // which keeps `is-previous` (opaque, underneath) until the fade ends.
+    let currentImage = 0;
+    const showImage = (index: number): void => {
+      const next = mobileImages[index];
+      const prev = mobileImages[currentImage];
+      if (!next || !prev || index === currentImage) return;
+      mobileImages.forEach((img) => img.classList.remove("is-previous"));
+      prev.classList.remove("is-active");
+      prev.classList.add("is-previous");
+      next.classList.add("is-active");
+      currentImage = index;
+      const done = (): void => {
+        if (mobileImages[currentImage] === next) prev.classList.remove("is-previous");
+      };
+      next.addEventListener("transitionend", done, { once: true });
+      // Reduced motion (no transition) or an interrupted fade: clear anyway.
+      window.setTimeout(done, 1000);
+    };
+
+    // The hovered / focused card keeps its hover look (`is-active`) until
+    // another card takes over, matching the lit ring (lead 2026-10-01).
+    const show = (index: number): void => {
+      const ring = items[index]?.dataset["cServicesRing"];
+      if (diagram && ring) diagram.dataset["active"] = ring;
+      items.forEach((item, i) => item.classList.toggle("is-active", i === index));
+      showImage(index);
+    };
+
+    // Accordion (only visible ≤767): one card open at a time; a second tap
+    // on the open card closes it.
+    const setOpen = (index: number | null): void => {
+      items.forEach((item, i) => {
+        const open = i === index;
+        item.classList.toggle("is-open", open);
+        item.querySelector("[data-c-services-toggle]")?.setAttribute("aria-expanded", String(open));
+      });
+      if (index !== null) show(index);
+    };
+
+    items.forEach((item) => {
+      const index = Number(item.dataset["cServicesItem"]);
+      // Mouse / pen hover only: a tap must not change the diagram on mobile.
+      item.addEventListener("pointerenter", (event) => {
+        if (event.pointerType !== "touch") show(index);
+      });
+      item.querySelector(".c-services__trigger")?.addEventListener("focus", () => show(index));
+      item.querySelector("[data-c-services-toggle]")?.addEventListener("click", () => {
+        setOpen(item.classList.contains("is-open") ? null : index);
+      });
+    });
+
+    show(0);
+    root.classList.add("is-enhanced");
+  });
+</script>

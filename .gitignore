@@ -29,3 +29,12 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# content import staging (raw assets to be renamed then imported)
+docs/content-import/
+
+# design references (kept locally; the project lead manages the files already tracked)
+docs/refs/
+
+# Claude Code local session state
+.claude/scheduled_tasks.lock

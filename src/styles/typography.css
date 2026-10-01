@@ -1,0 +1,93 @@
+/* ==========================================================================
+   BenorMedia — Typography classes
+   Names kept exactly as in Figma (§3.2).
+   All: font-weight: 400; letter-spacing: 0;
+   ========================================================================== */
+
+.c-text_xxl,
+.c-text_xl,
+.c-text_l,
+.c-text_m,
+.c-text,
+.c-text_s,
+.c-text_xs,
+.c-paragraph_xl,
+.c-paragraph_l,
+.c-paragraph_m,
+.c-paragraph,
+.c-paragraph_s,
+.c-button {
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+/* Heading scale (Brulia Display) */
+.c-text_xxl {
+  font-family: var(--font-heading);
+  font-size: var(--fs-text-xxl);
+  line-height: 1.2;
+}
+.c-text_xl {
+  font-family: var(--font-heading);
+  font-size: var(--fs-text-xl);
+  line-height: 1.2;
+}
+.c-text_l {
+  font-family: var(--font-heading);
+  font-size: var(--fs-text-l);
+  line-height: 1.4;
+}
+.c-text_m {
+  font-family: var(--font-heading);
+  font-size: var(--fs-text-m);
+  line-height: 1.4;
+}
+.c-text {
+  font-family: var(--font-heading);
+  font-size: var(--fs-text);
+  line-height: 1.2;
+}
+.c-text_s {
+  font-family: var(--font-heading);
+  font-size: var(--fs-text-s);
+  line-height: 1.2;
+}
+.c-text_xs {
+  font-family: var(--font-heading);
+  font-size: var(--fs-text-xs);
+  line-height: 1.2;
+}
+
+/* Paragraph scale (Acumin Pro) */
+.c-paragraph_xl {
+  font-family: var(--font-body);
+  font-size: var(--fs-p-xl);
+  line-height: 1.6;
+}
+.c-paragraph_l {
+  font-family: var(--font-body);
+  font-size: var(--fs-p-l);
+  line-height: 1.6;
+}
+.c-paragraph_m {
+  font-family: var(--font-body);
+  font-size: var(--fs-p-m);
+  line-height: 1.6;
+}
+.c-paragraph {
+  font-family: var(--font-body);
+  font-size: var(--fs-p);
+  line-height: 1.5;
+}
+.c-paragraph_s {
+  font-family: var(--font-body);
+  font-size: var(--fs-p-s);
+  line-height: 1.5;
+}
+
+/* Button text class (used inside .c-button; color is handled in buttons.css) */
+.c-button {
+  font-family: var(--font-body);
+  font-size: var(--fs-button);
+  line-height: 1.5;
+}

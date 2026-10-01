@@ -1,0 +1,147 @@
+---
+/**
+ * CtaBanner — c-cta
+ * Global gradient CTA rendered above the footer (BaseLayout, every page
+ * unless `showCtaBanner={false}`).
+ *
+ * Structure: <section class="c-cta-section"> → <Container> → .c-cta.
+ *
+ * Content: siteSettings.ctaBanner when it has a title; otherwise the approved
+ * design copy below (docs/refs/cta-banner.png), so the banner always renders.
+ *
+ * Buttons + trusted badge (docs/refs/trusted-badge.png) = the shared
+ * `CtaActions` (src/components/ui/CtaActions.astro), also used by the
+ * service hero. Its badge circles rotate via
+ * `src/scripts/animations/cta-badges.ts` (initialized from BaseLayout).
+ *
+ * Eyebrow needs an on-dark override — the default eyebrow has a gray
+ * border + dark text that are unreadable on the gradient. Overridden
+ * scoped to `.c-cta` here; flagged in DECISIONS as a possible DS gap.
+ */
+import type { SiteSettings } from "../../lib/sanity/types";
+import type { CtaBanner as CtaBannerData } from "../../lib/sanity/types";
+import Eyebrow from "../ui/Eyebrow.astro";
+import Container from "../ui/Container.astro";
+import CtaActions from "../ui/CtaActions.astro";
+import { getCtaBadgeUrlsCached } from "../../lib/sanity/site";
+
+interface Props {
+  siteSettings?: SiteSettings | null | undefined;
+}
+
+const { siteSettings } = Astro.props;
+// Approved design copy — used until siteSettings.ctaBanner is filled in Sanity.
+const FALLBACK: CtaBannerData = {
+  title: "Ready to build your website? Let's chat.",
+  buttons: [
+    { variant: "white", link: { label: "Get in Touch", type: "contact" } },
+    {
+      variant: "glass",
+      link: {
+        label: "See Pricing",
+        type: "internal",
+        internalRef: { _id: "pricingPage", _type: "pricingPage", title: "Pricing" },
+      },
+    },
+  ],
+};
+
+const cta = siteSettings?.ctaBanner?.title ? siteSettings.ctaBanner : FALLBACK;
+const shouldRender = !!cta.title;
+
+const buttons = cta?.buttons ?? [];
+
+// --- Trusted badge ----------------------------------------------------------
+const trustedText = cta.socialProofText?.trim() || "Trusted by +100 companies";
+const badgePool = await getCtaBadgeUrlsCached();
+---
+
+{shouldRender && cta && (
+<section class="c-cta-section" aria-labelledby="cta-banner-title">
+  <Container>
+  <div class="c-cta">
+    <div class="c-cta__inner">
+      <Eyebrow variant="default" class="c-cta__eyebrow">GET IN TOUCH</Eyebrow>
+      <h2 id="cta-banner-title" class="c-text_xl c-cta__title">{cta.title}</h2>
+
+      <CtaActions buttons={buttons} badges={badgePool} trustedText={trustedText} />
+    </div>
+
+    <img
+      src="/images/cta-banner-vector.svg"
+      alt=""
+      aria-hidden="true"
+      class="c-cta__vector"
+      data-cta-vector
+    />
+  </div>
+  </Container>
+</section>
+)}
+
+<style>
+  /* Section spacing: no top padding (the section above already provides
+     it); bottom padding stays the container default. */
+  .c-cta-section :global(.c-container) {
+    padding-top: 0;
+  }
+
+  .c-cta {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.455rem;
+    background: linear-gradient(290deg, var(--color-blue-light) 8.49%, var(--color-blue) 91.51%);
+    color: var(--color-white);
+    display: flex;
+    padding: 5rem 2.625rem 0 2.625rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.875rem;
+    align-self: stretch;
+  }
+  .c-cta__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1.5rem;
+  }
+  .c-cta__title {
+    color: var(--color-white);
+    max-width: 60%;
+  }
+  /* Decorative vector — scroll motion in cta-vector.ts */
+  .c-cta__vector {
+    position: relative;
+    z-index: 0;
+    width: min(60rem, 90%);
+    height: auto;
+    pointer-events: none;
+    display: block;
+  }
+
+  /* --- Eyebrow on-dark override -----------------------------------------
+     TODO: DS eyebrow on-dark variant — default eyebrow uses --color-gray border
+     + --color-text; unreadable on gradient. Scoped override until DS confirms. */
+  .c-cta :global(.c-eyebrow.is-default) {
+    border-color: rgba(255, 255, 255, 0.4);
+    color: var(--color-white);
+  }
+  .c-cta :global(.c-eyebrow.is-default::before),
+  .c-cta :global(.c-eyebrow.is-default::after) {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(255, 255, 255, 0.6);
+  }
+
+  @media (max-width: 991px) {
+    .c-cta { padding: 4rem 2rem 0; }
+  }
+  @media (max-width: 767px) {
+    .c-cta { padding: 3rem 1.25rem 0; }
+    .c-cta__inner { gap: 1.25rem; }
+    .c-cta__title { max-width: 100%; }
+  }
+</style>

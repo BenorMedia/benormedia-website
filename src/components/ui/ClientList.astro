@@ -1,0 +1,349 @@
+---
+/**
+ * ClientList — stacked client rows, reused across most pages.
+ *
+ * Row: [ icon box · client name ][ funds raised tag · category tag ][ arrow ]
+ *
+ * Usage: fetch clients on the page (e.g. `getClientsByIds`) and pass them in.
+ * `limit` caps how many rows render (default: all). No width: the list fills
+ * its parent up to `max-width: 85%` (100% on mobile), centered.
+ *
+ * Rows overlap by their extra bottom padding (30px bottom vs 14px top) so the
+ * list reads as a stacked deck; later rows paint over earlier ones.
+ *
+ * Filtering hooks: each `<li>` carries `data-category="<category slug>"` and
+ * `data-sector="<sector>"` when the client has them (the Work page filters
+ * by sector, lead 2026-10-01). A page script can set `hidden` on rows; the
+ * overlap only applies after a visible row, so hidden rows leave no gap.
+ *
+ * Fallbacks:
+ *   - Missing icon → client initial inside the icon box.
+ *   - Funds tag only when `fundsRaised` is set; category tag only when set.
+ *   - Row is a link (new tab) only when `websiteUrl` is set; otherwise a div.
+ *     A linked row's accessible name = client name + tags + a visually
+ *     hidden "(opens in a new tab)"; the icon is decorative (`alt=""`), so
+ *     the name isn't read twice (QA 2026-09-30).
+ *   - Hover preview only renders when `websiteScreenshot` is set.
+ *
+ * Hover (lead, visual QA 2026-09-29):
+ *   - The row lifts 0.4rem with a soft shadow (`transition: all 0.2s linear`).
+ *     Lead-approved shadow exception 2026-09-29 — see docs/DECISIONS.md.
+ *     No z-index change: the next row still paints over the lifted row's
+ *     bottom edge (stacked deck).
+ *   - Arrow turns accent and rotates −30.963deg (also on keyboard focus).
+ *   - Website screenshot preview fades in (opacity only; fixed height, width
+ *     follows the screenshot's ratio so nothing is cropped), centered on the
+ *     row. Also on keyboard focus of a linked row.
+ *     Lead-approved shadow exception 2026-09-28 — see docs/DECISIONS.md.
+ *
+ * Stacking: the lift is applied to the row (`__row`), not the `<li>`, and the
+ * preview is the row's sibling. A transform on the `<li>` would make it a
+ * stacking context and trap the preview under the following rows; this way
+ * the preview's `z-index: 1` paints above every row. The row is the only
+ * visible part of the item, so this looks the same as styling the item.
+ * Hover is read on the `<li>` (it doesn't move), so the lift can't flicker.
+ *
+ * Preview loading (lead, 2026-09-29): screenshots are not part of the page
+ * load. The `<img>` ships with `data-src` only; on hover-capable devices
+ * (`(hover: hover)`) the first pointer entry or focus inside a list sets
+ * `src` on every preview in that list. Touch devices never download them.
+ * A preview only opens once its image has loaded (`is-loaded`), so it is
+ * never blank. No JS → no previews (decorative, `aria-hidden`).
+ */
+import type { Client } from "../../lib/sanity/types";
+import { urlFor, assetDimensions, type Source } from "../../lib/sanity/image";
+import Tag from "./Tag.astro";
+import ClientIcon from "./ClientIcon.astro";
+
+interface Props {
+  clients: Client[];
+  limit?: number;
+  class?: string;
+}
+
+const { clients, limit, class: className } = Astro.props;
+
+const rows = (limit === undefined ? clients : clients.slice(0, limit)).map(
+  (client) => {
+    return {
+      id: client._id,
+      client,
+      name: client.name,
+      href: client.websiteUrl,
+      fundsLabel: client.fundsRaised?.trim()
+        ? `${client.fundsRaised.trim()} Raised`
+        : undefined,
+      categoryLabel: client.category?.title,
+      categorySlug: client.category?.slug?.current,
+      sector: client.sector,
+      // Height only (≈249px preview at 2x density) — no width, so the
+      // builder never crops; the full screenshot is always shown.
+      previewUrl: client.websiteScreenshot?.asset
+        ? urlFor(client.websiteScreenshot as Source)
+            .height(500)
+            .fit("max")
+            .auto("format")
+            .url()
+        : undefined,
+      // Intrinsic size from the asset id (`image-<hash>-<w>x<h>-<ext>`) so the
+      // browser knows the ratio before the file loads.
+      previewSize: assetDimensions(client.websiteScreenshot?.asset?._id),
+    };
+  },
+);
+
+const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
+---
+
+<ul class={rootClass}>
+  {rows.map((row) => {
+    const RowTag = row.href ? "a" : "div";
+    const linkAttrs = row.href
+      ? { href: row.href, target: "_blank", rel: "noopener noreferrer" }
+      : {};
+    return (
+      <li class="c-client-list__item" data-category={row.categorySlug} data-sector={row.sector}>
+        <RowTag class="c-client-list__row" {...linkAttrs}>
+          <span class="c-client-list__client">
+            <ClientIcon client={row.client} />
+            <span class="c-client-list__name c-text_m">{row.name}</span>
+            {/* TODO: COPY — screen-reader note on linked rows. */}
+            {row.href && <span class="c-client-list__sr-only"> (opens in a new tab)</span>}
+          </span>
+
+          <span class="c-client-list__tags">
+            {row.fundsLabel && <Tag>{row.fundsLabel}</Tag>}
+            {row.categoryLabel && <Tag variant="accent">{row.categoryLabel}</Tag>}
+          </span>
+
+          <svg
+            class="c-client-list__arrow"
+            aria-hidden="true"
+            width="15"
+            height="15"
+            viewBox="0 0 15 15"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0.000296913 6.53389H11.6643C10.0983 5.20189 7.2543 2.51989 5.4903 0.917886L6.3543 -0.000113487L14.0583 7.16389V7.21789L6.3543 14.4719L5.4903 13.5359C7.2723 11.8979 10.0803 9.28789 11.6643 7.84789H0.000296913V6.53389Z"
+            />
+          </svg>
+
+        </RowTag>
+
+        {row.previewUrl && (
+          <span class="c-client-list__preview" aria-hidden="true">
+            <img
+              data-src={row.previewUrl}
+              alt=""
+              width={row.previewSize?.width}
+              height={row.previewSize?.height}
+              decoding="async"
+            />
+          </span>
+        )}
+      </li>
+    );
+  })}
+</ul>
+
+<script>
+  import { initClientPreviews } from "../../scripts/ui/client-previews";
+
+  document.querySelectorAll<HTMLElement>(".c-client-list").forEach((list) => {
+    initClientPreviews(list);
+  });
+</script>
+
+<style>
+  .c-client-list {
+    display: flex;
+    flex-direction: column;
+    /* No width: fills its parent up to max-width. `flex-grow` keeps that
+       true inside a flex wrapper, where it would otherwise shrink to content. */
+    flex-grow: 1;
+    max-width: 85%;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Mobile: full width. */
+  @media (max-width: 767px) {
+    .c-client-list {
+      max-width: 100%;
+    }
+  }
+
+  /* Positioning context for the preview. No z-index and no transform here,
+     so the preview's own z-index paints above the other rows. */
+  .c-client-list__item {
+    position: relative;
+  }
+
+  /* Stacked deck: each row covers the previous row's extra bottom padding
+     (30px − 14px top → 14px overlap), so visible padding reads balanced. */
+  .c-client-list__item:not([hidden]) ~ .c-client-list__item {
+    margin-top: -0.875rem; /* 14px */
+  }
+
+  /* Filtered-out rows (Work page). Explicit so no future `display` rule on
+     the item can override the `hidden` attribute. */
+  .c-client-list__item[hidden] {
+    display: none;
+  }
+
+  .c-client-list__row {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 18.75rem 2.5rem; /* 1fr · 300px · 40px */
+    grid-template-rows: 3.5rem; /* 56px */
+    align-items: center;
+    column-gap: 1.5rem; /* 24px */
+    row-gap: 1.5rem; /* 24px */
+    padding: 0.875rem 1.375rem 1.875rem 1.375rem; /* 14 22 30 22 */
+    border-radius: 0.5rem; /* 8px */
+    border: var(--border-default);
+    background: var(--color-white);
+    color: inherit;
+    text-decoration: none;
+    transition: all 0.2s linear;
+  }
+
+  /* Lift on hover (lead spec for the item, applied to its row, see header). */
+  .c-client-list__item:hover .c-client-list__row {
+    transform: translateY(-0.4rem);
+    /* Lead-approved shadow exception (2026-09-29), see DECISIONS.md. */
+    box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.07);
+  }
+
+  a.c-client-list__row:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  /* --- Left: icon box + name ------------------------------------------- */
+  .c-client-list__client {
+    display: flex;
+    align-items: center;
+    /* TODO: DS gap icon → name (ref ≈ 22px). */
+    gap: 1.375rem;
+    min-width: 0;
+  }
+
+  /* Icon tile: shared ClientIcon (also used by the Home hero pile). */
+
+  /* Visually hidden, still read by screen readers. TODO: switch to a global
+     `cc-sr-only` utility (G-14). */
+  .c-client-list__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .c-client-list__name {
+    color: var(--color-heading);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* --- Middle: tags (right-aligned; long labels spill left) ------------ */
+  .c-client-list__tags {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    /* TODO: DS gap between tags (ref ≈ 12px). */
+    gap: 0.75rem;
+  }
+
+  /* --- Right: arrow ---------------------------------------------------- */
+  .c-client-list__arrow {
+    display: block;
+    justify-self: center;
+    width: 0.9375rem; /* 15px */
+    height: 0.9375rem;
+    transition: transform var(--duration-hover) var(--ease-smooth);
+  }
+
+  .c-client-list__arrow path {
+    fill: var(--color-text);
+    transition: fill var(--duration-hover) var(--ease-smooth);
+  }
+
+  .c-client-list__row:hover .c-client-list__arrow,
+  a.c-client-list__row:focus-visible .c-client-list__arrow {
+    transform: rotate(-30.963deg);
+  }
+
+  .c-client-list__row:hover .c-client-list__arrow path,
+  a.c-client-list__row:focus-visible .c-client-list__arrow path {
+    fill: var(--color-accent);
+  }
+
+  /* --- Hover preview --------------------------------------------------- */
+  /* Sibling of the row, centered on its 56px track. Fixed height (same as
+     the image), fades in on hover. The box has no width: it shrinks to the
+     image, whose width follows its ratio. */
+  .c-client-list__preview {
+    position: absolute;
+    top: 2.625rem; /* 14px top padding + half of the 56px track */
+    left: 50%;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    height: 15.58rem;
+    overflow: hidden;
+    border-radius: 0.875rem; /* 14px */
+    /* Lead-approved shadow exception (2026-09-28), see DECISIONS.md. */
+    box-shadow: 0 0.6875rem 1.48125rem 0.125rem rgba(0, 0, 0, 0.2); /* 0 11px 23.7px 2px */
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    transition: opacity var(--duration-hover) var(--ease-smooth);
+  }
+
+  /* Height only (277px − 10% ≈ 249px); width auto keeps the whole image.
+     `max-width: none` overrides the base reset, which would collapse the
+     image inside a shrink-to-fit box. */
+  .c-client-list__preview img {
+    display: block;
+    flex: 0 0 auto;
+    height: 15.58rem;
+    width: auto;
+    max-width: none;
+  }
+
+  /* Fades in only once its screenshot has loaded (script above). */
+  .c-client-list__item:hover .c-client-list__preview.is-loaded,
+  a.c-client-list__row:focus-visible + .c-client-list__preview.is-loaded {
+    opacity: 1;
+  }
+
+  /* TODO: DS mobile — no mobile design; tags drop to a second line. */
+  @media (max-width: 767px) {
+    .c-client-list__row {
+      grid-template-columns: minmax(0, 1fr) 2.5rem;
+      grid-template-rows: 3.5rem auto;
+    }
+
+    .c-client-list__tags {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+    }
+
+    .c-client-list__arrow {
+      grid-column: 2;
+      grid-row: 1;
+    }
+  }
+</style>
