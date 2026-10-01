@@ -159,6 +159,7 @@ Default squares (`::before` left, `::after` right): 0.625rem × 0.625rem, `backg
   /* Neutrals */
   --color-gray: #C9CEDA;
   --color-gray-light: #F0F0F0;
+  --color-grey-700: #3B3B3B;        /* Figma Grey-700 — Services diagram labels (lead, 2026-10-01) */
 
   /* Surfaces — glass (lead, 2026-09-29): pricing cards, FAQ rows; used with
      backdrop-filter: blur(10px) over line art */
@@ -178,7 +179,7 @@ Default squares (`::before` left, `::after` right): 0.625rem × 0.625rem, `backg
 
 - **Borders:** default `var(--border-default)`. Some elements differ; defined per component.
 - **Border radius:** varies per element; defined per component at build time (no global scale).
-- **Shadows:** none. Do not add shadows to any element.
+- **Shadows:** allowed where the lead specifies them; values defined per component (lead 2026-09-30, replaces the former "no shadows" rule).
 
 ---
 
@@ -238,9 +239,9 @@ Gradient border assumed (Figma `var(--Gradient, #6275F6)`, #6275F6 = fallback). 
   font-weight: 400;
   line-height: 1.5;
   text-decoration: none;
-  transition: transform var(--duration-hover) var(--ease-smooth);
+  transition: transform var(--duration-hover) var(--ease-smooth), box-shadow var(--duration-hover) var(--ease-smooth);
 }
-.c-button:hover { transform: translateY(-7%); }
+.c-button:hover { transform: translateY(-7%); box-shadow: 0 0 20px #2223; /* lead 2026-09-30 */ }
 .c-button:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
 
 /* Text: color only */
@@ -329,7 +330,7 @@ TODO: columns, gutters, standard gaps.
 | # | Section | Component | Dynamic (Sanity) | Motion (TBD) |
 |---|---|---|---|---|
 | 1 | Nav (Services dropdown, Work, Pricing, Testimonials, CTA) | `c-nav` | siteSettings | Dropdown |
-| 2 | Hero: eyebrow, H1, lead, 2 CTAs, social proof, 2 stats | `c-hero` | homePage | Counter? bg pattern? |
+| 2 | Hero: 2 eyebrows, H1, lead, 2 CTAs, client icon pile (stats removed 2026-09-30) | `c-hero` | client (icons) | Physics pile (Matter.js) |
 | 3 | Logo strip "Trusted by 100+ B2B teams" | `c-logos` | client | Marquee |
 | 4 | Featured Work: 2 case cards (quote, author, 2 stats) | `c-featured` | caseStudy | — |
 | 5 | Services: 3 accordion items + diagram, 2 CTAs | `c-services` | service | Accordion |
