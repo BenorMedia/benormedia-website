@@ -204,6 +204,8 @@
 | 2026-10-01 | Contact form → email (supersedes "Forms: Vercel endpoint → Make webhook", pending CEO): `POST /api/contact` (`src/pages/api/contact.ts`, on-demand route = Vercel function; site stays static) validates (name, email, company, budget required; message optional; lengths capped; honeypot `website`) and sends every field to `CONTACT_TO_EMAIL` (default info@benor.media) through the Google Workspace mailbox over SMTP (`nodemailer`, smtp.gmail.com:465; Resend was built first and replaced the same day, lead), Reply-To = visitor; `nodemailer` is bundled into the function (`vite.ssr.noExternal`, the adapter's symlinked node_modules copy fails on Windows with EPERM). Env: `SMTP_USER` (info@benor.media) + `SMTP_PASS` (app password; the CEO owns the mailbox, Spanish instructions given to the lead). Modal: budget radios `required` (it already showed *), native validation, button disabled while sending, `role="status"` line (`TODO: COPY`), reset on success | Lead | Lead |
 | 2026-10-01 | New token `--color-grey-700: #3B3B3B` (tokens.css + DESIGN_SYSTEM §4), Figma Grey-700; first use: Services diagram labels | Lead OK | Lead |
 | 2026-10-01 | `CtaActions` gained `circles` (default true): `false` renders a text-only badge without `data-cta-badges` (no rotation). Nav.astro sets `--c-nav-height` (bar height in px, ResizeObserver) on `<html>` | Home hero badge; hero fits under the nav | Lead |
+| 2026-10-04 | Nav ≥768px: `c-nav__inner` is a grid `1fr auto 1fr` (logo start, links middle, CTA end; was flex + `space-between` with `c-nav__primary` `flex: 1`), so the links sit on the header's true center (measured Δ 0.00–0.01px at 768–1920, was +13.6 to +21.6px); ≤767 flex layout unchanged | Lead Vercel preview comment | Lead |
+| 2026-10-04 | Nav Services panel `width: max-content` (was `auto`): its `auto` width shrank to min-content (absolute at `left: 50%` in the narrow `li`), and Chrome's row-flex min-content leaves out the icon, so "Custom Websites & Migrations" ran past the panel's content edge by 24–29px (past the link by one icon width) at every desktop width; panel now 30–35px wider, padding/gap/icon/type unchanged, still centered under the trigger and inside the viewport at 768 | Lead preview comment (overflow seen in QA) | Proposed |
 
 ### Open questions
 
@@ -279,12 +281,15 @@
 - **`hrefFromLink` in `src/lib/sanity/links.ts` (`service` → `/<slug>`)** (2026-09-29)
 - ~~**`TestimonialCard` `fluid` variant (grid)**~~ — RESOLVED 2026-09-29: dropped; width 100% on the Testimonials page only (see Decisions).
 - ~~**Testimonial marquee pauses on hover / focus**~~ — RESOLVED 2026-09-29: lead removed the pause (see Decisions).
+- ~~**Nav links on the header's true center (grid `1fr auto 1fr`)**~~ — RESOLVED 2026-10-04: approved by the lead (see Decisions).
+- **Nav Services panel `width: max-content`** — fixes the longest label overflowing the dropdown; the panel is about 30–35px wider. Confirm on the Vercel preview (2026-10-04)
 
 #### Engineering follow-ups
 - ~~**Phase 4 final QA should-fix items (S1–S11)**~~ — RESOLVED 2026-09-29: S1–S5 and S7–S11 fixed (see `docs/handoffs/2026-09-29_astro_qa-fixes-nav-services.md` and the Phase 4 handoff). S6 (contrast) deferred by the lead — see Lead / CEO.
 - **Mobile menu backdrop click can't close the menu** — `.c-nav__mobile-inner` has `min-height: 100%`, so no click lands on the backdrop. X, Esc and link clicks work. Found while fixing S5. (2026-09-29)
 - **QA nits N1–N10** — still open, listed in `docs/handoffs/2026-09-29_qa_phase4-home-final-review.md` (modal copy spacing, duplicate SR output in testimonial rows, reduced-motion rows not keyboard-scrollable, partial badge rotation with 7–11 badges, images without width/height, empty LogoStrip, no Organization JSON-LD fallback, untokenized font sizes, nav menu roles without arrow keys, accent tag 4.48:1). (2026-09-29)
 - **`@sanity/astro` upstream fix** — file upstream fix for the Windows path-strip bug (one-line regex `/[\\/]package\.json$/`); remove `benorSanityAliasFix` workaround from `astro.config.mjs` once a fixed release ships. (2026-09-25)
+- **Nav width at 768 if Testimonials is un-hidden** — with the true-center grid the bar has ~38px spare on the logo side at 768; the hidden "Testimonials" link (~120px, estimate) would overflow at 768–~850 (the old flex layout too). Re-check the nav at 768 before un-hiding it. (2026-10-04)
 - **TypeScript pin** — revisit `typescript` pin (`^6.0.0`) once Astro supports TS 7 via `@astrojs/ts-content-mapper`. (2026-09-25)
 - ~~**Sitemap `/dev/*` exclusion**~~ — RESOLVED 2026-09-29: `@astrojs/sitemap` added with `/dev/*`, `/studio` and `/404` filtered out (see Decisions).
 - **No visually-hidden utility** — `WorkListing` scopes its own `.c-work-listing__sr-only` (1px clip pattern) for the hidden h2 and the live region. Request to @ui: add a global `cc-sr-only` utility and switch to it. (2026-09-29)
