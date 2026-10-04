@@ -392,7 +392,6 @@ const primaryLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   }
 
   .c-nav__primary {
-    flex: 1;
     display: flex;
     justify-content: center;
   }
@@ -449,6 +448,11 @@ const primaryLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
     top: calc(100% + 0.5rem);
     left: 50%;
     transform: translateX(-50%);
+    /* Lead preview comment 2026-10-04: the narrow li leaves the absolute
+       panel ~0 available width, so `auto` shrank to min-content, and a row
+       flexbox's min-content (Chrome) skips the icon: the longest label ran
+       out by one icon width. max-content sizes to the full icon+gap+text. */
+    width: max-content;
     /* Ref: docs/refs/navbar/dropdown-content-preview.png — lead 2026-09-30.
        Figma 15/24px padding, 20px gap (÷16 → rem). */
     background: var(--color-white);
@@ -631,5 +635,15 @@ const primaryLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   }
   @media (min-width: 768px) {
     .c-nav__mobile { display: none !important; }
+    /* Lead preview comment 2026-10-04: links on the header's true center.
+       Equal 1fr side columns, so the wider logo no longer pushes the links
+       right (flex + space-between centered them in the leftover space).
+       The burger is display:none here, so it is not a grid item. */
+    .c-nav__inner {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+    }
+    .c-nav__logo { justify-self: start; }
+    .c-nav__cta { justify-self: end; }
   }
 </style>
