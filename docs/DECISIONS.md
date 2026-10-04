@@ -468,6 +468,7 @@ Without adding to your team." with "website moving." marked Gradient (published 
 | 2026-09-29 | Spacing (lead visual QA): hero → filters 7.5rem (was 8.286rem), filters → list 3rem (was 4rem); mobile 5rem / 3rem unchanged | Lead measurements replace the 1/14 ref measurements | Lead |
 | 2026-10-01 | Work hero description: "A collection of the dozens of clients that trust us for their website growth." (meta description unchanged); "launched." in the hero title in the gradient (`accent`); hero description `max-width: 22rem` (`.c-work-hero`, full width on phones) | Lead | Lead |
 | 2026-10-01 | Work filters by `client.sector` (new field, SCHEMAS v0.9: Agency · Professional Services · SaaS) instead of category slugs (supersedes the 2026-09-29 tab map and the AI & Technology tab): tabs View All · Agency · Professional Services · SaaS, always rendered (no more dropping empty tabs; a sector with no client yet shows an empty list), URL `?sector=` (was `?category=`). `ClientList` rows emit `data-sector` | Lead | Lead |
+| 2026-10-04 | Work filter tab order: View All · SaaS · Professional Services · Agency (was View All · Agency · Professional Services · SaaS). Order only; values, URL `?sector=` and behavior unchanged | Lead request | Lead |
 
 ### Open questions
 
