@@ -205,7 +205,7 @@
 | 2026-10-01 | New token `--color-grey-700: #3B3B3B` (tokens.css + DESIGN_SYSTEM §4), Figma Grey-700; first use: Services diagram labels | Lead OK | Lead |
 | 2026-10-01 | `CtaActions` gained `circles` (default true): `false` renders a text-only badge without `data-cta-badges` (no rotation). Nav.astro sets `--c-nav-height` (bar height in px, ResizeObserver) on `<html>` | Home hero badge; hero fits under the nav | Lead |
 | 2026-10-04 | Nav ≥768px: `c-nav__inner` is a grid `1fr auto 1fr` (logo start, links middle, CTA end; was flex + `space-between` with `c-nav__primary` `flex: 1`), so the links sit on the header's true center (measured Δ 0.00–0.01px at 768–1920, was +13.6 to +21.6px); ≤767 flex layout unchanged | Lead Vercel preview comment | Lead |
-| 2026-10-04 | Nav Services panel `width: max-content` (was `auto`): its `auto` width shrank to min-content (absolute at `left: 50%` in the narrow `li`), and Chrome's row-flex min-content leaves out the icon, so "Custom Websites & Migrations" ran past the panel's content edge by 24–29px (past the link by one icon width) at every desktop width; panel now 30–35px wider, padding/gap/icon/type unchanged, still centered under the trigger and inside the viewport at 768 | Lead preview comment (overflow seen in QA) | Proposed |
+| 2026-10-04 | Nav Services panel `width: max-content` (was `auto`): its `auto` width shrank to min-content (absolute at `left: 50%` in the narrow `li`), and Chrome's row-flex min-content leaves out the icon, so "Custom Websites & Migrations" ran past the panel's content edge by 24–29px (past the link by one icon width) at every desktop width; panel now 30–35px wider, padding/gap/icon/type unchanged, still centered under the trigger and inside the viewport at 768 | Lead preview comment (overflow seen in QA) | Lead |
 
 ### Open questions
 
@@ -282,7 +282,7 @@
 - ~~**`TestimonialCard` `fluid` variant (grid)**~~ — RESOLVED 2026-09-29: dropped; width 100% on the Testimonials page only (see Decisions).
 - ~~**Testimonial marquee pauses on hover / focus**~~ — RESOLVED 2026-09-29: lead removed the pause (see Decisions).
 - ~~**Nav links on the header's true center (grid `1fr auto 1fr`)**~~ — RESOLVED 2026-10-04: approved by the lead (see Decisions).
-- **Nav Services panel `width: max-content`** — fixes the longest label overflowing the dropdown; the panel is about 30–35px wider. Confirm on the Vercel preview (2026-10-04)
+- ~~**Nav Services panel `width: max-content`**~~ — RESOLVED 2026-10-04: approved by the lead on staging (see Decisions).
 
 #### Engineering follow-ups
 - ~~**Phase 4 final QA should-fix items (S1–S11)**~~ — RESOLVED 2026-09-29: S1–S5 and S7–S11 fixed (see `docs/handoffs/2026-09-29_astro_qa-fixes-nav-services.md` and the Phase 4 handoff). S6 (contrast) deferred by the lead — see Lead / CEO.
