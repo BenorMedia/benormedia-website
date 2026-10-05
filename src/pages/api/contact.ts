@@ -1,7 +1,7 @@
 /**
  * POST /api/contact — contact modal submissions → email to the team
- * (lead 2026-10-01: Vercel endpoint, sent through the Google Workspace
- * mailbox over SMTP with `nodemailer`).
+ * (lead 2026-10-01: Vercel endpoint; lead 2026-10-05: sent with Resend,
+ * replacing Google Workspace SMTP).
  *
  * On-demand route (Vercel serverless function); the rest of the site stays
  * static. Body: the contact form's fields as JSON
@@ -10,24 +10,24 @@
  *     200 and send nothing.
  *   - name, email, company and budget are required; message is optional.
  *   - Lengths are capped; every value is HTML-escaped in the email.
- * The email is sent from the SMTP_USER mailbox to CONTACT_TO_EMAIL (default
+ * The email is sent from CONTACT_FROM_EMAIL to CONTACT_TO_EMAIL (default
  * info@benor.media) with every field, Reply-To = the visitor, so replying
  * answers them directly.
  *
  * Env (Vercel project settings + local `.env`, never committed):
- *   SMTP_USER          required — the Google Workspace mailbox that sends
- *                      (info@benor.media)
- *   SMTP_PASS          required — that mailbox's app password (16 chars,
- *                      myaccount.google.com/apppasswords; needs 2-step
- *                      verification on the account)
+ *   RESEND_API_KEY     required — Resend API key ("Sending access",
+ *                      restricted to benor.media)
+ *   CONTACT_FROM_EMAIL sender, an address on the domain verified in Resend;
+ *                      default `BenorMedia Website <website@benor.media>`
  *   CONTACT_TO_EMAIL   recipient, default info@benor.media
- * SMTP: smtp.gmail.com:465 (TLS). Gmail limit ≈ 2,000 sends / day.
+ * Resend REST API (`POST https://api.resend.com/emails`) through `fetch`: no
+ * SDK, so nothing to bundle into the function. Free plan: 100 emails / day,
+ * 3,000 / month; every send is listed in Resend → Emails.
  *
  * Responses: 200 `{ ok: true }` · 400 `{ ok: false, error: "invalid" }`
  * (with `fields`) · 500 `{ ok: false, error: "send" | "config" }`.
  */
 import type { APIRoute } from "astro";
-import nodemailer from "nodemailer";
 
 export const prerender = false;
 
@@ -92,13 +92,13 @@ export const POST: APIRoute = async ({ request }) => {
   if (!(BUDGETS as readonly string[]).includes(budget)) invalid.push("budget");
   if (invalid.length) return json(400, { ok: false, error: "invalid", fields: invalid });
 
-  const user = env("SMTP_USER");
-  const pass = env("SMTP_PASS");
-  if (!user || !pass) {
-    console.error("[contact] SMTP_USER / SMTP_PASS are not set");
+  const apiKey = env("RESEND_API_KEY");
+  if (!apiKey) {
+    console.error("[contact] RESEND_API_KEY is not set");
     return json(500, { ok: false, error: "config" });
   }
-  const to = env("CONTACT_TO_EMAIL") ?? "info@benor.media";
+  const from = env("CONTACT_FROM_EMAIL") || "BenorMedia Website <website@benor.media>";
+  const to = env("CONTACT_TO_EMAIL") || "info@benor.media";
 
   const budgetLabel = BUDGET_LABELS[budget as (typeof BUDGETS)[number]];
   const rows: [string, string][] = [
@@ -120,22 +120,25 @@ ${rows
   const plain = rows.map(([label, value]) => `${label}: ${value}`).join("\n");
 
   try {
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: { user, pass },
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from,
+        to: [to],
+        reply_to: email,
+        subject: `New contact: ${name} (${company})`,
+        html,
+        text: plain,
+      }),
     });
-    await transporter.sendMail({
-      from: { name: "BenorMedia Website", address: user },
-      to,
-      replyTo: { name, address: email },
-      subject: `New contact: ${name} (${company})`,
-      html,
-      text: plain,
-    });
+    if (!res.ok) {
+      // Resend answers `{ statusCode, name, message }` (no visitor data).
+      console.error("[contact] Resend send failed", res.status, await res.text());
+      return json(500, { ok: false, error: "send" });
+    }
   } catch (err) {
-    console.error("[contact] SMTP send failed", err instanceof Error ? err.message : err);
+    console.error("[contact] Resend request failed", err instanceof Error ? err.message : err);
     return json(500, { ok: false, error: "send" });
   }
 

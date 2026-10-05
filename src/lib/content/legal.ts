@@ -6,8 +6,9 @@
  *
  * Privacy Policy + Terms & Conditions (lead 2026-10-05): original copy,
  * structured after flowninja.com's pages and written for BenorMedia's own
- * setup (Barcelona, GDPR + LOPDGDD, contact form → Google Workspace email,
- * Google Tag Manager, Vercel hosting). Approved by the lead as written.
+ * setup (Barcelona, GDPR + LOPDGDD, contact form → Resend email (lead
+ * 2026-10-05), Google Tag Manager, Vercel hosting). Approved by the lead as
+ * written.
  * Cookie Policy is still placeholder.
  *
  * TODO: COPY — `LEGAL_NAME` is the trade name; replace it with the
@@ -94,6 +95,7 @@ We do not sell your personal data, and we do not use it for automated decision-m
 
 - Google (Google Workspace and Google Tag Manager / Google Analytics): email, documents and website analytics.
 - Vercel: hosting of our website and of the contact form endpoint.
+- Resend: delivery of contact form messages by email.
 - Other tools we use to manage projects, communication and invoicing with clients.
 
 We may also disclose data to public authorities, courts or professional advisers (such as lawyers and accountants) when the law requires it or to protect our legal rights.`,
