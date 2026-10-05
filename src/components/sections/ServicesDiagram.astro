@@ -38,7 +38,12 @@
  * the frame in the refs).
  *
  * Labels: final names and order from the lead (2026-10-01). A `\n` in a
- * label is a forced line break.
+ * label is a forced line break (Scalable / Systems, SEO / GEO / Research,
+ * CRO / Strategy: lead 2026-10-05).
+ *
+ * Hover: discs and steps carry `data-ring`, so Services.astro can light the
+ * ring under the pointer (lead 2026-10-05). The full-frame SVGs (lines,
+ * glow) and the center icon ignore the pointer.
  *
  * Tag carousels: `ServicesDiagramTags` (own component + scoped styles), a
  * layer clipped to the center disc's circle, on top of the disc and behind
@@ -84,14 +89,14 @@ const CENTER_Y = CENTER_DISC_TOP + (H - CENTER_DISC_TOP) * 0.55;
 // Names + order: lead 2026-10-01.
 const STEPS: Step[] = [
   { ring: "outer", label: "UX Research and Strategy", icon: "ux-research-and-strategy", x: 400, y: 737 },
-  { ring: "outer", label: "Scalable Systems", icon: "scalable-systems", x: 1063.5, y: 370 },
+  { ring: "outer", label: "Scalable\nSystems", icon: "scalable-systems", x: 1063.5, y: 370 },
   { ring: "outer", label: "Custom Graphics and Videos", icon: "custom-graphics-and-videos", x: 1875, y: 255 },
   { ring: "outer", label: "Technical SEO and AEO Optimization", icon: "technical-seo-and-aeo-optimization", x: 2687.5, y: 424 },
   { ring: "outer", label: "CMS Setup and\nMigrations", icon: "crm-setup-and-integrations", x: 3307.5, y: 792 },
-  { ring: "middle", label: "SEO / GEO Research", icon: "seo-geo-research", x: 341, y: 1932 },
+  { ring: "middle", label: "SEO / GEO\nResearch", icon: "seo-geo-research", x: 341, y: 1932 },
   { ring: "middle", label: "AI Visibility", icon: "ai-visibility", x: 1190, y: 1023 },
   { ring: "middle", label: "Content Production", icon: "content-production", x: 2445, y: 1023 },
-  { ring: "middle", label: "CRO Strategy", icon: "cro-strategy", x: 3278, y: 1926 },
+  { ring: "middle", label: "CRO\nStrategy", icon: "cro-strategy", x: 3278, y: 1926 },
   { ring: "inner", label: "Analytics", icon: "analytics", x: 895, y: 2222 },
   { ring: "inner", label: "Reporting & Planning", icon: "reporting-and-planning", x: 1270, y: 1783 },
   { ring: "inner", label: "CRO Insights & Experiments", icon: "cro-insights-and-experiments", x: 1820.5, y: 1604 },
@@ -135,8 +140,8 @@ const TAGS_TOP = `${(((CENTER_Y - CENTER_DISC_TOP) / (2 * CENTER_DISC.r)) * 100)
 
 <div class="c-services-diagram" aria-hidden="true">
   <div class="c-services-diagram__frame" data-active={active} data-c-services-diagram>
-    <div class="c-services-diagram__disc is-outer" style={disc(1838.5, 2638, 2352)}></div>
-    <div class="c-services-diagram__disc is-middle" style={disc(1838.5, 2555, 1931)}></div>
+    <div class="c-services-diagram__disc is-outer" data-ring="outer" style={disc(1838.5, 2638, 2352)}></div>
+    <div class="c-services-diagram__disc is-middle" data-ring="middle" style={disc(1838.5, 2555, 1931)}></div>
 
     <svg
       class="c-services-diagram__lines"
@@ -149,8 +154,8 @@ const TAGS_TOP = `${(((CENTER_Y - CENTER_DISC_TOP) / (2 * CENTER_DISC.r)) * 100)
       <line x1="3246.4" y1="1233.4" x2="2731.3" y2="1779.8" />
     </svg>
 
-    <div class="c-services-diagram__disc is-inner" style={disc(1838.5, 2620, 1226)}></div>
-    <div class="c-services-diagram__disc is-center" style={disc(CENTER_DISC.cx, CENTER_DISC.cy, CENTER_DISC.r)}></div>
+    <div class="c-services-diagram__disc is-inner" data-ring="inner" style={disc(1838.5, 2620, 1226)}></div>
+    <div class="c-services-diagram__disc is-center" data-ring="inner" style={disc(CENTER_DISC.cx, CENTER_DISC.cy, CENTER_DISC.r)}></div>
     <ServicesDiagramTags
       steps={tagSteps}
       style={`${disc(CENTER_DISC.cx, CENTER_DISC.cy, CENTER_DISC.r)}height:${py(2 * CENTER_DISC.r)};`}
@@ -284,6 +289,7 @@ const TAGS_TOP = `${(((CENTER_Y - CENTER_DISC_TOP) / (2 * CENTER_DISC.r)) * 100)
     width: 100%;
     height: 100%;
     overflow: visible;
+    pointer-events: none;
   }
   .c-services-diagram__lines line {
     stroke: #AEBDDA;
@@ -296,6 +302,7 @@ const TAGS_TOP = `${(((CENTER_Y - CENTER_DISC_TOP) / (2 * CENTER_DISC.r)) * 100)
   .c-services-diagram__glow,
   .c-services-diagram__center-icon {
     position: absolute;
+    pointer-events: none;
     height: auto;
     display: block;
   }

@@ -35,9 +35,14 @@
  * Desktop / tablet keep the hover-link cards (the toggle and "Learn More"
  * are not rendered visible there).
  *
- * Cards = the 3 Sanity services (lead 2026-09-30): `name` as title,
- * `subtitle` as copy (`TODO: COPY`), linked to `/<slug>`. A missing /
- * unpublished service drops its card. Body copy is always visible.
+ * Cards = the 3 Sanity services (lead 2026-09-30): `name` as title, linked
+ * to `/<slug>`. Card copy = `CARD_COPY` below (Figma, lead 2026-10-05), not
+ * the service `subtitle` (that stays the service page's hero copy); a slug
+ * without card copy falls back to the subtitle. A missing / unpublished
+ * service drops its card. Body copy is always visible.
+ *
+ * Hovering the diagram (lead 2026-10-05) does what hovering a card does:
+ * the ring under the pointer lights up and its card takes the hover look.
  */
 import Container from "../ui/Container.astro";
 import SectionHeader from "../ui/SectionHeader.astro";
@@ -57,6 +62,16 @@ const MOBILE_IMAGES: Record<string, string> = {
   growth: "/images/home/services-mobile-2",
   "ongoing-website-support": "/images/home/services-mobile-3",
 };
+// Card copy (Figma, lead 2026-10-05). Growth: Figma reads "We drive drive
+// traffic", the repeated word dropped.
+const CARD_COPY: Record<string, string> = {
+  "custom-websites-migrations":
+    "We work as an extension of your company’s marketing team to build scalable, high-converting, and SEO/AEO optimized websites using the right technologies for your business.",
+  growth:
+    "We drive traffic to your website through SEO and content strategy, then we convert those visitors into leads with the right CRO improvements.",
+  "ongoing-website-support":
+    "We provide the strategy, design, development, and support needed to keep it improving, without the cost and complexity of building an internal team.",
+};
 const RINGS: Record<string, "outer" | "middle" | "inner"> = {
   "custom-websites-migrations": "outer",
   growth: "middle",
@@ -75,8 +90,7 @@ interface Item {
 const services = await getServiceCards(SERVICE_SLUGS);
 const items: Item[] = services.map((service) => ({
   title: service.name,
-  // TODO: COPY — the service `subtitle` until card copy is written.
-  body: service.subtitle?.trim() ?? "",
+  body: CARD_COPY[service.slug] ?? service.subtitle?.trim() ?? "",
   href: `/${service.slug}`,
   ring: RINGS[service.slug] ?? "outer",
   mobileImage: MOBILE_IMAGES[service.slug] ?? MOBILE_IMAGES["custom-websites-migrations"]!,
@@ -619,6 +633,20 @@ const badges = await getCtaBadgeUrlsCached();
       });
       if (index !== null) show(index);
     };
+
+    // Diagram hover (lead 2026-10-05): the ring under the pointer (a step,
+    // else the topmost ring disc) lights up with its card, like a card
+    // hover. Off every ring, or on leaving, the last one stays.
+    diagram?.addEventListener("pointermove", (event) => {
+      if (event.pointerType === "touch") return;
+      const hit = document
+        .elementsFromPoint(event.clientX, event.clientY)
+        .find((el): el is HTMLElement => el instanceof HTMLElement && !!el.dataset["ring"]);
+      const ring = hit?.dataset["ring"];
+      if (!ring || ring === diagram.dataset["active"]) return;
+      const index = items.findIndex((item) => item.dataset["cServicesRing"] === ring);
+      if (index !== -1) show(index);
+    });
 
     items.forEach((item) => {
       const index = Number(item.dataset["cServicesItem"]);
