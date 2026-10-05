@@ -3,7 +3,7 @@
 Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) approved 2026-09-29. v0.7 (`client.orderRank`) requested by the lead 2026-09-29. v0.8 (`client.websiteVideo`) requested by the lead 2026-09-30. v0.9 (`client.sector`) requested by the lead 2026-10-01.
 
 ### v0.9 changes vs v0.8 (2026-10-01)
-- **`client.sector`** (optional `string`, dropdown, one value): `agency` (Agency), `professional-services` (Professional Services), `saas` (SaaS). Projected in `CLIENT_LIST_FIELDS` (so `CLIENTS_BY_IDS` + `ALL_CLIENTS`). The Work page filters by it (View All · SaaS · Professional Services · Agency); `category` no longer drives any filter. Values are filled in Studio / MCP by the lead.
+- **`client.sector`** (optional `string`, dropdown, one value): `agency` (Agency), `professional-services` (Professional Services), `saas` (SaaS). Projected in `CLIENT_LIST_FIELDS` (so `CLIENTS_BY_IDS` + `ALL_CLIENTS`). The Work page filters by it (View All · SaaS · Professional Services; no Agency tab since 2026-10-05, `agency` clients show under View All); `category` no longer drives any filter. Values are filled in Studio / MCP by the lead.
 
 Approach: **repeatable data lives in Sanity documents; page copy is authored directly in Astro components.** Page singletons exist only to hold per-page SEO metadata. Global chrome (nav, footer) is authored in Astro components too.
 
