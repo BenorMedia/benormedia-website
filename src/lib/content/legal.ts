@@ -242,7 +242,7 @@ ${EMAIL}`,
 
 export const COOKIE_POLICY: LegalDoc = {
   title: "Cookie Policy",
-  description: "How the BenorMedia website uses cookies and similar technologies.",
+  description: "How the BenorMedia website uses cookies and similar technologies for analytics and site performance, and how you can manage your cookie preferences.",
   intro: "How this website uses cookies and similar technologies.",
   sections: [
     { heading: "What cookies are", body: PLACEHOLDER },

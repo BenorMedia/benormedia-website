@@ -19,6 +19,7 @@ import {
   getTestimonials,
 } from "../lib/sanity/queries";
 import { OUR_WORK_GRID_IDS, OUR_WORK_LIST_IDS } from "../lib/content/our-work";
+import { PAGE_META } from "../lib/content/seo";
 import HomeHero from "../components/sections/HomeHero.astro";
 import LogoStrip from "../components/sections/LogoStrip.astro";
 import FeaturedWork from "../components/sections/FeaturedWork.astro";
@@ -38,7 +39,7 @@ const [heroClients, logoClients, featuredClients, workClients, workListClients, 
 ]);
 ---
 
-<BaseLayout pageSeo={home?.seo ?? null}>
+<BaseLayout pageSeo={home?.seo ?? null} title={PAGE_META.home.title} description={PAGE_META.home.description}>
   <HomeHero clients={heroClients} />
   {/* Hidden on Home only (lead 2026-09-30). */}
   <LogoStrip clients={logoClients} hidden />

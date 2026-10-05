@@ -9,9 +9,6 @@
  * props below are the fallback).
  *
  * BaseLayout owns Nav, CtaBanner, Footer and ContactModal.
- *
- * TODO: COPY — fallback meta title / description until pricingPage.seo is
- * filled in Sanity (kept here, not as an HTML comment, so it doesn't ship).
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
 import {
@@ -23,6 +20,7 @@ import {
 import { OUR_WORK_GRID_IDS, OUR_WORK_LIST_IDS } from "../lib/content/our-work";
 import { PRICING_PLANS } from "../lib/content/pricing";
 import { PRICING_FAQ_GROUPS } from "../lib/content/faqs";
+import { PAGE_META } from "../lib/content/seo";
 import PageHero from "../components/sections/PageHero.astro";
 import PricingPlans from "../components/sections/PricingPlans.astro";
 import LogoStrip from "../components/sections/LogoStrip.astro";
@@ -38,12 +36,9 @@ const [pricingPage, logoClients, testimonials, workClients, workListClients] = a
   getClientsByIds(OUR_WORK_LIST_IDS),
 ]);
 
-// 156 characters (keep ≤160).
-const metaDescription =
-  "Simple, transparent pricing for B2B websites: monthly design and development, AEO/GEO growth plans, or one-off projects. Unlimited requests, cancel anytime.";
 ---
 
-<BaseLayout pageSeo={pricingPage?.seo ?? null} title="Pricing" description={metaDescription}>
+<BaseLayout pageSeo={pricingPage?.seo ?? null} title={PAGE_META.pricing.title} description={PAGE_META.pricing.description}>
   <div class="c-pricing-intro">
     <PageHero
       eyebrow="Pricing"
