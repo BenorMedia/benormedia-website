@@ -131,12 +131,13 @@ export default defineConfig({
     react(),
     // Needs `site` (PUBLIC_SITE_URL): skipped with a warning until the
     // production domain is set. Dev pages, Studio and the 404 are left out,
-    // and so are the legal pages while they are noindex placeholders and
+    // and so are the noindex pages: /cookie-policy (placeholder) and
     // /testimonials while testimonials are off (lead 2026-09-30; drop them
-    // from this list when they go live).
+    // from this list when they go live). Privacy Policy + Terms are
+    // indexable since 2026-10-05, so they are listed.
     sitemap({
       filter: (page) =>
-        !/\/(dev|studio)(\/|$)|\/404$|^\/(privacy-policy|terms-conditions|cookie-policy|testimonials)\/?$/.test(
+        !/\/(dev|studio)(\/|$)|\/404$|^\/(cookie-policy|testimonials)\/?$/.test(
           new URL(page).pathname,
         ),
     }),
