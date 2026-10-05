@@ -21,11 +21,12 @@
  *     value falls back to "all" and the parameter is removed. Other query
  *     parameters are kept.
  *
- * Tabs (lead, 2026-10-01; order 2026-10-04):
+ * Tabs (lead, 2026-10-01; order 2026-10-04; Agency tab removed 2026-10-05):
  *   View All              → every client (no parameter)
  *   SaaS                  → sector `saas`
  *   Professional Services → sector `professional-services`
- *   Agency                → sector `agency`
+ *   Agency clients still show under View All; `?sector=agency` falls back
+ *   to "all".
  *
  * Order: the rows keep the `getAllClients()` order (Studio drag-and-drop
  * `orderRank`); filtering only hides rows.
@@ -54,7 +55,6 @@ const filters: Filter[] = [
   { label: "View All", value: "all" },
   { label: "SaaS", value: "saas" },
   { label: "Professional Services", value: "professional-services" },
-  { label: "Agency", value: "agency" },
 ];
 
 const headingId = "work-listing-title";
