@@ -63,14 +63,15 @@ const MOBILE_IMAGES: Record<string, string> = {
   "ongoing-website-support": "/images/home/services-mobile-3",
 };
 // Card copy (Figma, lead 2026-10-05). Growth: Figma reads "We drive drive
-// traffic", the repeated word dropped.
+// traffic", the repeated word dropped. `\n` = Figma's line breaks, kept
+// ≥768 (lead: same lines as the design); mobile wraps normally.
 const CARD_COPY: Record<string, string> = {
   "custom-websites-migrations":
-    "We work as an extension of your company’s marketing team to build scalable, high-converting, and SEO/AEO optimized websites using the right technologies for your business.",
+    "We work as an extension of your company’s marketing team to\nbuild scalable, high-converting, and SEO/AEO optimized\nwebsites using the right technologies for your business.",
   growth:
-    "We drive traffic to your website through SEO and content strategy, then we convert those visitors into leads with the right CRO improvements.",
+    "We drive traffic to your website through SEO and content\nstrategy, then we convert those visitors into leads with the right\nCRO improvements.",
   "ongoing-website-support":
-    "We provide the strategy, design, development, and support needed to keep it improving, without the cost and complexity of building an internal team.",
+    "We provide the strategy, design, development, and support\nneeded to keep it improving, without the cost and complexity of\nbuilding an internal team.",
 };
 const RINGS: Record<string, "outer" | "middle" | "inner"> = {
   "custom-websites-migrations": "outer",
@@ -178,7 +179,7 @@ const badges = await getCtaBadgeUrlsCached();
               </h3>
               <div class="c-services__panel" id={`c-services-panel-${i}`}>
                 <div class="c-services__panel-inner">
-                  <p class="c-paragraph">{item.body}</p>
+                  <p class="c-paragraph c-services__body">{item.body}</p>
                   <a href={item.href} class="c-services__more c-paragraph">
                     Learn More
                     <svg class="c-services__more-icon" aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -201,6 +202,13 @@ const badges = await getCtaBadgeUrlsCached();
 </section>
 
 <style>
+  /* Figma's line breaks (`\n` in CARD_COPY), ≥768 only (lead 2026-10-05). */
+  @media (min-width: 768px) {
+    .c-services__body {
+      white-space: pre-line;
+    }
+  }
+
   .c-services {
     background: var(--color-white);
   }
