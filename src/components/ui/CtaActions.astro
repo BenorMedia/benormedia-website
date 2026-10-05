@@ -162,11 +162,29 @@ const rootClass = ["c-cta__actions", tone === "light" && "is-light", className]
     /* TODO: DS gap text → circles (ref ≈ 14px). */
     gap: 0.875rem;
   }
-  /* Mobile: centered in the (full-width) badge — every CtaActions, lead
-     visual QA 2026-09-30. */
+  /* Mobile: centered in the badge — every CtaActions, lead visual QA
+     2026-09-30. */
   @media (max-width: 767px) {
     .c-cta__badge-row {
       margin: 0 auto;
+    }
+  }
+
+  /* Mobile, every CtaActions (lead 2026-10-05): the badge hugs its content,
+     centered under the full-width buttons (was stretched full width);
+     1rem top / bottom padding; client circles 2.2rem. */
+  @media (max-width: 767px) {
+    .c-cta__badge {
+      align-self: center;
+      width: fit-content;
+      max-width: 100%;
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+    .c-cta__badge .c-cta__badge-slot,
+    .c-cta__badge .c-cta__badge-circle {
+      width: 2.2rem;
+      height: 2.2rem;
     }
   }
 

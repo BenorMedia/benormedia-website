@@ -10,6 +10,7 @@
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getAllClients, getTestimonials } from "../lib/sanity/queries";
+import { PAGE_META } from "../lib/content/seo";
 import PageHero from "../components/sections/PageHero.astro";
 import WorkListing from "../components/sections/WorkListing.astro";
 import Testimonials from "../components/sections/Testimonials.astro";
@@ -23,13 +24,9 @@ const [clients, testimonials] = await Promise.all([
 const heroDescription =
   "A collection of the dozens of clients that trust us for their website growth.";
 
-// TODO: COPY — meta title / description (≤160 characters).
-const metaTitle = "Our Work";
-const metaDescription =
-  "We work with enterprises and startups alike, driving growth through website transformation and optimization for B2B tech and professional services.";
 ---
 
-<BaseLayout title={metaTitle} description={metaDescription}>
+<BaseLayout title={PAGE_META.work.title} description={PAGE_META.work.description}>
   <PageHero
     eyebrow="Our Work"
     title={"Websites\nwe've launched."}
