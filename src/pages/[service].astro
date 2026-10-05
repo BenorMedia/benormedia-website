@@ -18,7 +18,8 @@
  *                        plain paragraphs), FAQPage JSON-LD
  *   8. CTA banner + footer — BaseLayout default
  *
- * SEO: `service.seo` → title = `name`, description = `subtitle` (≤160 chars)
+ * SEO: `service.seo` → `SERVICE_META[slug]` (lib/content/seo.ts) → title =
+ * `name`, description = `subtitle` (≤160 chars)
  * → siteSettings defaults. BreadcrumbList JSON-LD (Home → service) when the
  * site URL is known.
  */
@@ -37,6 +38,7 @@ import type { FaqGroup } from "../lib/content/faqs";
 import { OUR_WORK_GRID_IDS, OUR_WORK_LIST_IDS } from "../lib/content/our-work";
 import ServiceHero from "../components/sections/ServiceHero.astro";
 import { SERVICE_LAYOUT } from "../lib/content/service-layout";
+import { SERVICE_META } from "../lib/content/seo";
 import LogoStrip from "../components/sections/LogoStrip.astro";
 import ServiceProblem from "../components/sections/ServiceProblem.astro";
 import ServiceProcess from "../components/sections/ServiceProcess.astro";
@@ -113,13 +115,16 @@ function clamp(text: string, max = 160): string {
   const cut = clean.slice(0, max - 1);
   return `${cut.slice(0, cut.lastIndexOf(" ")).replace(/[\s,;:.]+$/, "")}…`;
 }
-const metaDescription = service.subtitle ? clamp(service.subtitle) : undefined;
+const serviceMeta = SERVICE_META[service.slug];
+const metaTitle = serviceMeta?.title ?? service.name;
+const metaDescription =
+  serviceMeta?.description ?? (service.subtitle ? clamp(service.subtitle) : undefined);
 // Per-service text widths (lead 2026-10-01); none = template defaults.
 const layout = SERVICE_LAYOUT[service.slug] ?? {};
 const layoutOptional = metaDescription ? { description: metaDescription } : {};
 ---
 
-<BaseLayout pageSeo={service.seo ?? null} title={service.name} {...layoutOptional}>
+<BaseLayout pageSeo={service.seo ?? null} title={metaTitle} {...layoutOptional}>
   <div class="c-service-intro">
     <ServiceHero
       name={service.name}
