@@ -5,7 +5,9 @@
  * typography classes and tokens only (lead 2026-09-30, placeholder copy).
  *
  * One `<h2>` per section (`c-text_m`) followed by its paragraphs
- * (`c-paragraph_m`); a blank line in `body` starts a new paragraph. Content
+ * (`c-paragraph_m`); a blank line in `body` starts a new paragraph, a
+ * paragraph whose lines all start with "- " is a bulleted list, and a single
+ * line break inside a paragraph is kept (address block). Content
  * comes from `src/lib/content/legal.ts`. The page hero (PageHero, h1) sits
  * above; BaseLayout owns the CTA banner and footer below.
  */
@@ -23,7 +25,13 @@ const blocks = sections.map((section) => ({
   paragraphs: section.body
     .split(/\n\s*\n/)
     .map((paragraph) => paragraph.trim())
-    .filter(Boolean),
+    .filter(Boolean)
+    .map((paragraph) => {
+      const lines = paragraph.split("\n").map((line) => line.trim());
+      return lines.every((line) => line.startsWith("- "))
+        ? { list: lines.map((line) => line.slice(2)) }
+        : { text: paragraph };
+    }),
 }));
 ---
 
@@ -33,9 +41,15 @@ const blocks = sections.map((section) => ({
       {blocks.map((block) => (
         <div class="c-legal__section">
           <h2 class="c-legal__heading c-text_m">{block.heading}</h2>
-          {block.paragraphs.map((paragraph) => (
-            <p class="c-legal__paragraph c-paragraph_m">{paragraph}</p>
-          ))}
+          {block.paragraphs.map((paragraph) =>
+            paragraph.list ? (
+              <ul class="c-legal__list c-paragraph_m">
+                {paragraph.list.map((item) => <li>{item}</li>)}
+              </ul>
+            ) : (
+              <p class="c-legal__paragraph c-paragraph_m">{paragraph.text}</p>
+            ),
+          )}
         </div>
       ))}
     </div>
@@ -77,6 +91,18 @@ const blocks = sections.map((section) => ({
   .c-legal__paragraph {
     margin: 0;
     color: var(--color-text);
+    white-space: pre-line; /* single line breaks (address block) */
+  }
+
+  /* TODO: DS — no list style in the design system; reuses the paragraph
+     style with default bullets. */
+  .c-legal__list {
+    margin: 0;
+    padding-left: 1.25em;
+    color: var(--color-text);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4em;
   }
 
   /* TODO: DS mobile — no mobile ref. */
