@@ -15,12 +15,10 @@
  * `noindex` and out of the sitemap for now (lead 2026-09-30): production
  * ships without testimonials (the section and the nav / footer links are
  * hidden).
- *
- * TODO: COPY — fallback meta title / description until testimonialsPage.seo
- * is filled in Sanity (kept here, not as an HTML comment, so it doesn't ship).
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getPageSeo, getTestimonials } from "../lib/sanity/queries";
+import { PAGE_META } from "../lib/content/seo";
 import PageHero from "../components/sections/PageHero.astro";
 import TestimonialsGrid from "../components/sections/TestimonialsGrid.astro";
 
@@ -29,15 +27,12 @@ const [testimonialsPage, testimonials] = await Promise.all([
   getTestimonials(),
 ]);
 
-// Keep ≤160 characters.
-const metaDescription =
-  "Hear from our more than 100 happy clients: what B2B marketing leaders say about working with BenorMedia on their websites, from launch day onward.";
 ---
 
 <BaseLayout
   pageSeo={testimonialsPage?.seo ?? null}
-  title="Testimonials"
-  description={metaDescription}
+  title={PAGE_META.testimonials.title}
+  description={PAGE_META.testimonials.description}
   noIndex={true}
 >
   <PageHero

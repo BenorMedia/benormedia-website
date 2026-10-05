@@ -32,7 +32,7 @@ const PLACEHOLDER =
 
 export const PRIVACY_POLICY: LegalDoc = {
   title: "Privacy Policy",
-  description: "How BenorMedia collects, uses and protects personal information.",
+  description: "How BenorMedia collects, uses, stores and protects the personal information you share through our website, contact forms and client services.",
   intro: "How we collect, use and protect your personal information.",
   sections: [
     { heading: "Information we collect", body: PLACEHOLDER },
@@ -46,7 +46,7 @@ export const PRIVACY_POLICY: LegalDoc = {
 
 export const TERMS_CONDITIONS: LegalDoc = {
   title: "Terms & Conditions",
-  description: "The terms that apply when you use the BenorMedia website.",
+  description: "The terms and conditions that apply when you use the BenorMedia website or work with our Webflow design, development and growth services.",
   intro: "The terms that apply when you use this website.",
   sections: [
     { heading: "Using this website", body: PLACEHOLDER },
@@ -60,7 +60,7 @@ export const TERMS_CONDITIONS: LegalDoc = {
 
 export const COOKIE_POLICY: LegalDoc = {
   title: "Cookie Policy",
-  description: "How the BenorMedia website uses cookies and similar technologies.",
+  description: "How the BenorMedia website uses cookies and similar technologies for analytics and site performance, and how you can manage your cookie preferences.",
   intro: "How this website uses cookies and similar technologies.",
   sections: [
     { heading: "What cookies are", body: PLACEHOLDER },
