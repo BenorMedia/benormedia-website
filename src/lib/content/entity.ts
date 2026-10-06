@@ -50,3 +50,11 @@ export const PROVIDER_LD = {
   name: ENTITY.name,
   url: `${SITE}/`,
 } as const;
+
+/** Service JSON-LD `serviceType`, keyed by `service.slug`. Slugs without an
+ *  entry get no Service markup. */
+export const SERVICE_TYPES: Record<string, string> = {
+  "custom-websites-migrations": "Webflow website design, development and migration",
+  growth: "SEO, AEO/GEO and conversion rate optimization",
+  "ongoing-website-support": "Webflow website maintenance and support",
+};

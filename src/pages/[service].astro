@@ -39,6 +39,8 @@ import { OUR_WORK_GRID_IDS, OUR_WORK_LIST_IDS } from "../lib/content/our-work";
 import ServiceHero from "../components/sections/ServiceHero.astro";
 import { SERVICE_LAYOUT } from "../lib/content/service-layout";
 import { SERVICE_H1, SERVICE_META } from "../lib/content/seo";
+import { AREA_SERVED_LD, PROVIDER_LD, SERVICE_TYPES, SITE } from "../lib/content/entity";
+import JsonLd from "../components/layout/JsonLd.astro";
 import LogoStrip from "../components/sections/LogoStrip.astro";
 import ServiceProblem from "../components/sections/ServiceProblem.astro";
 import ServiceProcess from "../components/sections/ServiceProcess.astro";
@@ -141,12 +143,32 @@ const serviceMeta = SERVICE_META[service.slug];
 const metaTitle = serviceMeta?.title ?? service.name;
 const metaDescription =
   serviceMeta?.description ?? (service.subtitle ? clamp(service.subtitle) : undefined);
+
+// Service JSON-LD (SEO quick changes, lead 2026-10-06): @id = canonical +
+// `#service`; description = the page's meta description. No offers/prices.
+const serviceType = SERVICE_TYPES[service.slug];
+const serviceUrl = `${SITE}/${service.slug}`;
+const serviceLd = serviceType
+  ? {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "@id": `${serviceUrl}#service`,
+      name: service.name,
+      serviceType,
+      url: serviceUrl,
+      ...(metaDescription ? { description: metaDescription } : {}),
+      provider: PROVIDER_LD,
+      areaServed: AREA_SERVED_LD,
+      audience: { "@type": "BusinessAudience", audienceType: "B2B SaaS and tech companies" },
+    }
+  : null;
 // Per-service text widths (lead 2026-10-01); none = template defaults.
 const layout = SERVICE_LAYOUT[service.slug] ?? {};
 const layoutOptional = metaDescription ? { description: metaDescription } : {};
 ---
 
 <BaseLayout pageSeo={service.seo ?? null} title={metaTitle} {...layoutOptional}>
+  {serviceLd && <JsonLd data={serviceLd} />}
   <div class="c-service-intro">
     <ServiceHero
       name={service.name}
