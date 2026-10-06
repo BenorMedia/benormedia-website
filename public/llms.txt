@@ -1,0 +1,19 @@
+# BenorMedia
+
+> BenorMedia is a Webflow agency for B2B SaaS and tech companies. We design and build high-converting Webflow websites, then grow them with SEO, AEO/GEO and CRO. Webflow Professional Partner, 6+ years, 100+ clients. Office: Barcelona, Spain. Contact: info@benor.media
+
+## Services
+
+- [Custom Websites & Migrations](https://www.benormedia.com/custom-websites-migrations): Custom Webflow design, development and migrations for B2B SaaS and tech companies.
+- [Growth (SEO/GEO + CRO)](https://www.benormedia.com/growth): Technical SEO, AEO/GEO, content and CRO that turn more website traffic into pipeline.
+- [Ongoing Website Support](https://www.benormedia.com/ongoing-website-support): Unlimited Webflow design, development and maintenance for growing B2B companies.
+
+## Company
+
+- [Our work](https://www.benormedia.com/work): Webflow websites designed and built for B2B SaaS, professional services and agencies.
+- [Pricing](https://www.benormedia.com/pricing): Monthly design and development, AEO/GEO growth plans, or one-off projects.
+
+## Optional
+
+- [Privacy Policy](https://www.benormedia.com/privacy-policy)
+- [Terms & Conditions](https://www.benormedia.com/terms-conditions)
