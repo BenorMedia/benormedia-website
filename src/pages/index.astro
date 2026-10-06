@@ -20,6 +20,8 @@ import {
 } from "../lib/sanity/queries";
 import { OUR_WORK_GRID_IDS, OUR_WORK_LIST_IDS } from "../lib/content/our-work";
 import { PAGE_META } from "../lib/content/seo";
+import { AREA_SERVED_LD, ENTITY, ORG_ID, SITE, WEBSITE_ID } from "../lib/content/entity";
+import JsonLd from "../components/layout/JsonLd.astro";
 import HomeHero from "../components/sections/HomeHero.astro";
 import LogoStrip from "../components/sections/LogoStrip.astro";
 import FeaturedWork from "../components/sections/FeaturedWork.astro";
@@ -37,9 +39,42 @@ const [heroClients, logoClients, featuredClients, workClients, workListClients, 
   getClientsByIds(OUR_WORK_LIST_IDS),
   getTestimonials(),
 ]);
+
+// Organization + WebSite JSON-LD, Home only (SEO quick changes, lead
+// 2026-10-06). Facts from `lib/content/entity.ts`; description = the Home
+// meta description. No SearchAction: the site has no search.
+const homeLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": ORG_ID,
+      name: ENTITY.name,
+      alternateName: ENTITY.alternateName,
+      url: `${SITE}/`,
+      logo: { "@type": "ImageObject", url: `${SITE}/apple-touch-icon.png`, width: 180, height: 180 },
+      description: PAGE_META.home.description,
+      email: ENTITY.email,
+      address: { "@type": "PostalAddress", ...ENTITY.address },
+      areaServed: AREA_SERVED_LD,
+      knowsAbout: ENTITY.knowsAbout,
+      sameAs: ENTITY.sameAs,
+    },
+    {
+      "@type": "WebSite",
+      "@id": WEBSITE_ID,
+      url: `${SITE}/`,
+      name: ENTITY.name,
+      alternateName: ENTITY.alternateName,
+      inLanguage: "en",
+      publisher: { "@id": ORG_ID },
+    },
+  ],
+};
 ---
 
 <BaseLayout pageSeo={home?.seo ?? null} title={PAGE_META.home.title} description={PAGE_META.home.description}>
+  <JsonLd data={homeLd} />
   <HomeHero clients={heroClients} />
   {/* Hidden on Home only (lead 2026-09-30). */}
   <LogoStrip clients={logoClients} hidden />
