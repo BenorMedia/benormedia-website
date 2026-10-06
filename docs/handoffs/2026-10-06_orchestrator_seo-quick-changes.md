@@ -7,7 +7,7 @@ Brief: `docs/seo-quick-changes.md`. One commit per task.
 ## What I did
 - **Scripts:** `scripts/check-seo.mjs`, `scripts/check-crawlers.sh`, `scripts/indexnow.mjs` (+ `pnpm run indexnow`).
 - **10 Entity facts:** `src/lib/content/entity.ts` (name, alternateName, email, footer address, service area, profiles) + `src/components/layout/JsonLd.astro`. Brand grep `Benor Media|Benor media|benor media` in src/public/sanity: 0 hits. Partner badge (`webflow-partner.png`) reads "Official Webflow Partner", no tier → alt text and meta left as they are.
-- **5 Titles / H1 / meta:** Home h1 "Webflow agency for B2B SaaS and tech companies", old h1 as the first hero paragraph (same `c-paragraph_m c-hero__desc`). Service h1s from `SERVICE_H1` (`lib/content/seo.ts`, code override); the Sanity `headline` becomes the first subtitle paragraph. Accent phrases: "design and development", "Google and AI search", "maintenance and support". New titles + descriptions in `SERVICE_META`. Checked 1440 + 390: no bad wraps; Home hero is one paragraph taller.
+- **5 Titles / meta:** new titles + descriptions in `SERVICE_META`. The H1 / subheader changes were reverted (lead 2026-10-06): Home and service heroes are as before.
 - **2 Organization + WebSite** JSON-LD on `/` only.
 - **3 Service** JSON-LD on the three service pages (BreadcrumbList / FAQPage untouched).
 - **4 Pricing FAQPage:** not added. The FAQ is rendered `hidden` (lead 2026-09-30) with placeholder answers; FaqSection already uses one data array for both and emits FAQPage automatically once `hidden` is removed. Check script updated to match.

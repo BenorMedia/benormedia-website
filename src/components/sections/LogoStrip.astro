@@ -21,12 +21,13 @@
  */
 import Eyebrow from "../ui/Eyebrow.astro";
 import type { Client } from "../../lib/sanity/types";
-import { urlFor, assetDimensions, type Source } from "../../lib/sanity/image";
+import { urlFor, assetDimensions, clientImageAlt, type Source } from "../../lib/sanity/image";
 
 interface Props {
   clients: Client[];
-  /** Render `hidden` (kept in the markup, not shown). Home only, lead
-   *  2026-09-30; other pages keep the strip. */
+  /** Render `hidden` (kept in the markup, not shown) above 767px; phones
+   *  still show it. Home only, lead 2026-09-30 / 2026-10-06; other pages
+   *  keep the strip. */
   hidden?: boolean;
 }
 
@@ -49,13 +50,27 @@ const track = [...clients, ...clients];
           // Rendered at 60px tall (2x of the 30px row); width from the ratio.
           const dims = assetDimensions(client.logo?.asset?._id);
           const imgWidth = dims ? Math.round((60 * dims.width) / dims.height) : undefined;
+          const imgSrc = client.logo?.asset ? urlFor(client.logo as Source).auto("format").height(60).url() : "";
+          const alt = clientImageAlt(client.logo?.alt, client.name, "logo");
           return (
             <li class="c-logos__item" aria-hidden={dup ? "true" : undefined}>
-              {client.logo?.asset ? (
+              {/* Repeats get a literal `alt=""`: Astro writes an expression
+                  that is "" as a bare `alt`, which crawlers report as missing. */}
+              {client.logo?.asset && dup ? (
                 <img
                   class="c-logos__img"
-                  src={urlFor(client.logo as Source).auto("format").height(60).url()}
-                  alt={dup ? "" : (client.logo.alt ?? client.name)}
+                  src={imgSrc}
+                  alt=""
+                  width={imgWidth}
+                  height={dims ? 60 : undefined}
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : client.logo?.asset ? (
+                <img
+                  class="c-logos__img"
+                  src={imgSrc}
+                  alt={alt}
                   width={imgWidth}
                   height={dims ? 60 : undefined}
                   loading="lazy"
@@ -89,6 +104,14 @@ const track = [...clients, ...clients];
   @media (max-width: 767px) {
     .c-logos__container {
       padding-inline: 2rem;
+    }
+  }
+
+  /* `hidden` (Home) applies above 767 only: phones show the strip (lead
+     2026-10-06). */
+  @media (max-width: 767px) {
+    .c-logos[hidden] {
+      display: block;
     }
   }
 

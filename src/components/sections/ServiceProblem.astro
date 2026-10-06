@@ -46,7 +46,7 @@ import SectionHeader from "../ui/SectionHeader.astro";
 import Eyebrow from "../ui/Eyebrow.astro";
 import type { Client, SanityImage } from "../../lib/sanity/types";
 import type { TitleSegment } from "../../lib/sanity/portable-text";
-import { urlFor, assetDimensions, type Source } from "../../lib/sanity/image";
+import { urlFor, assetDimensions, clientImageAlt, type Source } from "../../lib/sanity/image";
 
 interface Props {
   /** Plain title (`\n` = line break). Empty = no title. */
@@ -87,7 +87,7 @@ const shots: Shot[] = clients
       srcset: `${base.width(IMG_WIDTH).url()} 1x, ${base.width(IMG_WIDTH * 2).url()} 2x`,
       width: IMG_WIDTH,
       height,
-      alt: image.alt?.trim() || `${c.name} website`,
+      alt: clientImageAlt(image.alt, c.name, "website"),
     };
   });
 
@@ -174,16 +174,31 @@ const headerOptional = {
           >
             {col.items.map((item) => (
               <li class="c-service-problem__item" aria-hidden={item.hidden ? "true" : undefined}>
-                <img
-                  class="c-service-problem__img"
-                  src={item.src}
-                  srcset={item.srcset}
-                  width={item.width}
-                  height={item.height}
-                  alt={item.hidden ? "" : item.alt}
-                  loading="lazy"
-                  decoding="async"
-                />
+                {/* Repeats get a literal `alt=""`: Astro writes an expression
+                    that is "" as a bare `alt`, which crawlers report as missing. */}
+                {item.hidden ? (
+                  <img
+                    class="c-service-problem__img"
+                    src={item.src}
+                    srcset={item.srcset}
+                    width={item.width}
+                    height={item.height}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <img
+                    class="c-service-problem__img"
+                    src={item.src}
+                    srcset={item.srcset}
+                    width={item.width}
+                    height={item.height}
+                    alt={item.alt}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                )}
               </li>
             ))}
           </ul>

@@ -10,14 +10,13 @@ const target = (process.argv[2] ?? 'dist').replace(/\/$/, '');
 const isUrl = /^https?:\/\//.test(target);
 const SITE = 'https://www.benormedia.com';
 
-// expected = JSON-LD @types that must be present. keyword = words that must all appear in title + H1.
+// expected = JSON-LD @types that must be present. keyword = words that must all appear in title + meta description.
 const PAGES = {
   '/': { expected: ['Organization', 'WebSite'], keyword: 'webflow agency' },
   '/custom-websites-migrations': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'webflow development agency' },
   '/growth': { expected: ['Service', 'BreadcrumbList'], keyword: 'b2b saas seo agency' },
   '/ongoing-website-support': { expected: ['Service', 'BreadcrumbList'], keyword: 'webflow maintenance service' },
-  // FAQ rendered hidden (lead 2026-09-30), so no FAQPage yet: add 'FAQPage' here when it goes live.
-  '/pricing': { expected: [], keyword: null },
+  '/pricing': { expected: ['FAQPage'], keyword: null },
   '/work': { expected: [], keyword: null },
 };
 const NOINDEX_PAGES = ['/testimonials', '/cookie-policy']; // must stay out of the sitemap
@@ -83,12 +82,15 @@ for (const [path, rule] of Object.entries(PAGES)) {
   check(parseErrors === 0, 'all JSON-LD blocks parse', `${parseErrors} JSON-LD block(s) fail to parse`);
   for (const t of rule.expected) check(types.includes(t), `JSON-LD has ${t}`, `JSON-LD missing ${t}`);
   check(!/lorem ipsum/i.test(html), 'no Lorem ipsum', 'Lorem ipsum found in HTML');
+  // H1s are brand taglines (lead 2026-10-06), so keywords are checked in title + meta.
   if (rule.keyword) {
-    const hay = `${title} ${h1s.join(' ')}`.toLowerCase();
+    const hay = `${title} ${meta}`.toLowerCase();
     const missing = rule.keyword.split(' ').filter((w) => !hay.includes(w));
-    check(missing.length === 0, `title+h1 cover "${rule.keyword}"`, `title+h1 miss: ${missing.join(', ')}`);
-    check(h1s[0] && h1s[0].toLowerCase() !== title.toLowerCase().split(' | ')[0], 'h1 differs from title', 'h1 equals title');
+    check(missing.length === 0, `title+meta cover "${rule.keyword}"`, `title+meta miss: ${missing.join(', ')}`);
   }
+  const imgs = [...html.matchAll(/<img\b[^>]*>/gi)].map((m) => m[0]);
+  const noAlt = imgs.filter((t) => !/\salt\s*=/i.test(t));
+  check(noAlt.length === 0, `all ${imgs.length} img tags have alt`, `${noAlt.length} of ${imgs.length} img tags have no alt attribute, for example: ${noAlt.slice(0, 2).map((t) => t.slice(0, 90)).join(' | ')}`);
 }
 
 console.log('\nsitemap');

@@ -36,3 +36,18 @@ export function assetDimensions(
 export function isSvgAsset(id: string | undefined | null): boolean {
   return /-svg$/i.test(id ?? '');
 }
+
+/**
+ * Alt text for a client image: the Sanity `alt` unless it is empty or only
+ * repeats the client name (which says nothing about the image), else
+ * "<name> <kind>", e.g. "Surfe logo", "Surfe website" (SEO cleanup 2026-10-06).
+ */
+export function clientImageAlt(
+  alt: string | undefined | null,
+  name: string | undefined | null,
+  kind: 'logo' | 'website',
+): string {
+  const a = alt?.trim();
+  const n = name?.trim() ?? '';
+  return a && a !== n ? a : `${n} ${kind}`.trim();
+}

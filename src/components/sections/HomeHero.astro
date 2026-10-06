@@ -8,7 +8,7 @@
  * inside `.c-hero__lines`, aria-hidden.
  *
  * Content stack (24px internal gap):
- *   - title sub-block (eyebrow row + h1 + tagline + subtitle, gap 1.15rem). Eyebrow row:
+ *   - title sub-block (eyebrow row + h1 + subtitle, 24px gap). Eyebrow row:
  *     "$700M+" eyebrow left of the partner one; stacked on mobile, new on top.
  *   - `CtaActions` (lead 2026-09-30): the CTA banner's buttons + the
  *     "Trusted by" badge (`c-cta__actions`, dark tone on the gradient), with
@@ -112,15 +112,9 @@ const BUTTONS: ButtonType[] = [
           </Eyebrow>
         </div>
 
-        {/* H1 names the service and the buyer; the brand line stays as the
-            first paragraph (SEO quick changes, lead 2026-10-06). */}
         <h1 class="c-hero__title" data-anim="hero-headline">
-          Webflow agency for B2B SaaS and tech companies
-        </h1>
-
-        <p class="c-paragraph_m c-hero__desc">
           We turn your website into a revenue engine built to scale.
-        </p>
+        </h1>
 
         <p class="c-paragraph_m c-hero__desc">
           We create high-converting and AEO optimized websites that anyone in
@@ -231,6 +225,15 @@ const BUTTONS: ButtonType[] = [
     );
   }
 
+  /* Mobile (lead 2026-10-06): no pile (see `.c-hero__physics`), so the box
+     follows its content + 4rem. */
+  @media (max-width: 767px) {
+    .c-hero.is-measured {
+      height: auto;
+      padding-bottom: 4rem;
+    }
+  }
+
   /* --- Decorative lines ------------------------------------------------- */
   .c-hero__lines {
     position: absolute;
@@ -338,13 +341,16 @@ const BUTTONS: ButtonType[] = [
     gap: 2.143rem; /* 30px ÷14 (1440 root) — lead 2026-09-30 */
   }
 
-  /* Mobile (lead 2026-10-05): 1rem gap; eyebrow text 2.5vw (vw on purpose,
-     the lead's value: it follows the screen width). */
+  /* Mobile (lead 2026-10-05): 1rem gap. Eyebrow text 2.5vw (vw on purpose,
+     the lead's value: it follows the screen width) only at ≤500px (lead
+     2026-10-06); 501–767 keeps the default eyebrow size. */
   @media (max-width: 767px) {
     .c-hero__eyebrows {
       flex-direction: column;
       gap: 1rem;
     }
+  }
+  @media (max-width: 500px) {
     .c-hero__eyebrows :global(.c-eyebrow.c-hero__eyebrow) {
       font-size: 2.5vw;
     }
@@ -380,6 +386,13 @@ const BUTTONS: ButtonType[] = [
     text-align: center;
   }
 
+  /* Mobile (lead 2026-10-06): no "Trusted by" badge in the hero. */
+  @media (max-width: 767px) {
+    .c-hero :global(.c-hero__actions .c-cta__badge) {
+      display: none;
+    }
+  }
+
   /* --- Physics pile (hero-physics.ts) ---------------------------------
      Static (no JS / reduced motion): a wrapped row in the bottom space,
      clipped to it so it never reaches the buttons. Live (`is-live`): the
@@ -409,10 +422,11 @@ const BUTTONS: ButtonType[] = [
     padding: 0.575rem; /* 0.5rem x 1.15 */
     border-radius: 0.575rem;
   }
+  /* Mobile (lead 2026-10-06): no physics pile. Hidden, it never intersects,
+     so hero-physics.ts never starts (matter-js is not loaded). */
   @media (max-width: 767px) {
-    .c-hero__physics :global(.c-hero__physics-item) {
-      width: 3rem;  /* lead 2026-09-30 */
-      height: 3rem;
+    .c-hero__physics {
+      display: none;
     }
   }
   /* JS on: the static row stays hidden until the physics goes live (no

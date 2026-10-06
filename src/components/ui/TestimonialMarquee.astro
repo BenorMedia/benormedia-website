@@ -71,7 +71,7 @@ const rootClass = ["c-testimonial-marquee", className].filter(Boolean).join(" ")
         >
           {row.items.map(({ t, hidden }) => (
             <li class="c-testimonial-marquee__item" aria-hidden={hidden ? "true" : undefined}>
-              <TestimonialCard testimonial={t} />
+              <TestimonialCard testimonial={t} repeat={hidden} />
             </li>
           ))}
         </ul>
