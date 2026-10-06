@@ -16,7 +16,8 @@ const PAGES = {
   '/custom-websites-migrations': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'webflow development agency' },
   '/growth': { expected: ['Service', 'BreadcrumbList'], keyword: 'b2b saas seo agency' },
   '/ongoing-website-support': { expected: ['Service', 'BreadcrumbList'], keyword: 'webflow maintenance service' },
-  '/pricing': { expected: ['FAQPage'], keyword: null },
+  // FAQ rendered hidden (lead 2026-09-30), so no FAQPage yet: add 'FAQPage' here when it goes live.
+  '/pricing': { expected: [], keyword: null },
   '/work': { expected: [], keyword: null },
 };
 const NOINDEX_PAGES = ['/testimonials', '/cookie-policy']; // must stay out of the sitemap
