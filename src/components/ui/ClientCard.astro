@@ -40,7 +40,7 @@
  * Motion is deferred: root gets `data-anim="card-reveal"` only.
  */
 import type { Client, Kpi } from "../../lib/sanity/types";
-import { urlFor, type Source } from "../../lib/sanity/image";
+import { urlFor, clientImageAlt, type Source } from "../../lib/sanity/image";
 import Tag from "./Tag.astro";
 
 type Variant = "featured" | "grid";
@@ -86,7 +86,7 @@ const screenshotAsset = client.websiteScreenshot?.asset;
 const screenshotUrl = screenshotAsset
   ? urlFor(client.websiteScreenshot as Source).width(960).auto("format").url()
   : undefined;
-const screenshotAlt = client.websiteScreenshot?.alt ?? client.name;
+const screenshotAlt = clientImageAlt(client.websiteScreenshot?.alt, client.name, "website");
 const videoUrl = client.websiteVideo?.asset?.url;
 // Poster at the video's 16:9 (both featured videos are 1920×1080), so it
 // fills the media box like the video does. Screenshot fallback keeps the top
@@ -117,7 +117,7 @@ const headLogoAsset = client.logo?.asset;
 const headLogoUrl = headLogoAsset
   ? urlFor(client.logo as Source).height(100).auto("format").url()
   : undefined;
-const headLogoAlt = client.logo?.alt ?? client.name;
+const headLogoAlt = clientImageAlt(client.logo?.alt, client.name, "logo");
 
 // --- Grid variant ----------------------------------------------------------
 // Thumbnail assets are authored at 547×360 (the card's Figma size); crops
@@ -135,7 +135,7 @@ const thumbSrc = thumbAsset ? thumbUrlAt(547) : undefined;
 const thumbSrcset = thumbAsset
   ? [547, 820, 1094].map((w) => `${thumbUrlAt(w)} ${w}w`).join(", ")
   : undefined;
-const thumbAlt = client.cardThumbnail?.alt ?? client.name;
+const thumbAlt = clientImageAlt(client.cardThumbnail?.alt, client.name, "website");
 const fundsLabel = client.fundsRaised?.trim()
   ? `${client.fundsRaised.trim()} Raised`
   : undefined;
@@ -258,7 +258,7 @@ const BodyTag = websiteUrl ? "a" : "div";
                 <img
                   class="c-client-card__author-photo"
                   src={authorPhotoUrl}
-                  alt={testimonial.authorPhoto?.alt ?? testimonial.authorName}
+                  alt=""
                   loading="lazy"
                   decoding="async"
                   width="48"
