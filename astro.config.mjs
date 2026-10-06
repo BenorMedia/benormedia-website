@@ -120,8 +120,8 @@ const LASTMOD = {
   '/custom-websites-migrations': '2026-10-06',
   '/growth': '2026-10-06',
   '/ongoing-website-support': '2026-10-06',
-  '/pricing': '2026-10-05',
-  '/work': '2026-10-05',
+  '/pricing': '2026-10-06',
+  '/work': '2026-10-06',
   '/privacy-policy': '2026-10-05',
   '/terms-conditions': '2026-10-05',
 };
