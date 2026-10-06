@@ -8,7 +8,7 @@
  * inside `.c-hero__lines`, aria-hidden.
  *
  * Content stack (24px internal gap):
- *   - title sub-block (eyebrow row + h1 + subtitle, 24px gap). Eyebrow row:
+ *   - title sub-block (eyebrow row + h1 + tagline + subtitle, gap 1.15rem). Eyebrow row:
  *     "$700M+" eyebrow left of the partner one; stacked on mobile, new on top.
  *   - `CtaActions` (lead 2026-09-30): the CTA banner's buttons + the
  *     "Trusted by" badge (`c-cta__actions`, dark tone on the gradient), with
@@ -112,9 +112,15 @@ const BUTTONS: ButtonType[] = [
           </Eyebrow>
         </div>
 
+        {/* H1 names the service and the buyer; the brand line stays as the
+            first paragraph (SEO quick changes, lead 2026-10-06). */}
         <h1 class="c-hero__title" data-anim="hero-headline">
-          We turn your website into a revenue engine built to scale.
+          Webflow agency for B2B SaaS and tech companies
         </h1>
+
+        <p class="c-paragraph_m c-hero__desc">
+          We turn your website into a revenue engine built to scale.
+        </p>
 
         <p class="c-paragraph_m c-hero__desc">
           We create high-converting and AEO optimized websites that anyone in
