@@ -5,7 +5,7 @@
 //   node scripts/indexnow.mjs https://www.benormedia.com/growth https://www.benormedia.com/pricing
 //   node scripts/indexnow.mjs --sitemap       every URL in the live sitemap (use sparingly)
 const HOST = 'www.benormedia.com';
-const KEY = '__INDEXNOW_KEY__'; // the key is public by design; it must equal the contents of public/<key>.txt
+const KEY = '9458c828e34af8970c785ff41c9216b1'; // the key is public by design; it must equal the contents of public/<key>.txt
 const KEY_LOCATION = `https://${HOST}/${KEY}.txt`;
 
 const args = process.argv.slice(2);

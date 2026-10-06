@@ -20,7 +20,8 @@
     "import:badges": "tsx scripts/sanity/import-client-assets.ts --only=badge --force",
     "import:icons": "tsx scripts/sanity/import-client-assets.ts --only=icons --force --create-missing",
     "schema:deploy": "sanity schema deploy",
-    "seed:client-order": "tsx scripts/sanity/seed-client-order.ts"
+    "seed:client-order": "tsx scripts/sanity/seed-client-order.ts",
+    "indexnow": "node scripts/indexnow.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^7.0.0",
