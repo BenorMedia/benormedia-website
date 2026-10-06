@@ -110,6 +110,22 @@ const benorSanityAliasFix = {
   },
 };
 
+// Sitemap <lastmod> per page (SEO quick changes, lead 2026-10-06). Real
+// dates only, never the build date (Google ignores an inaccurate lastmod):
+// seeded from `git log -1 --format=%cs` on each page's source files.
+// Update the date when a page's content changes.
+/** @type {Record<string, string>} */
+const LASTMOD = {
+  '/': '2026-10-06',
+  '/custom-websites-migrations': '2026-10-06',
+  '/growth': '2026-10-06',
+  '/ongoing-website-support': '2026-10-06',
+  '/pricing': '2026-10-05',
+  '/work': '2026-10-05',
+  '/privacy-policy': '2026-10-05',
+  '/terms-conditions': '2026-10-05',
+};
+
 // https://astro.build/config
 export default defineConfig({
   ...(siteUrl ? { site: siteUrl } : {}),
@@ -140,6 +156,12 @@ export default defineConfig({
         !/\/(dev|studio)(\/|$)|\/404$|^\/(cookie-policy|testimonials)\/?$/.test(
           new URL(page).pathname,
         ),
+      serialize(item) {
+        const path = new URL(item.url).pathname.replace(/\/$/, '') || '/';
+        const lastmod = LASTMOD[path];
+        if (lastmod) item.lastmod = lastmod;
+        return item;
+      },
     }),
   ],
   vite: {
