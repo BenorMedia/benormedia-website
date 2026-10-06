@@ -5,7 +5,7 @@
  * `docs/refs/services-template/` (`services-template-preview.jpg`).
  *
  * Sections (lead brief: 3 custom sections, the rest reused):
- *   1. ServiceHero     — breadcrumb, h1 `headline`, `subtitle`, CtaActions (light)
+ *   1. ServiceHero     — breadcrumb, h1 (`SERVICE_H1`, else `headline`), `headline` + `subtitle` paragraphs, CtaActions (light)
  *   2. LogoStrip       — same as Home (`getAllClientsWithLogo`)
  *      (1 + 2 share the `.c-service-intro` wrapper, which paints the line art
  *      `service-mid-hero-bg` across the hero bottom and the logo strip)
@@ -38,7 +38,9 @@ import type { FaqGroup } from "../lib/content/faqs";
 import { OUR_WORK_GRID_IDS, OUR_WORK_LIST_IDS } from "../lib/content/our-work";
 import ServiceHero from "../components/sections/ServiceHero.astro";
 import { SERVICE_LAYOUT } from "../lib/content/service-layout";
-import { SERVICE_META } from "../lib/content/seo";
+import { SERVICE_H1, SERVICE_META } from "../lib/content/seo";
+import { AREA_SERVED_LD, PROVIDER_LD, SERVICE_TYPES, SITE } from "../lib/content/entity";
+import JsonLd from "../components/layout/JsonLd.astro";
 import LogoStrip from "../components/sections/LogoStrip.astro";
 import ServiceProblem from "../components/sections/ServiceProblem.astro";
 import ServiceProcess from "../components/sections/ServiceProcess.astro";
@@ -72,7 +74,29 @@ const [logoClients, testimonials, workClients, workListClients, badges, siteSett
 // --- Hero -------------------------------------------------------------------
 const headlineSegments = accentTitleSegments(service.headline);
 const headlineText = accentTitleText(service.headline) || service.name;
-const heroSegments = headlineSegments.length > 0 ? headlineSegments : undefined;
+// SERVICE_H1 (lead 2026-10-06): a keyword h1 replaces the Sanity headline,
+// which moves to the first subtitle paragraph (same style, line breaks
+// dropped). Without an entry the headline stays the h1.
+const h1 = SERVICE_H1[service.slug];
+const heroTitle = h1?.title ?? headlineText;
+const heroSegments = h1
+  ? splitAccent(h1.title, h1.accent)
+  : headlineSegments.length > 0
+    ? headlineSegments
+    : undefined;
+const tagline = h1 ? headlineText.replace(/\s*\n\s*/g, " ").trim() : "";
+const heroSubtitle = [tagline, service.subtitle?.trim()].filter(Boolean).join("\n\n") || undefined;
+
+function splitAccent(text: string, accent?: string): { text: string; accent?: boolean }[] | undefined {
+  const start = accent ? text.indexOf(accent) : -1;
+  if (!accent || start < 0) return undefined;
+  const end = start + accent.length;
+  return [
+    { text: text.slice(0, start) },
+    { text: accent, accent: true },
+    { text: text.slice(end) },
+  ].filter((s) => s.text.length > 0);
+}
 
 // BreadcrumbList JSON-LD needs absolute URLs; skipped when no site URL is set.
 const siteBase = (siteSettings?.siteUrl ?? Astro.site?.toString() ?? "").replace(/\/$/, "");
@@ -119,18 +143,38 @@ const serviceMeta = SERVICE_META[service.slug];
 const metaTitle = serviceMeta?.title ?? service.name;
 const metaDescription =
   serviceMeta?.description ?? (service.subtitle ? clamp(service.subtitle) : undefined);
+
+// Service JSON-LD (SEO quick changes, lead 2026-10-06): @id = canonical +
+// `#service`; description = the page's meta description. No offers/prices.
+const serviceType = SERVICE_TYPES[service.slug];
+const serviceUrl = `${SITE}/${service.slug}`;
+const serviceLd = serviceType
+  ? {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "@id": `${serviceUrl}#service`,
+      name: service.name,
+      serviceType,
+      url: serviceUrl,
+      ...(metaDescription ? { description: metaDescription } : {}),
+      provider: PROVIDER_LD,
+      areaServed: AREA_SERVED_LD,
+      audience: { "@type": "BusinessAudience", audienceType: "B2B SaaS and tech companies" },
+    }
+  : null;
 // Per-service text widths (lead 2026-10-01); none = template defaults.
 const layout = SERVICE_LAYOUT[service.slug] ?? {};
 const layoutOptional = metaDescription ? { description: metaDescription } : {};
 ---
 
 <BaseLayout pageSeo={service.seo ?? null} title={metaTitle} {...layoutOptional}>
+  {serviceLd && <JsonLd data={serviceLd} />}
   <div class="c-service-intro">
     <ServiceHero
       name={service.name}
-      title={headlineText}
+      title={heroTitle}
       titleSegments={heroSegments}
-      subtitle={service.subtitle}
+      subtitle={heroSubtitle}
       badges={badges}
       breadcrumbLd={breadcrumbLd}
       descriptionWidth={layout.heroDescription}

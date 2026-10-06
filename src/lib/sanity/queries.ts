@@ -205,7 +205,7 @@ export const CLIENTS_BY_IDS = /* groq */ `
   "cardThumbnail": cardThumbnail${IMAGE},
   "websiteVideo": websiteVideo${VIDEO},
   "websiteVideoPoster": websiteVideoPoster${IMAGE},
-  "testimonial": testimonial->{
+  "testimonial": select(testimonial->quote match "lorem ipsum*" => null, testimonial->{
     _id,
     _type,
     quote,
@@ -214,7 +214,7 @@ export const CLIENTS_BY_IDS = /* groq */ `
     "authorPhoto": authorPhoto${IMAGE},
     "companyLogo": companyLogo${IMAGE},
     kpis[]{ value, description }
-  }
+  })
 }
 `;
 
@@ -267,10 +267,12 @@ export const ALL_CLIENTS_WITH_ICON = /* groq */ `
 // TESTIMONIALS — every published testimonial, oldest first, with the client
 // that references it (`client.testimonial`) so cards can show that client's
 // logo. Used by the shared TestimonialMarquee (Home + other pages).
+// Placeholder quotes ("Lorem ipsum…") are skipped until the real ones are in
+// (SEO quick changes, lead 2026-10-06); CLIENTS_BY_IDS drops them the same way.
 // ---------------------------------------------------------------------------
 
 export const TESTIMONIALS = /* groq */ `
-*[_type == "testimonial" && !(_id in path("drafts.**"))] | order(_createdAt asc){
+*[_type == "testimonial" && !(_id in path("drafts.**")) && !(quote match "lorem ipsum*")] | order(_createdAt asc){
   _id,
   _type,
   quote,

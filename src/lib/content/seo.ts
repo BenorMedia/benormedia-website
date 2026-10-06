@@ -45,18 +45,40 @@ export const PAGE_META = {
  *  service name + subtitle in `[service].astro`. */
 export const SERVICE_META: Record<string, PageMeta> = {
   "custom-websites-migrations": {
-    title: "Custom Webflow Websites & Migrations",
+    title: "Webflow Design & Development Agency for B2B",
     description:
-      "Custom Webflow website design, development and migrations for B2B companies: strong creative, clear strategy and scalable tech your team can update.",
+      "Custom Webflow design, development and migrations for B2B SaaS and tech companies: strong creative, clear strategy and a site your team can update.",
   },
   growth: {
-    title: "SEO, GEO & CRO Growth Services",
+    title: "B2B SaaS SEO Agency: SEO, GEO & CRO",
     description:
-      "Get found in Google and AI search. Technical SEO, AEO/GEO, AI visibility, content and CRO that turn more of your website traffic into pipeline.",
+      "B2B SaaS SEO agency for Google and AI search: technical SEO, AEO/GEO, content and CRO that turn more of your website traffic into pipeline.",
   },
   "ongoing-website-support": {
-    title: "Ongoing Webflow Website Support",
+    title: "Webflow Maintenance & Support Service",
     description:
-      "Unlimited Webflow design, development and support for growing B2B companies. Keep your website improving without the cost of an in-house team.",
+      "Unlimited Webflow design, development and maintenance for growing B2B companies. Keep your website improving without the cost of an in-house team.",
+  },
+};
+
+/**
+ * Service hero h1, keyed by `service.slug` (SEO quick changes, lead
+ * 2026-10-06): the h1 names the service and the buyer; the Sanity
+ * `headline` (brand line) renders as the first paragraph under it.
+ * `accent` = the gradient phrase (SectionHeader `accent`). Unknown slugs
+ * keep the Sanity headline as the h1.
+ */
+export const SERVICE_H1: Record<string, { title: string; accent?: string }> = {
+  "custom-websites-migrations": {
+    title: "Webflow design and development for B2B companies",
+    accent: "design and development",
+  },
+  growth: {
+    title: "B2B SaaS SEO for Google and AI search",
+    accent: "Google and AI search",
+  },
+  "ongoing-website-support": {
+    title: "Webflow maintenance and support for B2B teams",
+    accent: "maintenance and support",
   },
 };
