@@ -25,8 +25,9 @@ import { urlFor, assetDimensions, type Source } from "../../lib/sanity/image";
 
 interface Props {
   clients: Client[];
-  /** Render `hidden` (kept in the markup, not shown). Home only, lead
-   *  2026-09-30; other pages keep the strip. */
+  /** Render `hidden` (kept in the markup, not shown) above 767px; phones
+   *  still show it. Home only, lead 2026-09-30 / 2026-10-06; other pages
+   *  keep the strip. */
   hidden?: boolean;
 }
 
@@ -89,6 +90,14 @@ const track = [...clients, ...clients];
   @media (max-width: 767px) {
     .c-logos__container {
       padding-inline: 2rem;
+    }
+  }
+
+  /* `hidden` (Home) applies above 767 only: phones show the strip (lead
+     2026-10-06). */
+  @media (max-width: 767px) {
+    .c-logos[hidden] {
+      display: block;
     }
   }
 
