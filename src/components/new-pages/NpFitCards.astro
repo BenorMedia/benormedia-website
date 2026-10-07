@@ -14,13 +14,14 @@
  *   4. no break → the whole bullet is the title.
  * The card's text content is always the bullet's text, unchanged.
  *
- * Icon: the Figma's image (the same one on every card), served resized by
- * astro:assets. Icon tile values from the Figma (1920 frame, 1/14 rem),
- * like the nav's service icons.
+ * Icon: the most relevant one from the Figma icon set for each card's
+ * message (`src/lib/new-pages/fit-icons.ts`), with its Figma window and
+ * crop, served resized by astro:assets. Icon tile values from the Figma
+ * (1920 frame, 1/14 rem), like the nav's service icons.
  */
 import { Image } from "astro:assets";
 import Container from "../ui/Container.astro";
-import fitIcon from "../../assets/new-pages/fit-icon.png";
+import { fitIconFor, type FitIcon } from "../../lib/new-pages/fit-icons";
 import type { PageSection } from "../../lib/new-pages/loader";
 
 interface Props {
@@ -33,13 +34,16 @@ const before = list ? section.html.slice(0, list.index) : section.html;
 const after = list ? section.html.slice(list.index + list[0].length) : "";
 
 interface Card {
+  icon: FitIcon;
   titleHtml: string;
   /** Text hidden on screen between title and text (the dropped comma). */
   hiddenSep: string;
   textHtml: string;
 }
 
-function split(inner: string): Card {
+const plainText = (html: string): string => html.replace(/<[^>]*>/g, "");
+
+function split(inner: string): Omit<Card, "icon"> {
   const bold = /^<strong>([\s\S]*?)<\/strong>\s*([\s\S]*)$/.exec(inner);
   if (bold) return { titleHtml: bold[1] ?? "", hiddenSep: "", textHtml: bold[2] ?? "" };
   // Split points outside tags only (links and highlights stay whole).
@@ -62,7 +66,18 @@ function split(inner: string): Card {
   return { titleHtml: inner, hiddenSep: "", textHtml: "" };
 }
 
-const cards: Card[] = list ? [...list[1]!.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)].map((m) => split(m[1] ?? "")) : [];
+const cards: Card[] = list
+  ? [...list[1]!.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)].map((m) => {
+      const card = split(m[1] ?? "");
+      return { ...card, icon: fitIconFor(plainText(card.titleHtml), plainText(card.textHtml)) };
+    })
+  : [];
+const rem = (px: number): string => `${(px / 14).toFixed(3)}rem`;
+const iconStyle = (icon: FitIcon): string => `--np-icon-w: ${rem(icon.width)}; --np-icon-h: ${rem(icon.height)};`;
+const imgStyle = (icon: FitIcon): string =>
+  icon.crop
+    ? `width: ${icon.crop.w}%; height: ${icon.crop.h}%; left: ${icon.crop.left}%; top: ${icon.crop.top}%;`
+    : "width: 100%; height: 100%; left: 0; top: 0; object-position: bottom;";
 ---
 
 <section class="c-np-fit" aria-labelledby={section.id}>
@@ -78,8 +93,8 @@ const cards: Card[] = list ? [...list[1]!.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)
         {cards.map((card) => (
           <li class="c-np-fit__card" data-np-src="li">
             <span class="c-np-fit__icon" aria-hidden="true">
-              <span class="c-np-fit__icon-crop">
-                <Image src={fitIcon} alt="" width={136} height={136} class="c-np-fit__icon-img" />
+              <span class="c-np-fit__icon-crop" style={iconStyle(card.icon)}>
+                <Image src={card.icon.src} alt="" width={136} height={136} class="c-np-fit__icon-img" style={imgStyle(card.icon)} />
               </span>
             </span>
             <span class="c-np-fit__copy">
@@ -173,21 +188,18 @@ const cards: Card[] = list ? [...list[1]!.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)
     overflow: hidden;
     background: var(--color-gray-light); /* TODO: DS — Figma #F8F8F8 */
   }
-  /* The Figma crops the image to a 40px window (image at 169.7% size). */
+  /* Each icon's Figma window (`--np-icon-w/h`) and crop (inline style on the
+     image, % of the window). */
   .c-np-fit__icon-crop {
     position: relative;
     display: block;
-    width: 2.861rem;
-    height: 2.857rem;
+    width: var(--np-icon-w);
+    height: var(--np-icon-h);
     overflow: hidden;
   }
   .c-np-fit__icon :global(.c-np-fit__icon-img) {
     position: absolute;
-    top: -28.84%;
-    left: -34.86%;
-    width: 169.72%;
     max-width: none;
-    height: 169.93%;
   }
   .c-np-fit__copy {
     display: flex;
@@ -239,9 +251,10 @@ const cards: Card[] = list ? [...list[1]!.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)
       width: 5.333rem;
       height: 5.333rem;
     }
+    /* Phone tile is 5.333rem (4.229rem × 1.26): windows scale the same. */
     .c-np-fit__icon-crop {
-      width: 3.6rem;
-      height: 3.6rem;
+      width: calc(var(--np-icon-w) * 1.26);
+      height: calc(var(--np-icon-h) * 1.26);
     }
   }
 </style>
