@@ -1,0 +1,98 @@
+---
+/**
+ * NpArticleHeader — article header (brief 6.2 row 1, 7.2 `ArticleHeader`):
+ * breadcrumb (the live `Breadcrumbs`), eyebrow (the live `Eyebrow`), H1,
+ * byline row and lead. Left-aligned: articles are the one exception to the
+ * centered section headers (lead 2026-10-07).
+ *
+ * Byline: author, published and updated dates in `<time datetime>`, and the
+ * recheck interval. Separators are drawn with CSS. Each item is one
+ * `data-np-src` unit, so its section 8 wording is checked as a whole.
+ */
+import Breadcrumbs from "../layout/Breadcrumbs.astro";
+import Container from "../ui/Container.astro";
+import Eyebrow from "../ui/Eyebrow.astro";
+import copy from "../../lib/new-pages/copy.json";
+import { fill, formatDate } from "../../lib/new-pages/html";
+import type { NpPage } from "../../lib/new-pages/loader";
+
+interface Props {
+  page: NpPage;
+}
+
+const { page } = Astro.props;
+const eyebrow = (copy.articleEyebrow as Record<string, string>)[page.pageType] ?? copy.articleEyebrow.guide;
+const [byBefore = "", byAfter = ""] = copy.byline.author.split("{author}");
+const [pubBefore = "", pubAfter = ""] = copy.byline.published.split("{date}");
+const [updBefore = "", updAfter = ""] = copy.byline.updated.split("{date}");
+---
+
+<header class="c-np-article-header">
+  <Container>
+    <Breadcrumbs items={page.breadcrumbVisible} class="c-np-article-header__breadcrumbs" />
+    <div class="c-np-article-header__eyebrow"><Eyebrow>{eyebrow}</Eyebrow></div>
+    <h1 class="c-np-article-header__title c-text_xxl cc-mobile-lands_text-l" data-np-src="h1">{page.h1}</h1>
+    <p class="c-np-article-header__byline c-paragraph_s" data-np-byline>
+      <span class="c-np-article-header__by" data-np-src="byline.author">{byBefore}<Fragment set:html={page.author.html} />{byAfter}</span>
+      <span class="c-np-article-header__by" data-np-src="byline.published">{pubBefore}<time datetime={page.publishedAt}>{formatDate(page.publishedAt)}</time>{pubAfter}</span>
+      <span class="c-np-article-header__by" data-np-src="byline.updated">{updBefore}<time datetime={page.updatedAt}>{formatDate(page.updatedAt)}</time>{updAfter}</span>
+      <span class="c-np-article-header__by" data-np-src="byline.recheck">{fill(copy.byline.recheck, { n: page.reviewEvery })}</span>
+    </p>
+    <div class="c-np-prose c-np-article-header__lead" set:html={page.lead.join("")} />
+  </Container>
+</header>
+
+<style>
+  .c-np-article-header :global(.c-container) {
+    padding-top: 7.5rem; /* PageHero: nav → first element */
+    padding-bottom: 0;
+  }
+  .c-np-article-header :global(.c-breadcrumbs__list) {
+    justify-content: flex-start;
+  }
+  .c-np-article-header__eyebrow {
+    margin-top: 2.286rem;
+  }
+  .c-np-article-header__title {
+    max-width: 70rem;
+    margin-top: 1.714rem; /* eyebrow → title 24px, as SectionHeader */
+    color: var(--color-heading);
+  }
+  .c-np-article-header__byline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0;
+    margin-top: 2.286rem;
+    color: var(--color-text);
+  }
+  .c-np-article-header__by {
+    display: inline;
+  }
+  /* Separator dot drawn with CSS. */
+  .c-np-article-header__by + .c-np-article-header__by::before {
+    content: "";
+    display: inline-block;
+    width: 0.25em;
+    height: 0.25em;
+    margin: 0 0.9em;
+    vertical-align: middle;
+    border-radius: 50%;
+    background: var(--color-gray);
+  }
+  .c-np-article-header__lead {
+    max-width: var(--np-measure);
+    margin-top: 2.286rem;
+    font-size: var(--fs-p-l);
+    line-height: 1.55;
+  }
+  @media (max-width: 767px) {
+    .c-np-article-header :global(.c-container) {
+      padding-top: 5rem;
+    }
+    .c-np-article-header__eyebrow,
+    .c-np-article-header__byline,
+    .c-np-article-header__lead {
+      margin-top: 2.667rem;
+    }
+  }
+</style>

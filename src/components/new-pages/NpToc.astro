@@ -1,0 +1,57 @@
+---
+/**
+ * NpToc — "On this page": links to the body H2s and the FAQ heading (brief
+ * 7.2 `TableOfContents`). Always visible, plain links, no JavaScript.
+ */
+import copy from "../../lib/new-pages/copy.json";
+
+interface Props {
+  items: readonly { id: string; html: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="c-np-toc" aria-label={copy.accessibleNames.toc}>
+  <p class="c-np-toc__label c-paragraph_s">{copy.tocLabel}</p>
+  <ol class="c-np-toc__list">
+    {items.map((item) => (
+      <li class="c-np-toc__item c-paragraph"><a class="c-np-toc__link" href={`#${item.id}`} set:html={item.html} /></li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .c-np-toc {
+    max-width: var(--np-measure);
+  }
+  .c-np-toc__label {
+    margin: 0;
+    color: var(--color-text);
+    letter-spacing: 0.064em;
+    text-transform: uppercase;
+  }
+  .c-np-toc__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.571rem;
+    margin: 1.143rem 0 0;
+    padding: 0 0 0 1.25em;
+    color: var(--color-text);
+  }
+  .c-np-toc__link {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+  }
+  .c-np-toc__link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  @media (max-width: 767px) {
+    .c-np-toc__list {
+      gap: 1rem;
+    }
+  }
+</style>

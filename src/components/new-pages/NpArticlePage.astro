@@ -1,0 +1,105 @@
+---
+/**
+ * NpArticlePage — the article template (brief 6.2): guides, comparisons and
+ * data studies at /guides/<slug>. Order: draft banner (preview), header
+ * (breadcrumb, eyebrow, H1, byline, lead), key takeaways, on this page, the
+ * body with full-width visuals after their H2, FAQ, closing band with the
+ * related links, sources, gaps panel (preview, review view).
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import JsonLd from "../layout/JsonLd.astro";
+import Container from "../ui/Container.astro";
+import NpDraftBanner from "./NpDraftBanner.astro";
+import NpArticleHeader from "./NpArticleHeader.astro";
+import NpKeyTakeaways from "./NpKeyTakeaways.astro";
+import NpToc from "./NpToc.astro";
+import NpVisual from "./NpVisual.astro";
+import NpFaq from "./NpFaq.astro";
+import NpCtaBand from "./NpCtaBand.astro";
+import NpRelatedLinks from "./NpRelatedLinks.astro";
+import NpSources from "./NpSources.astro";
+import NpGapsPanel from "./NpGapsPanel.astro";
+import copy from "../../lib/new-pages/copy.json";
+import { escapeHtml } from "../../lib/new-pages/html";
+import { pageJsonLd } from "../../lib/new-pages/jsonld";
+import type { NpPage } from "../../lib/new-pages/loader";
+import { resolveVisual } from "../../lib/new-pages/visuals";
+import "./new-pages.css";
+
+interface Props {
+  page: NpPage;
+}
+
+const { page } = Astro.props;
+const toc = [
+  ...page.sections.map((s) => ({ id: s.id, html: s.titleHtml })),
+  ...(page.faq.length > 0 ? [{ id: page.faqId, html: page.faqHeadingHtml }] : []),
+];
+---
+
+<BaseLayout title={page.title} description={page.description} noIndex={page.draft} showCtaBanner={false} titleTemplate={false}>
+  {pageJsonLd(page).map((data) => <JsonLd data={data} />)}
+  {page.includeDrafts && page.draft && <NpDraftBanner view={page.view} gaps={page.gaps.length} />}
+  <article class="c-np-article">
+    <NpArticleHeader page={page} />
+    <Container class="c-np-article__intro">
+      <NpKeyTakeaways items={page.takeaways} />
+      <NpToc items={toc} />
+    </Container>
+    <Container class="c-np-article__body">
+      <div class="c-np-prose c-np-article__prose">
+        {page.sections.map((section) => (
+          <>
+            <h2 id={section.id} data-np-src="h2" set:html={section.titleHtml} />
+            <Fragment set:html={section.html} />
+            {resolveVisual(section.visual, page.includeDrafts) && (
+              <div class="c-np-article__visual">
+                <NpVisual visual={section.visual} includeDrafts={page.includeDrafts} layout="full" />
+              </div>
+            )}
+          </>
+        ))}
+      </div>
+    </Container>
+  </article>
+  <NpFaq id={page.faqId} headingHtml={page.faqHeadingHtml} items={page.faq} />
+  <NpCtaBand headingHtml={escapeHtml(copy.articleClosing.heading)} textHtml={escapeHtml(copy.articleClosing.text)} src="copy" />
+  {page.related.length > 0 && (
+    <div class="c-np-related-wrap">
+      <Container>
+        <NpRelatedLinks items={page.related} />
+      </Container>
+    </div>
+  )}
+  <NpSources items={page.sources} />
+  {page.includeDrafts && page.view === "review" && <NpGapsPanel gaps={page.gaps} />}
+</BaseLayout>
+
+<style>
+  .c-np-article :global(.c-np-article__intro) {
+    display: flex;
+    flex-direction: column;
+    gap: 3.429rem; /* 48px */
+    padding-bottom: 0.571rem; /* + the first H2's 64px top margin ≈ 72px */
+  }
+  .c-np-article :global(.c-np-article__body) {
+    padding-top: 0;
+  }
+  .c-np-article__prose {
+    max-width: var(--np-measure);
+  }
+  /* The first H2 keeps its 64px top margin after the table of contents. */
+  .c-np-article__prose > :global(h2:first-child) {
+    margin-top: 4.571rem;
+  }
+  /* Tables and figures may use the full column width beyond the text measure. */
+  .c-np-article__prose :global(.c-np-table) {
+    max-width: 100%;
+  }
+  .c-np-article__visual {
+    margin-top: 2.857rem;
+  }
+  .c-np-related-wrap :global(.c-container) {
+    padding-top: 0;
+  }
+</style>
