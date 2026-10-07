@@ -62,21 +62,24 @@
   & h2 + *,
   & h3 + * { margin-top: 1.143rem; }
 
-  & p,
-  & ul,
-  & ol,
-  & .c-np-table { margin: 1.143rem 0 0; }
+  /* Direct children only: figures (diagrams) inside the prose keep their own list styles. */
+  & > p,
+  & > ul,
+  & > ol,
+  & > .c-np-table { margin: 1.143rem 0 0; }
 
-  & ul,
-  & ol {
+  & > ul,
+  & > ol {
     padding: 0;
     list-style: none;
   }
-  & li { position: relative; padding-left: 1.5em; }
-  & li + li { margin-top: 0.857rem; /* 12px */ }
+  & > ul > li,
+  & > ol > li { position: relative; padding-left: 1.5em; }
+  & > ul > li + li,
+  & > ol > li + li { margin-top: 0.857rem; /* 12px */ }
 
   /* Bullet: a small accent square drawn in CSS (Eyebrow squares). */
-  & ul > li::before {
+  & > ul > li::before {
     content: "";
     position: absolute;
     left: 0.25em;
@@ -87,9 +90,9 @@
     background: var(--color-accent);
   }
 
-  & ol { counter-reset: np-ol; }
-  & ol > li { counter-increment: np-ol; }
-  & ol > li::before {
+  & > ol { counter-reset: np-ol; }
+  & > ol > li { counter-increment: np-ol; }
+  & > ol > li::before {
     content: counter(np-ol) ".";
     position: absolute;
     left: 0;
