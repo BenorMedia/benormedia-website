@@ -50,7 +50,7 @@ const spokes = [90].map((deg) => ({ a: at(190, deg), b: at(320, deg) }));
     <circle cx={cx} cy={cy} r="190" style="fill: color-mix(in srgb, var(--color-accent) 4%, var(--color-white)); stroke: var(--np-il-line)" />
     <circle cx={cx} cy={cy} r="110" fill="url(#np-il-core)" />
   </svg>
-  <img class="np-il-at" src="/images/home/services-diagram/center-bottom-icon.webp" width="288" height="295" alt="" style={`--x: ${cx}; --y: 402; width: 5.4em; height: auto;`} />
+  <img class="np-il-at np-il-core-mark" src="/images/home/services-diagram/center-bottom-icon.webp" width="288" height="295" alt="" style={`--x: ${cx}; --y: 402; width: 5.4em; height: auto;`} />
   {inner.map((item, i) => {
     const p = at(255, innerAngles[i] ?? 90);
     return <IlNode x={p.x} y={p.y} icon={item.icon} label={item.label} w={150} muted />;

@@ -33,9 +33,13 @@ const center = centerLogo ? LOGO[centerLogo] : null;
 <IlFrame h={H} glow={{ x: 280, y: markY, w: 700, h: 360 }}>
   <svg class="np-il__lines" viewBox={`0 0 560 ${H}`} preserveAspectRatio="none" aria-hidden="true">
     <path d={`M${xs[0]} ${by} V${bus - 16} Q${xs[0]} ${bus} ${xs[0]! + 16} ${bus} H${264} Q280 ${bus} 280 ${bus + 16} V${markY - markD / 2}`} />
+    <path class="np-il-flow" d={`M${xs[0]} ${by} V${bus - 16} Q${xs[0]} ${bus} ${xs[0]! + 16} ${bus} H${264} Q280 ${bus} 280 ${bus + 16} V${markY - markD / 2}`} />
     <path d={`M${xs[2]} ${by} V${bus - 16} Q${xs[2]} ${bus} ${xs[2]! - 16} ${bus} H${296} Q280 ${bus} 280 ${bus + 16}`} />
+    <path class="np-il-flow" d={`M${xs[2]} ${by} V${bus - 16} Q${xs[2]} ${bus} ${xs[2]! - 16} ${bus} H${296} Q280 ${bus} 280 ${bus + 16}`} />
     <path d={`M280 ${by} V${bus}`} />
+    <path class="np-il-flow" d={`M280 ${by} V${bus}`} />
     <path d={`M280 ${markY + markD / 2} V${H - 92}`} />
+    <path class="np-il-flow" d={`M280 ${markY + markD / 2} V${H - 92}`} />
     <rect x={xs[0]! - 3} y={by + 14} width="6" height="6" rx="1" />
     <rect x={xs[2]! - 3} y={by + 14} width="6" height="6" rx="1" />
     <rect x={187} y={bus - 3} width="6" height="6" rx="1" />

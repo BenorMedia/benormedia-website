@@ -31,6 +31,7 @@ const blockY = (i: number) => (blocks[i]?.y ?? 0) + (blocks[i]?.h ?? 0) / 2;
     {items.map((_, i) => (
       <>
         <path class={i === 0 ? "is-accent" : undefined} d={`M206 ${itemY(i)} C232 ${itemY(i)}, 236 ${blockY(i)}, 262 ${blockY(i)}`} />
+        <path class="np-il-flow" d={`M206 ${itemY(i)} C232 ${itemY(i)}, 236 ${blockY(i)}, 262 ${blockY(i)}`} style={`animation-delay: ${-i * 0.7}s;`} />
         <rect x="259" y={blockY(i) - 3} width="6" height="6" rx="1" />
       </>
     ))}

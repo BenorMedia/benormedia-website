@@ -23,8 +23,11 @@ const bus = 168;
 <IlFrame h={H} glow={{ x: 280, y: 250, w: 660, h: 420 }}>
   <svg class="np-il__lines" viewBox={`0 0 560 ${H}`} preserveAspectRatio="none" aria-hidden="true">
     <path d={`M280 132 V${bus}`} />
+    <path class="np-il-flow" d={`M280 132 V${bus}`} />
     <path d={`M${xs[0]} ${r1 - 21} V${bus + 14} Q${xs[0]} ${bus} ${xs[0]! + 14} ${bus} H${xs[2]! - 14} Q${xs[2]} ${bus} ${xs[2]} ${bus + 14} V${r1 - 21}`} />
+    <path class="np-il-flow" d={`M${xs[0]} ${r1 - 21} V${bus + 14} Q${xs[0]} ${bus} ${xs[0]! + 14} ${bus} H${xs[2]! - 14} Q${xs[2]} ${bus} ${xs[2]} ${bus + 14} V${r1 - 21}`} />
     <path d={`M280 ${bus} V${r1 - 21}`} />
+    <path class="np-il-flow" d={`M280 ${bus} V${r1 - 21}`} />
     {xs.map((x) => <path class="is-dashed" d={`M${x} ${r1 + 52} V${r2 - 21}`} />)}
     <rect x="277" y={bus - 3} width="6" height="6" rx="1" />
     {xs.map((x) => <rect x={x - 3} y={r2 - 36} width="6" height="6" rx="1" />)}

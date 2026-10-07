@@ -332,3 +332,67 @@
   background: var(--gradient-primary);
   opacity: 0.85;
 }
+
+/* --------------------------------------------------------------------------
+   Motion (lead 2026-10-07): very subtle, CSS only. Dots flow along the
+   connectors toward the center, dashed paths drift, the BenorMedia mark
+   breathes with its glow, glowing tiles float a couple of px out of step.
+   Off for prefers-reduced-motion.
+   -------------------------------------------------------------------------- */
+.np-il__lines .np-il-flow {
+  stroke: var(--color-accent);
+  stroke-opacity: 0.55;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-dasharray: 1.5 30;
+  animation: np-il-flow 2.8s linear infinite;
+}
+@keyframes np-il-flow {
+  to { stroke-dashoffset: -31.5; }
+}
+.np-il__lines .is-dashed {
+  animation: np-il-dash 2.4s linear infinite;
+}
+@keyframes np-il-dash {
+  to { stroke-dashoffset: -16; }
+}
+
+.np-il-mark {
+  animation: np-il-breathe 4.8s ease-in-out infinite;
+}
+@keyframes np-il-breathe {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow: 0 0 6em 0 color-mix(in srgb, var(--color-accent) 16%, transparent);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.045);
+    box-shadow: 0 0 7.5em 0 color-mix(in srgb, var(--color-accent) 26%, transparent);
+  }
+}
+.np-il-core-mark {
+  animation: np-il-breathe 4.8s ease-in-out infinite;
+}
+.np-il__glow {
+  animation: np-il-glow 6s ease-in-out infinite;
+}
+@keyframes np-il-glow {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+
+.np-il-node:not(.is-muted) .np-il-tile {
+  animation: np-il-float 5.5s ease-in-out infinite;
+  animation-delay: calc(var(--x) * -0.013s);
+}
+@keyframes np-il-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(calc(-3 * var(--u))); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .np-il,
+  .np-il * {
+    animation: none !important;
+  }
+}

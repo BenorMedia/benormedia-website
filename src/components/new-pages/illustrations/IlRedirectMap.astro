@@ -27,11 +27,17 @@ const markY = cardBottom + 70;
 <IlFrame h={H} glow={{ x: 280, y: 200, w: 640, h: 420 }}>
   <svg class="np-il__lines" viewBox={`0 0 560 ${H}`} preserveAspectRatio="none" aria-hidden="true">
     {rows.map((_, i) => (
-      <path class="is-accent" d={`M236 ${rowY(i)} H324`} />
+      <>
+        <path class="is-accent" d={`M236 ${rowY(i)} H324`} />
+        <path class="np-il-flow" d={`M236 ${rowY(i)} H324`} style={`animation-delay: ${-i * 0.6}s;`} />
+      </>
     ))}
     <path d={`M130 ${cardBottom} V${cardBottom + 10} Q130 ${cardBottom + 24} 146 ${cardBottom + 24} H264 Q280 ${cardBottom + 24} 280 ${cardBottom + 40} V${markY - 42}`} />
+    <path class="np-il-flow" d={`M130 ${cardBottom} V${cardBottom + 10} Q130 ${cardBottom + 24} 146 ${cardBottom + 24} H264 Q280 ${cardBottom + 24} 280 ${cardBottom + 40} V${markY - 42}`} />
     <path d={`M430 ${cardBottom} V${cardBottom + 10} Q430 ${cardBottom + 24} 414 ${cardBottom + 24} H296 Q280 ${cardBottom + 24} 280 ${cardBottom + 40}`} />
+    <path class="np-il-flow" d={`M430 ${cardBottom} V${cardBottom + 10} Q430 ${cardBottom + 24} 414 ${cardBottom + 24} H296 Q280 ${cardBottom + 24} 280 ${cardBottom + 40}`} />
     <path d={`M280 ${markY + 42} V${H - 92}`} />
+    <path class="np-il-flow" d={`M280 ${markY + 42} V${H - 92}`} />
     <rect x="200" y={cardBottom + 21} width="6" height="6" rx="1" />
     <rect x="354" y={cardBottom + 21} width="6" height="6" rx="1" />
   </svg>

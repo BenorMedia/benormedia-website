@@ -31,6 +31,7 @@ const pts = [
   <svg class="np-il__lines" viewBox={`0 0 560 ${H}`} preserveAspectRatio="none" aria-hidden="true">
     <ellipse class="is-dashed" cx={c.x} cy={c.y} rx="200" ry="104" />
     {pts.map((p) => <path d={`M${c.x} ${c.y} L${p.x} ${p.y}`} />)}
+    {pts.map((p) => <path class="np-il-flow" d={`M${c.x} ${c.y} L${p.x} ${p.y}`} />)}
     {pts.map((p) => <rect x={(p.x + c.x) / 2 - 3} y={(p.y + c.y) / 2 - 3} width="6" height="6" rx="1" />)}
   </svg>
   <span class="np-il-mark" style={`--x: ${c.x}; --y: ${c.y}; --d: 96;`}></span>
