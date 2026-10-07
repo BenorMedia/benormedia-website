@@ -3,6 +3,8 @@
  * Seo — resolves meta from (pageSeo) → (component props) → (siteSettings defaults).
  * Applies siteSettings.titleTemplate to the resolved title unless the title
  * equals defaultMetaTitle (avoids double-templating the site name on Home).
+ * `titleTemplate={false}`: the title is printed as given (it already ends in
+ * the site name, e.g. the new pages' front matter `title`). Default true.
  * Emits robots noindex when noIndex OR pageSeo.noIndex OR PUBLIC_SITE_ENV !== 'production'.
  */
 import type { Seo, SiteSettings, SanityImage } from "../../lib/sanity/types";
@@ -18,6 +20,7 @@ interface Props {
   canonicalUrl?: string | undefined;
   pageSeo?: Seo | null | undefined;
   siteSettings?: SiteSettings | null | undefined;
+  titleTemplate?: boolean | undefined;
 }
 
 const {
@@ -28,6 +31,7 @@ const {
   canonicalUrl: canonicalUrlProp,
   pageSeo,
   siteSettings,
+  titleTemplate: useTemplate = true,
 } = Astro.props;
 
 // --- Resolution chain -------------------------------------------------------
@@ -50,7 +54,7 @@ const template = siteSettings?.titleTemplate ?? "%s | BenorMedia";
 const titleFromPage = !!(pageSeo?.metaTitle ?? titleProp);
 const isDefaultTitle =
   !!siteSettings?.defaultMetaTitle && rawTitle === siteSettings.defaultMetaTitle;
-const title = titleFromPage && !isDefaultTitle ? template.replace("%s", rawTitle) : rawTitle;
+const title = useTemplate && titleFromPage && !isDefaultTitle ? template.replace("%s", rawTitle) : rawTitle;
 
 // Robots --------------------------------------------------------------------
 const envIsProd = import.meta.env["PUBLIC_SITE_ENV"] === "production";

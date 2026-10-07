@@ -1,0 +1,43 @@
+---
+/**
+ * NpProofStrip — the four proof items under the hero (section 8). The live
+ * stats row was removed from Home (lead 2026-09-30), so this repeats the
+ * nearest live pattern: the Home hero's row of default `Eyebrow` labels.
+ */
+import Container from "../ui/Container.astro";
+import Eyebrow from "../ui/Eyebrow.astro";
+import copy from "../../lib/new-pages/copy.json";
+---
+
+<div class="c-np-proof">
+  <Container>
+    <ul class="c-np-proof__list">
+      {copy.proofStrip.map((item) => (
+        <li class="c-np-proof__item"><Eyebrow>{item}</Eyebrow></li>
+      ))}
+    </ul>
+  </Container>
+</div>
+
+<style>
+  .c-np-proof :global(.c-container) {
+    padding-top: 4rem;
+  }
+  .c-np-proof__list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.143rem 1.714rem; /* 16 / 24px */
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .c-np-proof__item {
+    display: inline-flex;
+  }
+  @media (max-width: 767px) {
+    .c-np-proof__list {
+      gap: 1.333rem;
+    }
+  }
+</style>

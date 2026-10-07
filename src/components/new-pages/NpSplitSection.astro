@@ -1,0 +1,79 @@
+---
+/**
+ * NpSplitSection — one commercial `##` section (brief 7.2 `SplitSection`):
+ * H2, the framing line, the bullets (and anything else under the H2), and
+ * the visual beside them on the side `visuals[].side` names. Two columns
+ * above 991px; stacked below (H2, framing line, bullets, visual). Without a
+ * visual the text keeps a readable measure, left-aligned in the container.
+ */
+import Container from "../ui/Container.astro";
+import NpVisual from "./NpVisual.astro";
+import type { PageSection } from "../../lib/new-pages/loader";
+import { resolveVisual } from "../../lib/new-pages/visuals";
+
+interface Props {
+  section: PageSection;
+  includeDrafts: boolean;
+}
+
+const { section, includeDrafts } = Astro.props;
+const hasVisual = resolveVisual(section.visual, includeDrafts) !== undefined;
+const gridClass = ["c-np-split__grid", hasVisual && "has-visual", hasVisual && `is-${section.visual?.side}`]
+  .filter(Boolean)
+  .join(" ");
+---
+
+<section class="c-np-split" aria-labelledby={section.id}>
+  <Container>
+    <div class={gridClass}>
+      <div class="c-np-split__text">
+        <h2 id={section.id} class="c-np-split__title c-text_xl" data-np-src="h2" set:html={section.titleHtml} />
+        <div class="c-np-prose c-np-split__body" set:html={section.html} />
+      </div>
+      {hasVisual && (
+        <div class="c-np-split__visual">
+          <NpVisual visual={section.visual} includeDrafts={includeDrafts} />
+        </div>
+      )}
+    </div>
+  </Container>
+</section>
+
+<style>
+  .c-np-split__grid {
+    display: grid;
+    gap: 3.429rem;
+  }
+  .c-np-split__grid:not(.has-visual) .c-np-split__text {
+    max-width: 57rem; /* ≈ 800px at 1440 */
+  }
+  .c-np-split__title {
+    color: var(--color-heading);
+    scroll-margin-top: calc(var(--c-nav-height, 0px) + 2rem);
+  }
+  .c-np-split__body {
+    margin-top: 1.714rem; /* title → text 24px, as SectionHeader */
+  }
+  /* Framing line: the live section-intro size. */
+  .c-np-split__body :global(> p:first-child) {
+    color: var(--color-text);
+    font-size: var(--fs-p-l);
+    line-height: 1.5;
+  }
+
+  @media (min-width: 992px) {
+    .c-np-split__grid.has-visual {
+      grid-template-columns: 1fr 1fr;
+      gap: 5.714rem; /* 80px */
+      align-items: center;
+    }
+    .c-np-split__grid.has-visual.is-left .c-np-split__visual {
+      order: -1;
+    }
+  }
+  @media (max-width: 767px) {
+    .c-np-split__body {
+      margin-top: 2rem;
+    }
+  }
+</style>

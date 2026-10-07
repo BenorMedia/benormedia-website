@@ -34,6 +34,8 @@ interface Props {
   noindex?: boolean;
   pageSeo?: SeoData | null;
   showCtaBanner?: boolean;
+  /** Apply the "%s | BenorMedia" title template (Seo). Default true. */
+  titleTemplate?: boolean;
 }
 
 const {
@@ -44,6 +46,7 @@ const {
   noindex,
   pageSeo,
   showCtaBanner = true,
+  titleTemplate = true,
 } = Astro.props;
 
 const noIndexResolved = noIndex ?? noindex ?? false;
@@ -182,6 +185,7 @@ if (siteSettings) {
       noIndex={noIndexResolved}
       pageSeo={pageSeo}
       siteSettings={siteSettings}
+      titleTemplate={titleTemplate}
     />
 
     {orgLd && (

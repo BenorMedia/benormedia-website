@@ -184,3 +184,33 @@
   text-decoration: underline dotted;
   text-underline-offset: 0.2em;
 }
+
+/* --------------------------------------------------------------------------
+   SectionHeader rules (copied from `SectionHeader.astro`, `is:global`): they
+   ship only with that component, and the new hero and FAQ title reuse its
+   classes without rendering it. Identical values, so a page that loads both
+   renders the same.
+   -------------------------------------------------------------------------- */
+.c-section-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  gap: 1.5rem;
+}
+.c-section-header__text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  gap: 0.714rem;
+}
+.c-section-header__title {
+  color: var(--color-heading);
+  text-align: center;
+  margin: 0 auto;
+}

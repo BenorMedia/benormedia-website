@@ -1,0 +1,60 @@
+---
+/**
+ * NpCommercialPage — the commercial template (brief 6.1): service, industry
+ * and regional pages. Order: draft banner (preview), hero, proof strip, the
+ * `##` sections with their visuals, FAQ, closing band, related links, gaps
+ * panel (preview, review view).
+ *
+ * Never printed here: author, dates, recheck, breadcrumb trail, sources.
+ * Testimonials are left out for now (lead 2026-10-07: the live testimonial
+ * section is hidden site-wide); `testimonial` / `testimonialAfter` stay in
+ * the front matter for later.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import JsonLd from "../layout/JsonLd.astro";
+import Container from "../ui/Container.astro";
+import NpDraftBanner from "./NpDraftBanner.astro";
+import NpHero from "./NpHero.astro";
+import NpProofStrip from "./NpProofStrip.astro";
+import NpSplitSection from "./NpSplitSection.astro";
+import NpFaq from "./NpFaq.astro";
+import NpCtaBand from "./NpCtaBand.astro";
+import NpRelatedLinks from "./NpRelatedLinks.astro";
+import NpGapsPanel from "./NpGapsPanel.astro";
+import copy from "../../lib/new-pages/copy.json";
+import { pageJsonLd } from "../../lib/new-pages/jsonld";
+import type { NpPage } from "../../lib/new-pages/loader";
+import "./new-pages.css";
+
+interface Props {
+  page: NpPage;
+}
+
+const { page } = Astro.props;
+// Second button: Pricing on service pages, Work on industry and regional pages.
+const second = page.pageType === "service" ? copy.buttons.pricing : copy.buttons.work;
+---
+
+<BaseLayout title={page.title} description={page.description} noIndex={page.draft} showCtaBanner={false} titleTemplate={false}>
+  {pageJsonLd(page).map((data) => <JsonLd data={data} />)}
+  {page.includeDrafts && page.draft && <NpDraftBanner view={page.view} gaps={page.gaps.length} />}
+  <NpHero eyebrowHtml={page.eyebrowHtml} h1={page.h1} lead={page.lead} second={second} />
+  <NpProofStrip />
+  {page.sections.map((section) => <NpSplitSection section={section} includeDrafts={page.includeDrafts} />)}
+  <NpFaq id={page.faqId} headingHtml={page.faqHeadingHtml} items={page.faq} />
+  <NpCtaBand headingHtml={page.closingHeadingHtml} textHtml={page.closingTextHtml} src="closing" second={second} />
+  {page.related.length > 0 && (
+    <div class="c-np-related-wrap">
+      <Container>
+        <NpRelatedLinks items={page.related} />
+      </Container>
+    </div>
+  )}
+  {page.includeDrafts && page.view === "review" && <NpGapsPanel gaps={page.gaps} />}
+</BaseLayout>
+
+<style>
+  .c-np-related-wrap :global(.c-container) {
+    padding-top: 0;
+  }
+</style>
