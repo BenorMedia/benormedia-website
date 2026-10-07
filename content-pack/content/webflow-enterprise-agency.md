@@ -193,7 +193,7 @@ The amounts show what each company has raised, not results of our work.
 
 BenorMedia fits an enterprise team whose website is a marketing and content system on Webflow and that wants one agency to carry strategy, design, development, migration, and support. Another option is better when:
 
-- The website is mainly a product application with logged-in features.
+- **The website is mainly a product application** with logged-in features.
 - The site must handle protected health information, because Webflow says it is not HIPAA compliant by default.
 - Your procurement requires a specific Webflow partner status. BenorMedia is a Webflow Professional Partner, so check that before you shortlist it.
 - You need the agency team to work inside your office. We work with clients through a dashboard, Slack, or email from Barcelona.

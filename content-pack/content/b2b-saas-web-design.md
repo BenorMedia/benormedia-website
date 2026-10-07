@@ -182,5 +182,5 @@ This page is about the public marketing website of a B2B SaaS company. Another o
 - The site is one page, and a template or a page builder is enough.
 - The work is the product interface, such as in-app screens or a logged-in dashboard.
 - The positioning is undecided, and a new design cannot settle who the product is for.
-- Nobody on your team will own the site after launch.
-- Engineering requires the marketing site to live inside the product codebase.
+- **Nobody on your team** will own the site after launch.
+- **Engineering requires** the marketing site to live inside the product codebase.
