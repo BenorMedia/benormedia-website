@@ -20,7 +20,10 @@ import { LIVE_PATHS } from '../content-pack/scripts/lib/check.mjs';
 // - FaqAccordion: no text of its own (the +/× icon is an SVG).
 // - Breadcrumbs: no text of its own (chevrons are SVGs).
 // - Button / NpActions labels come from copy.json (section 8), not from here.
-const LIVE_ALLOW = [];
+// - CtaActions (the Home hero's Trusted badge): the star before the text.
+const LIVE_ALLOW = [
+  '★', // CtaActions badge star (aria-hidden)
+];
 
 const SITE = 'https://www.benormedia.com';
 const ROOT = resolve(process.cwd());
@@ -192,12 +195,14 @@ for (const { f, family, draft } of built) {
   if (!main) { fail(f, 0, 'no <main>'); continue; }
   const mainText = norm(textOf(main));
   const marker = /\[(FACT NEEDED|VERIFY|PERSON)\b/;
+  // Commercial headings end in a period (lead 2026-10-07), added by the template.
+  const head = (t) => (family === 'commercial' && t && !/[.?!]$/.test(t) ? `${t}.` : t);
   const hasGap = (s) => marker.test(String(s ?? ''));
 
   // 1. One h1, equal to the front matter.
   const h1s = all(main, (n) => n.tag === 'h1');
   if (h1s.length !== 1) fail(f, 1, `${h1s.length} <h1> elements`);
-  else if (norm(textOf(h1s[0])) !== norm(d.h1)) fail(f, 1, `h1 "${norm(textOf(h1s[0]))}"`);
+  else if (norm(textOf(h1s[0])) !== head(norm(d.h1))) fail(f, 1, `h1 "${norm(textOf(h1s[0]))}"`);
 
   // 2. Head.
   const title = norm(textOf(all(doc, (n) => n.tag === 'title')[0] ?? { children: [] }));
@@ -218,17 +223,26 @@ for (const { f, family, draft } of built) {
   const faq = (d.faq ?? []).filter((x) => x && x.q);
   const expectedOther = [
     ...(family === 'commercial' && d.eyebrow ? [{ src: 'eyebrow', text: norm(d.eyebrow) }] : []),
-    { src: 'faqHeading', text: norm(d.faqHeading) },
+    { src: 'faqHeading', text: head(norm(d.faqHeading)) },
     ...faq.flatMap((x) => [{ src: 'faq.q', text: norm(x.q) }, { src: 'faq.a', text: norm(x.a) }]),
     ...(family === 'article' ? (d.takeaways ?? []).map((t) => ({ src: 'takeaway', text: norm(t) })) : []),
-    ...(family === 'commercial' ? [{ src: 'closing.heading', text: norm(d.closing?.heading) }, { src: 'closing.text', text: norm(d.closing?.text) }] : []),
+    ...(family === 'commercial' ? [{ src: 'closing.heading', text: head(norm(d.closing?.heading)) }, { src: 'closing.text', text: norm(d.closing?.text) }] : []),
   ];
-  const sourceBody = bodyBlocks(body);
+  const sourceBody = bodyBlocks(body).map((b) => (b.src === 'h2' ? { ...b, text: head(b.text) } : b));
+  // Sections the template renders with a live block (`data-np-live` +
+  // `data-np-section`, e.g. Our Work): their own blocks are not printed.
+  const replaced = new Set(all(main, (n) => n.attrs['data-np-section'] !== undefined).map((n) => head(norm(n.attrs['data-np-section']))));
+  const printedBody = [];
+  let skipping = false;
+  for (const b of sourceBody) {
+    if (b.src === 'h2') skipping = replaced.has(b.text);
+    if (!skipping) printedBody.push(b);
+  }
 
   if (view !== 'review') {
     // 3. Fidelity forward: every source block is one unit, body blocks in order.
     const seq = bodyUnits.map((u) => `${u.src}\u0000${u.text}`);
-    const want = sourceBody.map((b) => `${b.src}\u0000${b.text}`);
+    const want = printedBody.map((b) => `${b.src}\u0000${b.text}`);
     for (let i = 0; i < Math.max(seq.length, want.length); i++) {
       if (seq[i] !== want[i]) {
         fail(f, 3, `body block ${i + 1}: expected [${(want[i] ?? 'nothing').replace('\u0000', '] ')} — got [${(seq[i] ?? 'nothing').replace('\u0000', '] ')}`);
@@ -241,7 +255,7 @@ for (const { f, family, draft } of built) {
 
     // 4. Fidelity backward: every unit is a source block, section 8 copy, a visual's alt or brief, or live text.
     const allowed = new Set([
-      norm(d.h1),
+      head(norm(d.h1)),
       ...sourceBody.map((b) => b.text),
       ...expectedOther.map((e) => e.text),
       ...(d.visuals ?? []).flatMap((v) => [norm(v.alt), norm(v.brief)]),
@@ -275,8 +289,8 @@ for (const { f, family, draft } of built) {
   const h2s = heads.filter((h) => h.tag === 'h2').map((h) => norm(textOf(h)));
   const wantH2 = [
     ...sourceBody.filter((b) => b.src === 'h2').map((b) => b.text),
-    norm(d.faqHeading),
-    family === 'commercial' ? norm(d.closing?.heading) : norm(copy.articleClosing.heading),
+    head(norm(d.faqHeading)),
+    family === 'commercial' ? head(norm(d.closing?.heading)) : norm(copy.articleClosing.heading),
     ...(family === 'article' ? [norm(copy.sourcesHeading)] : []),
   ];
   if (JSON.stringify([...h2s].sort()) !== JSON.stringify([...wantH2].sort())) {
@@ -350,7 +364,7 @@ for (const { f, family, draft } of built) {
   }
 
   // 8. Images.
-  for (const img of all(main, (n) => n.tag === 'img')) {
+  for (const img of all(main, (n) => n.tag === 'img' && !inside(n, (p) => p.attrs['data-np-live'] !== undefined))) {
     if (img.attrs.alt === undefined) fail(f, 8, `img without alt: ${img.attrs.src}`);
     if (!img.attrs.width || !img.attrs.height) fail(f, 8, `img without width/height: ${img.attrs.src}`);
   }

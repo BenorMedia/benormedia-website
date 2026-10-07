@@ -1,0 +1,98 @@
+---
+/**
+ * NpFitCards — the commercial blueprint's last section ("when another
+ * option is better", RULES.md §10) as cards (lead 2026-10-07, Figma
+ * BenorMedia node 3696-7378): the H2 and framing line, then one card per
+ * bullet. A `**Bold lead-in.**` becomes the card's small bold title and the
+ * rest the text below; a bullet without one is the card's text. Anything
+ * after the list (closing paragraphs) follows the cards. The text of each
+ * card is the bullet's text, unchanged.
+ */
+import Container from "../ui/Container.astro";
+import type { PageSection } from "../../lib/new-pages/loader";
+
+interface Props {
+  section: PageSection;
+}
+
+const { section } = Astro.props;
+const list = /<ul>([\s\S]*?)<\/ul>/.exec(section.html);
+const before = list ? section.html.slice(0, list.index) : section.html;
+const after = list ? section.html.slice(list.index + list[0].length) : "";
+const cards = list
+  ? [...list[1]!.matchAll(/<li([^>]*)>([\s\S]*?)<\/li>/g)].map((m) => {
+      const inner = m[2] ?? "";
+      const lead = /^<strong>([\s\S]*?)<\/strong>\s*([\s\S]*)$/.exec(inner);
+      return { attrs: m[1] ?? "", titleHtml: lead?.[1], textHtml: lead ? (lead[2] ?? "") : inner };
+    })
+  : [];
+---
+
+<section class="c-np-fit" aria-labelledby={section.id}>
+  <Container>
+    <div class="c-np-fit__header">
+      <h2 id={section.id} class="c-np-fit__title c-text_xl" data-np-src="h2" set:html={section.titleHtml} />
+      <div class="c-np-prose c-np-fit__intro" set:html={before} />
+    </div>
+    {cards.length > 0 && (
+      <ul class="c-np-fit__grid">
+        {cards.map((card) => (
+          <li class="c-np-fit__card" data-np-src="li">
+            {card.titleHtml && <strong class="c-np-fit__card-title c-paragraph" set:html={card.titleHtml} />}
+            {card.titleHtml && " "}
+            <span class="c-np-fit__card-text c-paragraph" set:html={card.textHtml} />
+          </li>
+        ))}
+      </ul>
+    )}
+    {after.trim() && <div class="c-np-prose c-np-fit__after" set:html={after} />}
+  </Container>
+</section>
+
+<style>
+  .c-np-fit__header {
+    max-width: 57rem;
+  }
+  .c-np-fit__title {
+    color: var(--color-heading);
+    scroll-margin-top: calc(var(--c-nav-height, 0px) + 2rem);
+  }
+  .c-np-fit__intro {
+    margin-top: 1.714rem;
+  }
+  .c-np-fit__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.143rem;
+    margin: 3.429rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .c-np-fit__card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.571rem;
+    padding: 1.714rem;
+    border: var(--border-default);
+    border-radius: var(--np-radius);
+    background: var(--color-white);
+  }
+  .c-np-fit__card-title {
+    color: var(--color-heading);
+    font-weight: 600;
+  }
+  .c-np-fit__card-text {
+    color: var(--color-text);
+  }
+  .c-np-fit__after {
+    max-width: 57rem;
+    margin-top: 2.286rem;
+  }
+  @media (max-width: 991px) {
+    .c-np-fit__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 767px) {
+    .c-np-fit__grid { grid-template-columns: 1fr; }
+    .c-np-fit__card { padding: 2.222rem; }
+  }
+</style>

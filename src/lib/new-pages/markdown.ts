@@ -33,6 +33,13 @@ export interface RenderOptions {
   slugger: Slugger;
   /** Turns gap tokens into highlights (review view). */
   finish: (html: string) => string;
+  /**
+   * Live typography classes per element (commercial pages use the Home
+   * page's: the section-intro size for the framing line, body size for the
+   * rest). Without them the elements get no class and `.c-np-prose` styles
+   * them (articles).
+   */
+  classes?: { lead?: string; firstP?: string; p?: string; li?: string };
 }
 
 const LINK = /\[([^\]]+)\]\(([^)\s]+)\)/g;
@@ -109,12 +116,15 @@ export function renderBody(body: string, opts: RenderOptions): RenderedBody {
     const text = para.join(" ").trim();
     para = [];
     if (!text) return;
-    push(`<p data-np-src="${current ? "p" : "lead"}">${inline(text, opts)}</p>`, true);
+    const c = opts.classes;
+    const cls = !current ? c?.lead : current.html === "" ? (c?.firstP ?? c?.p) : c?.p;
+    push(`<p${attrs({ class: cls, "data-np-src": current ? "p" : "lead" })}>${inline(text, opts)}</p>`, true);
   };
   const flushList = (): void => {
     if (!list) return;
     const tag = list.ordered ? "ol" : "ul";
-    push(`<${tag}>${list.items.map((i) => `<li data-np-src="li">${inline(i, opts)}</li>`).join("")}</${tag}>`, true);
+    const li = attrs({ class: opts.classes?.li, "data-np-src": "li" });
+    push(`<${tag}>${list.items.map((i) => `<li${li}>${inline(i, opts)}</li>`).join("")}</${tag}>`, true);
     list = null;
   };
   const flushTable = (): void => {

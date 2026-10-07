@@ -232,7 +232,15 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
   // A front matter string printed as text (never through Markdown).
   const text = (value: unknown): string => gaps.toHtml(escapeHtml(gaps.tokenize(String(value ?? ""))));
 
-  const rendered = renderBody(gaps.tokenize(body), { links, slugger, finish: (h) => gaps.toHtml(h) });
+  // Commercial pages use the Home page's text classes (lead 2026-10-07).
+  const classes =
+    family === "commercial" ? { lead: "c-paragraph_m", firstP: "c-paragraph_m", p: "c-paragraph", li: "c-paragraph" } : undefined;
+  const rendered = renderBody(gaps.tokenize(body), {
+    links,
+    slugger,
+    finish: (h) => gaps.toHtml(h),
+    ...(classes ? { classes } : {}),
+  });
 
   // Visuals: numbered from 1 in file order, placed after the H2 named in `after`.
   const sections: PageSection[] = rendered.sections.map((s) => ({ ...s, visual: undefined }));

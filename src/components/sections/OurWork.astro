@@ -7,6 +7,9 @@
  *   3. "View All" CTA → /work.
  *
  * Order is preserved by the `getClientsByIds` fetcher in `src/pages/index.astro`.
+ *
+ * `title` (optional): replaces the H2 (the new pages pass their own section
+ * heading). Without it the Home title renders unchanged.
  */
 import Container from "../ui/Container.astro";
 import SectionHeader from "../ui/SectionHeader.astro";
@@ -18,9 +21,10 @@ import type { Client } from "../../lib/sanity/types";
 interface Props {
   clients: Client[];
   listClients: Client[];
+  title?: string;
 }
 
-const { clients, listClients } = Astro.props;
+const { clients, listClients, title } = Astro.props;
 
 // Full-height wordmarks read larger than icon + text logos at the same box
 // height — render them one step smaller (lead visual QA 2026-09-28).
@@ -31,7 +35,7 @@ const COMPACT_LOGOS = new Set(["client-surfe", "client-arrows"]);
   <Container>
     <SectionHeader
       eyebrow="Our Work"
-      title={"From growing B2B\ncompanies to large enterprises."}
+      title={title ?? "From growing B2B\ncompanies to large enterprises."}
       description="6+ years of experience and 100+ launches speak for themselves."
       class="c-work__header"
     />

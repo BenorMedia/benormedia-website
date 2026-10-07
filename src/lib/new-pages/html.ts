@@ -43,3 +43,13 @@ export function formatDate(iso: string): string {
 /** Fill `{name}` placeholders of a section 8 string. */
 export const fill = (template: string, values: Record<string, string>): string =>
   template.replace(/\{(\w+)\}/g, (all, key: string) => values[key] ?? all);
+
+/**
+ * Heading with a closing period (site convention: "Frequently asked
+ * questions."; lead 2026-10-07 for the commercial pages). Left alone when
+ * the text already ends in `.`, `?` or `!`. Works on escaped HTML.
+ */
+export function withPeriod(html: string): string {
+  const plain = html.replace(/<[^>]*>/g, "").trim();
+  return /[.?!]$/.test(plain) ? html : `${html.trimEnd()}.`;
+}

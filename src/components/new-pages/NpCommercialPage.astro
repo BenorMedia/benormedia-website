@@ -1,29 +1,40 @@
 ---
 /**
  * NpCommercialPage — the commercial template (brief 6.1): service, industry
- * and regional pages. Order: draft banner (preview), hero, proof strip, the
- * `##` sections with their visuals, FAQ, closing band, related links, gaps
- * panel (preview, review view).
+ * and regional pages. Order: draft banner (preview), the Home hero with the
+ * page's copy (logo pile and Trusted badge as on Home), the `##` sections
+ * with their visuals, FAQ, closing band, related links, gaps panel
+ * (preview, review view).
+ *
+ * Lead 2026-10-07: H1 and H2s end in a period; Home text classes; no proof
+ * strip. Two section roles from the commercial blueprint (RULES.md §10):
+ *   - work: the section that links to /work ("who the work is for") renders
+ *     the Home `OurWork` block under the section's own heading;
+ *   - fit: the last section ("when another option is better") renders as
+ *     cards (`NpFitCards`).
  *
  * Never printed here: author, dates, recheck, breadcrumb trail, sources.
- * Testimonials are left out for now (lead 2026-10-07: the live testimonial
- * section is hidden site-wide); `testimonial` / `testimonialAfter` stay in
- * the front matter for later.
+ * Testimonials are left out for now (lead 2026-10-07).
  */
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import JsonLd from "../layout/JsonLd.astro";
 import Container from "../ui/Container.astro";
+import HomeHero from "../sections/HomeHero.astro";
+import OurWork from "../sections/OurWork.astro";
 import NpDraftBanner from "./NpDraftBanner.astro";
-import NpHero from "./NpHero.astro";
-import NpProofStrip from "./NpProofStrip.astro";
 import NpSplitSection from "./NpSplitSection.astro";
+import NpFitCards from "./NpFitCards.astro";
 import NpFaq from "./NpFaq.astro";
 import NpCtaBand from "./NpCtaBand.astro";
 import NpRelatedLinks from "./NpRelatedLinks.astro";
 import NpGapsPanel from "./NpGapsPanel.astro";
 import copy from "../../lib/new-pages/copy.json";
+import { withPeriod } from "../../lib/new-pages/html";
 import { pageJsonLd } from "../../lib/new-pages/jsonld";
 import type { NpPage } from "../../lib/new-pages/loader";
+import { getAllClientsWithIcon, getClientsByIds } from "../../lib/sanity/queries";
+import { OUR_WORK_GRID_IDS, OUR_WORK_LIST_IDS } from "../../lib/content/our-work";
+import type { Button as ButtonType } from "../../lib/sanity/types";
 import "./new-pages.css";
 
 interface Props {
@@ -31,18 +42,52 @@ interface Props {
 }
 
 const { page } = Astro.props;
+
 // Second button: Pricing on service pages, Work on industry and regional pages.
 const second = page.pageType === "service" ? copy.buttons.pricing : copy.buttons.work;
+const heroButtons: ButtonType[] = [
+  { variant: "white", link: { label: copy.buttons.contact, type: "contact" } },
+  { variant: "glass", link: { label: second.label, type: "external", externalUrl: second.href } },
+];
+
+// Section roles (blueprint): work = links to /work, fit = the last section.
+const lastIndex = page.sections.length - 1;
+const workIndex = page.sections.findIndex((s, i) => i < lastIndex && s.html.includes('href="/work"'));
+const needsWork = workIndex >= 0;
+const [heroClients, workClients, workListClients] = await Promise.all([
+  getAllClientsWithIcon(),
+  needsWork ? getClientsByIds(OUR_WORK_GRID_IDS) : Promise.resolve([]),
+  needsWork ? getClientsByIds(OUR_WORK_LIST_IDS) : Promise.resolve([]),
+]);
+
+// Lead paragraphs as inner HTML for the hero's own <p> elements.
+const leadInner = page.lead
+  .map((html) => /^<p[^>]*>([\s\S]*)<\/p>$/.exec(html)?.[1])
+  .filter((html): html is string => html !== undefined);
+const plain = (html: string): string => html.replace(/<[^>]*>/g, "").replace(/&amp;/g, "&");
 ---
 
 <BaseLayout title={page.title} description={page.description} noIndex={page.draft} showCtaBanner={false} titleTemplate={false}>
   {pageJsonLd(page).map((data) => <JsonLd data={data} />)}
   {page.includeDrafts && page.draft && <NpDraftBanner view={page.view} gaps={page.gaps.length} />}
-  <NpHero eyebrowHtml={page.eyebrowHtml} h1={page.h1} lead={page.lead} second={second} />
-  <NpProofStrip />
-  {page.sections.map((section) => <NpSplitSection section={section} includeDrafts={page.includeDrafts} />)}
-  <NpFaq id={page.faqId} headingHtml={page.faqHeadingHtml} items={page.faq} />
-  <NpCtaBand headingHtml={page.closingHeadingHtml} textHtml={page.closingTextHtml} src="closing" second={second} />
+  <HomeHero
+    clients={heroClients}
+    content={{ eyebrowHtml: page.eyebrowHtml, title: withPeriod(page.h1), paragraphsHtml: leadInner, npSrc: true }}
+    buttons={heroButtons}
+  />
+  {page.sections.map((section, i) =>
+    i === workIndex ? (
+      <div data-np-live="our-work" data-np-section={section.title} class="c-np-live">
+        <OurWork clients={workClients} listClients={workListClients} title={withPeriod(plain(section.titleHtml))} />
+      </div>
+    ) : i === lastIndex ? (
+      <NpFitCards section={{ ...section, titleHtml: withPeriod(section.titleHtml) }} />
+    ) : (
+      <NpSplitSection section={{ ...section, titleHtml: withPeriod(section.titleHtml) }} includeDrafts={page.includeDrafts} />
+    ),
+  )}
+  <NpFaq id={page.faqId} headingHtml={withPeriod(page.faqHeadingHtml)} items={page.faq} />
+  <NpCtaBand headingHtml={withPeriod(page.closingHeadingHtml)} textHtml={page.closingTextHtml} src="closing" second={second} />
   {page.related.length > 0 && (
     <div class="c-np-related-wrap">
       <Container>
@@ -56,5 +101,8 @@ const second = page.pageType === "service" ? copy.buttons.pricing : copy.buttons
 <style>
   .c-np-related-wrap :global(.c-container) {
     padding-top: 0;
+  }
+  .c-np-live {
+    display: contents;
   }
 </style>

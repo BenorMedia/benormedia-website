@@ -59,12 +59,18 @@ Release companion pairs on the same day.
 7. `pnpm run pages:verify` (its production view now includes the page), then the lead merges and deploys.
 8. After deploy: `node scripts/check-seo.mjs https://www.benormedia.com`, `node scripts/indexnow.mjs <url>`, Search Console inspection, Rich Results Test.
 
+## Commercial page conventions (lead 2026-10-07)
+
+H1, H2s, the FAQ heading and the closing heading end in a period (added by the template unless the text already ends in `.`, `?` or `!`). Body text uses the Home classes: `c-paragraph_m` for the lead and each section's framing line, `c-paragraph` for the rest. The two section roles follow the commercial blueprint (RULES.md §10), keyed on structure, never on a slug: the section that links to `/work` renders Our Work, and the last section renders as fit cards.
+
 ## Component map as built
 
 | Block | Decision | File |
 |---|---|---|
-| Commercial hero | sibling of PageHero / ServiceHero (rung 3) | `NpHero.astro`, `NpActions.astro` |
-| Proof strip | sibling: live `Eyebrow` pills (rung 3) | `NpProofStrip.astro` |
+| Commercial hero | the Home `HomeHero` (logo pile, Trusted badge) extended with optional `content` / `buttons` (rung 2; lead 2026-10-07) | `src/components/sections/HomeHero.astro` |
+| Proof strip | removed (lead 2026-10-07) | — |
+| Work section (the section linking to `/work`) | the Home `OurWork` extended with an optional `title` (rung 2), under the section's own H2 | `src/components/sections/OurWork.astro` |
+| Fit section (the last section, "when another option is better") | cards (lead 2026-10-07, Figma 3696-7378) | `NpFitCards.astro` |
 | Sections + visuals | new (rung 4) | `NpSplitSection.astro`, `NpVisual.astro` |
 | Testimonial | left out for now (lead 2026-10-07) | — |
 | FAQ | `FaqAccordion` extended (rung 2) + section sibling (rung 3) | `src/components/ui/FaqAccordion.astro`, `NpFaq.astro` |

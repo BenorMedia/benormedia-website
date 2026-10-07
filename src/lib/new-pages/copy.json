@@ -2,10 +2,16 @@
   "_note": "Every string the new-page templates add (BUILD-BRIEF section 8). Read by the templates and by scripts/check-new-pages.mjs. {name} is a placeholder.",
   "buttons": {
     "contact": "Get in Touch",
-    "pricing": { "label": "See Pricing", "href": "/pricing" },
-    "work": { "label": "See Our Work", "href": "/work" }
+    "pricing": {
+      "label": "See Pricing",
+      "href": "/pricing"
+    },
+    "work": {
+      "label": "See Our Work",
+      "href": "/work"
+    }
   },
-  "proofStrip": ["100+ launches", "6+ years of experience", "$700M+ raised by our clients", "Webflow Professional Partner"],
+  "heroTrusted": "Trusted by +100 B2B companies:",
   "relatedLabel": "Related pages",
   "livePathNames": {
     "/": "Home",
@@ -40,7 +46,10 @@
   },
   "draftBanner": {
     "text": "Draft preview. This page is not published.",
-    "views": { "review": "review", "defaults": "defaults" },
+    "views": {
+      "review": "review",
+      "defaults": "defaults"
+    },
     "gaps": "{n} open gaps"
   },
   "gapsPanelHeading": "Open gaps on this page",
