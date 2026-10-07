@@ -1,0 +1,100 @@
+---
+/**
+ * NpVisual — one `visuals` entry (brief 5.9, 7.2 `Visual`): a real asset with
+ * the repo's image component, a registered diagram, or (previews only) a
+ * labelled placeholder showing the visual's type and brief. Nothing renders
+ * when `resolveVisual` returns undefined (production without an asset).
+ *
+ * Space is reserved with `aspect-ratio` (placeholder) or the image's own
+ * width / height (asset). Diagrams are DOM text, so they have no load shift.
+ */
+import { Image } from "astro:assets";
+import copy from "../../lib/new-pages/copy.json";
+import type { Visual } from "../../lib/new-pages/loader";
+import { resolveVisual } from "../../lib/new-pages/visuals";
+
+interface Props {
+  visual: Visual | undefined;
+  includeDrafts: boolean;
+  /** `side` in a SplitSection, `full` in an article. */
+  layout?: "side" | "full";
+}
+
+const { visual, includeDrafts, layout = "side" } = Astro.props;
+const resolved = resolveVisual(visual, includeDrafts);
+const rootClass = ["c-np-visual", `is-${layout}`, resolved && `is-${resolved.kind}`].filter(Boolean).join(" ");
+const placeholderLabel = visual?.type === "screenshot" ? copy.placeholder.screenshot : copy.placeholder.diagram;
+const Diagram = resolved?.kind === "diagram" ? resolved.diagram.component : null;
+---
+
+{visual && resolved && (
+  resolved.kind === "asset" ? (
+    <figure class={rootClass}>
+      <Image src={resolved.asset} alt={visual.alt} data-np-src="visual.alt" />
+    </figure>
+  ) : resolved.kind === "diagram" && Diagram ? (
+    <figure class={rootClass} role="img" aria-label={visual.alt}>
+      <Diagram {...resolved.diagram.props} />
+    </figure>
+  ) : (
+    <figure class={rootClass} data-np-placeholder={visual.key}>
+      <p class="c-np-visual__label c-paragraph_s">{placeholderLabel}</p>
+      <p class="c-np-visual__brief c-paragraph" data-np-src="visual.brief">{visual.brief}</p>
+    </figure>
+  )
+)}
+
+<style>
+  .c-np-visual {
+    margin: 0;
+    width: 100%;
+    border: var(--border-default);
+    border-radius: var(--np-radius);
+    overflow: hidden;
+    background: var(--color-white);
+  }
+  .c-np-visual :global(img) {
+    width: 100%;
+    height: auto;
+  }
+  .c-np-visual.is-diagram {
+    padding: 2.286rem; /* 32px */
+  }
+
+  /* Placeholder (preview only): dashed frame, type label, then the brief. */
+  .c-np-visual.is-placeholder {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.857rem;
+    aspect-ratio: 4 / 3;
+    padding: 2.286rem;
+    border-style: dashed;
+    border-color: var(--color-gray);
+    background: var(--np-surface-tint);
+  }
+  .c-np-visual.is-full.is-placeholder {
+    aspect-ratio: 16 / 7;
+  }
+  .c-np-visual__label {
+    color: var(--color-accent);
+    font-weight: 600;
+    letter-spacing: 0.064em;
+    text-transform: uppercase;
+  }
+  .c-np-visual__brief {
+    color: var(--color-text);
+  }
+
+  @media (max-width: 767px) {
+    .c-np-visual.is-diagram,
+    .c-np-visual.is-placeholder {
+      padding: 2.222rem; /* 20px */
+    }
+    .c-np-visual.is-placeholder,
+    .c-np-visual.is-full.is-placeholder {
+      aspect-ratio: auto;
+      min-height: 22rem;
+    }
+  }
+</style>

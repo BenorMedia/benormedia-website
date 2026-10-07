@@ -1,0 +1,79 @@
+---
+/**
+ * NpRelatedLinks — "Related pages" label and a wrapping row of text links
+ * (brief 7.2 `RelatedLinks`, link rules 5.4). The label is a `<p>`, not a
+ * heading; it names the `nav` through `aria-labelledby`. Planned pages show
+ * as plain text with the "(planned)" suffix, previews only.
+ */
+import copy from "../../lib/new-pages/copy.json";
+import type { RelatedItem } from "../../lib/new-pages/links";
+
+interface Props {
+  items: readonly RelatedItem[];
+  id?: string;
+}
+
+const { items, id = "np-related" } = Astro.props;
+const labelId = `${id}-label`;
+---
+
+{items.length > 0 && (
+  <nav class="c-np-related" aria-labelledby={labelId}>
+    <p id={labelId} class="c-np-related__label c-paragraph_s">{copy.relatedLabel}</p>
+    <ul class="c-np-related__list">
+      {items.map((item) => (
+        <li class="c-np-related__item c-paragraph_m">
+          {item.href ? (
+            <a class="c-np-related__link" href={item.href} {...item.data}>{item.text}</a>
+          ) : (
+            <span class="c-np-related__planned c-np-planned" {...item.data}>{item.text} {copy.plannedSuffix}</span>
+          )}
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}
+
+<style>
+  .c-np-related {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.857rem 2.286rem;
+  }
+  .c-np-related__label {
+    margin: 0;
+    color: var(--color-text);
+    letter-spacing: 0.064em;
+    text-transform: uppercase;
+  }
+  .c-np-related__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.857rem 2.286rem; /* 12 / 32px */
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .c-np-related__item {
+    color: var(--color-heading);
+  }
+  .c-np-related__link {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+  }
+  .c-np-related__link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 767px) {
+    .c-np-related,
+    .c-np-related__list {
+      flex-direction: column;
+      gap: 1.333rem;
+    }
+  }
+</style>

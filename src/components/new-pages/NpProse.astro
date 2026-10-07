@@ -1,0 +1,17 @@
+---
+/**
+ * NpProse — article body wrapper (brief 7.2 `Prose`). Renders pre-built HTML
+ * from the loader (`src/lib/new-pages/markdown.ts`); every content element
+ * already carries `data-np-src`. Styles: `.c-np-prose` in `new-pages.css`
+ * (global, because the body is `set:html`).
+ */
+interface Props {
+  html?: string;
+  class?: string;
+}
+
+const { html, class: className } = Astro.props;
+const rootClass = ["c-np-prose", className].filter(Boolean).join(" ");
+---
+
+{html !== undefined ? <div class={rootClass} set:html={html} /> : <div class={rootClass}><slot /></div>}

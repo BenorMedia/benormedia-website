@@ -9,6 +9,10 @@
  * the current page (`aria-current="page"`). Items without `href` render as
  * plain text (e.g. "Services" has no index page, only the nav dropdown).
  *
+ * `attrs` (optional, per item): extra attributes on the crumb element, e.g.
+ * the new pages' preview markers (`data-planned`, `data-draft-target`).
+ * Without it the output is unchanged.
+ *
  * `ld` (optional): BreadcrumbList JSON-LD items, absolute URLs. Google needs
  * a URL on every level, so the caller passes only the levels that have a page
  * (e.g. Home → service), not the visual trail.
@@ -18,6 +22,7 @@ import Eyebrow from "../ui/Eyebrow.astro";
 interface Crumb {
   label: string;
   href?: string;
+  attrs?: Record<string, string>;
 }
 
 interface Props {
@@ -58,15 +63,15 @@ const ldJson =
               </svg>
             )}
             {isCurrent ? (
-              <span class="c-breadcrumbs__crumb" aria-current="page">
+              <span class="c-breadcrumbs__crumb" aria-current="page" {...item.attrs}>
                 <Eyebrow variant="default" class="c-breadcrumbs__current">{item.label}</Eyebrow>
               </span>
             ) : item.href ? (
-              <a class="c-breadcrumbs__crumb c-breadcrumbs__link" href={item.href}>
+              <a class="c-breadcrumbs__crumb c-breadcrumbs__link" href={item.href} {...item.attrs}>
                 <Eyebrow variant="default">{item.label}</Eyebrow>
               </a>
             ) : (
-              <span class="c-breadcrumbs__crumb">
+              <span class="c-breadcrumbs__crumb" {...item.attrs}>
                 <Eyebrow variant="default">{item.label}</Eyebrow>
               </span>
             )}
