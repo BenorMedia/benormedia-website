@@ -21,7 +21,10 @@
     "import:icons": "tsx scripts/sanity/import-client-assets.ts --only=icons --force --create-missing",
     "schema:deploy": "sanity schema deploy",
     "seed:client-order": "tsx scripts/sanity/seed-client-order.ts",
-    "indexnow": "node scripts/indexnow.mjs"
+    "indexnow": "node scripts/indexnow.mjs",
+    "pages:check": "node content-pack/scripts/check-content.mjs content-pack/content",
+    "pages:release-check": "node content-pack/scripts/check-content.mjs --release",
+    "pages:verify": "node scripts/verify-new-pages.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^7.0.0",

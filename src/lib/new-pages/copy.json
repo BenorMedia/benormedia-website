@@ -1,0 +1,52 @@
+{
+  "_note": "Every string the new-page templates add (BUILD-BRIEF section 8). Read by the templates and by scripts/check-new-pages.mjs. {name} is a placeholder.",
+  "buttons": {
+    "contact": "Get in Touch",
+    "pricing": { "label": "See Pricing", "href": "/pricing" },
+    "work": { "label": "See Our Work", "href": "/work" }
+  },
+  "proofStrip": ["100+ launches", "6+ years of experience", "$700M+ raised by our clients", "Webflow Professional Partner"],
+  "relatedLabel": "Related pages",
+  "livePathNames": {
+    "/": "Home",
+    "/custom-websites-migrations": "Custom Websites & Migrations",
+    "/growth": "Growth (SEO/GEO + CRO)",
+    "/ongoing-website-support": "Ongoing Website Support",
+    "/pricing": "Pricing",
+    "/work": "Work"
+  },
+  "accessibleNames": {
+    "breadcrumb": "Breadcrumb",
+    "toc": "On this page"
+  },
+  "articleEyebrow": {
+    "guide": "Guides",
+    "comparison": "Guides",
+    "data-study": "Original data"
+  },
+  "byline": {
+    "author": "By {author}",
+    "published": "Published {date}",
+    "updated": "Updated {date}",
+    "recheck": "Rechecked every {n} days"
+  },
+  "takeawaysLabel": "Key takeaways",
+  "tocLabel": "On this page",
+  "sourcesHeading": "Sources",
+  "sourceAccessed": "Accessed {date}",
+  "articleClosing": {
+    "heading": "Talk to BenorMedia about your own site",
+    "text": "Questions about applying this to your own site? One of our team members will be in touch within 24 hours."
+  },
+  "draftBanner": {
+    "text": "Draft preview. This page is not published.",
+    "views": { "review": "review", "defaults": "defaults" },
+    "gaps": "{n} open gaps"
+  },
+  "gapsPanelHeading": "Open gaps on this page",
+  "placeholder": {
+    "diagram": "Diagram to come",
+    "screenshot": "Screenshot to come"
+  },
+  "plannedSuffix": "(planned)"
+}
