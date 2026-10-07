@@ -12,8 +12,9 @@
 :root {
   /* Card radius: PricingCard / ClientCard (8px). */
   --np-radius: 8px;
-  /* Light accent tint: `.c-eyebrow.is-accent` background. */
-  --np-surface-tint: color-mix(in srgb, var(--color-accent) 8%, transparent);
+  /* Light accent tint: the `.c-eyebrow.is-accent` mix, at 5% instead of 8%
+     so accent text on it keeps 4.5:1 (4.48:1 at 8%). */
+  --np-surface-tint: color-mix(in srgb, var(--color-accent) 5%, var(--color-white));
   /* Reading measure for article text (brief 7.2: 68–72 characters). */
   --np-measure: 70ch;
   /* Gap highlight (preview only): marker-pen yellow, not a site colour. */
