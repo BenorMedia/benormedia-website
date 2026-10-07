@@ -55,7 +55,8 @@ interface Props {
   clients?: Client[];
   /**
    * Optional page copy (the new pages, content-pack). Without it the Home
-   * copy below renders unchanged. `eyebrowHtml` and each `paragraphsHtml`
+   * copy below renders unchanged. With it the section also gets `is-page`
+   * (layout tweaks live in the new pages' stylesheet). `eyebrowHtml` and each `paragraphsHtml`
    * entry are escaped HTML from the new-pages loader; `npSrc` adds the
    * `data-np-src` attributes its checks read.
    */
@@ -84,7 +85,7 @@ const BUTTONS: ButtonType[] = [
 ];
 ---
 
-<section class="c-hero">
+<section class:list={["c-hero", content && "is-page"]}>
   <div class="c-hero__lines" aria-hidden="true">
     <img
       class="c-hero__lines-img is-left"

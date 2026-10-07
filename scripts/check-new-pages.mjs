@@ -286,7 +286,10 @@ for (const { f, family, draft } of built) {
     if (lvl > prev + 1) fail(f, 5, `heading level skips to ${h.tag}: "${norm(textOf(h))}"`);
     prev = lvl;
   }
-  const h2s = heads.filter((h) => h.tag === 'h2').map((h) => norm(textOf(h)));
+  // H2s of live blocks (Services, a page-level Our Work) are not page copy;
+  // a live block standing in for a section (`data-np-section`) keeps its H2.
+  const liveOnly = (h) => inside(h, (p) => p.attrs['data-np-live'] !== undefined && p.attrs['data-np-section'] === undefined);
+  const h2s = heads.filter((h) => h.tag === 'h2' && !liveOnly(h)).map((h) => norm(textOf(h)));
   const wantH2 = [
     ...sourceBody.filter((b) => b.src === 'h2').map((b) => b.text),
     head(norm(d.faqHeading)),

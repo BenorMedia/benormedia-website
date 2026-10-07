@@ -7,9 +7,12 @@
  * (preview, review view).
  *
  * Lead 2026-10-07: H1 and H2s end in a period; Home text classes; no proof
- * strip. Two section roles from the commercial blueprint (RULES.md §10):
+ * strip; the Home `Services` block right above the FAQ. Two section roles
+ * from the commercial blueprint (RULES.md §10):
  *   - work: the section that links to /work ("who the work is for") renders
- *     the Home `OurWork` block under the section's own heading;
+ *     the Home `OurWork` block under the section's own heading. A page
+ *     without one gets the Home `OurWork` (its own title) before the fit
+ *     section, so every page shows the work;
  *   - fit: the last section ("when another option is better") renders as
  *     cards (`NpFitCards`).
  *
@@ -21,6 +24,7 @@ import JsonLd from "../layout/JsonLd.astro";
 import Container from "../ui/Container.astro";
 import HomeHero from "../sections/HomeHero.astro";
 import OurWork from "../sections/OurWork.astro";
+import Services from "../sections/Services.astro";
 import NpDraftBanner from "./NpDraftBanner.astro";
 import NpSplitSection from "./NpSplitSection.astro";
 import NpFitCards from "./NpFitCards.astro";
@@ -53,11 +57,10 @@ const heroButtons: ButtonType[] = [
 // Section roles (blueprint): work = links to /work, fit = the last section.
 const lastIndex = page.sections.length - 1;
 const workIndex = page.sections.findIndex((s, i) => i < lastIndex && s.html.includes('href="/work"'));
-const needsWork = workIndex >= 0;
 const [heroClients, workClients, workListClients] = await Promise.all([
   getAllClientsWithIcon(),
-  needsWork ? getClientsByIds(OUR_WORK_GRID_IDS) : Promise.resolve([]),
-  needsWork ? getClientsByIds(OUR_WORK_LIST_IDS) : Promise.resolve([]),
+  getClientsByIds(OUR_WORK_GRID_IDS),
+  getClientsByIds(OUR_WORK_LIST_IDS),
 ]);
 
 // Lead paragraphs as inner HTML for the hero's own <p> elements.
@@ -81,11 +84,21 @@ const plain = (html: string): string => html.replace(/<[^>]*>/g, "").replace(/&a
         <OurWork clients={workClients} listClients={workListClients} title={withPeriod(plain(section.titleHtml))} />
       </div>
     ) : i === lastIndex ? (
-      <NpFitCards section={{ ...section, titleHtml: withPeriod(section.titleHtml) }} />
+      <>
+        {workIndex < 0 && (
+          <div data-np-live="our-work" class="c-np-live">
+            <OurWork clients={workClients} listClients={workListClients} />
+          </div>
+        )}
+        <NpFitCards section={{ ...section, titleHtml: withPeriod(section.titleHtml) }} />
+      </>
     ) : (
       <NpSplitSection section={{ ...section, titleHtml: withPeriod(section.titleHtml) }} includeDrafts={page.includeDrafts} />
     ),
   )}
+  <div data-np-live="services" class="c-np-live">
+    <Services />
+  </div>
   <NpFaq id={page.faqId} headingHtml={withPeriod(page.faqHeadingHtml)} items={page.faq} />
   <NpCtaBand headingHtml={withPeriod(page.closingHeadingHtml)} textHtml={page.closingTextHtml} src="closing" second={second} />
   {page.related.length > 0 && (

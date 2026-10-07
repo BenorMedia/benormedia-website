@@ -218,3 +218,17 @@
   text-align: center;
   margin: 0 auto;
 }
+
+/* --------------------------------------------------------------------------
+   Home hero on the new pages (`.c-hero.is-page`, HomeHero with `content`).
+   Desktop and up (lead 2026-10-07): a wider block so the H1 runs in two
+   lines where it can, and a 50rem lead (Home: 70% and 34rem).
+   -------------------------------------------------------------------------- */
+@media (min-width: 992px) {
+  .c-hero.is-page .c-hero__block {
+    max-width: 92%;
+  }
+  .c-hero.is-page .c-hero__desc {
+    max-width: 50rem;
+  }
+}

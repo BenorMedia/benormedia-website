@@ -131,14 +131,24 @@ const cards: Card[] = list ? [...list[1]!.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)
     text-underline-offset: 0.2em;
   }
 
+  /* Three equal columns, so five cards make two rows (lead 2026-10-07);
+     a short last row is centered (six tracks, each card spans two). */
   .c-np-fit__grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 2rem 1.429rem; /* 28 / 20px */
     margin: 4.286rem 0 0; /* 60px */
-    padding: 0 2.286rem; /* 32px */
+    padding: 0;
     list-style: none;
+  }
+  .c-np-fit__grid > li {
+    grid-column: span 2;
+  }
+  .c-np-fit__grid > li:nth-last-child(2):nth-child(3n + 1) {
+    grid-column: 2 / span 2;
+  }
+  .c-np-fit__grid > li:last-child:nth-child(3n + 1) {
+    grid-column: 3 / span 2;
   }
   .c-np-fit__card {
     display: flex;
@@ -198,15 +208,23 @@ const cards: Card[] = list ? [...list[1]!.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)
     white-space: nowrap;
   }
 
+  @media (max-width: 991px) {
+    .c-np-fit__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .c-np-fit__grid > li,
+    .c-np-fit__grid > li:nth-last-child(2):nth-child(3n + 1),
+    .c-np-fit__grid > li:last-child:nth-child(3n + 1) {
+      grid-column: auto;
+    }
+  }
   @media (max-width: 767px) {
     .c-np-fit :global(.c-container) {
       padding-top: 5rem;
       padding-bottom: 5rem;
     }
     .c-np-fit__grid {
-      flex-direction: column;
-      align-items: stretch;
-      padding: 0;
+      grid-template-columns: 1fr;
       margin-top: 3.333rem;
     }
     .c-np-fit__card {

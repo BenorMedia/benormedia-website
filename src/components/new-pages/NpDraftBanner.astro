@@ -20,7 +20,7 @@ const { view, gaps } = Astro.props;
   <p class="c-np-draft-banner__text c-paragraph_s">
     <span>{copy.draftBanner.text}</span>
     <span class="c-np-draft-banner__item">{copy.draftBanner.views[view]}</span>
-    {view === "review" && (
+    {view === "review" && gaps > 0 && (
       <a class="c-np-draft-banner__item c-np-draft-banner__link" href="#np-gaps">{fill(copy.draftBanner.gaps, { n: String(gaps) })}</a>
     )}
   </p>
