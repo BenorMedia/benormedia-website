@@ -67,7 +67,7 @@ const slots = [
         <div class="c-np-blog-hero__lead" set:html={page.lead.join("")} />
       </div>
       {Hero ? (
-        <div class="c-np-blog-hero__illustration" aria-hidden="true">
+        <div class="c-np-blog-hero__illustration" aria-hidden="true" data-np-illustration>
           <Hero {...hero.props} />
         </div>
       ) : (

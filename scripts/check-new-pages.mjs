@@ -270,7 +270,9 @@ for (const { f, family, draft } of built) {
     const ok = (t) => !t || allowed.has(t) || isCopy(t);
     for (const u of units) if (!ok(u.text)) fail(f, 4, `stray copy in data-np-src="${u.src}": "${u.text}"`);
     walk(main, (n) => {
-      if (n.tag && (n.attrs['data-np-src'] !== undefined || n.attrs['data-np-live'] !== undefined || n.attrs.role === 'img' || RAW.has(n.tag))) {
+      // Skipped: source units, live blocks, diagram figures and decorative
+      // illustrations (labels from the page text, audited by hand).
+      if (n.tag && (n.attrs['data-np-src'] !== undefined || n.attrs['data-np-live'] !== undefined || n.attrs.role === 'img' || n.attrs['data-np-illustration'] !== undefined || RAW.has(n.tag))) {
         if (n.tag && n.attrs.role === 'img' && n.attrs['aria-label'] && !ok(norm(n.attrs['aria-label']))) fail(f, 4, `stray aria-label "${n.attrs['aria-label']}"`);
         return false;
       }
