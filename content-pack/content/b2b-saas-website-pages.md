@@ -4,7 +4,7 @@ url: /guides/b2b-saas-website-pages
 lang: en-US
 pageType: guide
 wave: 1
-draft: true
+draft: false
 blockedBy: []
 title: "B2B SaaS Website Pages: What to Build | BenorMedia"
 description: "Which pages a B2B SaaS website needs, what each should hold, and how to keep it easy for marketing to run. Sourced from Webflow, Google, and Gartner."
@@ -12,9 +12,9 @@ h1: "B2B SaaS website: the pages you need and what each one should do"
 primaryKeyword: saas website
 secondaryKeywords: [b2b saas website design best practices, saas website design, b2b website design]
 targetCountry: US
-author: Sergio Gancedo
-publishedAt: 2026-10-06
-updatedAt: 2026-10-06
+author: "Sergio Gancedo, Managing Director, BenorMedia"
+publishedAt: 2026-10-07
+updatedAt: 2026-10-07
 reviewEvery: 30
 breadcrumb:
   - name: Home

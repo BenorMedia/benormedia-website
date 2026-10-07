@@ -212,7 +212,10 @@ for (const { f, family, draft } of built) {
   if (norm(meta('description')) !== norm(d.description)) fail(f, 2, `description "${meta('description')}"`);
   if (canonical !== `${SITE}${d.url}`) fail(f, 2, `canonical "${canonical}"`);
   const robots = meta('robots') ?? '';
-  if (draft !== /noindex/.test(robots)) fail(f, 2, `robots "${robots}" on a ${draft ? 'draft' : 'released'} page`);
+  // Previews are noindex site-wide (Seo: PUBLIC_SITE_ENV), so only the
+  // production view tells drafts and released pages apart.
+  const wantNoindex = view === 'production' ? draft : true;
+  if (wantNoindex !== /noindex/.test(robots)) fail(f, 2, `robots "${robots}" on a ${draft ? 'draft' : 'released'} page (${view} view)`);
 
   // Units inside <main>.
   const srcEls = all(main, (n) => n.attrs['data-np-src'] !== undefined && !inside(n, (p) => p.attrs['data-np-src'] !== undefined));
@@ -265,6 +268,8 @@ for (const { f, family, draft } of built) {
       ...pack.map((p) => norm(p.data.h1)),
       ...pack.map((p) => norm(p.data.description)),
       norm(d.author),
+      // The author card splits "Name, Role" over two lines.
+      ...String(d.author ?? '').split(/,(.*)/s).map((x) => norm(x)).filter(Boolean),
       ...LIVE_ALLOW.map(norm),
     ]);
     const ok = (t) => !t || allowed.has(t) || isCopy(t);
@@ -406,7 +411,7 @@ for (const { f, family, draft } of built) {
     const row = norm(byline.map((b) => textOf(b)).join(' '));
     const fmt = (iso) => new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
     const want = [
-      ...(hasGap(d.author) ? [] : [String(d.author)]),
+      ...(hasGap(d.author) ? [] : [String(d.author).split(',')[0].trim()]),
       copy.byline.published.replace('{date}', fmt(String(d.publishedAt))),
       copy.byline.updated.replace('{date}', fmt(String(d.updatedAt))),
     ];

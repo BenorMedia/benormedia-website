@@ -4,7 +4,7 @@ url: /guides/webflow-enterprise
 lang: en-US
 pageType: guide
 wave: 1
-draft: true
+draft: false
 blockedBy: []
 title: "Webflow Enterprise: What to Check | BenorMedia"
 description: "What makes a website project enterprise, what Webflow Enterprise includes as of October 2026, and how to vet an agency. Sourced from Webflow, Google, and W3C."
@@ -12,9 +12,9 @@ h1: "Webflow Enterprise: security, governance, and what to check before you comm
 primaryKeyword: webflow enterprise
 secondaryKeywords: [webflow for enterprise, webflow enterprise pricing, enterprise webflow agency]
 targetCountry: US
-author: Sergio Gancedo
-publishedAt: 2026-10-06
-updatedAt: 2026-10-06
+author: "Sergio Gancedo, Managing Director, BenorMedia"
+publishedAt: 2026-10-07
+updatedAt: 2026-10-07
 reviewEvery: 30
 breadcrumb:
   - name: Home

@@ -4,7 +4,7 @@ url: /webflow-migration
 lang: en-US
 pageType: service
 wave: 1
-draft: true
+draft: false
 blockedBy: []
 title: "WordPress to Webflow Migration | BenorMedia"
 description: "WordPress to Webflow migration for B2B teams. Every URL mapped, every redirect tested, and a plan built around the pages that earn your traffic."
@@ -13,8 +13,8 @@ eyebrow: Website migrations
 primaryKeyword: wordpress to webflow migration
 secondaryKeywords: [wordpress to webflow, convert wordpress to webflow, webflow migration services, webflow migration agency, squarespace to webflow migration]
 targetCountry: US
-publishedAt: 2026-10-06
-updatedAt: 2026-10-06
+publishedAt: 2026-10-07
+updatedAt: 2026-10-07
 reviewEvery: 90
 breadcrumb:
   - name: Home

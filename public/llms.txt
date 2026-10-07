@@ -7,6 +7,15 @@
 - [Custom Websites & Migrations](https://www.benormedia.com/custom-websites-migrations): Custom Webflow design, development and migrations for B2B SaaS and tech companies.
 - [Growth (SEO/GEO + CRO)](https://www.benormedia.com/growth): Technical SEO, AEO/GEO, content and CRO that turn more website traffic into pipeline.
 - [Ongoing Website Support](https://www.benormedia.com/ongoing-website-support): Unlimited Webflow design, development and maintenance for growing B2B companies.
+- [WordPress to Webflow Migration](https://www.benormedia.com/webflow-migration): WordPress to Webflow migration for B2B teams. Every URL mapped, every redirect tested, and a plan built around the pages that earn your traffic.
+- [B2B Web Design Agency for SaaS](https://www.benormedia.com/b2b-saas-web-design): B2B web design for SaaS. BenorMedia builds Webflow sites that explain the product, support demo requests, and stay easy for marketing to update.
+- [Webflow Enterprise Agency](https://www.benormedia.com/webflow-enterprise-agency): Webflow enterprise agency for B2B teams. Multi-language builds, security audits, access controls, and a dedicated team after launch.
+
+## Guides
+
+- [How to Migrate WordPress to Webflow](https://www.benormedia.com/guides/wordpress-to-webflow-migration): How to migrate from WordPress to Webflow without losing SEO: map URLs, move content, set 301 redirects, test, and monitor. Sourced from Google and Webflow.
+- [B2B SaaS Website Pages: What to Build](https://www.benormedia.com/guides/b2b-saas-website-pages): Which pages a B2B SaaS website needs, what each should hold, and how to keep it easy for marketing to run. Sourced from Webflow, Google, and Gartner.
+- [Webflow Enterprise: What to Check](https://www.benormedia.com/guides/webflow-enterprise): What makes a website project enterprise, what Webflow Enterprise includes as of October 2026, and how to vet an agency. Sourced from Webflow, Google, and W3C.
 
 ## Company
 

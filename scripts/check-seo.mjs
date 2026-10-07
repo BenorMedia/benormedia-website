@@ -18,6 +18,13 @@ const PAGES = {
   '/ongoing-website-support': { expected: ['Service', 'BreadcrumbList'], keyword: 'webflow maintenance service' },
   '/pricing': { expected: ['FAQPage'], keyword: null },
   '/work': { expected: [], keyword: null },
+  // New pages (content-pack), released 2026-10-07.
+  '/webflow-migration': { expected: ['Service', 'FAQPage', 'BreadcrumbList'], keyword: 'wordpress to webflow migration' },
+  '/b2b-saas-web-design': { expected: ['Service', 'FAQPage', 'BreadcrumbList'], keyword: 'b2b web design' },
+  '/webflow-enterprise-agency': { expected: ['Service', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow enterprise agency' },
+  '/guides/wordpress-to-webflow-migration': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'migrate wordpress to webflow' },
+  '/guides/b2b-saas-website-pages': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'saas website' },
+  '/guides/webflow-enterprise': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow enterprise' },
 };
 const NOINDEX_PAGES = ['/testimonials', '/cookie-policy']; // must stay out of the sitemap
 

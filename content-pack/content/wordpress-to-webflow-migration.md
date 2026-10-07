@@ -4,7 +4,7 @@ url: /guides/wordpress-to-webflow-migration
 lang: en-US
 pageType: guide
 wave: 1
-draft: true
+draft: false
 blockedBy: []
 title: "How to Migrate WordPress to Webflow | BenorMedia"
 description: "How to migrate from WordPress to Webflow without losing SEO: map URLs, move content, set 301 redirects, test, and monitor. Sourced from Google and Webflow."
@@ -12,9 +12,9 @@ h1: "How to migrate from WordPress to Webflow without losing SEO"
 primaryKeyword: migrate wordpress to webflow
 secondaryKeywords: [migrate from wordpress to webflow]
 targetCountry: US
-author: Sergio Gancedo
-publishedAt: 2026-10-06
-updatedAt: 2026-10-06
+author: "Sergio Gancedo, Managing Director, BenorMedia"
+publishedAt: 2026-10-07
+updatedAt: 2026-10-07
 reviewEvery: 30
 breadcrumb:
   - name: Home
