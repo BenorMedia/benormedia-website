@@ -2,11 +2,13 @@
 /**
  * NpBlogAuthor — the blog article template's author card (Figma
  * 3142:1618163): avatar, name and a second line, a rule, then a short
- * text; side squares as on the eyebrows. Here: the BenorMedia mark, the
- * front matter `author`, the published date, and the recheck interval.
+ * text; side squares as on the eyebrows. Here (lead 2026-10-07): the
+ * author's photo (`authors.ts`, else the BenorMedia mark), the front matter
+ * `author` and the published date, stacked and left-aligned.
  */
 import copy from "../../lib/new-pages/copy.json";
-import { fill, formatDate } from "../../lib/new-pages/html";
+import { formatDate } from "../../lib/new-pages/html";
+import { authorPhoto } from "../../lib/new-pages/authors";
 import type { NpPage } from "../../lib/new-pages/loader";
 
 interface Props {
@@ -15,17 +17,21 @@ interface Props {
 
 const { page } = Astro.props;
 const [pubBefore = "", pubAfter = ""] = copy.byline.published.split("{date}");
+const photo = page.author.hasGap ? undefined : authorPhoto(page.author.text);
 ---
 
 <aside class="c-np-author" data-np-byline>
   <div class="c-np-author__head">
-    <span class="c-np-author__avatar" aria-hidden="true"></span>
+    {photo ? (
+      <img class="c-np-author__photo" src={photo.src} width={photo.w} height={photo.h} alt="" loading="lazy" decoding="async" />
+    ) : (
+      <span class="c-np-author__avatar" aria-hidden="true"></span>
+    )}
     <span class="c-np-author__who">
       <span class="c-np-author__name c-paragraph" data-np-src="byline.author" set:html={page.author.html} />
       <span class="c-np-author__role c-paragraph_s" data-np-src="byline.published">{pubBefore}<time datetime={page.publishedAt}>{formatDate(page.publishedAt)}</time>{pubAfter}</span>
     </span>
   </div>
-  <p class="c-np-author__text c-paragraph_s" data-np-src="byline.recheck">{fill(copy.byline.recheck, { n: page.reviewEvery })}</p>
   <span class="c-np-author__sq is-left" aria-hidden="true"></span>
   <span class="c-np-author__sq is-right" aria-hidden="true"></span>
 </aside>
@@ -43,10 +49,17 @@ const [pubBefore = "", pubAfter = ""] = copy.byline.published.split("{date}");
   }
   .c-np-author__head {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
     gap: 1.143rem;
-    padding-bottom: 1.429rem;
-    border-bottom: var(--border-default);
+  }
+  .c-np-author__photo {
+    width: 3.857rem; /* 54px */
+    height: 3.857rem;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--color-gray-light);
   }
   .c-np-author__avatar {
     display: grid;

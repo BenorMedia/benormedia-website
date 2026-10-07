@@ -1,10 +1,10 @@
 ---
 /**
- * NpSources — the article's source list at the foot of the page (brief 7.2
- * `SourcesList`): an H2 "Sources", then each label as an external link and
- * its access date.
+ * NpSources — the article's source list (brief 7.2 `SourcesList`): an H2
+ * "Sources" and the list, each label as an external link with its access
+ * date. No wrapper of its own (lead 2026-10-07): it sits in the article
+ * column.
  */
-import Container from "../ui/Container.astro";
 import copy from "../../lib/new-pages/copy.json";
 import { fill, formatDate } from "../../lib/new-pages/html";
 
@@ -16,26 +16,22 @@ const { items } = Astro.props;
 ---
 
 {items.length > 0 && (
-  <section class="c-np-sources" aria-labelledby="np-sources">
-    <Container>
-      <h2 id="np-sources" class="c-np-sources__title c-text_m">{copy.sourcesHeading}</h2>
-      <ol class="c-np-sources__list">
-        {items.map((item) => (
-          <li class="c-np-sources__item c-paragraph">
-            <a class="c-np-sources__link" href={item.url} target="_blank" rel="noopener" data-np-src="source" set:html={item.labelHtml} />{" "}
-            <span class="c-np-sources__date">{fill(copy.sourceAccessed, { date: formatDate(item.accessed) })}</span>
-          </li>
-        ))}
-      </ol>
-    </Container>
-  </section>
+  <>
+    <h2 id="np-sources" class="c-np-sources__title c-text_m">{copy.sourcesHeading}</h2>
+    <ol class="c-np-sources__list">
+      {items.map((item) => (
+        <li class="c-np-sources__item c-paragraph">
+          <a class="c-np-sources__link" href={item.url} target="_blank" rel="noopener" data-np-src="source" set:html={item.labelHtml} />{" "}
+          <span class="c-np-sources__date">{fill(copy.sourceAccessed, { date: formatDate(item.accessed) })}</span>
+        </li>
+      ))}
+    </ol>
+  </>
 )}
 
 <style>
-  .c-np-sources :global(.c-container) {
-    padding-top: 0;
-  }
   .c-np-sources__title {
+    margin: 0;
     color: var(--color-heading);
     scroll-margin-top: calc(var(--c-nav-height, 0px) + 2rem);
   }
@@ -43,8 +39,7 @@ const { items } = Astro.props;
     display: flex;
     flex-direction: column;
     gap: 0.857rem;
-    max-width: var(--np-measure);
-    margin: 1.714rem 0 0;
+    margin: -2rem 0 0;
     padding: 0 0 0 1.25em;
     color: var(--color-text);
   }

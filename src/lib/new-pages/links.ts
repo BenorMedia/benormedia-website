@@ -147,7 +147,7 @@ export function breadcrumbs(items: readonly Crumb[], ctx: LinkContext): { visibl
     } else if (ctx.includeDrafts && t.status === "draft") {
       visible.push({ label: item.name, href: item.url, attrs: { "data-draft-target": t.slug ?? "" } });
     } else if (ctx.includeDrafts && t.status === "planned") {
-      visible.push({ label: `${item.name} ${copy.plannedSuffix}`, attrs: { "data-planned": t.slug ?? item.url } });
+      visible.push({ label: item.name, attrs: { "data-planned": t.slug ?? item.url } });
     }
   });
   return { visible, ld };

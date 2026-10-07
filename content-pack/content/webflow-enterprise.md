@@ -12,7 +12,7 @@ h1: "Webflow Enterprise: security, governance, and what to check before you comm
 primaryKeyword: webflow enterprise
 secondaryKeywords: [webflow for enterprise, webflow enterprise pricing, enterprise webflow agency]
 targetCountry: US
-author: BenorMedia team
+author: Sergio Gancedo
 publishedAt: 2026-10-06
 updatedAt: 2026-10-06
 reviewEvery: 30

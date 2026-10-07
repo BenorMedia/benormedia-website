@@ -33,8 +33,7 @@
   "byline": {
     "author": "By {author}",
     "published": "Published {date}",
-    "updated": "Updated {date}",
-    "recheck": "Rechecked every {n} days"
+    "updated": "Updated {date}"
   },
   "takeawaysLabel": "Key takeaways",
   "tocLabel": "Table of Contents",
@@ -57,7 +56,6 @@
     "diagram": "Diagram to come",
     "screenshot": "Screenshot to come"
   },
-  "plannedSuffix": "(planned)",
   "blog": {
     "readTime": "{n} min read",
     "share": "Share",
@@ -68,8 +66,7 @@
   },
   "resources": {
     "eyebrow": "Resources",
-    "heading": "Related pages.",
-    "button": "Start a Project",
+    "heading": "Related resources.",
     "learnMore": "Learn more",
     "serviceTag": "Services"
   }

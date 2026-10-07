@@ -12,7 +12,7 @@ h1: "How to migrate from WordPress to Webflow without losing SEO"
 primaryKeyword: migrate wordpress to webflow
 secondaryKeywords: [migrate from wordpress to webflow]
 targetCountry: US
-author: BenorMedia team
+author: Sergio Gancedo
 publishedAt: 2026-10-06
 updatedAt: 2026-10-06
 reviewEvery: 30

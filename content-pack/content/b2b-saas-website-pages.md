@@ -12,7 +12,7 @@ h1: "B2B SaaS website: the pages you need and what each one should do"
 primaryKeyword: saas website
 secondaryKeywords: [b2b saas website design best practices, saas website design, b2b website design]
 targetCountry: US
-author: BenorMedia team
+author: Sergio Gancedo
 publishedAt: 2026-10-06
 updatedAt: 2026-10-06
 reviewEvery: 30

@@ -7,7 +7,6 @@
  */
 import Container from "../ui/Container.astro";
 import Eyebrow from "../ui/Eyebrow.astro";
-import Button from "../ui/Button.astro";
 import copy from "../../lib/new-pages/copy.json";
 import type { NpPage } from "../../lib/new-pages/loader";
 import { ARROW_RIGHT } from "./blog-icons";
@@ -29,7 +28,6 @@ const list = cards.slice(0, 3);
         <div class="c-section-header__text">
           <h2 id="np-resources" class="c-section-header__title c-text_xl">{copy.resources.heading}</h2>
         </div>
-        <Button variant="gradient" class="js-open-contact">{copy.resources.button}</Button>
       </header>
       <ul class="c-np-res__grid">
         {list.map((card, i) => (

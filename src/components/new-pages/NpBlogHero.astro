@@ -4,7 +4,8 @@
  * BenorMedia 3142:1617991): breadcrumbs, the accent tag with the updated
  * date and the read time, the H1 and the lead on the left; on the right the
  * gradient card with a collage of client site screenshots (Our Work); a
- * divider under it. Left-aligned (articles are the exception, lead
+ * divider under it. A page with a registered header illustration
+ * (`HEROES`, lead 2026-10-07) shows it instead of the collage. Left-aligned (articles are the exception, lead
  * 2026-10-07).
  */
 import Container from "../ui/Container.astro";
@@ -13,6 +14,7 @@ import copy from "../../lib/new-pages/copy.json";
 import { fill, formatDate } from "../../lib/new-pages/html";
 import type { NpPage } from "../../lib/new-pages/loader";
 import { CHEVRON } from "./blog-icons";
+import { HEROES } from "../../lib/new-pages/visuals";
 
 interface Props {
   page: NpPage;
@@ -20,6 +22,8 @@ interface Props {
 }
 
 const { page, shots } = Astro.props;
+const hero = HEROES[page.slug];
+const Hero = hero?.component;
 const tag = (copy.articleEyebrow as Record<string, string>)[page.pageType] ?? copy.articleEyebrow.guide;
 const [updBefore = "", updAfter = ""] = copy.byline.updated.split("{date}");
 // Collage slots (Figma frame 2147237081, % of the card).
@@ -45,7 +49,7 @@ const slots = [
                 ) : c.href ? (
                   <a href={c.href} {...c.attrs}>{c.label}</a>
                 ) : (
-                  <span class="c-np-planned" {...c.attrs}>{c.label}</span>
+                  <span {...c.attrs}>{c.label}</span>
                 )}
               </li>
             ))}
@@ -62,13 +66,19 @@ const slots = [
         <h1 class="c-np-blog-hero__title c-text_xl" data-np-src="h1">{page.h1}</h1>
         <div class="c-np-blog-hero__lead" set:html={page.lead.join("")} />
       </div>
-      <div class="c-np-blog-hero__media" aria-hidden="true">
-        <div class="c-np-blog-hero__collage">
-          {shots.slice(0, 4).map((s, i) => (
-            <img src={s.src} srcset={s.srcset} width="453" height="300" alt="" loading="eager" decoding="async" style={slots[i]} />
-          ))}
+      {Hero ? (
+        <div class="c-np-blog-hero__illustration" aria-hidden="true">
+          <Hero {...hero.props} />
         </div>
-      </div>
+      ) : (
+        <div class="c-np-blog-hero__media" aria-hidden="true">
+          <div class="c-np-blog-hero__collage">
+            {shots.slice(0, 4).map((s, i) => (
+              <img src={s.src} srcset={s.srcset} width="453" height="300" alt="" loading="eager" decoding="async" style={slots[i]} />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
     <hr class="c-np-blog-hero__rule" />
   </Container>

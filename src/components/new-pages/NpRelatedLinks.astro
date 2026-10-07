@@ -3,7 +3,7 @@
  * NpRelatedLinks — "Related pages" label and a wrapping row of text links
  * (brief 7.2 `RelatedLinks`, link rules 5.4). The label is a `<p>`, not a
  * heading; it names the `nav` through `aria-labelledby`. Planned pages show
- * as plain text with the "(planned)" suffix, previews only.
+ * as plain text (dotted underline), previews only.
  */
 import copy from "../../lib/new-pages/copy.json";
 import type { RelatedItem } from "../../lib/new-pages/links";
@@ -26,7 +26,7 @@ const labelId = `${id}-label`;
           {item.href ? (
             <a class="c-np-related__link" href={item.href} {...item.data}>{item.text}</a>
           ) : (
-            <span class="c-np-related__planned c-np-planned" {...item.data}>{item.text} {copy.plannedSuffix}</span>
+            <span class="c-np-related__planned c-np-planned" {...item.data}>{item.text}</span>
           )}
         </li>
       ))}

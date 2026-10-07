@@ -267,7 +267,7 @@ for (const { f, family, draft } of built) {
       norm(d.author),
       ...LIVE_ALLOW.map(norm),
     ]);
-    const ok = (t) => !t || allowed.has(t) || isCopy(t) || (t.endsWith(` ${copy.plannedSuffix}`) && ok(t.slice(0, -copy.plannedSuffix.length - 1)));
+    const ok = (t) => !t || allowed.has(t) || isCopy(t);
     for (const u of units) if (!ok(u.text)) fail(f, 4, `stray copy in data-np-src="${u.src}": "${u.text}"`);
     walk(main, (n) => {
       if (n.tag && (n.attrs['data-np-src'] !== undefined || n.attrs['data-np-live'] !== undefined || n.attrs.role === 'img' || RAW.has(n.tag))) {
@@ -382,7 +382,7 @@ for (const { f, family, draft } of built) {
   if (marker.test(html)) fail(f, 9, 'raw gap marker in the HTML');
   if (view !== 'review' && /np-gap/.test(html)) fail(f, 9, 'np-gap markup');
   if (view === 'production') {
-    for (const chrome of ['data-np-draft-banner', 'data-np-gaps-panel', 'data-np-placeholder', 'data-draft-target', 'data-planned', copy.plannedSuffix]) {
+    for (const chrome of ['data-np-draft-banner', 'data-np-gaps-panel', 'data-np-placeholder', 'data-draft-target', 'data-planned']) {
       if (html.includes(chrome)) fail(f, 9, `preview chrome in production: ${chrome}`);
     }
   }
@@ -407,7 +407,6 @@ for (const { f, family, draft } of built) {
       ...(hasGap(d.author) ? [] : [String(d.author)]),
       copy.byline.published.replace('{date}', fmt(String(d.publishedAt))),
       copy.byline.updated.replace('{date}', fmt(String(d.updatedAt))),
-      copy.byline.recheck.replace('{n}', String(d.reviewEvery)),
     ];
     for (const w of want) if (!row.includes(norm(w))) fail(f, 11, `byline lacks "${w}"`);
     const dts = times.map((t) => t.attrs.datetime);
