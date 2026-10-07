@@ -109,6 +109,10 @@ export interface NpPage {
   reviewEvery: string;
   takeaways: string[];
   sources: { labelHtml: string; url: string; accessed: string }[];
+  /** Article read time, minutes (body + FAQ at 230 words a minute). */
+  readMinutes: number;
+  /** Related pack pages built in this mode (articles' Resources cards). */
+  relatedCards: { href: string; title: string; description: string; family: Family; data: Record<string, string> }[];
   gaps: Gap[];
 }
 
@@ -175,7 +179,16 @@ export function loadPages(): NpPage[] {
   const pack = new Map(
     files.map(({ parsed }) => {
       const d = parsed.data as FrontMatter;
-      return [String(d.slug), { url: String(d.url), draft: d.draft !== false, h1: String(d.h1 ?? "") }] as const;
+      return [
+        String(d.slug),
+        {
+          url: String(d.url),
+          draft: d.draft !== false,
+          h1: String(d.h1 ?? ""),
+          description: String(d.description ?? ""),
+          pageType: String(d.pageType ?? ""),
+        },
+      ] as const;
     }),
   );
   const plan = readPlan();
@@ -232,9 +245,12 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
   // A front matter string printed as text (never through Markdown).
   const text = (value: unknown): string => gaps.toHtml(escapeHtml(gaps.tokenize(String(value ?? ""))));
 
-  // Commercial pages use the Home page's text classes (lead 2026-10-07).
+  // Home page text classes (lead 2026-10-07): commercial sections, and the
+  // article body in the blog article template (Figma 3142:1617991).
   const classes =
-    family === "commercial" ? { lead: "c-paragraph_m", firstP: "c-paragraph_m", p: "c-paragraph", li: "c-paragraph" } : undefined;
+    family === "commercial"
+      ? { lead: "c-paragraph_m", firstP: "c-paragraph_m", p: "c-paragraph", li: "c-paragraph" }
+      : { lead: "c-paragraph_m", p: "c-paragraph", li: "c-paragraph" };
   const rendered = renderBody(gaps.tokenize(body), {
     links,
     slugger,
@@ -318,6 +334,24 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
       url: String(s.url ?? ""),
       accessed: String(s.accessed ?? ""),
     })),
+    readMinutes: Math.max(
+      1,
+      Math.round(
+        (stripTokens(body).split(/\s+/).filter(Boolean).length +
+          (d.faq ?? []).reduce((n, f) => n + `${f.q ?? ""} ${f.a ?? ""}`.split(/\s+/).length, 0)) /
+          230,
+      ),
+    ),
+    relatedCards: (d.related ?? []).flatMap((r) => {
+      const ref = String(r);
+      const s = ref.startsWith("/") ? [...ctx.pack].find(([, p]) => p.url === ref)?.[0] : ref.replace(/^page:/, "");
+      const p = s ? ctx.pack.get(s) : undefined;
+      if (!s || !p || s === slug) return [];
+      if (p.draft && !ctx.includeDrafts) return [];
+      const fam = (FAMILY as Record<string, Family>)[p.pageType ?? ""];
+      if (!fam) return [];
+      return [{ href: p.url, title: p.h1, description: p.description ?? "", family: fam, data: p.draft ? { "data-draft-target": s } : {} }];
+    }),
     gaps: gaps.unique(),
   };
 }

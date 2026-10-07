@@ -236,3 +236,66 @@
 .c-hero.is-page .c-hero__block .c-cta__actions.c-hero__actions {
   gap: 2rem;
 }
+
+/* --------------------------------------------------------------------------
+   Blog article template body (Figma 3142:1618069 "Rich Text", lead
+   2026-10-07): H2 Text XL, H3 Text L, H4 Text M, paragraphs and list
+   items `c-paragraph` (set by the loader), check-circle bullets in the
+   brand gradient (`--np-check`, set by the template), images 20px radius.
+   -------------------------------------------------------------------------- */
+.c-np-prose.is-blog {
+  color: var(--color-text);
+  font-size: var(--fs-p);
+  line-height: 1.5;
+
+  & > h2 {
+    margin-top: 4.286rem; /* 60px */
+    font-size: var(--fs-text-xl);
+    line-height: 1.4;
+    color: var(--color-black-secondary);
+  }
+  & > h2:first-child {
+    margin-top: 0;
+  }
+  & > h3 {
+    margin-top: 2.143rem;
+    font-size: var(--fs-text-l);
+    line-height: 1.2;
+    color: var(--color-black-secondary);
+  }
+  & > h2 + *,
+  & > h3 + * {
+    margin-top: 1.429rem; /* 20px */
+  }
+  & > p,
+  & > ul,
+  & > ol,
+  & > .c-np-table {
+    margin-top: 1.44rem;
+  }
+  & > ul > li,
+  & > ol > li {
+    padding-left: 2.286rem; /* 22px icon + 10px */
+  }
+  & > ul > li + li,
+  & > ol > li + li {
+    margin-top: 0.714rem; /* 10px */
+  }
+  & > ul > li::before {
+    left: 0;
+    top: 0.12em;
+    width: 1.571rem;
+    height: 1.714rem;
+    border-radius: 0;
+    background: var(--gradient-primary);
+    -webkit-mask: var(--np-check) center / contain no-repeat;
+            mask: var(--np-check) center / contain no-repeat;
+  }
+  & strong {
+    color: var(--color-black-secondary);
+  }
+}
+.c-np-article__figure .c-np-visual {
+  border-color: var(--color-gray-light);
+  border-radius: 20px;
+}

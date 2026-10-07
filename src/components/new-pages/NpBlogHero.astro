@@ -1,0 +1,216 @@
+---
+/**
+ * NpBlogHero — article header in the blog article template (Figma
+ * BenorMedia 3142:1617991): breadcrumbs, the accent tag with the updated
+ * date and the read time, the H1 and the lead on the left; on the right the
+ * gradient card with a collage of client site screenshots (Our Work); a
+ * divider under it. Left-aligned (articles are the exception, lead
+ * 2026-10-07).
+ */
+import Container from "../ui/Container.astro";
+import Eyebrow from "../ui/Eyebrow.astro";
+import copy from "../../lib/new-pages/copy.json";
+import { fill, formatDate } from "../../lib/new-pages/html";
+import type { NpPage } from "../../lib/new-pages/loader";
+import { CHEVRON } from "./blog-icons";
+
+interface Props {
+  page: NpPage;
+  shots: readonly { src: string; srcset: string }[];
+}
+
+const { page, shots } = Astro.props;
+const tag = (copy.articleEyebrow as Record<string, string>)[page.pageType] ?? copy.articleEyebrow.guide;
+const [updBefore = "", updAfter = ""] = copy.byline.updated.split("{date}");
+// Collage slots (Figma frame 2147237081, % of the card).
+const slots = [
+  "left: 0; top: 0; width: 48.8%; height: 63.25%;",
+  "left: 51.08%; top: 12.99%; width: 48.8%; height: 33.58%;",
+  "left: 0; top: 66.31%; width: 48.8%; height: 33.58%;",
+  "left: 51.08%; top: 49.58%; width: 48.8%; height: 42.01%;",
+];
+---
+
+<header class="c-np-blog-hero">
+  <Container>
+    <div class="c-np-blog-hero__grid">
+      <div class="c-np-blog-hero__text">
+        <nav class="c-np-crumbs" aria-label={copy.accessibleNames.breadcrumb}>
+          <ol class="c-np-crumbs__list">
+            {page.breadcrumbVisible.map((c, i) => (
+              <li class="c-np-crumbs__item c-paragraph_s">
+                {i > 0 && <span class="c-np-crumbs__chevron" set:html={CHEVRON} />}
+                {i === page.breadcrumbVisible.length - 1 ? (
+                  <span aria-current="page" {...c.attrs}>{c.label}</span>
+                ) : c.href ? (
+                  <a href={c.href} {...c.attrs}>{c.label}</a>
+                ) : (
+                  <span class="c-np-planned" {...c.attrs}>{c.label}</span>
+                )}
+              </li>
+            ))}
+          </ol>
+        </nav>
+        <div class="c-np-blog-hero__meta">
+          <Eyebrow variant="accent">{tag}</Eyebrow>
+          <p class="c-np-blog-hero__facts c-paragraph_s" data-np-byline>
+            <span data-np-src="byline.updated">{updBefore}<time datetime={page.updatedAt}>{formatDate(page.updatedAt)}</time>{updAfter}</span>
+            <span class="c-np-blog-hero__sep" aria-hidden="true"></span>
+            <span>{fill(copy.blog.readTime, { n: String(page.readMinutes) })}</span>
+          </p>
+        </div>
+        <h1 class="c-np-blog-hero__title c-text_xl" data-np-src="h1">{page.h1}</h1>
+        <div class="c-np-blog-hero__lead" set:html={page.lead.join("")} />
+      </div>
+      <div class="c-np-blog-hero__media" aria-hidden="true">
+        <div class="c-np-blog-hero__collage">
+          {shots.slice(0, 4).map((s, i) => (
+            <img src={s.src} srcset={s.srcset} width="453" height="300" alt="" loading="eager" decoding="async" style={slots[i]} />
+          ))}
+        </div>
+      </div>
+    </div>
+    <hr class="c-np-blog-hero__rule" />
+  </Container>
+</header>
+
+<style>
+  /* Accent tag tint at 5% (the live 8% measures 4.48:1 with accent text). */
+  .c-np-blog-hero__meta :global(.c-eyebrow.is-accent) {
+    background: color-mix(in srgb, var(--color-accent) 5%, var(--color-white));
+  }
+  /* Figma: 110px top padding, 50px column gap, divider 100px below. */
+  .c-np-blog-hero :global(.c-container) {
+    padding-top: 7.857rem;
+    padding-bottom: 0;
+  }
+  .c-np-blog-hero__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 3.571rem;
+  }
+  .c-np-blog-hero__text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.786rem; /* 25px */
+  }
+  .c-np-crumbs__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.571rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .c-np-crumbs__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.571rem;
+    color: var(--color-text-secondary);
+  }
+  .c-np-crumbs__item a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .c-np-crumbs__item a:hover {
+    color: var(--color-accent);
+  }
+  .c-np-crumbs__item a:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  .c-np-crumbs__chevron {
+    display: inline-flex;
+    width: 1.143rem;
+    height: 1.143rem;
+    color: var(--color-text-secondary);
+  }
+  .c-np-crumbs__chevron :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+  .c-np-blog-hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.071rem; /* 15px */
+  }
+  .c-np-blog-hero__facts {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.429rem; /* 20px */
+    margin: 0;
+    color: var(--color-text-secondary);
+  }
+  /* The Figma "|" separator, drawn. */
+  .c-np-blog-hero__sep {
+    width: 1px;
+    height: 1em;
+    background: currentColor;
+    opacity: 0.6;
+  }
+  .c-np-blog-hero__title {
+    margin-top: 0.643rem;
+    color: var(--color-black-secondary);
+  }
+  .c-np-blog-hero__lead {
+    display: flex;
+    flex-direction: column;
+    gap: 0.714rem;
+    max-width: 46.3rem; /* 648px */
+    margin-top: -1rem;
+    color: var(--color-text);
+  }
+  .c-np-blog-hero__lead :global(p) {
+    margin: 0;
+  }
+  /* Gradient card with the screenshot collage (Figma 3142:1618029). */
+  .c-np-blog-hero__media {
+    position: relative;
+    aspect-ratio: 815 / 545;
+    overflow: hidden;
+    border: var(--border-default);
+    border-radius: 8px;
+    background: linear-gradient(113deg, var(--color-blue) 2.88%, var(--color-blue-light) 96.84%);
+  }
+  .c-np-blog-hero__collage {
+    position: absolute;
+    left: -7.36%;
+    top: -13.15%;
+    width: 114%;
+    height: 123.7%;
+  }
+  .c-np-blog-hero__collage img {
+    position: absolute;
+    object-fit: cover;
+    object-position: top;
+    border-radius: 4px;
+    max-width: none;
+  }
+  .c-np-blog-hero__rule {
+    height: 1px;
+    margin: 7.143rem 0 0;
+    border: 0;
+    background: var(--color-border);
+  }
+  @media (max-width: 991px) {
+    .c-np-blog-hero__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 767px) {
+    .c-np-blog-hero :global(.c-container) {
+      padding-top: 5rem;
+    }
+    .c-np-blog-hero__lead {
+      margin-top: 0;
+    }
+    .c-np-blog-hero__rule {
+      margin-top: 4.444rem;
+    }
+  }
+</style>

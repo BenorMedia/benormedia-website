@@ -1,0 +1,93 @@
+---
+/**
+ * NpBlogAuthor — the blog article template's author card (Figma
+ * 3142:1618163): avatar, name and a second line, a rule, then a short
+ * text; side squares as on the eyebrows. Here: the BenorMedia mark, the
+ * front matter `author`, the published date, and the recheck interval.
+ */
+import copy from "../../lib/new-pages/copy.json";
+import { fill, formatDate } from "../../lib/new-pages/html";
+import type { NpPage } from "../../lib/new-pages/loader";
+
+interface Props {
+  page: NpPage;
+}
+
+const { page } = Astro.props;
+const [pubBefore = "", pubAfter = ""] = copy.byline.published.split("{date}");
+---
+
+<aside class="c-np-author" data-np-byline>
+  <div class="c-np-author__head">
+    <span class="c-np-author__avatar" aria-hidden="true"></span>
+    <span class="c-np-author__who">
+      <span class="c-np-author__name c-paragraph" data-np-src="byline.author" set:html={page.author.html} />
+      <span class="c-np-author__role c-paragraph_s" data-np-src="byline.published">{pubBefore}<time datetime={page.publishedAt}>{formatDate(page.publishedAt)}</time>{pubAfter}</span>
+    </span>
+  </div>
+  <p class="c-np-author__text c-paragraph_s" data-np-src="byline.recheck">{fill(copy.byline.recheck, { n: page.reviewEvery })}</p>
+  <span class="c-np-author__sq is-left" aria-hidden="true"></span>
+  <span class="c-np-author__sq is-right" aria-hidden="true"></span>
+</aside>
+
+<style>
+  .c-np-author {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1.429rem;
+    padding: 2.286rem; /* 32px */
+    border: var(--border-default);
+    border-radius: 8px;
+    background: var(--color-white);
+  }
+  .c-np-author__head {
+    display: flex;
+    align-items: center;
+    gap: 1.143rem;
+    padding-bottom: 1.429rem;
+    border-bottom: var(--border-default);
+  }
+  .c-np-author__avatar {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 3.857rem; /* 54px */
+    height: 3.857rem;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+  }
+  .c-np-author__avatar::after {
+    content: "";
+    width: 55%;
+    height: 55%;
+    background: var(--color-white);
+    -webkit-mask: url("/images/home/services-diagram/center-bottom-icon.webp") center / contain no-repeat;
+            mask: url("/images/home/services-diagram/center-bottom-icon.webp") center / contain no-repeat;
+  }
+  .c-np-author__who {
+    display: flex;
+    flex-direction: column;
+  }
+  .c-np-author__name {
+    color: var(--color-black-secondary);
+  }
+  .c-np-author__role,
+  .c-np-author__text {
+    margin: 0;
+    color: var(--color-text);
+  }
+  /* Side squares (Figma: 15px, the eyebrow square style). */
+  .c-np-author__sq {
+    position: absolute;
+    top: 50%;
+    width: 1.071rem;
+    height: 1.071rem;
+    transform: translateY(-50%);
+    border: 0.5px solid var(--color-gray);
+    border-radius: 1.5px;
+    background: var(--color-white);
+  }
+  .c-np-author__sq.is-left { left: -0.6rem; }
+  .c-np-author__sq.is-right { right: -0.6rem; }
+</style>

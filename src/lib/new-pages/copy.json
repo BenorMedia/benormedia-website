@@ -23,7 +23,7 @@
   },
   "accessibleNames": {
     "breadcrumb": "Breadcrumb",
-    "toc": "On this page"
+    "toc": "Table of Contents"
   },
   "articleEyebrow": {
     "guide": "Guides",
@@ -37,7 +37,7 @@
     "recheck": "Rechecked every {n} days"
   },
   "takeawaysLabel": "Key takeaways",
-  "tocLabel": "On this page",
+  "tocLabel": "Table of Contents",
   "sourcesHeading": "Sources",
   "sourceAccessed": "Accessed {date}",
   "articleClosing": {
@@ -57,5 +57,20 @@
     "diagram": "Diagram to come",
     "screenshot": "Screenshot to come"
   },
-  "plannedSuffix": "(planned)"
+  "plannedSuffix": "(planned)",
+  "blog": {
+    "readTime": "{n} min read",
+    "share": "Share",
+    "copyLink": "Copy link",
+    "shareLinkedin": "Share on LinkedIn",
+    "shareX": "Share on X",
+    "shareFacebook": "Share on Facebook"
+  },
+  "resources": {
+    "eyebrow": "Resources",
+    "heading": "Related pages.",
+    "button": "Start a Project",
+    "learnMore": "Learn more",
+    "serviceTag": "Services"
+  }
 }

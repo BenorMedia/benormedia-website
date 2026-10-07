@@ -29,7 +29,7 @@ export interface LinkContext {
   currentSlug: string;
   includeDrafts: boolean;
   /** Pack pages by slug. */
-  pack: ReadonlyMap<string, { url: string; draft: boolean; h1: string }>;
+  pack: ReadonlyMap<string, { url: string; draft: boolean; h1: string; description?: string; pageType?: string }>;
   plan: ReadonlyMap<string, PlanPage>;
   warn: (message: string) => void;
 }

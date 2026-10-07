@@ -263,6 +263,8 @@ for (const { f, family, draft } of built) {
       ...(d.sources ?? []).map((s) => norm(s.label)),
       ...plan.map((p) => norm(p.label)),
       ...pack.map((p) => norm(p.data.h1)),
+      ...pack.map((p) => norm(p.data.description)),
+      norm(d.author),
       ...LIVE_ALLOW.map(norm),
     ]);
     const ok = (t) => !t || allowed.has(t) || isCopy(t) || (t.endsWith(` ${copy.plannedSuffix}`) && ok(t.slice(0, -copy.plannedSuffix.length - 1)));
@@ -295,8 +297,10 @@ for (const { f, family, draft } of built) {
   const wantH2 = [
     ...sourceBody.filter((b) => b.src === 'h2').map((b) => b.text),
     head(norm(d.faqHeading)),
-    family === 'commercial' ? head(norm(d.closing?.heading)) : norm(copy.articleClosing.heading),
+    ...(family === 'commercial' ? [head(norm(d.closing?.heading))] : []),
     ...(family === 'article' ? [norm(copy.sourcesHeading)] : []),
+    // Articles (blog article template): the Resources heading when related cards render.
+    ...(family === 'article' && h2s.includes(norm(copy.resources.heading)) ? [norm(copy.resources.heading)] : []),
   ];
   if (JSON.stringify([...h2s].sort()) !== JSON.stringify([...wantH2].sort())) {
     fail(f, 5, `h2 set differs: got ${JSON.stringify(h2s)}`);
@@ -396,10 +400,11 @@ for (const { f, family, draft } of built) {
     if (times.length || byline.length || /Rechecked/.test(mainText)) fail(f, 11, 'byline, <time> or recheck text on a commercial page');
   } else if (!byline.length) fail(f, 11, 'no byline row');
   else {
-    const row = norm(textOf(byline[0]));
+    // Blog article template: the byline is split between the header and the author card.
+    const row = norm(byline.map((b) => textOf(b)).join(' '));
     const fmt = (iso) => new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
     const want = [
-      ...(hasGap(d.author) ? [] : [copy.byline.author.replace('{author}', d.author)]),
+      ...(hasGap(d.author) ? [] : [String(d.author)]),
       copy.byline.published.replace('{date}', fmt(String(d.publishedAt))),
       copy.byline.updated.replace('{date}', fmt(String(d.updatedAt))),
       copy.byline.recheck.replace('{n}', String(d.reviewEvery)),
