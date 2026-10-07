@@ -420,6 +420,7 @@ Without adding to your team." with "website moving." marked Gradient (published 
 | 2026-09-30 | Process tabs ≤767 (`docs/refs/services-images/services-template-tabs-mobile.png`): sliding strip — `overflow: hidden`, no wrap, tabs `padding: 0 1.5rem` with a 1px divider between them, active = square + name (name up to 12rem); selecting scrolls the strip smoothly so the new step is at the left (target computed from the final layout while names transition; last steps clamp at the strip end); progress line under the bar (3px, `--color-gray`, width = step / steps). Tablet (768–991) keeps the wrapped squares. Sizes `TODO: DS mobile` | Lead | Proposed |
 | 2026-09-30 | Process tabs ≤767 revised (supersedes the sliding strip): only the active step (square + name) and the next step (square, `is-next`, dividers both sides) show; the last step's next is step 01 (loops). The rest are visually hidden (1px clip), still focusable / announced, arrow keys select them. Selecting the next step: FLIP slide from its old spot to the left slot + the new next fades in from the right (800ms, `--ease-smooth` curve); reduced motion → instant. Progress line unchanged | Lead | Proposed |
 | 2026-09-30 | Process tabs ≤767: `justify-content: space-between` (active left, next right) | Lead visual QA | Lead |
+| 2026-10-07 | Service FAQs from the lead's brief "FAQs for the Service Pages" (Oct 2026), seeded by `pnpm run seed:service-faqs` (`scripts/sanity/seed-service-faqs.ts`, patches published docs): Custom Websites & Migrations → "Custom Websites" (8) + "Migrations" (5), replacing the placeholder Web Design / AEO tabs; Growth → "SEO, GEO & AEO" (8) + "CRO" (6); Ongoing Website Support → one list (10, no tabs). Copy = the brief's FAQPage JSON-LD word for word (no `[CONFIRM]` / `[NOV 1]` text, links as plain text); `FaqSection` emits the matching FAQPage JSON-LD | Lead brief | Lead |
 
 ### Open questions
 
@@ -428,10 +429,12 @@ Without adding to your team." with "website moving." marked Gradient (published 
 - ~~**Growth + Ongoing Support content**~~ — RESOLVED 2026-09-29: not now; make the one service work first. Their documents and routes stay uncreated (see Decisions).
 - **Problem section side images** — the side columns are cropped in `services-problem.jpg`; the full image list is unknown. (2026-09-29)
 - ~~**Related clients (seed guess)**~~ — RESOLVED 2026-09-29: any selection for now; 2 added (Emotional Hub, Garaje de Ideas) → 7 clients, all with `websiteScreenshot`. Placeholder selection (see Decisions).
-- **Service FAQs placeholder** — the seeded service copies the Pricing placeholder FAQ groups into Sanity; `TODO: COPY` until final copy (PHASE5 S-6). (2026-09-29)
+- ~~**Service FAQs placeholder**~~ — RESOLVED 2026-10-07: final FAQ copy from the lead's brief (see Decisions).
 - **Step illustrations** — every step of all 3 services uses the placeholder `service-step.svg`; final per-step illustrations needed. (2026-09-30)
 - **Related clients** — all 3 services list the same 7 placeholder clients for the Problem carousels; final lists needed. (2026-09-30)
-- **Growth + Ongoing Support FAQs** — no `faqSections` yet, so both pages ship without a FAQ section. (2026-09-30)
+- ~~**Growth + Ongoing Support FAQs**~~ — RESOLVED 2026-10-07: both get FAQs from the lead's brief (see Decisions).
+- **FAQ `[CONFIRM]` items** — left out of the page until confirmed: the question "What platforms can you migrate from?" (Migrations), the 6-hour critical-bug fix target (Ongoing Support → turnaround), typical project / migration timelines, AI visibility reporting cadence, non-Webflow sites for Growth, Slack Connect needing premium Slack. Add them to `seed-service-faqs.ts` and re-run once confirmed. (2026-10-07)
+- **FAQ `[NOV 1]` items** — Growth "What does the Growth plan include?" / "How long until I see results?" and all Ongoing Support answers follow today's plans; review them when the Nov 1 tiers go live. (2026-10-07)
 
 #### Design team
 - ~~**Growth service name**~~ — RESOLVED 2026-09-30: "Growth (SEO/GEO + CRO)" in nav, footer and Sanity (see Global Decisions). Home Services and the Pricing card use it too (lead, 2026-09-30).
