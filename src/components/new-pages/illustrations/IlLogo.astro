@@ -1,0 +1,13 @@
+---
+/** IlLogo — a tool logo (or a 3D icon) in a small bordered tile. */
+import { ICON, LOGO, type IconName, type LogoName } from "./assets";
+
+type Props = { logo: LogoName; icon?: never } | { icon: IconName; logo?: never };
+
+const props = Astro.props;
+const a = props.logo ? LOGO[props.logo] : ICON[props.icon as IconName];
+---
+
+<span class={["np-il-logo", props.icon && "is-icon"].filter(Boolean).join(" ")}>
+  <img src={a.src} width={a.w} height={a.h} alt="" loading="lazy" decoding="async" />
+</span>

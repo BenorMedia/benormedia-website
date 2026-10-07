@@ -1,0 +1,64 @@
+---
+/**
+ * IlHub — the tools panel (Figma 3702:9459): three category cards (box
+ * label + logos or icons) whose connectors run along a bus into a center
+ * mark (the BenorMedia mark, or a logo), then down into a row of chips.
+ */
+import IlFrame from "./IlFrame.astro";
+import IlLogo from "./IlLogo.astro";
+import IlChip from "./IlChip.astro";
+import { LOGO, type IconName, type LogoName } from "./assets";
+
+type Tile = { logo: LogoName } | { icon: IconName };
+
+interface Props {
+  cards: readonly { tag: string; tiles: readonly Tile[] }[];
+  chips: readonly { icon: IconName; label: string }[];
+  /** Logo in the center disc instead of the BenorMedia mark. */
+  centerLogo?: LogoName;
+}
+
+const { cards, chips, centerLogo } = Astro.props;
+const H = 480;
+const xs = [100, 280, 460];
+const cardTop = 22;
+const cardH = 124;
+const by = cardTop + cardH; // card bottoms
+const bus = by + 40;
+const markY = 292;
+const markD = 104;
+const center = centerLogo ? LOGO[centerLogo] : null;
+---
+
+<IlFrame h={H} glow={{ x: 280, y: markY, w: 700, h: 360 }}>
+  <svg class="np-il__lines" viewBox={`0 0 560 ${H}`} preserveAspectRatio="none" aria-hidden="true">
+    <path d={`M${xs[0]} ${by} V${bus - 16} Q${xs[0]} ${bus} ${xs[0]! + 16} ${bus} H${264} Q280 ${bus} 280 ${bus + 16} V${markY - markD / 2}`} />
+    <path d={`M${xs[2]} ${by} V${bus - 16} Q${xs[2]} ${bus} ${xs[2]! - 16} ${bus} H${296} Q280 ${bus} 280 ${bus + 16}`} />
+    <path d={`M280 ${by} V${bus}`} />
+    <path d={`M280 ${markY + markD / 2} V${H - 92}`} />
+    <rect x={xs[0]! - 3} y={by + 14} width="6" height="6" rx="1" />
+    <rect x={xs[2]! - 3} y={by + 14} width="6" height="6" rx="1" />
+    <rect x={187} y={bus - 3} width="6" height="6" rx="1" />
+    <rect x={367} y={bus - 3} width="6" height="6" rx="1" />
+    <rect x={277} y={markY - markD / 2 - 18} width="6" height="6" rx="1" />
+    <rect x={277} y={H - 112} width="6" height="6" rx="1" />
+  </svg>
+  {cards.map((card, i) => (
+    <div class="np-il-card" style={`--x: ${xs[i]! - 80}; --y: ${cardTop}; --w: 160; min-height: ${cardH / 10}em; justify-content: space-between;`}>
+      <span class="np-il-tag is-fixed" style="--th: 38;">{card.tag}</span>
+      <span class="np-il-row">
+        {card.tiles.map((t) => ("logo" in t ? <IlLogo logo={t.logo} /> : <IlLogo icon={t.icon} />))}
+      </span>
+    </div>
+  ))}
+  {center ? (
+    <span class="np-il-mark is-logo" style={`--x: 280; --y: ${markY}; --d: ${markD};`}>
+      <img src={center.src} width={center.w} height={center.h} alt="" loading="lazy" decoding="async" />
+    </span>
+  ) : (
+    <span class="np-il-mark" style={`--x: 280; --y: ${markY}; --d: ${markD};`}></span>
+  )}
+  <div class="np-il-chips" style={`--x: 12; --r: 12; --y: ${H - 84};`}>
+    {chips.map((c) => <IlChip icon={c.icon} label={c.label} />)}
+  </div>
+</IlFrame>

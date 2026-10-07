@@ -22,7 +22,10 @@ interface Props {
 
 const { visual, includeDrafts, layout = "side" } = Astro.props;
 const resolved = resolveVisual(visual, includeDrafts);
-const rootClass = ["c-np-visual", `is-${layout}`, resolved && `is-${resolved.kind}`].filter(Boolean).join(" ");
+const framed = resolved?.kind === "diagram" && resolved.diagram.framed === true;
+const rootClass = ["c-np-visual", `is-${layout}`, resolved && `is-${resolved.kind}`, framed && "is-framed"]
+  .filter(Boolean)
+  .join(" ");
 const placeholderLabel = visual?.type === "screenshot" ? copy.placeholder.screenshot : copy.placeholder.diagram;
 const Diagram = resolved?.kind === "diagram" ? resolved.diagram.component : null;
 ---
@@ -53,12 +56,20 @@ const Diagram = resolved?.kind === "diagram" ? resolved.diagram.component : null
     overflow: hidden;
     background: var(--color-white);
   }
-  .c-np-visual :global(img) {
+  .c-np-visual.is-asset :global(img) {
     width: 100%;
     height: auto;
   }
   .c-np-visual.is-diagram {
     padding: 2.286rem; /* 32px */
+  }
+  /* Illustrations draw their own frame. */
+  .c-np-visual.is-framed {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
+    background: none;
   }
 
   /* Placeholder (preview only): dashed frame, type label, then the brief. */
@@ -87,6 +98,9 @@ const Diagram = resolved?.kind === "diagram" ? resolved.diagram.component : null
   }
 
   @media (max-width: 767px) {
+    .c-np-visual.is-framed {
+      padding: 0;
+    }
     .c-np-visual.is-diagram,
     .c-np-visual.is-placeholder {
       padding: 2.222rem; /* 20px */

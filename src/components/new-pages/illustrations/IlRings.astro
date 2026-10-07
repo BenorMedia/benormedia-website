@@ -1,0 +1,62 @@
+---
+/**
+ * IlRings — the Home services rings (Figma 3702:9227): a gradient core with
+ * the BenorMedia mark at the bottom, an inner tinted ring, a white ring with
+ * spokes and an outer accent band. Outer nodes glow (active); inner nodes
+ * are muted. Four of each.
+ */
+import IlFrame from "./IlFrame.astro";
+import IlNode from "./IlNode.astro";
+import type { IconName } from "./assets";
+
+interface Item {
+  icon: IconName;
+  label: string;
+}
+
+interface Props {
+  outer: readonly Item[];
+  inner: readonly Item[];
+}
+
+const { outer, inner } = Astro.props;
+const H = 440;
+const cx = 280;
+const cy = 460;
+const at = (r: number, deg: number) => ({
+  x: Math.round(cx + r * Math.cos((deg * Math.PI) / 180)),
+  y: Math.round(cy - r * Math.sin((deg * Math.PI) / 180)),
+});
+const outerAngles = [128, 101, 79, 52];
+const innerAngles = [146, 116, 64, 34];
+const spokes = [90].map((deg) => ({ a: at(190, deg), b: at(320, deg) }));
+---
+
+<IlFrame h={H} glow={{ x: 280, y: 330, w: 640, h: 420 }}>
+  <svg class="np-il__lines" viewBox={`0 0 560 ${H}`} preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="np-il-band" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" style="stop-color: var(--color-blue); stop-opacity: 0.2" />
+        <stop offset="1" style="stop-color: var(--color-blue-light); stop-opacity: 0.08" />
+      </linearGradient>
+      <linearGradient id="np-il-core" x1="0" y1="0" x2="1" y2="0.3">
+        <stop offset="0.03" style="stop-color: var(--color-blue)" />
+        <stop offset="0.97" style="stop-color: var(--color-blue-light)" />
+      </linearGradient>
+    </defs>
+    <circle cx={cx} cy={cy} r="400" fill="url(#np-il-band)" style="stroke: var(--np-il-line)" />
+    <circle cx={cx} cy={cy} r="320" style="fill: var(--color-white); stroke: var(--np-il-line)" />
+    {spokes.map((s) => <line x1={s.a.x} y1={s.a.y} x2={s.b.x} y2={s.b.y} />)}
+    <circle cx={cx} cy={cy} r="190" style="fill: color-mix(in srgb, var(--color-accent) 4%, var(--color-white)); stroke: var(--np-il-line)" />
+    <circle cx={cx} cy={cy} r="110" fill="url(#np-il-core)" />
+  </svg>
+  <img class="np-il-at" src="/images/home/services-diagram/center-bottom-icon.webp" width="288" height="295" alt="" style={`--x: ${cx}; --y: 402; width: 5.4em; height: auto;`} />
+  {inner.map((item, i) => {
+    const p = at(255, innerAngles[i] ?? 90);
+    return <IlNode x={p.x} y={p.y} icon={item.icon} label={item.label} w={150} muted />;
+  })}
+  {outer.map((item, i) => {
+    const p = at(360, outerAngles[i] ?? 90);
+    return <IlNode x={p.x} y={p.y} icon={item.icon} label={item.label} w={118} />;
+  })}
+</IlFrame>
