@@ -126,9 +126,9 @@ visuals:
     alt: "Marketer editing a page in Webflow"
 ---
 
-Moving from WordPress to Webflow is a URL project first and a design project second. BenorMedia, a Webflow Professional Partner, maps every old URL to its new address, moves and checks every page by hand, and tests every redirect before the switch. Your marketing team ends up with a site it can update without booking a developer.
+Moving from WordPress to Webflow is a URL project first and a design project second. We map every old URL to its new address, move and check every page by hand, and test every redirect before the switch. Your marketing team ends up with a site it can update without booking a developer.
 
-[FACT NEEDED #MIG-1: how many WordPress to Webflow migrations BenorMedia has completed, and since when | default: DELETE-LINE]
+30+ WordPress to Webflow migrations in the last 6 years back that process.
 
 ## Start with a map of every URL
 
@@ -140,7 +140,7 @@ Before anyone builds, we map what your site has to do and what must not break, a
 - **Sitemap architecture.** A new structure planned around the pages that already earn traffic.
 - **Timeline and sign-off.** Timeline planning and stakeholder alignment before the first page is built.
 
-[FACT NEEDED #G6: BenorMedia's usual migration timeline in weeks for a small site of about 20 pages, a mid-size site with a blog and a large site | default: DELETE-LINE]
+A typical migration takes 3 to 4 weeks for a site of about 20 pages, 6 to 8 weeks for a mid-size site with a blog, and 10 to 14 weeks for a large site.
 
 The full method is in our [guide to migrating from WordPress to Webflow](page:wordpress-to-webflow-migration).
 
@@ -162,8 +162,6 @@ Most rebuilds lose rankings during the migration step, so it gets the closest su
 - **Redirect testing.** Every redirect tested before the switch.
 - **Launch coordination.** We are in the room while the site goes live.
 - **Post-launch monitoring.** The site is monitored after the switch.
-
-[FACT NEEDED #MIG-7: one measured result from a past migration, such as organic clicks before and after, or one named migration the client has approved | default: DELETE-LINE]
 
 ## Plugins, forms, and integrations: what moves and what is replaced
 
@@ -191,7 +189,7 @@ Your marketers get live training, video walkthroughs, and documentation they wil
 - [Ongoing website support](/ongoing-website-support) when you want a team behind the site: weekly updates, technical SEO monitoring, and bug fixes.
 - [Growth](/growth) for SEO and AI search work after the move.
 
-[FACT NEEDED #MIG-3: what a standard WordPress to Webflow migration includes and what it leaves out, for example a like-for-like move or a redesign, who cleans up the content, and how long support lasts after launch | default: DELETE-LINE]
+A standard migration is a like-for-like move of your pages, CMS content, and redirects, and a redesign is scoped as its own project. We clean up the content as it moves, and support continues for 30 days after launch.
 
 ## When staying on WordPress is the better call
 

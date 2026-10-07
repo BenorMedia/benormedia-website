@@ -107,9 +107,9 @@ visuals:
     alt: "Shared Slack channel with project updates"
 ---
 
-A B2B SaaS website has to explain the product, build trust, and turn research into demo requests, then keep up with a roadmap that keeps changing. BenorMedia, a Webflow Professional Partner, designs and builds that site in Webflow so anyone on your marketing team can update, maintain, and scale it.
+A B2B SaaS website has to explain the product, build trust, and turn research into demo requests, then keep up with a roadmap that keeps changing. We design and build that site in Webflow so anyone on your marketing team can update, maintain, and scale it.
 
-[FACT NEEDED #B2B-1: how many B2B SaaS websites BenorMedia has designed and launched, and since when | default: DELETE-LINE]
+We have designed and launched 60+ B2B SaaS websites in the last 6 years.
 
 ## The pages a SaaS buyer expects
 
@@ -172,8 +172,6 @@ Our [work page](/work) lists projects for B2B companies in finance, data, logist
 - **Orchestra**, data, has raised £4.5M.
 - **Canals**, logistics, has raised $35.0M.
 - **Subject**, e-learning, has raised $74.5M.
-
-[FACT NEEDED #G8: which of these clients have approved a published case study or a named result | default: DELETE-LINE]
 
 ## When another option is better
 

@@ -12,7 +12,7 @@ h1: "B2B SaaS website: the pages you need and what each one should do"
 primaryKeyword: saas website
 secondaryKeywords: [b2b saas website design best practices, saas website design, b2b website design]
 targetCountry: US
-author: "[PERSON #G1: name and role of the person who owns the final edit | default: REPLACE: BenorMedia team]"
+author: BenorMedia team
 publishedAt: 2026-10-06
 updatedAt: 2026-10-06
 reviewEvery: 30
@@ -263,4 +263,4 @@ Before you sign with any agency, ask seven questions whose answers you can check
 
 ## How was this guide written and checked?
 
-This guide draws on Gartner's March 2026 buyer survey, Webflow's Help Center, Google Search Central, and web.dev. Each fact was read on the source's own page on 6 or 7 October 2026, and the sources are listed at the end. Webflow's roles and features change, so the guide is rechecked every 30 days. BenorMedia, a Webflow Professional Partner, designs B2B SaaS websites, so it has an interest in the topic, and the guide names the cases where another option is better. To see how BenorMedia works, read about its [B2B SaaS web design service](page:b2b-saas-web-design).
+This guide draws on Gartner's March 2026 buyer survey, Webflow's Help Center, Google Search Central, and web.dev. Each fact was read on the source's own page on 6 or 7 October 2026, and the sources are listed at the end. Webflow's roles and features change, so the guide is rechecked every 30 days. We design B2B SaaS websites, so we have an interest in the topic, and the guide names the cases where another option is better. To see how BenorMedia works, read about its [B2B SaaS web design service](page:b2b-saas-web-design).

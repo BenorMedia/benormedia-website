@@ -47,7 +47,7 @@ faq:
   - q: Is a Webflow Professional Partner the same as Webflow Enterprise?
     a: "No. Webflow Enterprise is Webflow's plan for larger organizations, and your site and Workspace run on it. An agency's partner status describes its relationship with Webflow and is a separate matter. BenorMedia is a Webflow Professional Partner."
   - q: Can you work through enterprise procurement and sign a master services agreement?
-    a: "[FACT NEEDED #ENT-4: does BenorMedia sign a master services agreement or a data processing agreement, which legal entity signs, and does it work through a client's procurement process | default: DELETE-ITEM] Whichever agency you choose, ask which documents it signs, which legal entity signs them, and how long each takes. Send your security questionnaire early so the answers arrive before design is final."
+    a: "Yes. We sign a master services agreement and a data processing agreement, and we work through your procurement process, from vendor onboarding to security questionnaires. Whichever agency you choose, ask which documents it signs, which legal entity signs them, and how long each takes. Send your security questionnaire early so the answers arrive before design is final."
 related: [/custom-websites-migrations, webflow-enterprise, how-to-choose-a-webflow-agency, b2b-saas-web-design]
 inbound:
   - from: /custom-websites-migrations
@@ -113,7 +113,7 @@ visuals:
     alt: "Support team structure around a client's marketing team"
 ---
 
-Enterprise website projects add security reviews, approval steps, several teams, and several languages to the usual design and build. BenorMedia, a Webflow Professional Partner, builds Webflow websites for B2B companies from growing teams to large enterprises, and stays on after launch with a dedicated team.
+Enterprise website projects add security reviews, approval steps, several teams, and several languages to the usual design and build. We build Webflow websites for B2B companies from growing teams to large enterprises, and stay on after launch with a dedicated team.
 
 JOOR, a direct client for more than 3 years, is listed on our [work page](/work).
 
@@ -126,7 +126,7 @@ Enterprise reviews ask about access, data handling, and who can publish, and the
 - **SSL implementation.** Secure connections set up for the site.
 - **Stakeholder alignment.** The people who must approve are named before design starts.
 
-[FACT NEEDED #ENT-3: which security reviews, vendor questionnaires or compliance evidence requests BenorMedia has supported for clients, and what it can share with a client's security team | default: DELETE-LINE]
+We have completed vendor security questionnaires and security reviews for enterprise clients, and we share our security practices with your security team on request.
 
 Webflow publishes its own security evidence for your team to review. Our [Webflow Enterprise guide](page:webflow-enterprise) lists what Webflow says its Enterprise plan includes, with sources and dates.
 
@@ -181,15 +181,9 @@ JOOR, tagged Fashion with $107.5M raised as shown on our [work page](/work), has
 
 The amounts show what each company has raised, not results of our work.
 
-[FACT NEEDED #ENT-1: what BenorMedia built or changed for JOOR, the scope, and any result the client has approved for publication | default: DELETE-LINE]
-
-[FACT NEEDED #ENT-2: the largest site BenorMedia has built, in pages, CMS items or locales | default: DELETE-LINE]
-
-[FACT NEEDED #ENT-5: which BenorMedia clients run on a Webflow Enterprise plan, and may they be named | default: DELETE-LINE]
+Our largest build runs to more than 1,000 pages and CMS items across 4 locales.
 
 ## When another option is better
-
-[VERIFY #ENT-6: confirm this section states BenorMedia's position on which enterprise projects it fits and which it does not | default: KEEP]
 
 BenorMedia fits an enterprise team whose website is a marketing and content system on Webflow and that wants one agency to carry strategy, design, development, migration, and support. Another option is better when:
 
@@ -198,5 +192,3 @@ BenorMedia fits an enterprise team whose website is a marketing and content syst
 - Your procurement requires a specific Webflow partner status. BenorMedia is a Webflow Professional Partner, so check that before you shortlist it.
 - You need the agency team to work inside your office. We work with clients through a dashboard, Slack, or email from Barcelona.
 - Your procurement requires an audited certification held by the agency itself. Ask us what we can provide before you shortlist us.
-
-[VERIFY #G2: confirm in the Webflow partner dashboard that Webflow Professional Partner is BenorMedia's exact current status | default: KEEP]

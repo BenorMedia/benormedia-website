@@ -12,7 +12,7 @@ h1: "Webflow Enterprise: security, governance, and what to check before you comm
 primaryKeyword: webflow enterprise
 secondaryKeywords: [webflow for enterprise, webflow enterprise pricing, enterprise webflow agency]
 targetCountry: US
-author: "[PERSON #G1: name and role of the person who owns the final edit | default: REPLACE: BenorMedia team]"
+author: BenorMedia team
 publishedAt: 2026-10-06
 updatedAt: 2026-10-06
 reviewEvery: 30
@@ -261,6 +261,4 @@ Webflow suits an enterprise team whose website is a marketing and content system
 
 ## How was this guide written and checked?
 
-Every Webflow row in this guide was read on Webflow's own pages, listed at the end, on 6 or 7 October 2026, and each is marked as of October 2026 because plans and limits change. The guide is rechecked every 30 days. BenorMedia, a Webflow Professional Partner, builds Webflow sites for B2B companies, including large ones, so it has an interest in the topic. To see how BenorMedia works on enterprise projects, read about its [Webflow enterprise agency service](page:webflow-enterprise-agency).
-
-[VERIFY #G2: confirm in the Webflow partner dashboard that Webflow Professional Partner is BenorMedia's exact current status | default: KEEP]
+Every Webflow row in this guide was read on Webflow's own pages, listed at the end, on 6 or 7 October 2026, and each is marked as of October 2026 because plans and limits change. The guide is rechecked every 30 days. We build Webflow sites for B2B companies, including large ones, so we have an interest in the topic. To see how BenorMedia works on enterprise projects, read about its [Webflow enterprise agency service](page:webflow-enterprise-agency).
