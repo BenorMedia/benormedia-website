@@ -19,7 +19,7 @@
  * crop, served resized by astro:assets. Icon tile values from the Figma
  * (1920 frame, 1/14 rem), like the nav's service icons.
  */
-import { Image } from "astro:assets";
+import { getImage } from "astro:assets";
 import Container from "../ui/Container.astro";
 import { fitIconFor, type FitIcon } from "../../lib/new-pages/fit-icons";
 import type { PageSection } from "../../lib/new-pages/loader";
@@ -72,6 +72,9 @@ const cards: Card[] = list
       return { ...card, icon: fitIconFor(plainText(card.titleHtml), plainText(card.textHtml)) };
     })
   : [];
+// Resized icon files (astro:assets). Rendered as plain <img> with a literal
+// alt="" (Astro writes an `alt` expression that is "" as a bare `alt`).
+const icons = await Promise.all(cards.map((c) => getImage({ src: c.icon.src, width: 136, height: 136 })));
 const rem = (px: number): string => `${(px / 14).toFixed(3)}rem`;
 const iconStyle = (icon: FitIcon): string => `--np-icon-w: ${rem(icon.width)}; --np-icon-h: ${rem(icon.height)};`;
 const imgStyle = (icon: FitIcon): string =>
@@ -90,11 +93,11 @@ const imgStyle = (icon: FitIcon): string =>
     </header>
     {cards.length > 0 && (
       <ul class="c-np-fit__grid">
-        {cards.map((card) => (
+        {cards.map((card, i) => (
           <li class="c-np-fit__card" data-np-src="li">
             <span class="c-np-fit__icon" aria-hidden="true">
               <span class="c-np-fit__icon-crop" style={iconStyle(card.icon)}>
-                <Image src={card.icon.src} alt="" width={136} height={136} class="c-np-fit__icon-img" style={imgStyle(card.icon)} />
+                <img src={icons[i]?.src} alt="" width="136" height="136" class="c-np-fit__icon-img" style={imgStyle(card.icon)} loading="lazy" decoding="async" />
               </span>
             </span>
             <span class="c-np-fit__copy">

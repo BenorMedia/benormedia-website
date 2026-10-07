@@ -6,8 +6,8 @@
  *   header (breadcrumbs, tag, updated date, read time, H1, lead, screenshot
  *   collage) → three columns (sticky table of contents with Get in Touch
  *   and Share; the article: key takeaways, body with tables and figures,
- *   sources; the author card) → FAQ → Resources (related pages) → the
- *   global CTA banner (BaseLayout).
+ *   sources; the author card) → FAQ → the global CTA banner (lead
+ *   2026-10-07: right below the FAQ) → Related resources.
  * Draft banner and gaps panel in previews.
  */
 import BaseLayout from "../../layouts/BaseLayout.astro";
@@ -23,6 +23,8 @@ import NpVisual from "./NpVisual.astro";
 import NpFaq from "./NpFaq.astro";
 import NpSources from "./NpSources.astro";
 import NpGapsPanel from "./NpGapsPanel.astro";
+import CtaBanner from "../layout/CtaBanner.astro";
+import { getSiteSettingsCached } from "../../lib/sanity/site";
 import { pageJsonLd } from "../../lib/new-pages/jsonld";
 import type { NpPage } from "../../lib/new-pages/loader";
 import { resolveVisual } from "../../lib/new-pages/visuals";
@@ -38,6 +40,7 @@ interface Props {
 }
 
 const { page } = Astro.props;
+const siteSettings = await getSiteSettingsCached();
 const toc = [
   ...page.sections.map((s) => ({ id: s.id, html: s.titleHtml })),
   ...(page.faq.length > 0 ? [{ id: page.faqId, html: page.faqHeadingHtml }] : []),
@@ -53,7 +56,7 @@ const shots = clients
   });
 ---
 
-<BaseLayout title={page.title} description={page.description} noIndex={page.draft} titleTemplate={false}>
+<BaseLayout title={page.title} description={page.description} noIndex={page.draft} showCtaBanner={false} titleTemplate={false}>
   {pageJsonLd(page).map((data) => <JsonLd data={data} />)}
   {page.includeDrafts && page.draft && <NpDraftBanner view={page.view} gaps={page.gaps.length} />}
   <article class="c-np-article">
@@ -87,11 +90,18 @@ const shots = clients
     </Container>
   </article>
   <NpFaq id={page.faqId} headingHtml={page.faqHeadingHtml} items={page.faq} />
+  {/* The global CTA banner, right below the FAQ (lead 2026-10-07). */}
+  <div data-np-live="cta-banner" class="c-np-live-banner">
+    <CtaBanner siteSettings={siteSettings} />
+  </div>
   <NpBlogResources cards={page.relatedCards} shots={[...shots.slice(1), ...shots.slice(0, 1)]} />
   {page.includeDrafts && page.view === "review" && <NpGapsPanel gaps={page.gaps} />}
 </BaseLayout>
 
 <style>
+  .c-np-live-banner {
+    display: contents;
+  }
   /* Figma: 369 | 800 | 291 columns, 110px gaps, in the 1680 container. */
   .c-np-article :global(.c-np-article__body) {
     padding-top: 7.143rem;

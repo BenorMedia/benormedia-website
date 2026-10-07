@@ -18,6 +18,10 @@ interface Props {
 const { page } = Astro.props;
 const [pubBefore = "", pubAfter = ""] = copy.byline.published.split("{date}");
 const photo = page.author.hasGap ? undefined : authorPhoto(page.author.text);
+// "Name, Role" (front matter `author`): the role goes on its own line.
+const comma = page.author.hasGap ? -1 : page.author.text.indexOf(",");
+const name = comma >= 0 ? page.author.text.slice(0, comma).trim() : "";
+const role = comma >= 0 ? page.author.text.slice(comma + 1).trim() : "";
 ---
 
 <aside class="c-np-author" data-np-byline>
@@ -28,8 +32,15 @@ const photo = page.author.hasGap ? undefined : authorPhoto(page.author.text);
       <span class="c-np-author__avatar" aria-hidden="true"></span>
     )}
     <span class="c-np-author__who">
-      <span class="c-np-author__name c-paragraph" data-np-src="byline.author" set:html={page.author.html} />
-      <span class="c-np-author__role c-paragraph_s" data-np-src="byline.published">{pubBefore}<time datetime={page.publishedAt}>{formatDate(page.publishedAt)}</time>{pubAfter}</span>
+      {name ? (
+        <>
+          <span class="c-np-author__name c-paragraph" data-np-src="byline.author">{name}</span>
+          <span class="c-np-author__role c-paragraph_s" data-np-src="byline.role">{role}</span>
+        </>
+      ) : (
+        <span class="c-np-author__name c-paragraph" data-np-src="byline.author" set:html={page.author.html} />
+      )}
+      <span class="c-np-author__date c-paragraph_s" data-np-src="byline.published">{pubBefore}<time datetime={page.publishedAt}>{formatDate(page.publishedAt)}</time>{pubAfter}</span>
     </span>
   </div>
   <span class="c-np-author__sq is-left" aria-hidden="true"></span>
@@ -86,9 +97,12 @@ const photo = page.author.hasGap ? undefined : authorPhoto(page.author.text);
     color: var(--color-black-secondary);
   }
   .c-np-author__role,
-  .c-np-author__text {
+  .c-np-author__date {
     margin: 0;
     color: var(--color-text);
+  }
+  .c-np-author__date {
+    margin-top: 0.286rem;
   }
   /* Side squares (Figma: 15px, the eyebrow square style). */
   .c-np-author__sq {
