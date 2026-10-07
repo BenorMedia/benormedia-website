@@ -1,14 +1,26 @@
 ---
 /**
  * NpFitCards — the commercial blueprint's last section ("when another
- * option is better", RULES.md §10) as cards (lead 2026-10-07, Figma
- * BenorMedia node 3696-7378): the H2 and framing line, then one card per
- * bullet. A `**Bold lead-in.**` becomes the card's small bold title and the
- * rest the text below; a bullet without one is the card's text. Anything
- * after the list (closing paragraphs) follows the cards. The text of each
- * card is the bullet's text, unchanged.
+ * option is better", RULES.md §10), as cards (lead 2026-10-07, Figma
+ * BenorMedia node 3696:7378): a centered header (H2, framing line), then
+ * one card per bullet with an icon tile, a small bold title and the text
+ * below. Anything after the list follows the cards.
+ *
+ * Title / text split of a bullet, in order:
+ *   1. a `**Bold lead-in.**` → title = the bold text;
+ *   2. the first ", " → title before it, text after it (the Figma drops the
+ *      comma: it stays in the DOM for screen readers and search, hidden);
+ *   3. the first ". " → title = the first sentence;
+ *   4. no break → the whole bullet is the title.
+ * The card's text content is always the bullet's text, unchanged.
+ *
+ * Icon: the Figma's image (the same one on every card), served resized by
+ * astro:assets. Icon tile values from the Figma (1920 frame, 1/14 rem),
+ * like the nav's service icons.
  */
+import { Image } from "astro:assets";
 import Container from "../ui/Container.astro";
+import fitIcon from "../../assets/new-pages/fit-icon.png";
 import type { PageSection } from "../../lib/new-pages/loader";
 
 interface Props {
@@ -19,80 +31,195 @@ const { section } = Astro.props;
 const list = /<ul>([\s\S]*?)<\/ul>/.exec(section.html);
 const before = list ? section.html.slice(0, list.index) : section.html;
 const after = list ? section.html.slice(list.index + list[0].length) : "";
-const cards = list
-  ? [...list[1]!.matchAll(/<li([^>]*)>([\s\S]*?)<\/li>/g)].map((m) => {
-      const inner = m[2] ?? "";
-      const lead = /^<strong>([\s\S]*?)<\/strong>\s*([\s\S]*)$/.exec(inner);
-      return { attrs: m[1] ?? "", titleHtml: lead?.[1], textHtml: lead ? (lead[2] ?? "") : inner };
-    })
-  : [];
+
+interface Card {
+  titleHtml: string;
+  /** Text hidden on screen between title and text (the dropped comma). */
+  hiddenSep: string;
+  textHtml: string;
+}
+
+function split(inner: string): Card {
+  const bold = /^<strong>([\s\S]*?)<\/strong>\s*([\s\S]*)$/.exec(inner);
+  if (bold) return { titleHtml: bold[1] ?? "", hiddenSep: "", textHtml: bold[2] ?? "" };
+  // Split points outside tags only (links and highlights stay whole).
+  const plainAt = (re: RegExp): number => {
+    let depth = 0;
+    for (let i = 0; i < inner.length; i++) {
+      const ch = inner[i];
+      if (ch === "<") depth++;
+      else if (ch === ">") depth--;
+      else if (depth === 0 && re.test(inner.slice(i, i + 2))) return i;
+    }
+    return -1;
+  };
+  const comma = plainAt(/^, $/);
+  const stop = plainAt(/^\. $/);
+  if (comma >= 0 && (stop < 0 || comma < stop)) {
+    return { titleHtml: inner.slice(0, comma), hiddenSep: ",", textHtml: inner.slice(comma + 2) };
+  }
+  if (stop >= 0) return { titleHtml: inner.slice(0, stop + 1), hiddenSep: "", textHtml: inner.slice(stop + 2) };
+  return { titleHtml: inner, hiddenSep: "", textHtml: "" };
+}
+
+const cards: Card[] = list ? [...list[1]!.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)].map((m) => split(m[1] ?? "")) : [];
 ---
 
 <section class="c-np-fit" aria-labelledby={section.id}>
   <Container>
-    <div class="c-np-fit__header">
-      <h2 id={section.id} class="c-np-fit__title c-text_xl" data-np-src="h2" set:html={section.titleHtml} />
-      <div class="c-np-prose c-np-fit__intro" set:html={before} />
-    </div>
+    <header class="c-section-header c-np-fit__header">
+      <div class="c-section-header__text">
+        <h2 id={section.id} class="c-section-header__title c-text_xl c-np-fit__title" data-np-src="h2" set:html={section.titleHtml} />
+        <div class="c-np-fit__intro" set:html={before} />
+      </div>
+    </header>
     {cards.length > 0 && (
       <ul class="c-np-fit__grid">
         {cards.map((card) => (
           <li class="c-np-fit__card" data-np-src="li">
-            {card.titleHtml && <strong class="c-np-fit__card-title c-paragraph" set:html={card.titleHtml} />}
-            {card.titleHtml && " "}
-            <span class="c-np-fit__card-text c-paragraph" set:html={card.textHtml} />
+            <span class="c-np-fit__icon" aria-hidden="true">
+              <span class="c-np-fit__icon-crop">
+                <Image src={fitIcon} alt="" width={136} height={136} class="c-np-fit__icon-img" />
+              </span>
+            </span>
+            <span class="c-np-fit__copy">
+              <span class="c-np-fit__card-title c-paragraph" set:html={card.titleHtml} />
+              {card.hiddenSep && <span class="c-np-fit__sep">{card.hiddenSep}</span>}
+              {card.textHtml && " "}
+              {card.textHtml && <span class="c-np-fit__card-text c-paragraph" set:html={card.textHtml} />}
+            </span>
           </li>
         ))}
       </ul>
     )}
-    {after.trim() && <div class="c-np-prose c-np-fit__after" set:html={after} />}
+    {after.trim() && <div class="c-np-fit__after" set:html={after} />}
   </Container>
 </section>
 
 <style>
-  .c-np-fit__header {
-    max-width: 57rem;
+  /* Figma 3696:7378 (1920 frame, 1 px = 1/14 rem). */
+  .c-np-fit :global(.c-container) {
+    padding-top: 7.857rem; /* 110px */
+    padding-bottom: 7.857rem;
   }
   .c-np-fit__title {
-    color: var(--color-heading);
+    max-width: 37.632rem; /* 526.8px: the heading wraps as in the Figma */
     scroll-margin-top: calc(var(--c-nav-height, 0px) + 2rem);
   }
-  .c-np-fit__intro {
-    margin-top: 1.714rem;
+  .c-np-fit__intro,
+  .c-np-fit__after {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.714rem;
+    max-width: 47.321rem; /* 662.5px */
+    margin: 0 auto;
+    text-align: center;
+    color: var(--color-text);
   }
+  .c-np-fit__after {
+    margin-top: 4.286rem;
+  }
+  .c-np-fit__intro :global(p),
+  .c-np-fit__after :global(p) {
+    margin: 0;
+  }
+  .c-np-fit__intro :global(a),
+  .c-np-fit__after :global(a) {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
   .c-np-fit__grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1.143rem;
-    margin: 3.429rem 0 0;
-    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem 1.429rem; /* 28 / 20px */
+    margin: 4.286rem 0 0; /* 60px */
+    padding: 0 2.286rem; /* 32px */
     list-style: none;
   }
   .c-np-fit__card {
     display: flex;
-    flex-direction: column;
-    gap: 0.571rem;
-    padding: 1.714rem;
+    align-items: center;
+    gap: 1.571rem; /* 22px */
+    padding: 1rem 1.571rem; /* 14 / 22px */
     border: var(--border-default);
-    border-radius: var(--np-radius);
+    border-radius: 8px;
     background: var(--color-white);
   }
+  /* Icon tile: 59.2px, light grey, 5.481px radius (as the nav service icons). */
+  .c-np-fit__icon {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 4.229rem;
+    height: 4.229rem;
+    border-radius: 5.481px;
+    overflow: hidden;
+    background: var(--color-gray-light); /* TODO: DS — Figma #F8F8F8 */
+  }
+  /* The Figma crops the image to a 40px window (image at 169.7% size). */
+  .c-np-fit__icon-crop {
+    position: relative;
+    display: block;
+    width: 2.861rem;
+    height: 2.857rem;
+    overflow: hidden;
+  }
+  .c-np-fit__icon :global(.c-np-fit__icon-img) {
+    position: absolute;
+    top: -28.84%;
+    left: -34.86%;
+    width: 169.72%;
+    max-width: none;
+    height: 169.93%;
+  }
+  .c-np-fit__copy {
+    display: flex;
+    flex-direction: column;
+  }
   .c-np-fit__card-title {
-    color: var(--color-heading);
+    color: var(--color-grey-700);
     font-weight: 600;
+    line-height: normal;
   }
   .c-np-fit__card-text {
-    color: var(--color-text);
+    color: var(--color-grey-700);
   }
-  .c-np-fit__after {
-    max-width: 57rem;
-    margin-top: 2.286rem;
+  /* The comma the Figma drops: kept for screen readers and search. */
+  .c-np-fit__sep {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
-  @media (max-width: 991px) {
-    .c-np-fit__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  }
+
   @media (max-width: 767px) {
-    .c-np-fit__grid { grid-template-columns: 1fr; }
-    .c-np-fit__card { padding: 2.222rem; }
+    .c-np-fit :global(.c-container) {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
+    .c-np-fit__grid {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 0;
+      margin-top: 3.333rem;
+    }
+    .c-np-fit__card {
+      gap: 1.778rem;
+      padding: 1.556rem 1.778rem;
+    }
+    .c-np-fit__icon {
+      width: 5.333rem;
+      height: 5.333rem;
+    }
+    .c-np-fit__icon-crop {
+      width: 3.6rem;
+      height: 3.6rem;
+    }
   }
 </style>
