@@ -1,0 +1,136 @@
+---
+/**
+ * HubDiagram — a centre and its satellites (brief 7.3). Satellites sit in two
+ * columns either side of the centre, each joined by a 1px line. `ring`:
+ * round nodes and a dashed ring that joins the satellites to each other
+ * (language versions, a team around the client). A satellite can carry a
+ * note (e.g. the regional team beside a language version). Under 440px the
+ * centre sits on top and the satellites list below it.
+ */
+interface Props {
+  center: string;
+  satellites: readonly { label: string; note?: string }[];
+  ring?: boolean;
+}
+
+const { center, satellites, ring = false } = Astro.props;
+const half = Math.ceil(satellites.length / 2);
+const left = satellites.slice(0, half);
+const right = satellites.slice(half);
+---
+
+<div class={["c-np-hub", ring && "is-ring"].filter(Boolean).join(" ")}>
+  <div class="c-np-hub__grid">
+    <ul class="c-np-hub__side is-left">
+      {left.map((s) => (
+        <li class="c-np-hub__sat"><span class="c-np-hub__node">{s.label}</span>{s.note && <span class="c-np-hub__note">{s.note}</span>}</li>
+      ))}
+    </ul>
+    <div class="c-np-hub__center"><span class="c-np-hub__node is-center">{center}</span></div>
+    <ul class="c-np-hub__side is-right">
+      {right.map((s) => (
+        <li class="c-np-hub__sat"><span class="c-np-hub__node">{s.label}</span>{s.note && <span class="c-np-hub__note">{s.note}</span>}</li>
+      ))}
+    </ul>
+  </div>
+</div>
+
+<style>
+  .c-np-hub {
+    container-type: inline-size;
+    font-family: var(--font-body);
+    font-size: var(--fs-p);
+    line-height: 1.35;
+    color: var(--color-heading);
+  }
+  .c-np-hub ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .c-np-hub__grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 0.9fr) 1fr;
+    align-items: center;
+    gap: 2.286rem;
+  }
+  .c-np-hub__side {
+    display: flex;
+    flex-direction: column;
+    gap: 1.143rem;
+  }
+  .c-np-hub__sat {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  /* Spoke: from each satellite towards the centre. */
+  .c-np-hub__sat::after {
+    content: "";
+    position: absolute;
+    top: 1.5rem;
+    width: 2.286rem;
+    height: 1px;
+    background: var(--color-gray);
+  }
+  .c-np-hub__side.is-left .c-np-hub__sat::after { right: -2.286rem; }
+  .c-np-hub__side.is-right .c-np-hub__sat::after { left: -2.286rem; }
+  .c-np-hub__node {
+    display: block;
+    padding: 0.714rem 0.857rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--np-radius);
+    background: var(--color-white);
+    text-align: center;
+  }
+  .c-np-hub__node.is-center {
+    padding: 1.143rem 0.857rem;
+    border-color: var(--color-accent);
+    background: var(--np-surface-tint);
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+  .c-np-hub__note {
+    color: var(--color-text);
+    text-align: center;
+  }
+  /* Ring: round nodes, and a dashed ring behind them joining the satellites. */
+  .c-np-hub.is-ring .c-np-hub__node { border-radius: 999px; }
+  .c-np-hub.is-ring .c-np-hub__node.is-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    border-radius: 50%;
+  }
+  .c-np-hub.is-ring .c-np-hub__grid::before {
+    content: "";
+    position: absolute;
+    inset: -0.571rem 12%;
+    border: 1px dashed var(--color-gray);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  @container (max-width: 440px) {
+    .c-np-hub__grid {
+      grid-template-columns: 1fr;
+      gap: 1.143rem;
+    }
+    .c-np-hub__center { order: -1; }
+    .c-np-hub__side {
+      margin-left: 1.5rem;
+      padding-left: 1.143rem;
+      border-left: 1px solid var(--color-gray);
+    }
+    .c-np-hub__sat::after { display: none; }
+    .c-np-hub__node, .c-np-hub__note { text-align: left; }
+    .c-np-hub.is-ring .c-np-hub__grid::before { display: none; }
+    .c-np-hub.is-ring .c-np-hub__node.is-center { aspect-ratio: auto; border-radius: 999px; }
+  }
+  @media (max-width: 767px) {
+    .c-np-hub { font-size: 1.556rem; }
+    .c-np-hub__node { padding: 1rem 1.111rem; }
+  }
+</style>

@@ -53,9 +53,24 @@ import type { Button as ButtonType, Client } from "../../lib/sanity/types";
 
 interface Props {
   clients?: Client[];
+  /**
+   * Optional page copy (the new pages, content-pack). Without it the Home
+   * copy below renders unchanged. With it the section also gets `is-page`
+   * (layout tweaks live in the new pages' stylesheet). `eyebrowHtml` and each `paragraphsHtml`
+   * entry are escaped HTML from the new-pages loader; `npSrc` adds the
+   * `data-np-src` attributes its checks read.
+   */
+  content?: {
+    eyebrowHtml?: string;
+    title: string;
+    paragraphsHtml: readonly string[];
+    npSrc?: boolean;
+  };
+  /** Optional buttons (Sanity `button` objects). Default: Home's. */
+  buttons?: ButtonType[];
 }
 
-const { clients = [] } = Astro.props;
+const { clients = [], content, buttons } = Astro.props;
 
 const BUTTONS: ButtonType[] = [
   { variant: "white", link: { label: "Get in Touch", type: "contact" } },
@@ -70,7 +85,7 @@ const BUTTONS: ButtonType[] = [
 ];
 ---
 
-<section class="c-hero">
+<section class:list={["c-hero", content && "is-page"]}>
   <div class="c-hero__lines" aria-hidden="true">
     <img
       class="c-hero__lines-img is-left"
@@ -102,6 +117,25 @@ const BUTTONS: ButtonType[] = [
 
   <div class="c-hero__container">
     <div class="c-hero__block">
+      {content ? (
+        <div class="c-hero__title-block">
+          {content.eyebrowHtml && (
+            <div class="c-hero__eyebrows">
+              <Eyebrow variant="default" class="c-hero__eyebrow">
+                <span data-np-src={content.npSrc ? "eyebrow" : undefined} set:html={content.eyebrowHtml} />
+              </Eyebrow>
+            </div>
+          )}
+
+          <h1 class="c-hero__title" data-anim="hero-headline" data-np-src={content.npSrc ? "h1" : undefined}>
+            {content.title}
+          </h1>
+
+          {content.paragraphsHtml.map((html) => (
+            <p class="c-paragraph_m c-hero__desc" data-np-src={content.npSrc ? "lead" : undefined} set:html={html} />
+          ))}
+        </div>
+      ) : (
       <div class="c-hero__title-block">
         <div class="c-hero__eyebrows">
           <Eyebrow variant="default" class="c-hero__eyebrow">
@@ -121,9 +155,10 @@ const BUTTONS: ButtonType[] = [
           your team can update, maintain, and scale.
         </p>
       </div>
+      )}
 
       <CtaActions
-        buttons={BUTTONS}
+        buttons={buttons ?? BUTTONS}
         badges={[]}
         circles={false}
         trustedText="Trusted by +100 B2B companies:"
@@ -133,7 +168,7 @@ const BUTTONS: ButtonType[] = [
   </div>
 
   {clients.length > 0 && (
-    <div class="c-hero__physics" data-hero-physics aria-hidden="true">
+    <div class="c-hero__physics" data-hero-physics aria-hidden="true" data-np-live={content?.npSrc ? "hero-physics" : undefined}>
       {clients.map((client) => (
         <ClientIcon
           client={client}
@@ -377,10 +412,11 @@ const BUTTONS: ButtonType[] = [
     align-items: center;
     width: fit-content;
     margin: 0 auto;
-    /* Glass, like the "See Our Work" button (`is-glass`: white 10% + 10px
-       blur); the 10% white fill comes from CtaActions. Lead 2026-10-01. */
-    -webkit-backdrop-filter: blur(10px);
-            backdrop-filter: blur(10px);
+    /* Glass, like the "See Our Work" button (`is-glass`: white 10%); the
+       10% white fill comes from CtaActions. Lead 2026-10-01; blur 20px
+       (was 10px), lead 2026-10-07. */
+    -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
   }
   .c-hero :global(.c-hero__actions .c-cta__badge-text) {
     text-align: center;

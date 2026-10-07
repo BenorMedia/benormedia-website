@@ -5,7 +5,8 @@
  * Layout:
  *   1. .c-footer__inner  — max-width container with the top row:
  *      - Barcelona card (image + tint overlay + city/address text)
- *      - SERVICES + ABOUT link columns (Eyebrow labels)
+ *      - SERVICES + GUIDES + ABOUT link columns (Eyebrow labels; GUIDES
+ *        and the new service pages added 2026-10-07)
  *      - Socials, then the partner badges (images) — swapped lead 2026-09-30
  *   2. .c-footer__wordmark-strip — FULL-WIDTH strip, height 258px,
  *      border top + bottom, containing the wordmark image (move-in on
@@ -31,6 +32,16 @@ const servicesLinks = [
   { label: "Custom Websites & Migrations", href: "/custom-websites-migrations" },
   { label: "Growth (SEO/GEO + CRO)", href: "/growth" },
   { label: "Ongoing Website Support", href: "/ongoing-website-support" },
+  // New service pages (content-pack, released 2026-10-07).
+  { label: "WordPress to Webflow Migration", href: "/webflow-migration" },
+  { label: "B2B SaaS Web Design", href: "/b2b-saas-web-design" },
+  { label: "Webflow Enterprise Agency", href: "/webflow-enterprise-agency" },
+];
+// Guides (content-pack articles, released 2026-10-07).
+const guidesLinks = [
+  { label: "How to Migrate WordPress to Webflow", href: "/guides/wordpress-to-webflow-migration" },
+  { label: "B2B SaaS Website Pages", href: "/guides/b2b-saas-website-pages" },
+  { label: "Webflow Enterprise Guide", href: "/guides/webflow-enterprise" },
 ];
 // `hidden`: kept in the markup, not shown. Testimonials stays out of
 // production for now (lead 2026-09-30, same as the nav).
@@ -75,6 +86,14 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
           <Eyebrow class="c-footer__col-label">SERVICES</Eyebrow>
           <ul class="c-footer__col-list">
             {servicesLinks.map((l) => (
+              <li><a href={l.href} class="c-footer__col-link">{l.label}</a></li>
+            ))}
+          </ul>
+        </div>
+        <div class="c-footer__col">
+          <Eyebrow class="c-footer__col-label">GUIDES</Eyebrow>
+          <ul class="c-footer__col-list">
+            {guidesLinks.map((l) => (
               <li><a href={l.href} class="c-footer__col-link">{l.label}</a></li>
             ))}
           </ul>
@@ -206,7 +225,7 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   /* Link columns */
   .c-footer__cols {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, auto);
     gap: 3rem;
     /* Center content so Eyebrow (inline-flex, fit-content) and centered
        links share the same axis. */
@@ -388,6 +407,7 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
     .c-footer__cols {
       grid-template-columns: 1fr 1fr;
       gap: 2rem;
+      justify-items: start; /* three columns wrap: keep them on one left edge */
     }
     .c-footer__wordmark-strip { height: 8rem; }
     /* Socials + badges side by side, pushed apart (lead visual QA

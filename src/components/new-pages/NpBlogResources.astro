@@ -1,0 +1,172 @@
+---
+/**
+ * NpBlogResources — the blog article template's "Resources" section
+ * (Figma 3142:1618180): eyebrow, heading, a contact button, then up to
+ * three cards (screenshot thumbnail, tag, title, description, Learn more)
+ * for the related pack pages built in this mode.
+ */
+import Container from "../ui/Container.astro";
+import Eyebrow from "../ui/Eyebrow.astro";
+import copy from "../../lib/new-pages/copy.json";
+import type { NpPage } from "../../lib/new-pages/loader";
+import { ARROW_RIGHT } from "./blog-icons";
+
+interface Props {
+  cards: NpPage["relatedCards"];
+  shots: readonly { src: string; srcset: string }[];
+}
+
+const { cards, shots } = Astro.props;
+const list = cards.slice(0, 3);
+---
+
+{list.length > 0 && (
+  <section class="c-np-res" aria-labelledby="np-resources">
+    <Container>
+      <header class="c-section-header">
+        <Eyebrow>{copy.resources.eyebrow}</Eyebrow>
+        <div class="c-section-header__text">
+          <h2 id="np-resources" class="c-section-header__title c-text_xl">{copy.resources.heading}</h2>
+        </div>
+      </header>
+      <ul class="c-np-res__grid">
+        {list.map((card, i) => (
+          <li class="c-np-res__card">
+            <span class={["c-np-res__thumb", i === 0 && "is-gradient"].filter(Boolean).join(" ")} aria-hidden="true">
+              {[0, 1].map((k) => {
+                const s = shots[(i * 2 + k) % Math.max(shots.length, 1)];
+                return s ? <img class={`c-np-res__shot is-${k}`} src={s.src} srcset={s.srcset} width="423" height="300" alt="" loading="lazy" decoding="async" /> : null;
+              })}
+            </span>
+            <span class="c-np-res__texts">
+              <Eyebrow variant="accent">{card.family === "article" ? copy.articleEyebrow.guide : copy.resources.serviceTag}</Eyebrow>
+              <span class="c-np-res__title c-text_m">{card.title}</span>
+              <span class="c-np-res__desc c-paragraph">{card.description}</span>
+              <a class="c-np-res__more c-paragraph" href={card.href} {...card.data}>
+                {copy.resources.learnMore}
+                <span class="c-np-res__arrow" set:html={ARROW_RIGHT} />
+              </a>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </Container>
+  </section>
+)}
+
+<style>
+  /* Accent tag tint at 5% (the live 8% measures 4.48:1 with accent text). */
+  .c-np-res__texts :global(.c-eyebrow.is-accent) {
+    background: color-mix(in srgb, var(--color-accent) 5%, var(--color-white));
+  }
+  .c-np-res :global(.c-container) {
+    padding-top: 7.857rem;
+    padding-bottom: 7.857rem;
+  }
+  .c-np-res :global(.c-section-header) {
+    gap: 1.714rem;
+  }
+  /* Three columns; fewer cards stay centered. */
+  .c-np-res__grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2.857rem; /* 40px */
+    margin: 2.857rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .c-np-res__card {
+    flex: 0 1 calc((100% - 5.714rem) / 3);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1.786rem;
+  }
+  .c-np-res__thumb {
+    position: relative;
+    display: block;
+    aspect-ratio: 544 / 362;
+    overflow: hidden;
+    border: var(--border-default);
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--color-accent) 8%, var(--color-white));
+  }
+  .c-np-res__thumb.is-gradient {
+    background: linear-gradient(113deg, var(--color-blue) 2.88%, var(--color-blue-light) 96.84%);
+  }
+  .c-np-res__shot {
+    position: absolute;
+    left: 11.1%;
+    width: 77.8%;
+    max-width: none;
+    object-fit: cover;
+    border-radius: 2px;
+  }
+  .c-np-res__shot.is-0 {
+    top: -69.9%;
+    height: 107.8%;
+    object-position: bottom;
+  }
+  .c-np-res__shot.is-1 {
+    top: 43.5%;
+    height: 61.2%;
+    object-position: top;
+  }
+  .c-np-res__texts {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.143rem;
+    padding: 0 1.714rem 1.714rem;
+  }
+  .c-np-res__title {
+    color: var(--color-black-secondary);
+  }
+  .c-np-res__desc {
+    color: var(--color-text);
+  }
+  .c-np-res__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.571rem;
+    padding: 0.571rem 0;
+    color: var(--color-black-secondary);
+    text-decoration: none;
+  }
+  /* The whole card is the link's hit area. */
+  .c-np-res__more::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+  .c-np-res__more:hover {
+    color: var(--color-accent);
+  }
+  .c-np-res__more:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  .c-np-res__arrow {
+    display: inline-flex;
+    width: 1.714rem;
+    height: 1.714rem;
+    align-items: center;
+    justify-content: center;
+  }
+  .c-np-res__arrow :global(svg) {
+    width: 0.82rem;
+    height: 1.24rem;
+  }
+  @media (max-width: 991px) {
+    .c-np-res__card {
+      flex-basis: 100%;
+    }
+  }
+  @media (max-width: 767px) {
+    .c-np-res :global(.c-container) {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
+  }
+</style>

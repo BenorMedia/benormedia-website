@@ -1,0 +1,64 @@
+---
+/**
+ * NpDraftBanner — preview-only notice at the top of a draft page (brief 7.4):
+ * section 8 text, the view name and, in the review view, the open gap count.
+ * The template renders it only when drafts are included.
+ */
+import copy from "../../lib/new-pages/copy.json";
+import { fill } from "../../lib/new-pages/html";
+import type { View } from "../../lib/new-pages/loader";
+
+interface Props {
+  view: View;
+  gaps: number;
+}
+
+const { view, gaps } = Astro.props;
+---
+
+<div class="c-np-draft-banner" data-np-draft-banner>
+  <p class="c-np-draft-banner__text c-paragraph_s">
+    <span>{copy.draftBanner.text}</span>
+    <span class="c-np-draft-banner__item">{copy.draftBanner.views[view]}</span>
+    {view === "review" && gaps > 0 && (
+      <a class="c-np-draft-banner__item c-np-draft-banner__link" href="#np-gaps">{fill(copy.draftBanner.gaps, { n: String(gaps) })}</a>
+    )}
+  </p>
+</div>
+
+<style>
+  .c-np-draft-banner {
+    padding: 0.857rem 2.286rem;
+    background: var(--np-gap-bg);
+    color: var(--color-heading);
+    text-align: center;
+  }
+  .c-np-draft-banner__text {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.143rem;
+    margin: 0;
+  }
+  /* Separators drawn with CSS, not typed. */
+  .c-np-draft-banner__item::before {
+    content: "";
+    display: inline-block;
+    width: 0.3em;
+    height: 0.3em;
+    margin-right: 1.143rem;
+    border-radius: 50%;
+    background: currentColor;
+    vertical-align: middle;
+  }
+  .c-np-draft-banner__link {
+    color: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .c-np-draft-banner__link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+</style>

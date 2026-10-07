@@ -1,0 +1,301 @@
+/* ==========================================================================
+   New pages (content-pack) — the one stylesheet the new-page templates
+   import (BUILD-BRIEF 7.5). Live pages never load it. Global styles here are
+   for markup printed with `set:html` (the Markdown body, gap highlights),
+   which Astro's scoped styles cannot reach.
+
+   Local custom properties: each copies a value from a live element (listed
+   in docs/new-pages-build-report.md). TODO: DS — no spacing / radius scale
+   in DESIGN_SYSTEM (§5, §9).
+   ========================================================================== */
+
+:root {
+  /* Card radius: PricingCard / ClientCard (8px). */
+  --np-radius: 8px;
+  /* Light accent tint: the `.c-eyebrow.is-accent` mix, at 5% instead of 8%
+     so accent text on it keeps 4.5:1 (4.48:1 at 8%). */
+  --np-surface-tint: color-mix(in srgb, var(--color-accent) 5%, var(--color-white));
+  /* Reading measure for article text (brief 7.2: 68–72 characters). */
+  --np-measure: 70ch;
+  /* Gap highlight (preview only): marker-pen yellow, not a site colour. */
+  --np-gap-bg: #fff2a8;
+}
+
+/* Mobile landscape and below (≤767): the H1 drops to the `c-text_l` size so
+   a long H1 (up to 90 characters) wraps in three lines or fewer at 390px
+   (lead 2026-10-07). Desktop and tablet keep the class it is combined with. */
+@media (max-width: 767px) {
+  .cc-mobile-lands_text-l {
+    font-size: var(--fs-text-l) !important;
+    line-height: 1.3 !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Prose: the article body and the commercial section bodies (set:html)
+   -------------------------------------------------------------------------- */
+.c-np-prose {
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--fs-p-m);
+  line-height: 1.65;
+
+  & > :first-child { margin-top: 0; }
+
+  & h2,
+  & h3 {
+    color: var(--color-heading);
+    font-family: var(--font-heading);
+    font-weight: 400;
+    /* Anchors land below the sticky nav (`--c-nav-height`, Nav.astro). */
+    scroll-margin-top: calc(var(--c-nav-height, 0px) + 2rem);
+  }
+  & h2 {
+    margin-top: 4.571rem; /* 64px */
+    font-size: var(--fs-text-l);
+    line-height: 1.3;
+  }
+  & h3 {
+    margin-top: 2.857rem; /* 40px */
+    font-size: var(--fs-text-m);
+    line-height: 1.4;
+  }
+  & h2 + *,
+  & h3 + * { margin-top: 1.143rem; }
+
+  /* Direct children only: figures (diagrams) inside the prose keep their own list styles. */
+  & > p,
+  & > ul,
+  & > ol,
+  & > .c-np-table { margin: 1.143rem 0 0; }
+
+  & > ul,
+  & > ol {
+    padding: 0;
+    list-style: none;
+  }
+  & > ul > li,
+  & > ol > li { position: relative; padding-left: 1.5em; }
+  & > ul > li + li,
+  & > ol > li + li { margin-top: 0.857rem; /* 12px */ }
+
+  /* Bullet: a small accent square drawn in CSS (Eyebrow squares). */
+  & > ul > li::before {
+    content: "";
+    position: absolute;
+    left: 0.25em;
+    top: 0.68em;
+    width: 0.4em;
+    height: 0.4em;
+    border-radius: 1.5px;
+    background: var(--color-accent);
+  }
+
+  & > ol { counter-reset: np-ol; }
+  & > ol > li { counter-increment: np-ol; }
+  & > ol > li::before {
+    content: counter(np-ol) ".";
+    position: absolute;
+    left: 0;
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  & strong {
+    color: var(--color-heading);
+    font-weight: 600;
+  }
+
+  & a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+  }
+  & a:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   DataTable (markup from src/lib/new-pages/markdown.ts)
+   -------------------------------------------------------------------------- */
+.c-np-table {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  & table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--fs-p);
+    line-height: 1.5;
+  }
+  & table.is-wide { min-width: 45.714rem; /* 640px at the 14px root */ }
+
+  & caption {
+    caption-side: top;
+    padding-bottom: 0.857rem;
+    color: var(--color-heading);
+    font-weight: 600;
+    text-align: left;
+  }
+  & th,
+  & td {
+    padding: 1rem 1.143rem 1rem 0; /* 14 / 16px */
+    text-align: left;
+    vertical-align: top;
+  }
+  & th {
+    border-bottom: 1px solid var(--color-heading);
+    color: var(--color-heading);
+    font-weight: 600;
+  }
+  & td { border-bottom: var(--border-default); }
+}
+
+@media (max-width: 767px) {
+  .c-np-table table.is-wide { min-width: 71.111rem; /* 640px at the 9px root */ }
+  .c-np-table th,
+  .c-np-table td { padding: 1.333rem 1.778rem 1.333rem 0; }
+}
+
+/* --------------------------------------------------------------------------
+   Preview-only chrome: gap highlight and planned links (brief 7.4)
+   -------------------------------------------------------------------------- */
+.c-np-gap {
+  padding: 0.1em 0.3em;
+  border-radius: 2px;
+  background: var(--np-gap-bg);
+  color: var(--color-heading);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+.c-np-gap__id { font-weight: 600; }
+
+.c-np-planned {
+  text-decoration: underline dotted;
+  text-underline-offset: 0.2em;
+}
+
+/* --------------------------------------------------------------------------
+   SectionHeader rules (copied from `SectionHeader.astro`, `is:global`): they
+   ship only with that component, and the new hero and FAQ title reuse its
+   classes without rendering it. Identical values, so a page that loads both
+   renders the same.
+   -------------------------------------------------------------------------- */
+.c-section-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  gap: 1.5rem;
+}
+.c-section-header__text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  gap: 0.714rem;
+}
+.c-section-header__title {
+  color: var(--color-heading);
+  text-align: center;
+  margin: 0 auto;
+}
+
+/* --------------------------------------------------------------------------
+   Home hero on the new pages (`.c-hero.is-page`, HomeHero with `content`).
+   Desktop and up (lead 2026-10-07): a wider block so the H1 runs in two
+   lines where it can, and a 50rem lead (Home: 70% and 34rem).
+   -------------------------------------------------------------------------- */
+@media (min-width: 992px) {
+  .c-hero.is-page .c-hero__block {
+    max-width: 92%;
+  }
+  .c-hero.is-page .c-hero__desc {
+    max-width: 50rem;
+  }
+}
+/* Buttons → Trusted badge: 2rem on the new pages (Home: 5.8rem). */
+.c-hero.is-page .c-hero__block .c-cta__actions.c-hero__actions {
+  gap: 2rem;
+}
+
+/* --------------------------------------------------------------------------
+   Blog article template body (Figma 3142:1618069 "Rich Text", lead
+   2026-10-07): H2 Text XL, H3 Text L, H4 Text M, paragraphs and list
+   items `c-paragraph` (set by the loader), check-circle bullets in the
+   brand gradient (`--np-check`, set by the template), images 20px radius.
+   -------------------------------------------------------------------------- */
+.c-np-prose.is-blog {
+  color: var(--color-text);
+  font-size: var(--fs-p);
+  line-height: 1.5;
+
+  & > h2 {
+    margin-top: 3.571rem;
+    font-size: calc(var(--fs-text-xl) * 0.5); /* half the template size, lead 2026-10-07 */
+    line-height: 1.3;
+    color: var(--color-black-secondary);
+  }
+  & > h2:first-child {
+    margin-top: 0;
+  }
+  & > h3 {
+    margin-top: 2.143rem;
+    font-size: var(--fs-text-l);
+    line-height: 1.2;
+    color: var(--color-black-secondary);
+  }
+  & > h2 + *,
+  & > h3 + * {
+    margin-top: 1.429rem; /* 20px */
+  }
+  & > p,
+  & > ul,
+  & > ol,
+  & > .c-np-table {
+    margin-top: 1.44rem;
+  }
+  & > ul > li,
+  & > ol > li {
+    padding-left: 2.286rem; /* 22px icon + 10px */
+  }
+  & > ul > li + li,
+  & > ol > li + li {
+    margin-top: 0.714rem; /* 10px */
+  }
+  & > ul > li::before {
+    left: 0;
+    top: 0.12em;
+    width: 1.571rem;
+    height: 1.714rem;
+    border-radius: 0;
+    background: var(--gradient-primary);
+    -webkit-mask: var(--np-check) center / contain no-repeat;
+            mask: var(--np-check) center / contain no-repeat;
+  }
+  & strong {
+    color: var(--color-black-secondary);
+  }
+}
+.c-np-article__figure .c-np-visual {
+  border-color: var(--color-gray-light);
+  border-radius: 20px;
+}

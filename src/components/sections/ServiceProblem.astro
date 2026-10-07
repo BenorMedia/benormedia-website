@@ -38,6 +38,10 @@
  * `translateX` loop). Frame lines hidden. The section clips the rows, so the
  * page never scrolls sideways. Screenshot width `TODO: DS mobile`.
  *
+ * Optional `content` slot (the new pages, content-pack): replaces the
+ * centered header and the arrow with the page's own heading and copy, same
+ * frame and carousels. Without it the output is unchanged.
+ *
  * Hook: `data-anim="service-problem-carousel"` on each track (`data-direction`
  * = `up` / `down`), for a future GSAP swap if the spec asks for one.
  */
@@ -138,7 +142,8 @@ const paragraphStyle =
         return `--c-service-problem-p${i + 1}: ${width};`;
       }).join(" ")
     : undefined;
-const shouldRender = hasTitle || hasDescription;
+const hasContentSlot = Astro.slots.has("content");
+const shouldRender = hasTitle || hasDescription || hasContentSlot;
 const hasCarousels = columns.length > 0;
 
 const headerOptional = {
@@ -206,7 +211,9 @@ const headerOptional = {
       ))}
 
       <div class="c-service-problem__content">
-        {hasTitle ? (
+        {hasContentSlot ? (
+          <slot name="content" />
+        ) : hasTitle ? (
           <SectionHeader eyebrow="The Problem" title={title} {...headerOptional} />
         ) : (
           /* Description only: same header markup/classes, no empty heading. */
@@ -219,7 +226,7 @@ const headerOptional = {
             </div>
           </header>
         )}
-        {hasDescription && (
+        {!hasContentSlot && hasDescription && (
           <svg
             class="c-service-problem__arrow"
             aria-hidden="true"

@@ -14,11 +14,18 @@
  * through (lead visual QA 2026-09-29).
  *
  * `answer` is plain text; a blank line (`\n\n`) starts a new paragraph.
+ *
+ * New pages (optional, default output unchanged): `npSrc` adds the
+ * `data-np-src` source attributes the new-page checks read, and an item's
+ * `questionHtml` / `answerHtml` (escaped by the loader, with preview gap
+ * highlights) replace the plain text.
  * Empty `items` → renders nothing.
  */
 interface FaqItem {
   question: string;
   answer: string;
+  questionHtml?: string;
+  answerHtml?: string;
 }
 
 interface Props {
@@ -27,10 +34,12 @@ interface Props {
   name: string;
   /** Open the first item on load. Default: all closed. */
   openFirst?: boolean;
+  /** New pages: `data-np-src` on the question and the answer. Default false. */
+  npSrc?: boolean;
   class?: string;
 }
 
-const { items, name, openFirst = false, class: className } = Astro.props;
+const { items, name, openFirst = false, npSrc = false, class: className } = Astro.props;
 
 const rootClass = ["c-faq", className].filter(Boolean).join(" ");
 const toParagraphs = (text: string): string[] =>
@@ -46,7 +55,11 @@ const toParagraphs = (text: string): string[] =>
       {items.map((item, i) => (
         <details class="c-faq__item" name={name} open={openFirst && i === 0} data-anim="faq-item">
           <summary class="c-faq__summary">
-            <span class="c-faq__question c-paragraph_m">{item.question}</span>
+            {item.questionHtml !== undefined ? (
+              <span class="c-faq__question c-paragraph_m" data-np-src={npSrc ? "faq.q" : undefined} set:html={item.questionHtml} />
+            ) : (
+              <span class="c-faq__question c-paragraph_m" data-np-src={npSrc ? "faq.q" : undefined}>{item.question}</span>
+            )}
             <span class="c-faq__icon" aria-hidden="true">
               <svg viewBox="0 0 12 12" width="12" height="12" fill="none">
                 <path d="M6 0.75v10.5M0.75 6h10.5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" />
@@ -54,9 +67,13 @@ const toParagraphs = (text: string): string[] =>
             </span>
           </summary>
           <div class="c-faq__answer" data-anim="faq-answer">
-            {toParagraphs(item.answer).map((p) => (
-              <p class="c-paragraph_m">{p}</p>
-            ))}
+            {item.answerHtml !== undefined ? (
+              <p class="c-paragraph_m" data-np-src={npSrc ? "faq.a" : undefined} set:html={item.answerHtml} />
+            ) : (
+              toParagraphs(item.answer).map((p) => (
+                <p class="c-paragraph_m" data-np-src={npSrc ? "faq.a" : undefined}>{p}</p>
+              ))
+            )}
           </div>
         </details>
       ))}

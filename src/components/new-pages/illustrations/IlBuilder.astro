@@ -1,0 +1,81 @@
+---
+/**
+ * IlBuilder — a component library assembling a page: a library card of
+ * components (icon + name) and token tags, each component wired into its
+ * block of an abstract page in a browser frame (bars only, no fake UI).
+ */
+import IlFrame from "./IlFrame.astro";
+import IlChip from "./IlChip.astro";
+import type { IconName } from "./assets";
+
+interface Props {
+  tag: string;
+  items: readonly { icon: IconName; label: string }[];
+  tokens: readonly string[];
+}
+
+const { tag, items, tokens } = Astro.props;
+const H = 440;
+// Card top + padding + tag + gap + half a chip (42), then chip + gap.
+const itemY = (i: number) => 24 + 12 + 30 + 11 + 21 + i * 53;
+const blocks = [
+  { y: 74, h: 110 },
+  { y: 196, h: 80 },
+  { y: 288, h: 126 },
+];
+const blockY = (i: number) => (blocks[i]?.y ?? 0) + (blocks[i]?.h ?? 0) / 2;
+---
+
+<IlFrame h={H} glow={{ x: 330, y: 230, w: 640, h: 440 }}>
+  <svg class="np-il__lines" viewBox={`0 0 560 ${H}`} preserveAspectRatio="none" aria-hidden="true">
+    {items.map((_, i) => (
+      <>
+        <path class={i === 0 ? "is-accent" : undefined} d={`M206 ${itemY(i)} C232 ${itemY(i)}, 236 ${blockY(i)}, 262 ${blockY(i)}`} />
+        <path class="np-il-flow" d={`M206 ${itemY(i)} C232 ${itemY(i)}, 236 ${blockY(i)}, 262 ${blockY(i)}`} style={`animation-delay: ${-i * 0.7}s;`} />
+        <rect x="259" y={blockY(i) - 3} width="6" height="6" rx="1" />
+      </>
+    ))}
+  </svg>
+  <div class="np-il-card" style="--x: 20; --y: 24; --w: 186; align-items: stretch;">
+    <span class="np-il-tag is-fixed">{tag}</span>
+    {items.map((it) => <IlChip icon={it.icon} label={it.label} />)}
+    <span class="np-il-row" style="justify-content: flex-start; gap: 0.6em;">
+      {tokens.map((t) => <span class="np-il-tag is-accent">{t}</span>)}
+    </span>
+  </div>
+  <div class="np-il-card" style="--x: 262; --y: 24; --w: 276; height: 39.6em; padding: 0; overflow: hidden; align-items: stretch; gap: 0;">
+    <span style="display: flex; align-items: center; gap: 0.5em; height: 3.2em; padding: 0 1.2em; border-bottom: 0.1em solid var(--color-border);">
+      <span style="width: 0.7em; height: 0.7em; border-radius: 50%; background: var(--color-gray);"></span>
+      <span style="width: 0.7em; height: 0.7em; border-radius: 50%; background: var(--color-gray);"></span>
+      <span style="width: 0.7em; height: 0.7em; border-radius: 50%; background: var(--color-gray);"></span>
+      <span class="np-il-bar" style="flex: 1; margin-left: 1em;"></span>
+    </span>
+  </div>
+  {/* Hero block (the first component, highlighted). */}
+  <div class="np-il-card" style={`--x: 276; --y: ${blocks[0]!.y}; --w: 248; height: ${blocks[0]!.h / 10}em; align-items: flex-start; gap: 0.8em; border-style: dashed; border-color: var(--np-il-node); background: color-mix(in srgb, var(--color-accent) 4%, var(--color-white));`}>
+    <span class="np-il-bar is-strong" style="width: 70%;"></span>
+    <span class="np-il-bar" style="width: 90%;"></span>
+    <span class="np-il-bar" style="width: 55%;"></span>
+    <span class="np-il-bar is-accent" style="width: 28%; height: 1.6em; border-radius: 0.3em;"></span>
+  </div>
+  {/* Feature block: three tiles. */}
+  <div class="np-il-card" style={`--x: 276; --y: ${blocks[1]!.y}; --w: 248; height: ${blocks[1]!.h / 10}em; flex-direction: row; align-items: stretch; gap: 0.8em; padding: 1em;`}>
+    {[0, 1, 2].map(() => (
+      <span style="flex: 1; display: flex; flex-direction: column; gap: 0.6em; padding: 0.8em; border-radius: 0.5em; background: var(--color-gray-light);">
+        <span style="width: 1.6em; height: 1.6em; border-radius: 0.3em; background: color-mix(in srgb, var(--color-accent) 25%, var(--color-white));"></span>
+        <span class="np-il-bar" style="background: var(--color-white);"></span>
+      </span>
+    ))}
+  </div>
+  {/* Pricing block: three plans, the middle one featured. */}
+  <div class="np-il-card" style={`--x: 276; --y: ${blocks[2]!.y}; --w: 248; height: ${blocks[2]!.h / 10}em; flex-direction: row; align-items: stretch; gap: 0.8em; padding: 1em;`}>
+    {[0, 1, 2].map((i) => (
+      <span style={`flex: 1; display: flex; flex-direction: column; gap: 0.7em; padding: 0.9em 0.8em; border-radius: 0.5em; border: 0.1em solid ${i === 1 ? "var(--np-il-node)" : "var(--color-border)"};`}>
+        <span class="np-il-bar is-strong" style="width: 60%;"></span>
+        <span class="np-il-bar"></span>
+        <span class="np-il-bar" style="width: 80%;"></span>
+        <span class={`np-il-bar${i === 1 ? " is-accent" : ""}`} style="margin-top: auto; height: 1.4em; border-radius: 0.3em;"></span>
+      </span>
+    ))}
+  </div>
+</IlFrame>

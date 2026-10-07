@@ -1,0 +1,150 @@
+---
+/**
+ * NpArticlePage — the article template (guides, comparisons, data studies
+ * at /guides/<slug>), following the blog article template in Figma
+ * (BenorMedia 3142:1617991, lead 2026-10-07):
+ *   header (breadcrumbs, tag, updated date, read time, H1, lead, screenshot
+ *   collage) → three columns (sticky table of contents with Get in Touch
+ *   and Share; the article: key takeaways, body with tables and figures,
+ *   sources; the author card) → FAQ → the global CTA banner (lead
+ *   2026-10-07: right below the FAQ) → Related resources.
+ * Draft banner and gaps panel in previews.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import JsonLd from "../layout/JsonLd.astro";
+import Container from "../ui/Container.astro";
+import NpDraftBanner from "./NpDraftBanner.astro";
+import NpBlogHero from "./NpBlogHero.astro";
+import NpBlogSidebar from "./NpBlogSidebar.astro";
+import NpBlogAuthor from "./NpBlogAuthor.astro";
+import NpBlogResources from "./NpBlogResources.astro";
+import NpKeyTakeaways from "./NpKeyTakeaways.astro";
+import NpVisual from "./NpVisual.astro";
+import NpFaq from "./NpFaq.astro";
+import NpSources from "./NpSources.astro";
+import NpGapsPanel from "./NpGapsPanel.astro";
+import CtaBanner from "../layout/CtaBanner.astro";
+import { getSiteSettingsCached } from "../../lib/sanity/site";
+import { pageJsonLd } from "../../lib/new-pages/jsonld";
+import type { NpPage } from "../../lib/new-pages/loader";
+import { resolveVisual } from "../../lib/new-pages/visuals";
+import { getClientsByIds } from "../../lib/sanity/queries";
+import { urlFor, type Source } from "../../lib/sanity/image";
+import { OUR_WORK_GRID_IDS, OUR_WORK_LIST_IDS } from "../../lib/content/our-work";
+import { SITE } from "../../lib/content/entity";
+import { CHECK_MASK } from "./blog-icons";
+import "./new-pages.css";
+
+interface Props {
+  page: NpPage;
+}
+
+const { page } = Astro.props;
+const siteSettings = await getSiteSettingsCached();
+const toc = [
+  ...page.sections.map((s) => ({ id: s.id, html: s.titleHtml })),
+  ...(page.faq.length > 0 ? [{ id: page.faqId, html: page.faqHeadingHtml }] : []),
+];
+
+// Client site screenshots (Our Work) for the header collage and the cards.
+const clients = [...(await getClientsByIds(OUR_WORK_GRID_IDS)), ...(await getClientsByIds(OUR_WORK_LIST_IDS))];
+const shots = clients
+  .filter((c) => c.websiteScreenshot?.asset)
+  .map((c) => {
+    const base = urlFor(c.websiteScreenshot as Source).auto("format").fit("max");
+    return { src: base.width(460).url(), srcset: `${base.width(460).url()} 1x, ${base.width(920).url()} 2x` };
+  });
+---
+
+<BaseLayout title={page.title} description={page.description} noIndex={page.draft} showCtaBanner={false} titleTemplate={false}>
+  {pageJsonLd(page).map((data) => <JsonLd data={data} />)}
+  {page.includeDrafts && page.draft && <NpDraftBanner view={page.view} gaps={page.gaps.length} />}
+  <article class="c-np-article">
+    <NpBlogHero page={page} shots={shots} />
+    <Container class="c-np-article__body">
+      <div class="c-np-article__grid">
+        <div class="c-np-article__toc">
+          <NpBlogSidebar items={toc} url={`${SITE}${page.url}`} />
+        </div>
+        <div class="c-np-article__main">
+          <NpKeyTakeaways items={page.takeaways} />
+          <div class="c-np-prose is-blog" style={`--np-check: ${CHECK_MASK};`}>
+            {page.sections.map((section) => (
+              <>
+                <h2 id={section.id} data-np-src="h2" set:html={section.titleHtml} />
+                <Fragment set:html={section.html} />
+                {resolveVisual(section.visual, page.includeDrafts) && (
+                  <figure class="c-np-article__figure">
+                    <NpVisual visual={section.visual} includeDrafts={page.includeDrafts} layout="full" />
+                  </figure>
+                )}
+              </>
+            ))}
+          </div>
+          <NpSources items={page.sources} />
+        </div>
+        <div class="c-np-article__author">
+          <NpBlogAuthor page={page} />
+        </div>
+      </div>
+    </Container>
+  </article>
+  <NpFaq id={page.faqId} headingHtml={page.faqHeadingHtml} items={page.faq} />
+  {/* The global CTA banner, right below the FAQ (lead 2026-10-07). */}
+  <div data-np-live="cta-banner" class="c-np-live-banner">
+    <CtaBanner siteSettings={siteSettings} />
+  </div>
+  <NpBlogResources cards={page.relatedCards} shots={[...shots.slice(1), ...shots.slice(0, 1)]} />
+  {page.includeDrafts && page.view === "review" && <NpGapsPanel gaps={page.gaps} />}
+</BaseLayout>
+
+<style>
+  .c-np-live-banner {
+    display: contents;
+  }
+  /* Figma: 369 | 800 | 291 columns, 110px gaps, in the 1680 container. */
+  .c-np-article :global(.c-np-article__body) {
+    padding-top: 7.143rem;
+  }
+  .c-np-article__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 369fr) minmax(0, 800fr) minmax(0, 291fr);
+    align-items: start;
+    column-gap: 6.55%;
+  }
+  /* Stretches the column so the sidebar inside can stick. */
+  .c-np-article__toc {
+    align-self: stretch;
+  }
+  .c-np-article__main {
+    display: flex;
+    flex-direction: column;
+    gap: 3.571rem;
+    min-width: 0;
+  }
+  .c-np-article__figure {
+    margin: 2.143rem 0 0;
+  }
+  @media (max-width: 1199px) {
+    .c-np-article__grid {
+      grid-template-columns: minmax(0, 300fr) minmax(0, 800fr);
+      row-gap: 3.571rem;
+    }
+    .c-np-article__author {
+      grid-column: 2;
+    }
+  }
+  @media (max-width: 991px) {
+    .c-np-article__grid {
+      grid-template-columns: 1fr;
+    }
+    .c-np-article__author {
+      grid-column: auto;
+    }
+  }
+  @media (max-width: 767px) {
+    .c-np-article :global(.c-np-article__body) {
+      padding-top: 4.444rem;
+    }
+  }
+</style>

@@ -1,0 +1,31 @@
+---
+/**
+ * Commercial new pages (service, industry, regional) from
+ * `content-pack/content/*.md`: one static page per file, at its front matter
+ * `url`. Static routes and `[service].astro` (Sanity services) are matched
+ * first; this rest route only builds the paths it returns. Drafts are built
+ * in previews and dev only (src/lib/new-pages/registry.mjs). Docs:
+ * docs/new-pages.md.
+ */
+import NpCommercialPage from "../components/new-pages/NpCommercialPage.astro";
+import { pagesOf, type NpPage } from "../lib/new-pages/loader";
+
+export function getStaticPaths() {
+  return pagesOf("commercial").map((page) => {
+    // The front matter `url` is canonical: it must be `/<slug>` or a
+    // prefixed `/<prefix>/<slug>` (regional pages).
+    if (!page.url.startsWith("/") || page.url.endsWith("/") || page.url.split("/").pop() !== page.slug) {
+      throw new Error(`[new-pages] ${page.slug}: url "${page.url}" does not match the commercial route /<slug>`);
+    }
+    return { params: { page: page.url.slice(1) }, props: { page } };
+  });
+}
+
+interface Props {
+  page: NpPage;
+}
+
+const { page } = Astro.props;
+---
+
+<NpCommercialPage page={page} />

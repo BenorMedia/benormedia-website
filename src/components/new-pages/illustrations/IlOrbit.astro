@@ -1,0 +1,48 @@
+---
+/**
+ * IlOrbit — one site in the middle (the BenorMedia mark), its language
+ * versions on a dashed orbit, each with its regional team, and the
+ * workflows as chips below.
+ */
+import IlFrame from "./IlFrame.astro";
+import IlNode from "./IlNode.astro";
+import IlChip from "./IlChip.astro";
+import type { IconName } from "./assets";
+
+interface Props {
+  centerTag: string;
+  versions: readonly string[];
+  teamTag: string;
+  chips: readonly { icon: IconName; label: string }[];
+}
+
+const { centerTag, versions, teamTag, chips } = Astro.props;
+const H = 500;
+const c = { x: 280, y: 208 };
+const pts = [
+  { x: 104, y: 112 },
+  { x: 456, y: 112 },
+  { x: 104, y: 280 },
+  { x: 456, y: 280 },
+];
+---
+
+<IlFrame h={H} glow={{ x: 280, y: 208, w: 620, h: 400 }}>
+  <svg class="np-il__lines" viewBox={`0 0 560 ${H}`} preserveAspectRatio="none" aria-hidden="true">
+    <ellipse class="is-dashed" cx={c.x} cy={c.y} rx="200" ry="104" />
+    {pts.map((p) => <path d={`M${c.x} ${c.y} L${p.x} ${p.y}`} />)}
+    {pts.map((p) => <path class="np-il-flow" d={`M${c.x} ${c.y} L${p.x} ${p.y}`} />)}
+    {pts.map((p) => <rect x={(p.x + c.x) / 2 - 3} y={(p.y + c.y) / 2 - 3} width="6" height="6" rx="1" />)}
+  </svg>
+  <span class="np-il-mark" style={`--x: ${c.x}; --y: ${c.y}; --d: 96;`}></span>
+  <span class="np-il-at np-il-tag is-accent" style={`--x: ${c.x}; --y: ${c.y + 70};`}>{centerTag}</span>
+  {versions.map((v, i) => (
+    <>
+      <IlNode x={pts[i]!.x} y={pts[i]!.y} icon="research" label={v} w={150} />
+      <span class="np-il-at np-il-tag" style={`--x: ${pts[i]!.x}; --y: ${pts[i]!.y + 62}; display: inline-flex; gap: 0.5em;`}>{teamTag}</span>
+    </>
+  ))}
+  <div class="np-il-chips" style={`--x: 12; --r: 12; --y: ${H - 74};`}>
+    {chips.map((ch) => <IlChip icon={ch.icon} label={ch.label} />)}
+  </div>
+</IlFrame>

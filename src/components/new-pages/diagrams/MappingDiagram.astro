@@ -1,0 +1,129 @@
+---
+/**
+ * MappingDiagram — two columns with a connector per row (brief 7.3), plus an
+ * optional tag on each row (e.g. the redirect type). Stacks each row under
+ * 440px. Example values must be generic and visibly examples.
+ */
+interface Row {
+  from: string;
+  to: string;
+  tag?: string;
+}
+
+interface Props {
+  headers: readonly [string, string];
+  rows: readonly Row[];
+}
+
+const { headers, rows } = Astro.props;
+---
+
+<div class="c-np-map">
+  <div class="c-np-map__grid">
+    <span class="c-np-map__head">{headers[0]}</span>
+    <span class="c-np-map__head is-to">{headers[1]}</span>
+    {rows.map((row) => (
+      <div class="c-np-map__row">
+        <span class="c-np-map__cell">{row.from}</span>
+        <span class="c-np-map__link" />
+        <span class="c-np-map__cell is-to">
+          <span>{row.to}</span>
+          {row.tag && <span class="c-np-map__tag">{row.tag}</span>}
+        </span>
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .c-np-map {
+    container-type: inline-size;
+    font-family: var(--font-body);
+    font-size: var(--fs-p);
+    line-height: 1.35;
+    color: var(--color-heading);
+  }
+  .c-np-map__grid {
+    display: grid;
+    grid-template-columns: 1fr 2.857rem 1fr;
+    gap: 0.857rem 0;
+  }
+  .c-np-map__head {
+    grid-column: 1;
+    color: var(--color-text);
+    letter-spacing: 0.064em;
+    text-transform: uppercase;
+  }
+  .c-np-map__head.is-to {
+    grid-column: 3;
+  }
+  .c-np-map__row {
+    display: contents;
+  }
+  .c-np-map__cell {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.571rem;
+    padding: 0.857rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--np-radius);
+    background: var(--color-white);
+  }
+  .c-np-map__cell.is-to {
+    border-color: var(--color-accent);
+  }
+  .c-np-map__link {
+    position: relative;
+    align-self: center;
+    height: 1px;
+    background: var(--color-gray);
+  }
+  .c-np-map__link::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: -0.25rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-top: 1px solid var(--color-gray);
+    border-right: 1px solid var(--color-gray);
+    transform: rotate(45deg);
+  }
+  .c-np-map__tag {
+    padding: 0.15em 0.6em;
+    border: 1px solid var(--color-accent);
+    border-radius: 3px;
+    color: var(--color-accent);
+  }
+  @container (max-width: 440px) {
+    .c-np-map__grid {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+    .c-np-map__head { display: none; }
+    .c-np-map__row {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1.714rem;
+    }
+    .c-np-map__link {
+      align-self: flex-start;
+      width: 1px;
+      height: 1.714rem;
+      margin-left: 1.5rem;
+    }
+    .c-np-map__link::after {
+      right: auto;
+      top: auto;
+      bottom: 0;
+      left: -0.25rem;
+      transform: rotate(135deg);
+    }
+  }
+  @media (max-width: 767px) {
+    .c-np-map { font-size: 1.556rem; }
+    .c-np-map__cell { padding: 1.111rem 1.333rem; }
+  }
+</style>

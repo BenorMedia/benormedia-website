@@ -1,0 +1,78 @@
+---
+/**
+ * NpFaq — the FAQ block (brief 6.1 row 5). Rung 3 sibling of `FaqSection`:
+ * same look (centered title, wireframe globe, spacing) and the live
+ * `FaqAccordion` with its own script and keyboard behaviour, but the title
+ * carries `data-np-src` and the FAQPage JSON-LD comes from
+ * `src/lib/new-pages/jsonld.ts` (same array, gap items left out in review).
+ * Every answer is in the HTML, open or closed (native `<details>`).
+ */
+import Container from "../ui/Container.astro";
+import FaqAccordion from "../ui/FaqAccordion.astro";
+import type { FaqEntry } from "../../lib/new-pages/loader";
+
+interface Props {
+  id: string;
+  headingHtml: string;
+  items: readonly FaqEntry[];
+}
+
+const { id, headingHtml, items } = Astro.props;
+const accordionItems = items.map((item) => ({
+  question: item.q,
+  answer: item.a,
+  questionHtml: item.qHtml,
+  answerHtml: item.aHtml,
+}));
+---
+
+{items.length > 0 && (
+  <section class="c-np-faq" aria-labelledby={id}>
+    <Container>
+      <header class="c-section-header">
+        <div class="c-section-header__text">
+          <h2 id={id} class="c-section-header__title c-text_xl c-np-faq__title" data-np-src="faqHeading" set:html={headingHtml} />
+        </div>
+      </header>
+      <div class="c-np-faq__panel">
+        <FaqAccordion items={accordionItems} name={`${id}-items`} npSrc />
+      </div>
+    </Container>
+  </section>
+)}
+
+<style>
+  /* FaqSection.is-bg: wireframe globe anchored to the section top. */
+  .c-np-faq {
+    background-color: var(--color-white);
+    background-image: url("/images/pricing/faqs-bg.webp");
+    background-image: image-set(
+      url("/images/pricing/faqs-bg.webp") 1x,
+      url("/images/pricing/faqs-bg@2x.webp") 2x
+    );
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: auto 73.929rem;
+  }
+  .c-np-faq :global(.c-container) {
+    padding-top: 8.571rem;
+    padding-bottom: 8.571rem;
+  }
+  .c-np-faq__title {
+    max-width: 60rem;
+    text-wrap: balance;
+    scroll-margin-top: calc(var(--c-nav-height, 0px) + 2rem);
+  }
+  .c-np-faq__panel {
+    margin-top: 3.5rem;
+  }
+  @media (max-width: 767px) {
+    .c-np-faq :global(.c-container) {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
+    .c-np-faq__panel {
+      margin-top: 3rem;
+    }
+  }
+</style>
