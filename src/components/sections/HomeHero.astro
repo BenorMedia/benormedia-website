@@ -412,10 +412,11 @@ const BUTTONS: ButtonType[] = [
     align-items: center;
     width: fit-content;
     margin: 0 auto;
-    /* Glass, like the "See Our Work" button (`is-glass`: white 10% + 10px
-       blur); the 10% white fill comes from CtaActions. Lead 2026-10-01. */
-    -webkit-backdrop-filter: blur(10px);
-            backdrop-filter: blur(10px);
+    /* Glass, like the "See Our Work" button (`is-glass`: white 10%); the
+       10% white fill comes from CtaActions. Lead 2026-10-01; blur 20px
+       (was 10px), lead 2026-10-07. */
+    -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
   }
   .c-hero :global(.c-hero__actions .c-cta__badge-text) {
     text-align: center;

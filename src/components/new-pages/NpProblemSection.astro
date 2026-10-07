@@ -1,0 +1,82 @@
+---
+/**
+ * NpProblemSection — a commercial section in the style of the service
+ * pages' "The Problem" block (lead 2026-10-07): the live `ServiceProblem`
+ * (frame and the two vertical client-screenshot carousels, same animation)
+ * with the section's own heading and copy in its `content` slot. The
+ * framing line and paragraphs are centered; the bullets stack, centered,
+ * one under the other. The section's visual is not shown in this layout.
+ */
+import ServiceProblem from "../sections/ServiceProblem.astro";
+import type { PageSection } from "../../lib/new-pages/loader";
+import type { Client } from "../../lib/sanity/types";
+
+interface Props {
+  section: PageSection;
+  clients: readonly Client[];
+}
+
+const { section, clients } = Astro.props;
+---
+
+<div data-np-live="service-problem" class="c-np-live">
+  <ServiceProblem title="" clients={clients}>
+    <div slot="content" class="c-np-problem">
+      <header class="c-section-header">
+        <div class="c-section-header__text">
+          <h2 id={section.id} class="c-section-header__title c-text_xl c-np-problem__title" data-np-src="h2" set:html={section.titleHtml} />
+          <div class="c-np-problem__body" set:html={section.html} />
+        </div>
+      </header>
+    </div>
+  </ServiceProblem>
+</div>
+
+<style>
+  .c-np-live {
+    display: contents;
+  }
+  .c-np-problem__title {
+    max-width: 52rem;
+    text-wrap: balance;
+    scroll-margin-top: calc(var(--c-nav-height, 0px) + 2rem);
+  }
+  .c-np-problem__body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.714rem;
+    max-width: 44rem;
+    margin: 1rem auto 0;
+    color: var(--color-text);
+    text-align: center;
+  }
+  .c-np-problem__body :global(p) {
+    margin: 0;
+    text-wrap: balance;
+  }
+  /* Bullets: stacked and centered, no markers (lead 2026-10-07). */
+  .c-np-problem__body :global(ul),
+  .c-np-problem__body :global(ol) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .c-np-problem__body :global(li) {
+    max-width: 36rem;
+    text-wrap: balance;
+  }
+  .c-np-problem__body :global(strong) {
+    color: var(--color-heading);
+    font-weight: 600;
+  }
+  .c-np-problem__body :global(a) {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+</style>

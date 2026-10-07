@@ -102,8 +102,10 @@ const cards: Card[] = list ? [...list[1]!.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)
     padding-top: 7.857rem; /* 110px */
     padding-bottom: 7.857rem;
   }
+  /* Two lines, balanced (lead 2026-10-07). */
   .c-np-fit__title {
-    max-width: 37.632rem; /* 526.8px: the heading wraps as in the Figma */
+    max-width: 52rem;
+    text-wrap: balance;
     scroll-margin-top: calc(var(--c-nav-height, 0px) + 2rem);
   }
   .c-np-fit__intro,
@@ -115,6 +117,7 @@ const cards: Card[] = list ? [...list[1]!.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)
     max-width: 47.321rem; /* 662.5px */
     margin: 0 auto;
     text-align: center;
+    text-wrap: balance;
     color: var(--color-text);
   }
   .c-np-fit__after {
@@ -152,7 +155,7 @@ const cards: Card[] = list ? [...list[1]!.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)
   }
   .c-np-fit__card {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 1.571rem; /* 22px */
     padding: 1rem 1.571rem; /* 14 / 22px */
     border: var(--border-default);
@@ -191,6 +194,7 @@ const cards: Card[] = list ? [...list[1]!.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)
     flex-direction: column;
   }
   .c-np-fit__card-title {
+    padding-bottom: 0.4rem;
     color: var(--color-grey-700);
     font-weight: 600;
     line-height: normal;

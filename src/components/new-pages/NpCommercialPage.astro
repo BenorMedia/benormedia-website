@@ -14,7 +14,10 @@
  *     without one gets the Home `OurWork` (its own title) before the fit
  *     section, so every page shows the work;
  *   - fit: the last section ("when another option is better") renders as
- *     cards (`NpFitCards`).
+ *     cards (`NpFitCards`);
+ *   - the third section renders in the "The Problem" style of the service
+ *     pages (`NpProblemSection`, lead 2026-10-07) unless it has a role above.
+ * The closing band sits right above the FAQ (lead 2026-10-07).
  *
  * Never printed here: author, dates, recheck, breadcrumb trail, sources.
  * Testimonials are left out for now (lead 2026-10-07).
@@ -27,6 +30,7 @@ import OurWork from "../sections/OurWork.astro";
 import Services from "../sections/Services.astro";
 import NpDraftBanner from "./NpDraftBanner.astro";
 import NpSplitSection from "./NpSplitSection.astro";
+import NpProblemSection from "./NpProblemSection.astro";
 import NpFitCards from "./NpFitCards.astro";
 import NpFaq from "./NpFaq.astro";
 import NpCtaBand from "./NpCtaBand.astro";
@@ -92,6 +96,8 @@ const plain = (html: string): string => html.replace(/<[^>]*>/g, "").replace(/&a
         )}
         <NpFitCards section={{ ...section, titleHtml: withPeriod(section.titleHtml) }} />
       </>
+    ) : i === 2 ? (
+      <NpProblemSection section={{ ...section, titleHtml: withPeriod(section.titleHtml) }} clients={[...workClients, ...workListClients]} />
     ) : (
       <NpSplitSection section={{ ...section, titleHtml: withPeriod(section.titleHtml) }} includeDrafts={page.includeDrafts} />
     ),
@@ -99,8 +105,8 @@ const plain = (html: string): string => html.replace(/<[^>]*>/g, "").replace(/&a
   <div data-np-live="services" class="c-np-live">
     <Services />
   </div>
-  <NpFaq id={page.faqId} headingHtml={withPeriod(page.faqHeadingHtml)} items={page.faq} />
   <NpCtaBand headingHtml={withPeriod(page.closingHeadingHtml)} textHtml={page.closingTextHtml} src="closing" second={second} />
+  <NpFaq id={page.faqId} headingHtml={withPeriod(page.faqHeadingHtml)} items={page.faq} />
   {page.related.length > 0 && (
     <div class="c-np-related-wrap">
       <Container>
