@@ -89,10 +89,11 @@ const shares = [
     /* Room for the label tab, which sits on the box's top border. */
     padding-top: 1.429rem;
   }
-  /* Figma 3718:7504: 1px border, 8px radius, items 50px in from the left. */
+  /* Figma 3718:7504: 1px border, 8px radius. Left padding = right (lead
+     2026-10-09). */
   .c-np-sidebar__toc {
     position: relative;
-    padding: 3.214rem 1.429rem 2.857rem 3.571rem;
+    padding: 3.214rem 1.786rem 2.857rem;
     border: var(--border-default);
     border-radius: 8px;
     background: var(--color-white);
@@ -101,7 +102,7 @@ const shares = [
   .c-np-sidebar__title {
     position: absolute;
     top: 0;
-    left: 2.357rem;
+    left: 1.071rem;
     margin: 0;
     padding: 0.5em 1.05em;
     transform: translateY(-50%);
@@ -231,10 +232,10 @@ const shares = [
   }
   @media (max-width: 767px) {
     .c-np-sidebar__toc {
-      padding: 2.857rem 1.429rem 2.143rem 2.143rem;
+      padding: 2.857rem 1.429rem 2.143rem;
     }
     .c-np-sidebar__title {
-      left: 1.429rem;
+      left: 0.714rem;
     }
     /* Half the previous mobile size (lead 2026-10-08). */
     .c-np-sidebar__share-btn {

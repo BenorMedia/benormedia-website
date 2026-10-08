@@ -4,24 +4,28 @@
  * (Figma 3142:1618180): eyebrow, heading, a contact button, then up to
  * three cards (screenshot thumbnail, tag, title, description, Learn more)
  * for the related pack pages built in this mode. The author pages reuse it
- * for the author's guides (own eyebrow and heading, every card).
+ * for the author's guides (own eyebrow and heading, every card, each
+ * guide's header illustration as its thumbnail, static: lead 2026-10-09).
  */
 import Container from "../ui/Container.astro";
 import Eyebrow from "../ui/Eyebrow.astro";
 import copy from "../../lib/new-pages/copy.json";
 import type { NpPage } from "../../lib/new-pages/loader";
 import { ARROW_RIGHT } from "./blog-icons";
+import { HEROES } from "../../lib/new-pages/visuals";
 
 interface Props {
-  cards: NpPage["relatedCards"];
+  cards: readonly (NpPage["relatedCards"][number] & { slug?: string })[];
   shots: readonly { src: string; srcset: string }[];
   eyebrow?: string;
   heading?: string;
   /** Max cards; the article Resources show three. */
   limit?: number;
+  /** Use a guide's header illustration (`HEROES`) as its thumbnail. */
+  heroThumbs?: boolean;
 }
 
-const { cards, shots, eyebrow = copy.resources.eyebrow, heading = copy.resources.heading, limit = 3 } = Astro.props;
+const { cards, shots, eyebrow = copy.resources.eyebrow, heading = copy.resources.heading, limit = 3, heroThumbs = false } = Astro.props;
 const list = cards.slice(0, limit);
 ---
 
@@ -35,14 +39,23 @@ const list = cards.slice(0, limit);
         </div>
       </header>
       <ul class="c-np-res__grid">
-        {list.map((card, i) => (
+        {list.map((card, i) => {
+          const hero = heroThumbs && card.slug ? HEROES[card.slug] : undefined;
+          const Hero = hero?.component;
+          return (
           <li class="c-np-res__card">
+            {Hero ? (
+              <span class="c-np-res__thumb is-illustration" aria-hidden="true">
+                <Hero {...hero.props} />
+              </span>
+            ) : (
             <span class={["c-np-res__thumb", i === 0 && "is-gradient"].filter(Boolean).join(" ")} aria-hidden="true">
               {[0, 1].map((k) => {
                 const s = shots[(i * 2 + k) % Math.max(shots.length, 1)];
                 return s ? <img class={`c-np-res__shot is-${k}`} src={s.src} srcset={s.srcset} width="423" height="300" alt="" loading="lazy" decoding="async" /> : null;
               })}
             </span>
+            )}
             <span class="c-np-res__texts">
               <Eyebrow variant="accent">{card.family === "article" ? copy.articleEyebrow.guide : copy.resources.serviceTag}</Eyebrow>
               <span class="c-np-res__title c-text_m">{card.title}</span>
@@ -53,7 +66,8 @@ const list = cards.slice(0, limit);
               </a>
             </span>
           </li>
-        ))}
+          );
+        })}
       </ul>
     </Container>
   </section>
@@ -96,6 +110,33 @@ const list = cards.slice(0, limit);
     border: var(--border-default);
     border-radius: 8px;
     background: color-mix(in srgb, var(--color-accent) 8%, var(--color-white));
+  }
+  /* Header illustration as the thumbnail: centered on white, its own
+     frame border dropped (the thumb has one), motion off. */
+  .c-np-res__thumb.is-illustration {
+    display: flex;
+    align-items: center;
+    background: var(--color-white);
+  }
+  .c-np-res__thumb.is-illustration :global(.np-il) {
+    border: 0;
+    border-radius: 0;
+  }
+  .c-np-res__thumb.is-illustration :global(*) {
+    animation: none !important;
+  }
+  /* Centered header (SectionHeader's rules, also in new-pages.css): here
+     too, so pages without new-pages.css (author pages) match. */
+  .c-np-res :global(.c-section-header),
+  .c-np-res :global(.c-section-header__text) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .c-np-res :global(.c-section-header__title) {
+    margin: 0 auto;
+    text-align: center;
   }
   .c-np-res__thumb.is-gradient {
     background: linear-gradient(113deg, var(--color-blue) 2.88%, var(--color-blue-light) 96.84%);
