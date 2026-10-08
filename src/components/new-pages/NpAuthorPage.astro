@@ -1,0 +1,185 @@
+---
+/**
+ * NpAuthorPage — an article author's page at /authors/<slug> (lead
+ * 2026-10-08, structure after flowninja.com/authors/*), in the blog
+ * article template's style:
+ *   header (breadcrumbs, photo, Author tag, H1 name, role, LinkedIn; the
+ *   bio on the right; the divider) → the author's guides (the Resources
+ *   cards, all of them) → the global CTA banner.
+ * JSON-LD: ProfilePage about the Person the articles' `author` points to,
+ * and the breadcrumb (`authorPageJsonLd`).
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import JsonLd from "../layout/JsonLd.astro";
+import Container from "../ui/Container.astro";
+import Eyebrow from "../ui/Eyebrow.astro";
+import NpCrumbs from "./NpCrumbs.astro";
+import NpBlogResources from "./NpBlogResources.astro";
+import copy from "../../lib/new-pages/copy.json";
+import { fill } from "../../lib/new-pages/html";
+import { authorPageJsonLd } from "../../lib/new-pages/jsonld";
+import type { Author } from "../../lib/new-pages/authors";
+import type { NpPage } from "../../lib/new-pages/loader";
+import { clientShots } from "../../lib/new-pages/shots";
+import { SHARE_LINKEDIN } from "./blog-icons";
+
+interface Props {
+  author: Author;
+  articles: readonly NpPage[];
+}
+
+const { author, articles } = Astro.props;
+const role = author.jobTitle.split(",")[0]?.trim() ?? author.jobTitle;
+const shots = await clientShots();
+const cards = articles.map((p) => ({
+  href: p.url,
+  title: p.h1,
+  description: p.description,
+  family: p.family,
+  data: p.draft ? { "data-draft-target": p.slug } : ({} as Record<string, string>),
+}));
+---
+
+<BaseLayout title={fill(copy.author.title, { name: author.name, role })} description={author.description}>
+  {authorPageJsonLd(author, articles).map((data) => <JsonLd data={data} />)}
+  <header class="c-np-author-hero">
+    <Container>
+      <div class="c-np-author-hero__grid">
+        <div class="c-np-author-hero__text">
+          <NpCrumbs items={[{ label: "Home", href: "/" }, { label: author.name }]} />
+          <img
+            class="c-np-author-hero__photo"
+            src={author.photo.src}
+            width={author.photo.w}
+            height={author.photo.h}
+            alt={author.name}
+            loading="eager"
+            decoding="async"
+          />
+          <Eyebrow variant="accent">{copy.author.eyebrow}</Eyebrow>
+          <div class="c-np-author-hero__who">
+            <h1 class="c-np-author-hero__name c-text_xl">{author.name}</h1>
+            <p class="c-np-author-hero__role c-paragraph_m">{author.jobTitle}</p>
+          </div>
+          <a
+            class="c-np-author-hero__social"
+            href={author.linkedin}
+            target="_blank"
+            rel="noopener me"
+            aria-label={fill(copy.author.social, { name: author.name })}
+            set:html={SHARE_LINKEDIN}
+          />
+        </div>
+        <div class="c-np-author-hero__bio">
+          {author.bio.map((p) => <p class="c-paragraph_m">{p}</p>)}
+        </div>
+      </div>
+      <hr class="c-np-author-hero__rule" />
+    </Container>
+  </header>
+  <NpBlogResources
+    cards={cards}
+    shots={shots}
+    eyebrow={copy.author.articlesEyebrow}
+    heading={fill(copy.author.articlesHeading, { name: author.name })}
+    limit={cards.length}
+  />
+</BaseLayout>
+
+<style>
+  /* Accent tag tint at 5% (the live 8% measures 4.48:1 with accent text). */
+  .c-np-author-hero__text :global(.c-eyebrow.is-accent) {
+    background: color-mix(in srgb, var(--color-accent) 5%, var(--color-white));
+  }
+  /* The article header's spacing: 110px top, 50px column gap, divider 100px below. */
+  .c-np-author-hero :global(.c-container) {
+    padding-top: 7.857rem;
+    padding-bottom: 0;
+  }
+  .c-np-author-hero__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
+    gap: 3.571rem;
+  }
+  .c-np-author-hero__text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.786rem; /* 25px */
+  }
+  .c-np-author-hero__photo {
+    width: 7.714rem; /* 108px */
+    height: 7.714rem;
+    margin-top: 1.071rem;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--color-gray-light);
+  }
+  .c-np-author-hero__who {
+    display: flex;
+    flex-direction: column;
+    gap: 0.714rem;
+  }
+  .c-np-author-hero__name {
+    margin: 0;
+    color: var(--color-black-secondary);
+  }
+  .c-np-author-hero__role {
+    margin: 0;
+    color: var(--color-text);
+  }
+  .c-np-author-hero__social {
+    display: grid;
+    place-items: center;
+    width: 2.286rem;
+    height: 2.286rem;
+    color: var(--color-black-secondary);
+    transition: color var(--duration-hover) var(--ease-smooth);
+  }
+  .c-np-author-hero__social :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+  .c-np-author-hero__social:hover {
+    color: var(--color-accent);
+  }
+  .c-np-author-hero__social:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  .c-np-author-hero__bio {
+    display: flex;
+    flex-direction: column;
+    gap: 1.071rem;
+    max-width: 46.3rem; /* 648px, the article lead */
+    color: var(--color-text);
+  }
+  .c-np-author-hero__bio p {
+    margin: 0;
+  }
+  .c-np-author-hero__rule {
+    height: 1px;
+    margin: 7.143rem 0 0;
+    border: 0;
+    background: var(--color-border);
+  }
+  @media (max-width: 991px) {
+    .c-np-author-hero__grid {
+      grid-template-columns: 1fr;
+      align-items: start;
+    }
+  }
+  @media (max-width: 767px) {
+    .c-np-author-hero :global(.c-container) {
+      padding-top: 5rem;
+    }
+    .c-np-author-hero__social {
+      width: 3.333rem;
+      height: 3.333rem;
+    }
+    .c-np-author-hero__rule {
+      margin-top: 4.444rem;
+    }
+  }
+</style>

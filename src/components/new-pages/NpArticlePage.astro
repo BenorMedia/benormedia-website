@@ -28,9 +28,7 @@ import { getSiteSettingsCached } from "../../lib/sanity/site";
 import { pageJsonLd } from "../../lib/new-pages/jsonld";
 import type { NpPage } from "../../lib/new-pages/loader";
 import { resolveVisual } from "../../lib/new-pages/visuals";
-import { getClientsByIds } from "../../lib/sanity/queries";
-import { urlFor, type Source } from "../../lib/sanity/image";
-import { OUR_WORK_GRID_IDS, OUR_WORK_LIST_IDS } from "../../lib/content/our-work";
+import { clientShots } from "../../lib/new-pages/shots";
 import { SITE } from "../../lib/content/entity";
 import { CHECK_MASK } from "./blog-icons";
 import "./new-pages.css";
@@ -47,13 +45,7 @@ const toc = [
 ];
 
 // Client site screenshots (Our Work) for the header collage and the cards.
-const clients = [...(await getClientsByIds(OUR_WORK_GRID_IDS)), ...(await getClientsByIds(OUR_WORK_LIST_IDS))];
-const shots = clients
-  .filter((c) => c.websiteScreenshot?.asset)
-  .map((c) => {
-    const base = urlFor(c.websiteScreenshot as Source).auto("format").fit("max");
-    return { src: base.width(460).url(), srcset: `${base.width(460).url()} 1x, ${base.width(920).url()} 2x` };
-  });
+const shots = await clientShots();
 ---
 
 <BaseLayout title={page.title} description={page.description} noIndex={page.draft} showCtaBanner={false} titleTemplate={false}>
@@ -112,9 +104,11 @@ const shots = clients
     align-items: start;
     column-gap: 6.55%;
   }
-  /* Stretches the column so the sidebar inside can stick. */
+  /* Stretches the column so the sidebar inside can stick; min-width 0 so
+     the one-line TOC items cut instead of widening the grid. */
   .c-np-article__toc {
     align-self: stretch;
+    min-width: 0;
   }
   .c-np-article__main {
     display: flex;

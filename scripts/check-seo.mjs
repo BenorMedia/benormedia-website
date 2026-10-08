@@ -25,6 +25,8 @@ const PAGES = {
   '/guides/wordpress-to-webflow-migration': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'migrate wordpress to webflow' },
   '/guides/b2b-saas-website-pages': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'saas website' },
   '/guides/webflow-enterprise': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow enterprise' },
+  // Author pages (src/lib/new-pages/authors.ts), 2026-10-08.
+  '/authors/sergio-gancedo': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'sergio gancedo' },
 };
 const NOINDEX_PAGES = ['/testimonials', '/cookie-policy']; // must stay out of the sitemap
 

@@ -63,6 +63,10 @@ Release companion pairs on the same day.
 
 H1, H2s, the FAQ heading and the closing heading end in a period (added by the template unless the text already ends in `.`, `?` or `!`). Body text uses the Home classes: `c-paragraph_m` for the lead and each section's framing line, `c-paragraph` for the rest. The two section roles follow the commercial blueprint (RULES.md §10), keyed on structure, never on a slug: the section that links to `/work` renders Our Work, and the last section renders as fit cards.
 
+## Author pages (lead 2026-10-08)
+
+`/authors/<slug>` (`src/pages/authors/[slug].astro`, `NpAuthorPage.astro`), one per entry in `src/lib/new-pages/authors.ts` (name, job title, photo, meta description, bio, LinkedIn). An article's front matter `author` ("Name, Role") is matched on the name: the author card links to the page (`rel="author"`) and the Article JSON-LD `author` gets the Person `@id`, `url` and `sameAs`. The page lists the author's article pages built in the current mode and emits ProfilePage (mainEntity Person, `hasPart` the articles) + BreadcrumbList. To add an author: add an entry and a 216×216 photo in `public/images/new-pages/authors/`, plus the path in `LASTMOD` (`astro.config.mjs`) and `scripts/check-seo.mjs`.
+
 ## Component map as built
 
 | Block | Decision | File |

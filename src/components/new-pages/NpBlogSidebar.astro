@@ -1,14 +1,16 @@
 ---
 /**
- * NpBlogSidebar — the blog article template's left column (Figma
- * 3142:1618038): "Table of Contents" (the body H2s and the FAQ; the item
- * in view is boxed), a full-width Get in Touch (the header's contact
- * trigger) and the Share row (copy link, LinkedIn, X, Facebook). Sticky
- * on desktop. A few lines of vanilla JS: the active item and copy link.
+ * NpBlogSidebar — the blog article template's left column. Table of
+ * Contents in the 2026-10-08 style (Figma 3718:7504): a bordered box with
+ * the label as a tab on its top border, one-line uppercase items (cut with
+ * an ellipsis), the item in view led by an arrow. Then a full-width Get in
+ * Touch (the header's contact trigger) and the Share row (copy link,
+ * LinkedIn, X, Facebook). Sticky on desktop. A few lines of vanilla JS: the
+ * active item and copy link.
  */
 import Button from "../ui/Button.astro";
 import copy from "../../lib/new-pages/copy.json";
-import { SHARE_FACEBOOK, SHARE_LINK, SHARE_LINKEDIN, SHARE_X } from "./blog-icons";
+import { SHARE_FACEBOOK, SHARE_LINK, SHARE_LINKEDIN, SHARE_X, TOC_ARROW } from "./blog-icons";
 
 interface Props {
   items: readonly { id: string; html: string }[];
@@ -26,10 +28,15 @@ const shares = [
 
 <div class="c-np-sidebar" data-np-sidebar>
   <nav class="c-np-sidebar__toc" aria-label={copy.accessibleNames.toc}>
-    <p class="c-np-sidebar__title c-text_m">{copy.tocLabel}</p>
+    <p class="c-np-sidebar__title">{copy.tocLabel}</p>
     <ol class="c-np-sidebar__list">
       {items.map((item) => (
-        <li><a class="c-np-sidebar__link c-paragraph" href={`#${item.id}`} data-np-toc={item.id} set:html={item.html} /></li>
+        <li>
+          <a class="c-np-sidebar__link" href={`#${item.id}`} data-np-toc={item.id}>
+            <span class="c-np-sidebar__arrow" set:html={TOC_ARROW} />
+            <span class="c-np-sidebar__label" set:html={item.html} />
+          </a>
+        </li>
       ))}
     </ol>
   </nav>
@@ -78,52 +85,96 @@ const shares = [
     top: calc(var(--c-nav-height, 0px) + 2rem);
     display: flex;
     flex-direction: column;
-    gap: 2.143rem; /* 30px */
-    padding: 1.714rem; /* 24px */
+    gap: 0.857rem; /* 12px */
+    /* Room for the label tab, which sits on the box's top border. */
+    padding-top: 1.429rem;
+  }
+  /* Figma 3718:7504: 1px border, 8px radius, items 50px in from the left. */
+  .c-np-sidebar__toc {
+    position: relative;
+    padding: 3.214rem 1.429rem 2.857rem 3.571rem;
+    border: var(--border-default);
     border-radius: 8px;
+    background: var(--color-white);
   }
+  /* The label: an eyebrow-style tab centred on the top border. */
   .c-np-sidebar__title {
+    position: absolute;
+    top: 0;
+    left: 2.357rem;
     margin: 0;
-    padding-bottom: 1.071rem;
-    border-bottom: var(--border-default);
-    color: var(--color-black-secondary);
+    padding: 0.5em 1.05em;
+    transform: translateY(-50%);
+    border: var(--border-default);
+    border-radius: 3px;
+    background: var(--color-white);
+    color: var(--color-text-secondary);
+    font-size: var(--fs-p);
+    line-height: normal;
+    letter-spacing: 0.064em;
+    text-transform: uppercase;
+    white-space: nowrap;
   }
-  /* Lead 2026-10-07: links at 80% size, half the spacing, max 60vh with
-     its own scroll. */
+  /* Max 60vh with its own scroll (lead 2026-10-07). */
   .c-np-sidebar__list {
     display: flex;
     flex-direction: column;
-    gap: 0.536rem;
+    gap: 1.786rem; /* 25px */
     max-height: 60vh;
-    margin: 1.071rem 0 0;
-    padding: 0 0.286rem 0 0;
+    margin: 0;
+    padding: 0;
     overflow-y: auto;
     overscroll-behavior: contain;
     list-style: none;
   }
-  /* Item box: 16px padding, 4px radius; the active one gets the 0.5px
-     brand border (Figma). */
   .c-np-sidebar__link {
-    display: block;
-    padding: 0.914rem 0.914rem 0.743rem;
-    font-size: calc(var(--fs-p) * 0.8);
-    border: 0.5px solid transparent;
-    border-radius: 4px;
-    color: var(--color-black-secondary);
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    color: var(--color-text-secondary);
+    font-size: var(--fs-p-s);
+    line-height: 1.4;
+    letter-spacing: 0.064em;
+    text-transform: uppercase;
     text-decoration: none;
-    transition: border-color var(--duration-hover) var(--ease-smooth);
+    transition: color var(--duration-hover) var(--ease-smooth);
   }
-  .c-np-sidebar__link:hover,
-  .c-np-sidebar__link.is-active {
-    border-color: var(--color-blue);
+  .c-np-sidebar__label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  /* Active item: the arrow slides in before the label. */
+  .c-np-sidebar__arrow {
+    display: inline-flex;
+    flex: 0 0 auto;
+    width: 0;
+    height: 1.429rem;
+    margin-right: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+      width var(--duration-hover) var(--ease-smooth),
+      margin-right var(--duration-hover) var(--ease-smooth),
+      opacity var(--duration-hover) var(--ease-smooth);
+  }
+  .c-np-sidebar__arrow :global(svg) {
+    flex: 0 0 auto;
+    width: 1.429rem;
+    height: 1.429rem;
+  }
+  .c-np-sidebar__link.is-active .c-np-sidebar__arrow {
+    width: 1.429rem;
+    margin-right: 0.857rem;
+    opacity: 1;
+  }
+  .c-np-sidebar__link:hover {
+    color: var(--color-accent);
   }
   .c-np-sidebar__link:focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
-  }
-  .c-np-sidebar__cta-wrap {
-    padding-top: 2.143rem;
-    border-top: var(--border-default);
   }
   .c-np-sidebar :global(.c-np-sidebar__cta) {
     width: 100%;
@@ -168,16 +219,27 @@ const shares = [
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
+  @media (prefers-reduced-motion: reduce) {
+    .c-np-sidebar__arrow {
+      transition: none;
+    }
+  }
   @media (max-width: 991px) {
     .c-np-sidebar {
       position: static;
-      padding: 0;
     }
   }
   @media (max-width: 767px) {
+    .c-np-sidebar__toc {
+      padding: 2.857rem 1.429rem 2.143rem 2.143rem;
+    }
+    .c-np-sidebar__title {
+      left: 1.429rem;
+    }
+    /* Half the previous mobile size (lead 2026-10-08). */
     .c-np-sidebar__share-btn {
-      width: 4.444rem;
-      height: 4.444rem;
+      width: 2.222rem;
+      height: 2.222rem;
     }
   }
 </style>
