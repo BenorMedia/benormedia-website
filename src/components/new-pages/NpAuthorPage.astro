@@ -5,7 +5,8 @@
  * article template's style:
  *   header (breadcrumbs, photo, Author tag, H1 name, role, LinkedIn; the
  *   bio on the right; the divider) → the author's guides (the Resources
- *   cards, all of them) → the global CTA banner.
+ *   cards, all of them, each guide's header illustration
+ *   as its static thumbnail) → the global CTA banner.
  * JSON-LD: ProfilePage about the Person the articles' `author` points to,
  * and the breadcrumb (`authorPageJsonLd`).
  */
@@ -32,6 +33,7 @@ const { author, articles } = Astro.props;
 const role = author.jobTitle.split(",")[0]?.trim() ?? author.jobTitle;
 const shots = await clientShots();
 const cards = articles.map((p) => ({
+  slug: p.slug,
   href: p.url,
   title: p.h1,
   description: p.description,
@@ -83,6 +85,7 @@ const cards = articles.map((p) => ({
     eyebrow={copy.author.articlesEyebrow}
     heading={fill(copy.author.articlesHeading, { name: author.name })}
     limit={cards.length}
+    heroThumbs
   />
 </BaseLayout>
 
