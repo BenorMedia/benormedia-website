@@ -13,7 +13,7 @@ import Eyebrow from "../ui/Eyebrow.astro";
 import copy from "../../lib/new-pages/copy.json";
 import { fill, formatDate } from "../../lib/new-pages/html";
 import type { NpPage } from "../../lib/new-pages/loader";
-import { CHEVRON } from "./blog-icons";
+import NpCrumbs from "./NpCrumbs.astro";
 import { HEROES } from "../../lib/new-pages/visuals";
 
 interface Props {
@@ -39,22 +39,7 @@ const slots = [
   <Container>
     <div class="c-np-blog-hero__grid">
       <div class="c-np-blog-hero__text">
-        <nav class="c-np-crumbs" aria-label={copy.accessibleNames.breadcrumb}>
-          <ol class="c-np-crumbs__list">
-            {page.breadcrumbVisible.map((c, i) => (
-              <li class="c-np-crumbs__item c-paragraph_s">
-                {i > 0 && <span class="c-np-crumbs__chevron" set:html={CHEVRON} />}
-                {i === page.breadcrumbVisible.length - 1 ? (
-                  <span aria-current="page" {...c.attrs}>{c.label}</span>
-                ) : c.href ? (
-                  <a href={c.href} {...c.attrs}>{c.label}</a>
-                ) : (
-                  <span {...c.attrs}>{c.label}</span>
-                )}
-              </li>
-            ))}
-          </ol>
-        </nav>
+        <NpCrumbs items={page.breadcrumbVisible} />
         <div class="c-np-blog-hero__meta">
           <Eyebrow variant="accent">{tag}</Eyebrow>
           <p class="c-np-blog-hero__facts c-paragraph_s" data-np-byline>
@@ -105,42 +90,6 @@ const slots = [
     flex-direction: column;
     align-items: flex-start;
     gap: 1.786rem; /* 25px */
-  }
-  .c-np-crumbs__list {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.571rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .c-np-crumbs__item {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.571rem;
-    color: var(--color-text-secondary);
-  }
-  .c-np-crumbs__item a {
-    color: inherit;
-    text-decoration: none;
-  }
-  .c-np-crumbs__item a:hover {
-    color: var(--color-accent);
-  }
-  .c-np-crumbs__item a:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-  }
-  .c-np-crumbs__chevron {
-    display: inline-flex;
-    width: 1.143rem;
-    height: 1.143rem;
-    color: var(--color-text-secondary);
-  }
-  .c-np-crumbs__chevron :global(svg) {
-    width: 100%;
-    height: 100%;
   }
   .c-np-blog-hero__meta {
     display: flex;

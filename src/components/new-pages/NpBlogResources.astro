@@ -3,7 +3,8 @@
  * NpBlogResources — the blog article template's "Resources" section
  * (Figma 3142:1618180): eyebrow, heading, a contact button, then up to
  * three cards (screenshot thumbnail, tag, title, description, Learn more)
- * for the related pack pages built in this mode.
+ * for the related pack pages built in this mode. The author pages reuse it
+ * for the author's guides (own eyebrow and heading, every card).
  */
 import Container from "../ui/Container.astro";
 import Eyebrow from "../ui/Eyebrow.astro";
@@ -14,19 +15,23 @@ import { ARROW_RIGHT } from "./blog-icons";
 interface Props {
   cards: NpPage["relatedCards"];
   shots: readonly { src: string; srcset: string }[];
+  eyebrow?: string;
+  heading?: string;
+  /** Max cards; the article Resources show three. */
+  limit?: number;
 }
 
-const { cards, shots } = Astro.props;
-const list = cards.slice(0, 3);
+const { cards, shots, eyebrow = copy.resources.eyebrow, heading = copy.resources.heading, limit = 3 } = Astro.props;
+const list = cards.slice(0, limit);
 ---
 
 {list.length > 0 && (
   <section class="c-np-res" aria-labelledby="np-resources">
     <Container>
       <header class="c-section-header">
-        <Eyebrow>{copy.resources.eyebrow}</Eyebrow>
+        <Eyebrow>{eyebrow}</Eyebrow>
         <div class="c-section-header__text">
-          <h2 id="np-resources" class="c-section-header__title c-text_xl">{copy.resources.heading}</h2>
+          <h2 id="np-resources" class="c-section-header__title c-text_xl">{heading}</h2>
         </div>
       </header>
       <ul class="c-np-res__grid">
@@ -71,7 +76,7 @@ const list = cards.slice(0, 3);
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 2.857rem; /* 40px */
+    gap: 4.286rem 2.857rem; /* 60px rows (author pages), 40px columns */
     margin: 2.857rem 0 0;
     padding: 0;
     list-style: none;
