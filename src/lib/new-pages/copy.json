@@ -69,5 +69,12 @@
     "heading": "Related resources.",
     "learnMore": "Learn more",
     "serviceTag": "Services"
+  },
+  "author": {
+    "eyebrow": "Author",
+    "title": "{name}, {role}",
+    "social": "{name} on LinkedIn",
+    "articlesEyebrow": "Guides",
+    "articlesHeading": "Guides by {name}."
   }
 }

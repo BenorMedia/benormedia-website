@@ -295,6 +295,12 @@
     color: var(--color-black-secondary);
   }
 }
+/* Mobile body H2s 30% bigger (lead 2026-10-08). */
+@media (max-width: 767px) {
+  .c-np-prose.is-blog > h2 {
+    font-size: calc(var(--fs-text-xl) * 0.65);
+  }
+}
 .c-np-article__figure .c-np-visual {
   border-color: var(--color-gray-light);
   border-radius: 20px;
