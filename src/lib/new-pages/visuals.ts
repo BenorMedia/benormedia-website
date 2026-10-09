@@ -342,101 +342,7 @@ export const DIAGRAMS: Record<string, DiagramEntry> = {
       ],
     },
   },
-};
 
-export type ResolvedVisual =
-  | { kind: "asset"; asset: ImageMetadata }
-  | { kind: "diagram"; diagram: DiagramEntry }
-  | { kind: "placeholder" };
-
-/**
- * What renders for a visual, in brief 5.9 order. `undefined` = nothing
- * (production without an asset or a diagram: the section is one column).
- */
-export function resolveVisual(
-  visual: { slug: string; n: number; key: string } | undefined,
-  includeDrafts: boolean,
-): ResolvedVisual | undefined {
-  if (!visual) return undefined;
-  const asset = findAsset(visual.slug, visual.n);
-  if (asset) return { kind: "asset", asset };
-  const diagram = DIAGRAMS[visual.key];
-  if (diagram) return { kind: "diagram", diagram };
-  return includeDrafts ? { kind: "placeholder" } : undefined;
-}
-
-/**
- * Article header illustrations (blog template, lead 2026-10-07), by page.
- * Labels come from the article's text. A page without one keeps the
- * screenshot collage.
- */
-export const HEROES: Record<string, DiagramEntry> = {
-  // The guide's steps: old URLs, plugins and SEO fields move to new URLs, CMS Collections and 301 redirects.
-  "wordpress-to-webflow-migration": {
-    component: IlHero,
-    props: {
-      from: {
-        tag: "WordPress",
-        items: [
-          { icon: "doc", label: "/old-page" },
-          { icon: "puzzle", label: "Plugins" },
-          { icon: "techSeo", label: "SEO fields" },
-        ],
-      },
-      to: {
-        tag: "Webflow",
-        items: [
-          { icon: "doc", label: "/new-page" },
-          { icon: "cms", label: "CMS Collections" },
-          { icon: "api", label: "301 redirects" },
-        ],
-      },
-    },
-  },
-  // What the buyer is doing (learning, evaluating, deciding) and the pages that answer it.
-  "b2b-saas-website-pages": {
-    component: IlHero,
-    props: {
-      from: {
-        tag: "Buyer",
-        items: [
-          { icon: "ux", label: "Learning" },
-          { icon: "chartSearch", label: "Evaluating" },
-          { icon: "reporting", label: "Deciding" },
-        ],
-      },
-      to: {
-        tag: "Website",
-        items: [
-          { icon: "devices", label: "Product pages" },
-          { icon: "person", label: "Customers & proof" },
-          { icon: "doc", label: "Demo or contact" },
-        ],
-      },
-    },
-  },
-  // The Enterprise release path (branch, review, approve, publish to staging and production) and roles.
-  "webflow-enterprise": {
-    component: IlHero,
-    props: {
-      from: {
-        tag: "Page branch",
-        items: [
-          { icon: "graphics", label: "Branch a page" },
-          { icon: "ux", label: "Submit for review" },
-          { icon: "shield", label: "Approve" },
-        ],
-      },
-      to: {
-        tag: "Release",
-        items: [
-          { icon: "devices", label: "Staging" },
-          { icon: "speed", label: "Production" },
-          { icon: "person", label: "Roles & permissions" },
-        ],
-      },
-    },
-  },
   // /website-redesign (docs/brief-next-pages.md). Labels from the page text.
   // "Start with what your current site already wins": the five groups (stand-in for the five-way triage diagram).
   "website-redesign:1": {
@@ -823,6 +729,101 @@ export const HEROES: Record<string, DiagramEntry> = {
         { icon: "devices", label: "What we shipped" },
         { icon: "calendar", label: "What's next" },
       ],
+    },
+  },
+};
+
+export type ResolvedVisual =
+  | { kind: "asset"; asset: ImageMetadata }
+  | { kind: "diagram"; diagram: DiagramEntry }
+  | { kind: "placeholder" };
+
+/**
+ * What renders for a visual, in brief 5.9 order. `undefined` = nothing
+ * (production without an asset or a diagram: the section is one column).
+ */
+export function resolveVisual(
+  visual: { slug: string; n: number; key: string } | undefined,
+  includeDrafts: boolean,
+): ResolvedVisual | undefined {
+  if (!visual) return undefined;
+  const asset = findAsset(visual.slug, visual.n);
+  if (asset) return { kind: "asset", asset };
+  const diagram = DIAGRAMS[visual.key];
+  if (diagram) return { kind: "diagram", diagram };
+  return includeDrafts ? { kind: "placeholder" } : undefined;
+}
+
+/**
+ * Article header illustrations (blog template, lead 2026-10-07), by page.
+ * Labels come from the article's text. A page without one keeps the
+ * screenshot collage.
+ */
+export const HEROES: Record<string, DiagramEntry> = {
+  // The guide's steps: old URLs, plugins and SEO fields move to new URLs, CMS Collections and 301 redirects.
+  "wordpress-to-webflow-migration": {
+    component: IlHero,
+    props: {
+      from: {
+        tag: "WordPress",
+        items: [
+          { icon: "doc", label: "/old-page" },
+          { icon: "puzzle", label: "Plugins" },
+          { icon: "techSeo", label: "SEO fields" },
+        ],
+      },
+      to: {
+        tag: "Webflow",
+        items: [
+          { icon: "doc", label: "/new-page" },
+          { icon: "cms", label: "CMS Collections" },
+          { icon: "api", label: "301 redirects" },
+        ],
+      },
+    },
+  },
+  // What the buyer is doing (learning, evaluating, deciding) and the pages that answer it.
+  "b2b-saas-website-pages": {
+    component: IlHero,
+    props: {
+      from: {
+        tag: "Buyer",
+        items: [
+          { icon: "ux", label: "Learning" },
+          { icon: "chartSearch", label: "Evaluating" },
+          { icon: "reporting", label: "Deciding" },
+        ],
+      },
+      to: {
+        tag: "Website",
+        items: [
+          { icon: "devices", label: "Product pages" },
+          { icon: "person", label: "Customers & proof" },
+          { icon: "doc", label: "Demo or contact" },
+        ],
+      },
+    },
+  },
+  // The Enterprise release path (branch, review, approve, publish to staging and production) and roles.
+  "webflow-enterprise": {
+    component: IlHero,
+    props: {
+      from: {
+        tag: "Page branch",
+        items: [
+          { icon: "graphics", label: "Branch a page" },
+          { icon: "ux", label: "Submit for review" },
+          { icon: "shield", label: "Approve" },
+        ],
+      },
+      to: {
+        tag: "Release",
+        items: [
+          { icon: "devices", label: "Staging" },
+          { icon: "speed", label: "Production" },
+          { icon: "person", label: "Roles & permissions" },
+        ],
+      },
     },
   },
 };
