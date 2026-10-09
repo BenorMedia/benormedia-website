@@ -1,6 +1,6 @@
 # Review sheet: /website-redesign
 
-Draft version: 1 | Preview: (added after push) | Prepared: 2026-10-09 | Content file: docs/website-redesign.md (built as content-pack/content/website-redesign.md)
+Draft version: 1 | Preview: https://benormedia-c8jhp7snp-benor-media.vercel.app/website-redesign (Vercel login required) | Prepared: 2026-10-09 | Content file: docs/website-redesign.md (built as content-pack/content/website-redesign.md)
 
 How to use: go to the rows marked `open`. For each, give the fact, or write "delete". Rows marked `ok` were checked against their source by Claude Code; open the source if one looks wrong to you.
 

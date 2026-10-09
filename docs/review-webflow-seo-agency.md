@@ -1,6 +1,6 @@
 # Review sheet: /webflow-seo-agency
 
-Draft version: 1 | Preview: (added after push) | Prepared: 2026-10-09 | Content file: docs/webflow-seo-agency.md (built as content-pack/content/webflow-seo-agency.md)
+Draft version: 1 | Preview: https://benormedia-c8jhp7snp-benor-media.vercel.app/webflow-seo-agency (Vercel login required) | Prepared: 2026-10-09 | Content file: docs/webflow-seo-agency.md (built as content-pack/content/webflow-seo-agency.md)
 
 How to use: go to the rows marked `open`. For each, give the fact, or write "delete". Rows marked `ok` were checked against their source by Claude Code; open the source if one looks wrong to you.
 
