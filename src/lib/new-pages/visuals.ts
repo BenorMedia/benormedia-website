@@ -544,4 +544,92 @@ export const HEROES: Record<string, DiagramEntry> = {
       ],
     },
   },
+
+  // /webflow-seo-agency (docs/brief-next-pages.md). Labels from the page text.
+  // "Start with a Webflow SEO audit, not a keyword list": the bold lead-ins (stand-in for the audit checklist).
+  "webflow-seo-agency:1": {
+    framed: true,
+    component: IlSiteMap,
+    props: {
+      root: "SEO audit",
+      pages: [
+        { icon: "techSeo", label: "Index & crawl" },
+        { icon: "cms", label: "CMS architecture" },
+        { icon: "speed", label: "Performance" },
+        { icon: "chartSearch", label: "Search baseline" },
+        { icon: "ai", label: "AI visibility baseline" },
+      ],
+    },
+  },
+  // "The Webflow SEO problems we fix most often": lead-ins of the problems listed.
+  "webflow-seo-agency:2": {
+    framed: true,
+    component: IlBuilder,
+    props: {
+      tag: "Webflow SEO fixes",
+      items: [
+        { icon: "shield", label: "Staging indexing" },
+        { icon: "cms", label: "CMS content" },
+        { icon: "systems", label: "Canonicals" },
+      ],
+      tokens: ["Redirect imports", "Schema gaps"],
+    },
+  },
+  // "AEO and AI search on Webflow": the content file's legend as chips; cards = structured data, crawler access, Bing.
+  "webflow-seo-agency:3": {
+    framed: true,
+    component: IlHub,
+    props: {
+      centerLogo: "webflow",
+      cards: [
+        { tag: "Structured data", tiles: [{ icon: "code" }, { icon: "cms" }] },
+        { tag: "Crawler access", tiles: [{ icon: "ai" }, { icon: "techSeo" }] },
+        { tag: "Bing and Copilot", tiles: [{ icon: "chartSearch" }, { icon: "analytics" }] },
+      ],
+      chips: [
+        { icon: "systems", label: "Built-in setting" },
+        { icon: "api", label: "Integration" },
+        { icon: "code", label: "Custom code" },
+      ],
+    },
+  },
+  // "Authority that moves rankings and AI answers": the content file's tags (outer) and the lead-ins (inner).
+  "webflow-seo-agency:4": {
+    framed: true,
+    component: IlRings,
+    props: {
+      outer: [
+        { icon: "doc", label: "Lists" },
+        { icon: "puzzle", label: "Partners" },
+        { icon: "research", label: "Digital PR" },
+        { icon: "person", label: "Reviews" },
+      ],
+      inner: [
+        { icon: "reporting", label: "Roundups" },
+        { icon: "api", label: "Integration listings" },
+        { icon: "analytics", label: "Your own data" },
+        { icon: "ux", label: "Communities" },
+      ],
+    },
+  },
+  // "Reporting you can take to a pipeline meeting": the lead-ins; chips = organic traffic, rankings, AI visibility.
+  "webflow-seo-agency:5": {
+    framed: true,
+    component: IlJourney,
+    props: {
+      tag: "Monthly report",
+      steps: [
+        { icon: "funnel", label: "Pipeline" },
+        { icon: "chartSearch", label: "Search Console" },
+        { icon: "ai", label: "AI visibility" },
+        { icon: "calendar", label: "Roadmap" },
+      ],
+      cardTag: "SEO performance",
+      chips: [
+        { icon: "analytics", label: "Organic traffic" },
+        { icon: "reporting", label: "Rankings" },
+        { icon: "ai", label: "AI visibility" },
+      ],
+    },
+  },
 };
