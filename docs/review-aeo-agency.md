@@ -1,0 +1,54 @@
+# Review sheet: /aeo-agency
+
+Draft version: 1 | Preview: (added after push) | Prepared: 2026-10-09 | Content file: docs/aeo-agency.md (built as content-pack/content/aeo-agency.md)
+
+How to use: go to the rows marked `open`. For each, give the fact, or write "delete". Rows marked `ok` were checked against their source by Claude Code; open the source if one looks wrong to you.
+
+| # | Section | Sentence or figure on the page | Tier | Source, or who confirms | Status |
+|---|---|---|---|---|---|
+| 1 | Hero | "AI visibility tracking and reporting are part of every Growth engagement, on Webflow and custom-coded sites." | C | Sergio (content file, statement 5). The /pricing Growth plan does list "AI Search Analytics" and "AI Visibility Reporting"; "every engagement" and "Webflow and custom-coded sites" need your OK | open |
+| 2 | Section 3 | "51% of B2B software buyers said they start research with an AI chatbot more often than with Google" (G2, April 2026) | B | G2, 15 Apr 2026: https://company.g2.com/news/g2-research-the-answer-economy (opened today: 51%, 1,076 buyers, March 2026) | ok |
+| 3 | Section 3 | "94% of business buyers use AI during their buying process" (Forrester, 2026) | B | Forrester, 21 Jan 2026: https://www.forrester.com/blogs/state-of-business-buying-2026/ (opened today) | ok |
+| 4 | Section 3 | "82% of buyers had received software recommendations from an AI chatbot in the previous two years" (G2 2026 Buyer Behavior Report) | B | G2, 22 Jul 2026: https://company.g2.com/news/buyer-behavior-2026 (opened today: "in the last 24 months") | ok |
+| 5 | Section 3 | "people clicked a traditional result in 8% of visits, against 15% when there was no summary" | B | Pew Research Center, 22 Jul 2025: https://www.pewresearch.org/short-reads/2025/07/22/google-users-are-less-likely-to-click-on-links-when-an-ai-summary-appears-in-the-results/ (opened today: 900 US adults, March 2025) | ok |
+| 6 | Section 4 | "Google says its AI features have no special requirements beyond being indexed and eligible for a snippet." | B | Google Search Central, AI features: https://developers.google.com/search/docs/appearance/ai-features (opened today) | ok |
+| 7 | Section 4 | Entity work: "The same company name, description and category on your site, LinkedIn, Crunchbase, G2 and Wikidata ... tied together with Organization schema and sameAs links" as part of the service | C | Sergio, facts sheet item 5 | open |
+| 8 | Section 4 | Organization schema supports sameAs links to profiles on other sites | B | Google Search Central, Organization structured data (last updated 8 Sep 2026): https://developers.google.com/search/docs/appearance/structured-data/organization (opened today) | ok |
+| 9 | Section 5 | "The first two set your AEO strategy, and they finish before we change anything on your site." | C | Sergio (content file, statement 2) | open |
+| 10 | Section 5 | "30 to 50 questions your buyers ask, built from sales calls, keyword research and search data" | C | Sergio (content file, statement 2) | open |
+| 11 | Section 5 | "We also review your wider digital presence: reviews, listings and mentions." | C | Sergio, facts sheet item 5 | open |
+| 12 | Section 5 | OAI-SearchBot, PerplexityBot and Claude-SearchBot named as search crawlers | B | https://developers.openai.com/api/docs/bots ; https://docs.perplexity.ai/guides/bots ; https://support.claude.com/en/articles/8896518 (all three opened today) | ok |
+| 13 | Section 5 | "Bing Webmaster Tools with IndexNow for Copilot and Bing" as part of the technical step | C | Sergio (content file, statement 2; no source listed for IndexNow) | open |
+| 14 | Section 5 | "We plan them in topic clusters, so the content strategy builds topical authority" | C | Sergio, facts sheet item 5 | open |
+| 15 | Section 5 | "link building where it's earned" | C | Sergio, facts sheet item 5 | open |
+| 16 | Section 5 | "Mention rate by platform and prompt, cited pages, AI-referred visits and the pipeline they bring in, every month." | C | Sergio (content file, statement 2) | open |
+| 17 | Section 6 | "adding citations, quotations and statistics raised visibility in AI answers by up to 40% in the authors' benchmark. Keyword stuffing didn't help." (KDD 2024) | B | Aggarwal et al.: https://arxiv.org/abs/2311.09735 (opened today: "up to 40%", "Accepted to KDD 2024"; full text names Cite Sources, Quotation Addition and Statistics Addition as top methods and keyword stuffing as little to no help) | ok |
+| 18 | Section 6 | "In an Ahrefs study of 750 prompts, "best of" lists made up 43.8% of the page types ChatGPT cited." | B | Ahrefs, 4 Dec 2025: https://ahrefs.com/blog/best-lists-research/ (opened today) | ok |
+| 19 | Section 6 | The page names Ahrefs as the publisher of a cited study (row 18). Keep the name, or delete the sentence? | B | Sergio, brief ground rule 4 | open |
+| 20 | Section 6 | "In our own tracking for the web agency category, roundups were 25 of the 40 pages AI assistants cited most." [VERIFY] | C | Sergio, facts sheet item 4 (marker AEO-1) | open |
+| 21 | Section 6 | "Google says its Search ignores the file" (llms.txt) | B | Google AI optimization guide: https://developers.google.com/search/docs/fundamentals/ai-optimization-guide (opened today; page shows "Last updated 2026-07-10", the content file says May 2026, the statement itself matches) | ok |
+| 22 | Section 6 | "an SE Ranking analysis of about 300,000 domains found no measurable effect on AI citations" | B | Search Engine Journal, 20 Nov 2025: https://www.searchenginejournal.com/llms-txt-shows-no-clear-effect-on-ai-citations-based-on-300k-domains/561542/ (opened today) | ok |
+| 23 | Section 6 | "Google says structured data isn't required for generative AI search." | B | Google AI optimization guide (same URL as row 21, opened today) | ok |
+| 24 | Section 7 | Bing Webmaster Tools reports citation data "for Copilot and Bing's AI summaries" | B | Bing Webmaster blog, 10 Feb 2026: https://blogs.bing.com/webmaster/February-2026/Introducing-AI-Performance-in-Bing-Webmaster-Tools-Public-Preview (opened today: covers Microsoft Copilot and AI summaries in Bing, shows "Total Citations") | ok |
+| 25 | Section 7 | "ChatGPT, which tags its links with utm_source=chatgpt.com" | B | OpenAI Help: https://help.openai.com/en/articles/12627856-publishers-and-developers-faq. Could not be opened today (403 Forbidden, also with curl). Someone needs to open it in a browser | open |
+| 26 | Section 7 | "the Search Console reports Google added in 2026, which cover AI Overviews and AI Mode" | B | https://support.google.com/webmasters/answer/16908024. Opened today, but it is a help page titled "Search generative AI control" (rolled out to all sites as of 31 Aug 2026). It covers AI Overviews and AI Mode and points to a "Generative AI performance report", but does not say the reports were added in 2026. Needs a better source or softer wording | open |
+| 27 | Section 8 | "A visibility report. Mention rate, citations and AI-referred pipeline against the baseline" | C | Sergio (content file, statement 3) | open |
+| 28 | Section 8 | "Shipped work. The pages, rewrites and technical changes that went live" | C | Sergio (content file, statement 3) | open |
+| 29 | Section 8 | "Outreach log. Which lists, publications and communities we contacted" | C | Sergio (content file, statement 3) | open |
+| 30 | Section 8 | "Next month's plan ... reviewed with you." | C | Sergio (content file, statement 3) | open |
+| 31 | Section 9 | "6+ years of experience and 100+ launches speak for themselves." | A | https://www.benormedia.com/ (checked live today) | ok |
+| 32 | Section 9 | Button "View All 100+ Projects" | A | https://www.benormedia.com/ ("100+ launches", checked live today) | ok |
+| 33 | Section 10 | "Google's AI features draw on the same index" | B | Google Search Central, AI features (same URL as row 6, opened today: pages must be indexed) | ok |
+| 34 | Section 12 | "We'll run a sample of your buyers' prompts and show you who gets named instead of you." | C | Sergio (content file, statement 4) | open |
+| 35 | Section 13 (FAQ) | "The term dates from the era of featured snippets and voice search" | B | Kalicube: https://kalicube.com/entity/answer-engine-optimization/. Opened today: it credits Jason Barnard with coining the term in 2017 (2018 in a diagram) and ties it to featured snippets and "People Also Ask". It does not clearly tie the original term to voice search. Keep "featured snippets" only, or confirm | open |
+| 36 | Section 13 (FAQ) | "GEO, generative engine optimization, comes from a 2023 research paper" | B | Aggarwal et al.: https://arxiv.org/abs/2311.09735 (opened today: first submitted 16 Nov 2023) | ok |
+| 37 | Section 13 (FAQ) | "We run a fixed set of 30 to 50 buyer prompts across ChatGPT, Perplexity, Gemini, Claude and Google's AI answers" | C | Sergio (content file, statement 2). The question itself is on https://www.benormedia.com/custom-websites-migrations (FAQ tab "Answer Engine Optimization (AEO)") | open |
+| 38 | Section 13 (FAQ) | "Google says its Search ignores llms.txt, and a study of about 300,000 domains found no measurable effect on AI citations." | B | Same sources as rows 21 and 22 (opened today) | ok |
+| 39 | Section 13 (FAQ) | "on Team and Enterprise plans with the Analyze add-on, Webflow's own AEO analytics" | B | Webflow Help: https://help.webflow.com/hc/en-us/articles/51704299506195-AEO-analytics-overview. Could not be opened today (403 Forbidden, also with curl). Someone needs to check the plans and the add-on in a browser | open |
+| 40 | Section 13 (FAQ) | "Ours is part of the Growth (SEO/GEO + CRO) plan, billed monthly and cancellable anytime" | A | https://www.benormedia.com/pricing (Growth plan lists "Cancel anytime", "AI Search Analytics", "AI Visibility Reporting"; FAQ: "The Growth plan is billed monthly and you can cancel anytime."; checked live today) | ok |
+
+## Sign-off
+
+- Facts confirmed by: ________ on ________
+- Final edit done by: ________ on ________
+- Approved to publish (yes or no): ________
