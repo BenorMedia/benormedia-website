@@ -437,4 +437,111 @@ export const HEROES: Record<string, DiagramEntry> = {
       },
     },
   },
+
+  // /website-redesign (docs/brief-next-pages.md). Labels from the page text.
+  // "Start with what your current site already wins": the five groups (stand-in for the five-way triage diagram).
+  "website-redesign:1": {
+    framed: true,
+    component: IlSiteMap,
+    props: {
+      root: "Current site",
+      pages: [
+        { icon: "shield", label: "Keep" },
+        { icon: "funnel", label: "Improve" },
+        { icon: "puzzle", label: "Merge" },
+        { icon: "doc", label: "Retire" },
+        { icon: "docPencil", label: "Add" },
+      ],
+    },
+  },
+  // "How we plan and run a website redesign": the seven step names.
+  "website-redesign:2": {
+    component: FlowDiagram,
+    props: {
+      numbered: true,
+      columns: 4,
+      steps: [
+        { label: "Audit and business goals" },
+        { label: "Website strategy plan" },
+        { label: "Wireframes and content" },
+        { label: "UI/UX design and design system" },
+        { label: "Component library build and website development" },
+        { label: "Content migration and QA" },
+        { label: "Launch, training and handoff" },
+      ],
+    },
+  },
+  // "Rebuild on a system your marketing team can run": component library, CMS structure, integrations; "variables and design tokens".
+  "website-redesign:3": {
+    framed: true,
+    component: IlBuilder,
+    props: {
+      tag: "Component library",
+      items: [
+        { icon: "systems", label: "Sections" },
+        { icon: "cms", label: "CMS structure" },
+        { icon: "api", label: "Integrations" },
+      ],
+      tokens: ["Variables", "Design tokens"],
+    },
+  },
+  // "Protect your rankings through launch": URL map with 301s (content note: reuse the /webflow-migration URL map); chips = bold lead-ins.
+  "website-redesign:4": {
+    framed: true,
+    component: IlRedirectMap,
+    props: {
+      fromTag: "Old URL",
+      toTag: "New address",
+      rows: [
+        { from: "/old-page", to: "/new-page", badge: "301" },
+        { from: "/blog/old-post", to: "/blog/new-post", badge: "301" },
+        { from: "/category/news", to: "/blog", badge: "301" },
+        { from: "/about-us-2", to: "/about", badge: "301" },
+      ],
+      chips: [
+        { icon: "techSeo", label: "URL map" },
+        { icon: "devices", label: "Testing on staging" },
+        { icon: "analytics", label: "Monitoring after launch" },
+      ],
+    },
+  },
+  // "Fast, findable and ready for AI search": the content file's tags (outer) and the three metrics plus server rendering (inner).
+  "website-redesign:5": {
+    framed: true,
+    component: IlRings,
+    props: {
+      outer: [
+        { icon: "speed", label: "Core Web Vitals" },
+        { icon: "techSeo", label: "Technical SEO" },
+        { icon: "code", label: "Structured data" },
+        { icon: "ai", label: "AEO" },
+      ],
+      inner: [
+        { icon: "speed", label: "Largest Contentful Paint" },
+        { icon: "ux", label: "Interaction to Next Paint" },
+        { icon: "devices", label: "Cumulative Layout Shift" },
+        { icon: "systems", label: "Content rendered on the server" },
+      ],
+    },
+  },
+  // "After launch: measure, fix, keep improving": "rankings, conversions and errors, then ... a short plan"; card = ongoing website support.
+  "website-redesign:6": {
+    framed: true,
+    component: IlJourney,
+    props: {
+      tag: "After launch",
+      steps: [
+        { icon: "chartSearch", label: "Rankings" },
+        { icon: "funnel", label: "Conversions" },
+        { icon: "code", label: "Errors" },
+        { icon: "reporting", label: "Plan" },
+      ],
+      cardTag: "Ongoing website support",
+      chips: [
+        { icon: "calendar", label: "Weekly updates" },
+        { icon: "funnel", label: "Quarterly CRO audits" },
+        { icon: "techSeo", label: "Technical SEO monitoring" },
+      ],
+    },
+  },
 };
