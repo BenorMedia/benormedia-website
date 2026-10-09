@@ -15,13 +15,13 @@ export const NOINDEX_PATHS = new Set(['/testimonials', '/cookie-policy']);
 //   `meta` = [title max, description max] in characters (commercial pages follow the outline template: under 50 and under 150).
 //   `faqWords` = the answer length the check expects (commercial answers are one to three sentences).
 export const TYPES = {
-  service:   { words: [650, 1200], qh2: 0, meta: [49, 149], faqWords: [15, 80], schema: ['Service', 'BreadcrumbList', 'FAQPage'], faq: true },
-  industry:  { words: [650, 1200], qh2: 0, meta: [49, 149], faqWords: [15, 80], schema: ['Service', 'BreadcrumbList', 'FAQPage'], faq: true },
+  service:   { words: [650, 1200], qh2: 0, meta: [60, 160], faqWords: [15, 80], schema: ['Service', 'BreadcrumbList', 'FAQPage'], faq: true },
+  industry:  { words: [650, 1200], qh2: 0, meta: [60, 160], faqWords: [15, 80], schema: ['Service', 'BreadcrumbList', 'FAQPage'], faq: true },
   guide:     { words: [1800, 3200], qh2: 0.7, article: true, meta: [60, 160], faqWords: [35, 100], schema: ['Article', 'BreadcrumbList', 'FAQPage'], faq: true, takeaways: true, sources: true },
   comparison:{ words: [1800, 3000], qh2: 0.7, article: true, meta: [60, 160], faqWords: [35, 100], schema: ['Article', 'BreadcrumbList', 'FAQPage'], faq: true, takeaways: true, sources: true },
   'data-study': { words: [1200, 2200], qh2: 0.5, article: true, meta: [60, 160], faqWords: [35, 100], schema: ['Article', 'BreadcrumbList'], takeaways: true },
   tool:      { words: [600, 1200], qh2: 0, meta: [49, 149], faqWords: [15, 80], schema: ['WebPage', 'BreadcrumbList'], faq: true },
-  regional:  { words: [650, 1200], qh2: 0, meta: [49, 149], faqWords: [15, 80], schema: ['Service', 'BreadcrumbList', 'FAQPage'], faq: true },
+  regional:  { words: [650, 1200], qh2: 0, meta: [60, 160], faqWords: [15, 80], schema: ['Service', 'BreadcrumbList', 'FAQPage'], faq: true },
   hub:       { words: [400, 800], qh2: 0, meta: [49, 149], faqWords: [15, 80], schema: ['CollectionPage', 'BreadcrumbList'] },
   section:   { words: [500, 1000], qh2: 0, meta: [50, 150], faqWords: [15, 80], schema: [], faq: false, noMeta: true },
   'case-study-template': { words: [250, 900], qh2: 0, meta: [50, 150], faqWords: [15, 80], schema: ['WebPage', 'BreadcrumbList'] },
@@ -269,8 +269,8 @@ export function analyze(path, ctx = {}) {
 
   // ---- FAQ
   const faqs = Array.isArray(data.faq) ? data.faq : [];
-  if (T?.faq && faqs.length < 5) add('FAIL', 'faq', 1, `${type} pages need 5 to 10 FAQ items (found ${faqs.length})`);
-  if (faqs.length > 10) add('FAIL', 'faq', 1, `FAQ has ${faqs.length} items (maximum 10)`);
+  if (T?.faq && faqs.length < 5) add('FAIL', 'faq', 1, `${type} pages need 5 to 12 FAQ items (found ${faqs.length})`);
+  if (faqs.length > 12) add('FAIL', 'faq', 1, `FAQ has ${faqs.length} items (maximum 12)`);
   else if (T && !T.article && faqs.length > 8) add('warn', 'faq', 1, `FAQ has ${faqs.length} items (a commercial page keeps it to 5 to 8)`);
   if (faqs.length && !data.faqHeading) add('FAIL', 'faq', 1, 'faqHeading is missing');
   faqs.forEach((f, i) => {

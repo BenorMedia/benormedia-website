@@ -9,7 +9,7 @@
  * Lead 2026-10-07: H1 and H2s end in a period; Home text classes; no proof
  * strip; the Home `Services` block right above the FAQ. Two section roles
  * from the commercial blueprint (RULES.md §10):
- *   - work: the section that links to /work ("who the work is for") renders
+ *   - work: the last section that links to /work ("who the work is for") renders
  *     the Home `OurWork` block under the section's own heading. A page
  *     without one gets the Home `OurWork` (its own title) before the fit
  *     section, so every page shows the work;
@@ -58,9 +58,11 @@ const heroButtons: ButtonType[] = [
   { variant: "glass", link: { label: second.label, type: "external", externalUrl: second.href } },
 ];
 
-// Section roles (blueprint): work = links to /work, fit = the last section.
+// Section roles (blueprint): work = the last section before fit that links to
+// /work (an earlier section may link a single client name to /work), fit = the
+// last section.
 const lastIndex = page.sections.length - 1;
-const workIndex = page.sections.findIndex((s, i) => i < lastIndex && s.html.includes('href="/work"'));
+const workIndex = page.sections.findLastIndex((s, i) => i < lastIndex && s.html.includes('href="/work"'));
 const [heroClients, workClients, workListClients] = await Promise.all([
   getAllClientsWithIcon(),
   getClientsByIds(OUR_WORK_GRID_IDS),

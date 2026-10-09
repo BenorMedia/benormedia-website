@@ -25,7 +25,7 @@ import {
 import { escapeHtml, Slugger } from "./html";
 import { GapTable, hasToken, stripTokens, type Gap } from "./markers";
 import { breadcrumbs, relatedItem, type Crumb, type LinkContext, type PlanPage, type RelatedItem, type VisibleCrumb } from "./links";
-import { renderBody, type RenderedSection } from "./markdown";
+import { inline, plainInline, renderBody, type RenderedSection } from "./markdown";
 
 export type Family = "commercial" | "article";
 export type View = "review" | "defaults";
@@ -45,7 +45,7 @@ interface FrontMatter {
   updatedAt?: string;
   reviewEvery?: number | string;
   breadcrumb?: Crumb[];
-  service?: { name?: string; serviceType?: string };
+  service?: { name?: string; serviceType?: string; audience?: string; alternateName?: string[] };
   closing?: { heading?: string; text?: string };
   faqHeading?: string;
   faq?: { q?: string; a?: string }[];
@@ -102,7 +102,7 @@ export interface NpPage {
   related: RelatedItem[];
   breadcrumbVisible: VisibleCrumb[];
   breadcrumbLd: Crumb[];
-  service: { name: string; serviceType: string };
+  service: { name: string; serviceType: string; audience: string | undefined; alternateName: string[] };
   author: { html: string; text: string; hasGap: boolean };
   publishedAt: string;
   updatedAt: string;
@@ -289,8 +289,9 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
     return {
       q: stripTokens(qTok),
       qHtml: gaps.toHtml(escapeHtml(qTok)),
-      a: stripTokens(aTok),
-      aHtml: gaps.toHtml(escapeHtml(aTok)),
+      // Links in an answer: real links in the visible FAQ, anchor words in FAQPage.
+      a: plainInline(stripTokens(aTok)),
+      aHtml: inline(aTok, { links, slugger, finish: (h) => gaps.toHtml(h) }),
       hasGap: hasToken(qTok) || hasToken(aTok),
     };
   });
@@ -323,7 +324,12 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
     related,
     breadcrumbVisible: crumbs.visible,
     breadcrumbLd: crumbs.ld,
-    service: { name: String(d.service?.name ?? ""), serviceType: String(d.service?.serviceType ?? "") },
+    service: {
+      name: String(d.service?.name ?? ""),
+      serviceType: String(d.service?.serviceType ?? ""),
+      audience: d.service?.audience ? String(d.service.audience) : undefined,
+      alternateName: (d.service?.alternateName ?? []).map(String),
+    },
     author: { html: gaps.toHtml(escapeHtml(authorTok)), text: stripTokens(authorTok), hasGap: hasToken(authorTok) },
     publishedAt: String(d.publishedAt ?? ""),
     updatedAt: String(d.updatedAt ?? ""),
