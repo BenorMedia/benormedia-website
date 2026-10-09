@@ -29,6 +29,7 @@ const PAGES = {
   '/website-redesign': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'website redesign' },
   '/webflow-seo-agency': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'webflow seo' },
   '/cybersecurity-web-design': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'cybersecurity website design' },
+  '/aeo-agency': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'aeo geo b2b saas' },
   // Author pages (src/lib/new-pages/authors.ts), 2026-10-08.
   '/authors/sergio-gancedo': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'sergio gancedo' },
 };

@@ -437,7 +437,6 @@ export const HEROES: Record<string, DiagramEntry> = {
       },
     },
   },
-
   // /website-redesign (docs/brief-next-pages.md). Labels from the page text.
   // "Start with what your current site already wins": the five groups (stand-in for the five-way triage diagram).
   "website-redesign:1": {
@@ -544,7 +543,6 @@ export const HEROES: Record<string, DiagramEntry> = {
       ],
     },
   },
-
   // /webflow-seo-agency (docs/brief-next-pages.md). Labels from the page text.
   // "Start with a Webflow SEO audit, not a keyword list": the bold lead-ins (stand-in for the audit checklist).
   "webflow-seo-agency:1": {
@@ -736,6 +734,94 @@ export const HEROES: Record<string, DiagramEntry> = {
       chips: [
         { icon: "calendar", label: "Weekly updates" },
         { icon: "speed", label: "SLA-backed response times" },
+      ],
+    },
+  },
+
+  // /aeo-agency (docs/brief-next-pages.md). Labels from the page text.
+  // "Why AI search now shapes B2B software shortlists": the bold lead-ins and source names (stand-in for the four stat tiles).
+  "aeo-agency:1": {
+    framed: true,
+    component: IlRings,
+    props: {
+      outer: [
+        { icon: "ai", label: "Research starts in chat" },
+        { icon: "chartSearch", label: "AI in nearly every purchase" },
+        { icon: "person", label: "AI names vendors" },
+        { icon: "funnel", label: "Fewer clicks" },
+      ],
+      inner: [
+        { icon: "research", label: "G2" },
+        { icon: "reporting", label: "Forrester" },
+        { icon: "research", label: "G2" },
+        { icon: "analytics", label: "Pew Research" },
+      ],
+    },
+  },
+  // "What AEO and GEO actually involve": the base layer and blocks in the content note (stand-in for the layered diagram).
+  "aeo-agency:2": {
+    framed: true,
+    component: IlSiteMap,
+    props: {
+      root: "SEO foundations",
+      pages: [
+        { icon: "chartSearch", label: "Prompt tracking" },
+        { icon: "docPencil", label: "Answer-shaped pages" },
+        { icon: "person", label: "Third-party presence" },
+        { icon: "systems", label: "Entity consistency" },
+      ],
+    },
+  },
+  // "What the evidence says gets cited": the bold lead-ins.
+  "aeo-agency:3": {
+    framed: true,
+    component: IlBuilder,
+    props: {
+      tag: "What gets cited",
+      items: [
+        { icon: "reporting", label: "Statistics" },
+        { icon: "doc", label: "Quotations" },
+        { icon: "research", label: "Lists" },
+      ],
+      tokens: ["Third-party pages", "Sources"],
+    },
+  },
+  // "How we measure AI search visibility": the content file's tags (outer) and the lead-ins (inner).
+  "aeo-agency:4": {
+    framed: true,
+    component: IlRings,
+    props: {
+      outer: [
+        { icon: "ai", label: "Mention rate" },
+        { icon: "doc", label: "Citations" },
+        { icon: "analytics", label: "AI referrals" },
+        { icon: "techSeo", label: "Search Console" },
+      ],
+      inner: [
+        { icon: "chartSearch", label: "Prompt set" },
+        { icon: "funnel", label: "Pipeline" },
+        { icon: "research", label: "AI Overviews" },
+        { icon: "ai", label: "AI Mode" },
+      ],
+    },
+  },
+  // "What you get every month": the bold lead-ins; chips = "what changed, what we shipped and what's next".
+  "aeo-agency:5": {
+    framed: true,
+    component: IlJourney,
+    props: {
+      tag: "Every month",
+      steps: [
+        { icon: "reporting", label: "Visibility report" },
+        { icon: "code", label: "Shipped work" },
+        { icon: "person", label: "Outreach log" },
+        { icon: "calendar", label: "Next month's plan" },
+      ],
+      cardTag: "Growth (SEO/GEO + CRO)",
+      chips: [
+        { icon: "analytics", label: "What changed" },
+        { icon: "devices", label: "What we shipped" },
+        { icon: "calendar", label: "What's next" },
       ],
     },
   },
