@@ -28,6 +28,7 @@ const PAGES = {
   // Service pages from docs/brief-next-pages.md (drafts until sign-off: built in previews only).
   '/website-redesign': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'website redesign' },
   '/webflow-seo-agency': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'webflow seo' },
+  '/cybersecurity-web-design': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'cybersecurity website design' },
   // Author pages (src/lib/new-pages/authors.ts), 2026-10-08.
   '/authors/sergio-gancedo': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'sergio gancedo' },
 };

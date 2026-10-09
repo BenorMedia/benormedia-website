@@ -632,4 +632,111 @@ export const HEROES: Record<string, DiagramEntry> = {
       ],
     },
   },
+
+  // /cybersecurity-web-design (docs/brief-next-pages.md). Labels from the page text.
+  // "Write for a buying committee that doesn't trust vendors": the four buyer lanes in the content note (stand-in).
+  "cybersecurity-web-design:1": {
+    framed: true,
+    component: IlSiteMap,
+    props: {
+      root: "Buying committee",
+      pages: [
+        { icon: "shield", label: "CISO" },
+        { icon: "code", label: "Engineers" },
+        { icon: "doc", label: "Procurement" },
+        { icon: "reporting", label: "Finance" },
+      ],
+    },
+  },
+  // "Proof before persuasion": the bold lead-ins and the trust center contents.
+  "cybersecurity-web-design:2": {
+    framed: true,
+    component: IlRings,
+    props: {
+      outer: [
+        { icon: "shield", label: "Trust center" },
+        { icon: "code", label: "security.txt" },
+        { icon: "person", label: "Customer evidence" },
+        { icon: "chartSearch", label: "Independent validation" },
+      ],
+      inner: [
+        { icon: "doc", label: "SOC 2 report" },
+        { icon: "reporting", label: "Certifications" },
+        { icon: "docPencil", label: "Policies" },
+        { icon: "systems", label: "Subprocessors" },
+      ],
+    },
+  },
+  // "Technical depth your engineers can find in two clicks": the page types.
+  "cybersecurity-web-design:3": {
+    framed: true,
+    component: IlSiteMap,
+    props: {
+      root: "Navigation",
+      pages: [
+        { icon: "devices", label: "Platform pages" },
+        { icon: "research", label: "Use-case pages" },
+        { icon: "api", label: "Integrations" },
+        { icon: "chartSearch", label: "Comparisons" },
+        { icon: "doc", label: "Research" },
+      ],
+    },
+  },
+  // "A website built to pass your own security review": the bold lead-ins.
+  "cybersecurity-web-design:4": {
+    framed: true,
+    component: IlAccessFlow,
+    props: {
+      tag: "Role-based publishing",
+      steps: [
+        { icon: "graphics", label: "Editors" },
+        { icon: "ux", label: "Reviewers" },
+        { icon: "shield", label: "Publishers", big: true },
+      ],
+      cardTag: "Attack surface",
+      chips: [
+        { icon: "code", label: "Fewer third-party scripts" },
+        { icon: "doc", label: "Forms that collect less" },
+        { icon: "techSeo", label: "Security reviews" },
+      ],
+    },
+  },
+  // "Search and AI visibility for security vendors": the content file's tags (outer) and the lead-ins (inner).
+  "cybersecurity-web-design:5": {
+    framed: true,
+    component: IlRings,
+    props: {
+      outer: [
+        { icon: "chartSearch", label: "Comparisons" },
+        { icon: "research", label: "Research" },
+        { icon: "techSeo", label: "Technical SEO" },
+        { icon: "ai", label: "AI visibility" },
+      ],
+      inner: [
+        { icon: "person", label: "Peer recommendations" },
+        { icon: "ai", label: "AI answers" },
+        { icon: "analytics", label: "Search Console" },
+        { icon: "funnel", label: "Pipeline data" },
+      ],
+    },
+  },
+  // "Built for the team that runs it after launch": the bold lead-ins; card = ongoing website support.
+  "cybersecurity-web-design:6": {
+    framed: true,
+    component: IlJourney,
+    props: {
+      tag: "Training & handoff",
+      steps: [
+        { icon: "systems", label: "Component library" },
+        { icon: "cms", label: "CMS" },
+        { icon: "ux", label: "Live sessions" },
+        { icon: "doc", label: "CMS guide" },
+      ],
+      cardTag: "Ongoing website support",
+      chips: [
+        { icon: "calendar", label: "Weekly updates" },
+        { icon: "speed", label: "SLA-backed response times" },
+      ],
+    },
+  },
 };
