@@ -5,8 +5,9 @@
  * Layout:
  *   1. .c-footer__inner  — max-width container with the top row:
  *      - Barcelona card (image + tint overlay + city/address text)
- *      - SERVICES + GUIDES + ABOUT link columns (Eyebrow labels; GUIDES
- *        and the new service pages added 2026-10-07)
+ *      - SERVICES + SOLUTIONS/GUIDES + ABOUT link columns (Eyebrow labels;
+ *        GUIDES and the new service pages added 2026-10-07; services grouped
+ *        by pillar and SOLUTIONS stacked above GUIDES 2026-10-10)
  *      - Socials, then the partner badges (images) — swapped lead 2026-09-30
  *   2. .c-footer__wordmark-strip — FULL-WIDTH strip, height 258px,
  *      border top + bottom, containing the wordmark image (move-in on
@@ -28,13 +29,20 @@ interface Props {
 }
 
 // --- Link columns ---------------------------------------------------------
+// Services by pillar: each pillar, then its spoke pages (lead 2026-10-10).
 const servicesLinks = [
   { label: "Custom Websites & Migrations", href: "/custom-websites-migrations" },
-  { label: "Growth (SEO/GEO + CRO)", href: "/growth" },
-  { label: "Ongoing Website Support", href: "/ongoing-website-support" },
-  // New service pages (content-pack, released 2026-10-07).
+  { label: "Website Redesign", href: "/website-redesign" },
   { label: "WordPress to Webflow Migration", href: "/webflow-migration" },
+  { label: "Growth (SEO/GEO + CRO)", href: "/growth" },
+  { label: "Webflow SEO & AEO", href: "/webflow-seo-agency" },
+  { label: "AEO & GEO Agency", href: "/aeo-agency" },
+  { label: "Ongoing Website Support", href: "/ongoing-website-support" },
+];
+// Pages by audience (industry and company size), stacked above GUIDES.
+const solutionsLinks = [
   { label: "B2B SaaS Web Design", href: "/b2b-saas-web-design" },
+  { label: "Cybersecurity Web Design", href: "/cybersecurity-web-design" },
   { label: "Webflow Enterprise Agency", href: "/webflow-enterprise-agency" },
 ];
 // Guides (content-pack articles, released 2026-10-07).
@@ -91,7 +99,13 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
           </ul>
         </div>
         <div class="c-footer__col">
-          <Eyebrow class="c-footer__col-label">GUIDES</Eyebrow>
+          <Eyebrow class="c-footer__col-label">SOLUTIONS</Eyebrow>
+          <ul class="c-footer__col-list">
+            {solutionsLinks.map((l) => (
+              <li><a href={l.href} class="c-footer__col-link">{l.label}</a></li>
+            ))}
+          </ul>
+          <Eyebrow class="c-footer__col-label is-next">GUIDES</Eyebrow>
           <ul class="c-footer__col-list">
             {guidesLinks.map((l) => (
               <li><a href={l.href} class="c-footer__col-link">{l.label}</a></li>
@@ -238,6 +252,11 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
     align-items: flex-start;
     gap: 1.25rem;
     text-align: center;
+  }
+  /* A second group in the same column (SOLUTIONS, then GUIDES): the column
+     gap plus the same again, so the groups read apart. */
+  .c-footer__col :global(.c-footer__col-label.is-next) {
+    margin-top: 1.25rem;
   }
   /* Eyebrow used as the col-label — width fits text automatically (inline-flex). */
   .c-footer__col-list {

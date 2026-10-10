@@ -30,25 +30,27 @@ const at = (r: number, deg: number) => ({
 const outerAngles = [128, 101, 79, 52];
 const innerAngles = [146, 116, 64, 34];
 const spokes = [90].map((deg) => ({ a: at(190, deg), b: at(320, deg) }));
+// Gradient ids per instance (a page can show two rings), stable across builds.
+const uid = `np-il-${[...JSON.stringify([outer, inner])].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7).toString(36)}`;
 ---
 
 <IlFrame h={H} glow={{ x: 280, y: 330, w: 640, h: 420 }}>
   <svg class="np-il__lines" viewBox={`0 0 560 ${H}`} preserveAspectRatio="none" aria-hidden="true">
     <defs>
-      <linearGradient id="np-il-band" x1="0" y1="0" x2="1" y2="1">
+      <linearGradient id={`${uid}-band`} x1="0" y1="0" x2="1" y2="1">
         <stop offset="0" style="stop-color: var(--color-blue); stop-opacity: 0.2" />
         <stop offset="1" style="stop-color: var(--color-blue-light); stop-opacity: 0.08" />
       </linearGradient>
-      <linearGradient id="np-il-core" x1="0" y1="0" x2="1" y2="0.3">
+      <linearGradient id={`${uid}-core`} x1="0" y1="0" x2="1" y2="0.3">
         <stop offset="0.03" style="stop-color: var(--color-blue)" />
         <stop offset="0.97" style="stop-color: var(--color-blue-light)" />
       </linearGradient>
     </defs>
-    <circle cx={cx} cy={cy} r="400" fill="url(#np-il-band)" style="stroke: var(--np-il-line)" />
+    <circle cx={cx} cy={cy} r="400" fill={`url(#${uid}-band)`} style="stroke: var(--np-il-line)" />
     <circle cx={cx} cy={cy} r="320" style="fill: var(--color-white); stroke: var(--np-il-line)" />
     {spokes.map((s) => <line x1={s.a.x} y1={s.a.y} x2={s.b.x} y2={s.b.y} />)}
     <circle cx={cx} cy={cy} r="190" style="fill: color-mix(in srgb, var(--color-accent) 4%, var(--color-white)); stroke: var(--np-il-line)" />
-    <circle cx={cx} cy={cy} r="110" fill="url(#np-il-core)" />
+    <circle cx={cx} cy={cy} r="110" fill={`url(#${uid}-core)`} />
   </svg>
   <img class="np-il-at np-il-core-mark" src="/images/home/services-diagram/center-bottom-icon.webp" width="288" height="295" alt="" style={`--x: ${cx}; --y: 402; width: 5.4em; height: auto;`} />
   {inner.map((item, i) => {

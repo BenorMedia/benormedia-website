@@ -342,6 +342,378 @@ export const DIAGRAMS: Record<string, DiagramEntry> = {
       ],
     },
   },
+
+  // /website-redesign (docs/brief-next-pages.md). Labels from the page text.
+  // "Start with what your current site already wins": the five groups (stand-in for the five-way triage diagram).
+  "website-redesign:1": {
+    framed: true,
+    component: IlSiteMap,
+    props: {
+      root: "Current site",
+      pages: [
+        { icon: "shield", label: "Keep" },
+        { icon: "funnel", label: "Improve" },
+        { icon: "puzzle", label: "Merge" },
+        { icon: "doc", label: "Retire" },
+        { icon: "docPencil", label: "Add" },
+      ],
+    },
+  },
+  // "Rebuild on a system your marketing team can run": component library, CMS structure, integrations; "variables and design tokens".
+  "website-redesign:2": {
+    framed: true,
+    component: IlBuilder,
+    props: {
+      tag: "Component library",
+      items: [
+        { icon: "systems", label: "Sections" },
+        { icon: "cms", label: "CMS structure" },
+        { icon: "api", label: "Integrations" },
+      ],
+      tokens: ["Variables", "Design tokens"],
+    },
+  },
+  // "Protect your rankings through launch": URL map with 301s (content note: reuse the /webflow-migration URL map); chips = bold lead-ins.
+  "website-redesign:3": {
+    framed: true,
+    component: IlRedirectMap,
+    props: {
+      fromTag: "Old URL",
+      toTag: "New address",
+      rows: [
+        { from: "/old-page", to: "/new-page", badge: "301" },
+        { from: "/blog/old-post", to: "/blog/new-post", badge: "301" },
+        { from: "/category/news", to: "/blog", badge: "301" },
+        { from: "/about-us-2", to: "/about", badge: "301" },
+      ],
+      chips: [
+        { icon: "techSeo", label: "URL map" },
+        { icon: "devices", label: "Testing on staging" },
+        { icon: "analytics", label: "Monitoring after launch" },
+      ],
+    },
+  },
+  // "Fast, findable and ready for AI search": the content file's tags (outer) and the three metrics plus server rendering (inner).
+  "website-redesign:4": {
+    framed: true,
+    component: IlRings,
+    props: {
+      outer: [
+        { icon: "speed", label: "Core Web Vitals" },
+        { icon: "techSeo", label: "Technical SEO" },
+        { icon: "code", label: "Structured data" },
+        { icon: "ai", label: "AEO" },
+      ],
+      inner: [
+        { icon: "speed", label: "Largest Contentful Paint" },
+        { icon: "ux", label: "Interaction to Next Paint" },
+        { icon: "devices", label: "Cumulative Layout Shift" },
+        { icon: "systems", label: "Content rendered on the server" },
+      ],
+    },
+  },
+  // "After launch: measure, fix, keep improving": "rankings, conversions and errors, then ... a short plan"; card = ongoing website support.
+  "website-redesign:5": {
+    framed: true,
+    component: IlJourney,
+    props: {
+      tag: "After launch",
+      steps: [
+        { icon: "chartSearch", label: "Rankings" },
+        { icon: "funnel", label: "Conversions" },
+        { icon: "code", label: "Errors" },
+        { icon: "reporting", label: "Plan" },
+      ],
+      cardTag: "Ongoing website support",
+      chips: [
+        { icon: "calendar", label: "Weekly updates" },
+        { icon: "funnel", label: "Quarterly CRO audits" },
+        { icon: "techSeo", label: "Technical SEO monitoring" },
+      ],
+    },
+  },
+  // /webflow-seo-agency (docs/brief-next-pages.md). Labels from the page text.
+  // "Start with a Webflow SEO audit, not a keyword list": the bold lead-ins (stand-in for the audit checklist).
+  "webflow-seo-agency:1": {
+    framed: true,
+    component: IlSiteMap,
+    props: {
+      root: "SEO audit",
+      pages: [
+        { icon: "techSeo", label: "Index & crawl" },
+        { icon: "cms", label: "CMS architecture" },
+        { icon: "speed", label: "Performance" },
+        { icon: "chartSearch", label: "Search baseline" },
+        { icon: "ai", label: "AI visibility baseline" },
+      ],
+    },
+  },
+  // "The Webflow SEO problems we fix most often": lead-ins of the problems listed.
+  "webflow-seo-agency:2": {
+    framed: true,
+    component: IlBuilder,
+    props: {
+      tag: "Webflow SEO fixes",
+      items: [
+        { icon: "shield", label: "Staging indexing" },
+        { icon: "cms", label: "CMS content" },
+        { icon: "systems", label: "Canonicals" },
+      ],
+      tokens: ["Redirect imports", "Schema gaps"],
+    },
+  },
+  // "AEO and AI search on Webflow": the content file's legend as chips; cards = structured data, crawler access, Bing.
+  "webflow-seo-agency:3": {
+    framed: true,
+    component: IlHub,
+    props: {
+      centerLogo: "webflow",
+      cards: [
+        { tag: "Structured data", tiles: [{ icon: "code" }, { icon: "cms" }] },
+        { tag: "Crawler access", tiles: [{ icon: "ai" }, { icon: "techSeo" }] },
+        { tag: "Bing and Copilot", tiles: [{ icon: "chartSearch" }, { icon: "analytics" }] },
+      ],
+      chips: [
+        { icon: "systems", label: "Built-in setting" },
+        { icon: "api", label: "Integration" },
+        { icon: "code", label: "Custom code" },
+      ],
+    },
+  },
+  // "Authority that moves rankings and AI answers": the content file's tags (outer) and the lead-ins (inner).
+  "webflow-seo-agency:4": {
+    framed: true,
+    component: IlRings,
+    props: {
+      outer: [
+        { icon: "doc", label: "Lists" },
+        { icon: "puzzle", label: "Partners" },
+        { icon: "research", label: "Digital PR" },
+        { icon: "person", label: "Reviews" },
+      ],
+      inner: [
+        { icon: "reporting", label: "Roundups" },
+        { icon: "api", label: "Integration listings" },
+        { icon: "analytics", label: "Your own data" },
+        { icon: "ux", label: "Communities" },
+      ],
+    },
+  },
+  // "Reporting you can take to a pipeline meeting": the lead-ins; chips = organic traffic, rankings, AI visibility.
+  "webflow-seo-agency:5": {
+    framed: true,
+    component: IlJourney,
+    props: {
+      tag: "Monthly report",
+      steps: [
+        { icon: "funnel", label: "Pipeline" },
+        { icon: "chartSearch", label: "Search Console" },
+        { icon: "ai", label: "AI visibility" },
+        { icon: "calendar", label: "Roadmap" },
+      ],
+      cardTag: "SEO performance",
+      chips: [
+        { icon: "analytics", label: "Organic traffic" },
+        { icon: "reporting", label: "Rankings" },
+        { icon: "ai", label: "AI visibility" },
+      ],
+    },
+  },
+
+  // /cybersecurity-web-design (docs/brief-next-pages.md). Labels from the page text.
+  // "Write for a buying committee that doesn't trust vendors": the four buyer lanes in the content note (stand-in).
+  "cybersecurity-web-design:1": {
+    framed: true,
+    component: IlSiteMap,
+    props: {
+      root: "Buying committee",
+      pages: [
+        { icon: "shield", label: "CISO" },
+        { icon: "code", label: "Engineers" },
+        { icon: "doc", label: "Procurement" },
+        { icon: "reporting", label: "Finance" },
+      ],
+    },
+  },
+  // "Proof before persuasion": the bold lead-ins and the trust center contents.
+  "cybersecurity-web-design:2": {
+    framed: true,
+    component: IlRings,
+    props: {
+      outer: [
+        { icon: "shield", label: "Trust center" },
+        { icon: "code", label: "security.txt" },
+        { icon: "person", label: "Customer evidence" },
+        { icon: "chartSearch", label: "Independent validation" },
+      ],
+      inner: [
+        { icon: "doc", label: "SOC 2 report" },
+        { icon: "reporting", label: "Certifications" },
+        { icon: "docPencil", label: "Policies" },
+        { icon: "systems", label: "Subprocessors" },
+      ],
+    },
+  },
+  // "Technical depth your engineers can find in two clicks": the page types.
+  "cybersecurity-web-design:3": {
+    framed: true,
+    component: IlSiteMap,
+    props: {
+      root: "Navigation",
+      pages: [
+        { icon: "devices", label: "Platform pages" },
+        { icon: "research", label: "Use-case pages" },
+        { icon: "api", label: "Integrations" },
+        { icon: "chartSearch", label: "Comparisons" },
+        { icon: "doc", label: "Research" },
+      ],
+    },
+  },
+  // "A website built to pass your own security review": the bold lead-ins.
+  "cybersecurity-web-design:4": {
+    framed: true,
+    component: IlAccessFlow,
+    props: {
+      tag: "Role-based publishing",
+      steps: [
+        { icon: "graphics", label: "Editors" },
+        { icon: "ux", label: "Reviewers" },
+        { icon: "shield", label: "Publishers", big: true },
+      ],
+      cardTag: "Attack surface",
+      chips: [
+        { icon: "code", label: "Fewer third-party scripts" },
+        { icon: "doc", label: "Forms that collect less" },
+        { icon: "techSeo", label: "Security reviews" },
+      ],
+    },
+  },
+  // "Search and AI visibility for security vendors": the content file's tags (outer) and the lead-ins (inner).
+  "cybersecurity-web-design:5": {
+    framed: true,
+    component: IlRings,
+    props: {
+      outer: [
+        { icon: "chartSearch", label: "Comparisons" },
+        { icon: "research", label: "Research" },
+        { icon: "techSeo", label: "Technical SEO" },
+        { icon: "ai", label: "AI visibility" },
+      ],
+      inner: [
+        { icon: "person", label: "Peer recommendations" },
+        { icon: "ai", label: "AI answers" },
+        { icon: "analytics", label: "Search Console" },
+        { icon: "funnel", label: "Pipeline data" },
+      ],
+    },
+  },
+  // "Built for the team that runs it after launch": the bold lead-ins; card = ongoing website support.
+  "cybersecurity-web-design:6": {
+    framed: true,
+    component: IlJourney,
+    props: {
+      tag: "Training & handoff",
+      steps: [
+        { icon: "systems", label: "Component library" },
+        { icon: "cms", label: "CMS" },
+        { icon: "ux", label: "Live sessions" },
+        { icon: "doc", label: "CMS guide" },
+      ],
+      cardTag: "Ongoing website support",
+      chips: [
+        { icon: "calendar", label: "Weekly updates" },
+        { icon: "speed", label: "SLA-backed response times" },
+      ],
+    },
+  },
+
+  // /aeo-agency (docs/brief-next-pages.md). Labels from the page text.
+  // "Why AI search now shapes B2B software shortlists": the bold lead-ins and source names (stand-in for the four stat tiles).
+  "aeo-agency:1": {
+    framed: true,
+    component: IlRings,
+    props: {
+      outer: [
+        { icon: "ai", label: "Research starts in chat" },
+        { icon: "chartSearch", label: "AI in nearly every purchase" },
+        { icon: "person", label: "AI names vendors" },
+        { icon: "funnel", label: "Fewer clicks" },
+      ],
+      inner: [
+        { icon: "research", label: "G2" },
+        { icon: "reporting", label: "Forrester" },
+        { icon: "research", label: "G2" },
+        { icon: "analytics", label: "Pew Research" },
+      ],
+    },
+  },
+  // "What AEO and GEO actually involve": the base layer and blocks in the content note (stand-in for the layered diagram).
+  "aeo-agency:2": {
+    framed: true,
+    component: IlSiteMap,
+    props: {
+      root: "SEO foundations",
+      pages: [
+        { icon: "chartSearch", label: "Prompt tracking" },
+        { icon: "docPencil", label: "Answer-shaped pages" },
+        { icon: "person", label: "Third-party presence" },
+        { icon: "systems", label: "Entity consistency" },
+      ],
+    },
+  },
+  // "What the evidence says gets cited": the bold lead-ins.
+  "aeo-agency:3": {
+    framed: true,
+    component: IlBuilder,
+    props: {
+      tag: "What gets cited",
+      items: [
+        { icon: "reporting", label: "Statistics" },
+        { icon: "doc", label: "Quotations" },
+        { icon: "research", label: "Lists" },
+      ],
+      tokens: ["Third-party pages", "Sources"],
+    },
+  },
+  // "How we measure AI search visibility": the content file's tags (outer) and the lead-ins (inner).
+  "aeo-agency:4": {
+    framed: true,
+    component: IlRings,
+    props: {
+      outer: [
+        { icon: "ai", label: "Mention rate" },
+        { icon: "doc", label: "Citations" },
+        { icon: "analytics", label: "AI referrals" },
+        { icon: "techSeo", label: "Search Console" },
+      ],
+      inner: [
+        { icon: "chartSearch", label: "Prompt set" },
+        { icon: "funnel", label: "Pipeline" },
+        { icon: "research", label: "AI Overviews" },
+        { icon: "ai", label: "AI Mode" },
+      ],
+    },
+  },
+  // "What you get every month": the bold lead-ins; chips = "what changed, what we shipped and what's next".
+  "aeo-agency:5": {
+    framed: true,
+    component: IlJourney,
+    props: {
+      tag: "Every month",
+      steps: [
+        { icon: "reporting", label: "Visibility report" },
+        { icon: "code", label: "Shipped work" },
+        { icon: "person", label: "Outreach log" },
+        { icon: "calendar", label: "Next month's plan" },
+      ],
+      cardTag: "Growth (SEO/GEO + CRO)",
+      chips: [
+        { icon: "analytics", label: "What changed" },
+        { icon: "devices", label: "What we shipped" },
+        { icon: "calendar", label: "What's next" },
+      ],
+    },
+  },
 };
 
 export type ResolvedVisual =

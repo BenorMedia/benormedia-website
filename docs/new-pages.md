@@ -74,6 +74,7 @@ H1, H2s, the FAQ heading and the closing heading end in a period (added by the t
 | Commercial hero | the Home `HomeHero` (logo pile, Trusted badge) extended with optional `content` / `buttons` (rung 2; lead 2026-10-07) | `src/components/sections/HomeHero.astro` |
 | Proof strip | removed (lead 2026-10-07) | — |
 | Work section (the section linking to `/work`) | the Home `OurWork` extended with an optional `title` (rung 2), under the section's own H2 | `src/components/sections/OurWork.astro` |
+| Process section (front matter `process: {section, imagesFrom}`) | the live service `ServiceProcess` tabs, steps from the section's `- **N. Name.** text` items, no feature pills, illustration from the `imagesFrom` service (lead 2026-10-10) | `src/components/sections/ServiceProcess.astro` |
 | Fit section (the last section, "when another option is better") | cards (lead 2026-10-07, Figma 3696-7378) | `NpFitCards.astro` |
 | Sections + visuals | new (rung 4) | `NpSplitSection.astro`, `NpVisual.astro` |
 | Testimonial | left out for now (lead 2026-10-07) | — |

@@ -25,6 +25,11 @@ const PAGES = {
   '/guides/wordpress-to-webflow-migration': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'migrate wordpress to webflow' },
   '/guides/b2b-saas-website-pages': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'saas website' },
   '/guides/webflow-enterprise': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow enterprise' },
+  // Service pages from docs/brief-next-pages.md (drafts until sign-off: built in previews only).
+  '/website-redesign': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'website redesign' },
+  '/webflow-seo-agency': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'webflow seo' },
+  '/cybersecurity-web-design': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'cybersecurity website design' },
+  '/aeo-agency': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'aeo geo b2b saas' },
   // Author pages (src/lib/new-pages/authors.ts), 2026-10-08.
   '/authors/sergio-gancedo': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'sergio gancedo' },
 };

@@ -83,12 +83,13 @@ export function pageJsonLd(page: NpPage): Ld[] {
       "@type": "Service",
       "@id": `${url}#service`,
       name: page.service.name,
+      ...(page.service.alternateName.length > 0 ? { alternateName: page.service.alternateName } : {}),
       serviceType: page.service.serviceType,
       url,
       description: page.description,
       provider: PROVIDER_LD,
       areaServed: AREA_SERVED_LD,
-      audience: { "@type": "BusinessAudience", audienceType: "B2B SaaS and tech companies" },
+      audience: { "@type": "BusinessAudience", audienceType: page.service.audience ?? "B2B SaaS and tech companies" },
     });
   } else {
     out.push({
