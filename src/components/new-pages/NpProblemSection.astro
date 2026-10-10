@@ -36,6 +36,12 @@ const { section, clients } = Astro.props;
   .c-np-live {
     display: contents;
   }
+  /* Top line to match the bottom border (lead 2026-10-10). On the live
+     service pages the logo strip's bottom border closes the frame; the new
+     pages have no logo strip above this section. */
+  .c-np-live > :global(.c-service-problem) {
+    border-top: var(--border-default);
+  }
   .c-np-problem__title {
     max-width: 52rem;
     text-wrap: balance;
