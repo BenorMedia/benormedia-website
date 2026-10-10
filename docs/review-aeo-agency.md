@@ -50,5 +50,5 @@ How to use: go to the rows marked `open`. For each, give the fact, or write "del
 ## Sign-off
 
 - Facts confirmed by: Sergio on 2026-10-10 (chat: "Ok to everything", DeepSeas is a client)
-- Final edit done by: ________ on ________
-- Approved to publish (yes or no): ________
+- Final edit done by: Sergio (approved as written) on 2026-10-10
+- Approved to publish (yes or no): yes, Sergio in chat on 2026-10-10 ("publish them")

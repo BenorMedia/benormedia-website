@@ -4,7 +4,7 @@ url: /aeo-agency
 lang: en-US
 pageType: service
 wave: 1
-draft: true
+draft: false
 blockedBy: []
 title: "AEO & GEO Agency for B2B SaaS | BenorMedia"
 description: "AEO and GEO services for B2B SaaS. We track the questions your buyers ask ChatGPT, Perplexity, Gemini and Google AI, then fix what keeps you out of the answers."
@@ -13,7 +13,7 @@ eyebrow: AEO & GEO
 primaryKeyword: aeo agency
 secondaryKeywords: [geo agency, generative engine optimization services, generative engine optimization agency, answer engine optimization services, answer engine optimization agency, ai seo agency, aeo services]
 targetCountry: US
-publishedAt: 2026-10-09
+publishedAt: 2026-10-10
 updatedAt: 2026-10-10
 reviewEvery: 90
 breadcrumb:

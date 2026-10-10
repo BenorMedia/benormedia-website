@@ -76,5 +76,5 @@ This page has no inline markers, so this sheet is the only check on the `open` r
 ## Sign-off
 
 - Facts confirmed by: Sergio on 2026-10-10 (chat: "Ok to everything", DeepSeas is a client)
-- Final edit done by: ________ on ________
-- Approved to publish (yes or no): ________
+- Final edit done by: Sergio (approved as written) on 2026-10-10
+- Approved to publish (yes or no): yes, Sergio in chat on 2026-10-10 ("publish them")

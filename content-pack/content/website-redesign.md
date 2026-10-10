@@ -4,7 +4,7 @@ url: /website-redesign
 lang: en-US
 pageType: service
 wave: 1
-draft: true
+draft: false
 blockedBy: []
 title: "Website Redesign Services for B2B & SaaS | BenorMedia"
 description: "Website redesign services for B2B and SaaS teams. We keep the pages that rank and convert, rebuild the rest, and launch on Webflow or custom code."
@@ -13,7 +13,7 @@ eyebrow: Website redesign
 primaryKeyword: website redesign services
 secondaryKeywords: [website redesign agency, b2b website redesign, saas website redesign, website redesign company]
 targetCountry: US
-publishedAt: 2026-10-09
+publishedAt: 2026-10-10
 updatedAt: 2026-10-10
 reviewEvery: 90
 breadcrumb:
