@@ -99,6 +99,9 @@ volatile:
     source: https://developers.openai.com/api/docs/bots
     recheck: open the OpenAI and Perplexity crawler pages and confirm both names
 volatileChecked: 2026-10-09
+process:
+  section: How we plan and run a website redesign.
+  imagesFrom: custom-websites-migrations
 editorNotes:
   - "Copy from docs/website-redesign.md (draft v2, 2026-10-09), word for word. Review sheet: docs/review-website-redesign.md."
   - "Two markers: RED-1 (custom code examples and frameworks, facts sheet item 1) and RED-2 (30-day support, item 2)."
@@ -110,28 +113,23 @@ visuals:
     type: diagram
     brief: "Five-way triage of every URL: Keep, Improve, Merge, Retire, Add, with a few example URLs flowing into each."
     alt: "Every URL of the current site sorted into Keep, Improve, Merge, Retire and Add"
-  - after: How we plan and run a website redesign.
-    side: left
-    type: diagram
-    brief: "The seven redesign steps in order, numbered."
-    alt: "The seven steps of a website redesign, from audit to handoff"
   - after: Rebuild on a system your marketing team can run.
-    side: right
+    side: left
     type: diagram
     brief: "A component library with reusable sections, the CMS structure and integrations, held together by variables and design tokens."
     alt: "Component library with sections, CMS structure and integrations"
   - after: Protect your rankings through launch.
-    side: left
+    side: right
     type: diagram
     brief: "URL map: old path, 301, new path on each row."
     alt: "URL map pairing old paths with new paths through 301 redirects"
   - after: Fast, findable and ready for AI search.
-    side: right
+    side: left
     type: diagram
     brief: "Core Web Vitals, technical SEO, structured data and AEO around the three Core Web Vitals metrics and server rendering."
     alt: "Core Web Vitals, technical SEO, structured data and AEO built into the redesign"
   - after: "After launch: measure, fix, keep improving."
-    side: left
+    side: right
     type: diagram
     brief: "After launch: rankings, conversions and errors watched, then a plan, with ongoing website support alongside."
     alt: "Rankings, conversions and errors tracked after launch, then a plan for what to improve"

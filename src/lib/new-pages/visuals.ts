@@ -359,25 +359,8 @@ export const DIAGRAMS: Record<string, DiagramEntry> = {
       ],
     },
   },
-  // "How we plan and run a website redesign": the seven step names.
-  "website-redesign:2": {
-    component: FlowDiagram,
-    props: {
-      numbered: true,
-      columns: 4,
-      steps: [
-        { label: "Audit and business goals" },
-        { label: "Website strategy plan" },
-        { label: "Wireframes and content" },
-        { label: "UI/UX design and design system" },
-        { label: "Component library build and website development" },
-        { label: "Content migration and QA" },
-        { label: "Launch, training and handoff" },
-      ],
-    },
-  },
   // "Rebuild on a system your marketing team can run": component library, CMS structure, integrations; "variables and design tokens".
-  "website-redesign:3": {
+  "website-redesign:2": {
     framed: true,
     component: IlBuilder,
     props: {
@@ -391,7 +374,7 @@ export const DIAGRAMS: Record<string, DiagramEntry> = {
     },
   },
   // "Protect your rankings through launch": URL map with 301s (content note: reuse the /webflow-migration URL map); chips = bold lead-ins.
-  "website-redesign:4": {
+  "website-redesign:3": {
     framed: true,
     component: IlRedirectMap,
     props: {
@@ -411,7 +394,7 @@ export const DIAGRAMS: Record<string, DiagramEntry> = {
     },
   },
   // "Fast, findable and ready for AI search": the content file's tags (outer) and the three metrics plus server rendering (inner).
-  "website-redesign:5": {
+  "website-redesign:4": {
     framed: true,
     component: IlRings,
     props: {
@@ -430,7 +413,7 @@ export const DIAGRAMS: Record<string, DiagramEntry> = {
     },
   },
   // "After launch: measure, fix, keep improving": "rankings, conversions and errors, then ... a short plan"; card = ongoing website support.
-  "website-redesign:6": {
+  "website-redesign:5": {
     framed: true,
     component: IlJourney,
     props: {

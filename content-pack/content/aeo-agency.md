@@ -136,6 +136,9 @@ volatile:
     source: https://help.webflow.com/hc/en-us/articles/51704299506195-AEO-analytics-overview
     recheck: open the Webflow article and confirm the plans and the add-on
 volatileChecked: 2026-10-09
+process:
+  section: How we run an AEO and GEO program.
+  imagesFrom: growth
 editorNotes:
   - "Copy from docs/aeo-agency.md (draft v2, 2026-10-09), word for word. Review sheet: docs/review-aeo-agency.md."
   - "One marker: AEO-1 (own tracking data, facts sheet item 4)."

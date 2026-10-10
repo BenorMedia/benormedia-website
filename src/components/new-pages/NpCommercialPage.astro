@@ -15,6 +15,8 @@
  *     section, so every page shows the work;
  *   - fit: the last section ("when another option is better") renders as
  *     cards (`NpFitCards`);
+ *   - process: the section named in the front matter `process` renders as the
+ *     live service `ServiceProcess` tabs (lead 2026-10-10);
  *   - the third section renders in the "The Problem" style of the service
  *     pages (`NpProblemSection`, lead 2026-10-07) unless it has a role above.
  * The closing band sits right above the FAQ (lead 2026-10-07).
@@ -28,6 +30,7 @@ import Container from "../ui/Container.astro";
 import HomeHero from "../sections/HomeHero.astro";
 import OurWork from "../sections/OurWork.astro";
 import Services from "../sections/Services.astro";
+import ServiceProcess from "../sections/ServiceProcess.astro";
 import NpDraftBanner from "./NpDraftBanner.astro";
 import NpSplitSection from "./NpSplitSection.astro";
 import NpProblemSection from "./NpProblemSection.astro";
@@ -40,9 +43,9 @@ import copy from "../../lib/new-pages/copy.json";
 import { withPeriod } from "../../lib/new-pages/html";
 import { pageJsonLd } from "../../lib/new-pages/jsonld";
 import type { NpPage } from "../../lib/new-pages/loader";
-import { getAllClientsWithIcon, getClientsByIds } from "../../lib/sanity/queries";
+import { getAllClientsWithIcon, getClientsByIds, getServiceBySlug } from "../../lib/sanity/queries";
 import { OUR_WORK_GRID_IDS, OUR_WORK_LIST_IDS } from "../../lib/content/our-work";
-import type { Button as ButtonType } from "../../lib/sanity/types";
+import type { Button as ButtonType, ProcessStep } from "../../lib/sanity/types";
 import "./new-pages.css";
 
 interface Props {
@@ -69,6 +72,23 @@ const [heroClients, workClients, workListClients] = await Promise.all([
   getClientsByIds(OUR_WORK_LIST_IDS),
 ]);
 
+// Process role (front matter `process`, lead 2026-10-10): that section renders
+// with the live service `ServiceProcess` tabs, its list items as the steps (no
+// feature pills), each with the illustration of the service named in
+// `imagesFrom` (same step number, else its first step's).
+const processIndex = page.process ? page.sections.findIndex((s) => s.title === page.process?.section) : -1;
+const processService = processIndex >= 0 && page.process?.imagesFrom ? await getServiceBySlug(page.process.imagesFrom) : null;
+const processImages = (processService?.steps ?? []).map((step) => step.image).filter((image) => image?.asset);
+const processSteps: ProcessStep[] = (page.process?.steps ?? []).map((step, i) => {
+  const image = processImages[i] ?? processImages[0];
+  return {
+    _key: `np-process-${i + 1}`,
+    name: step.name,
+    description: step.description,
+    image: image ? { ...image, alt: `${step.name} illustration` } : null,
+  };
+});
+
 // Lead paragraphs as inner HTML for the hero's own <p> elements.
 const leadInner = page.lead
   .map((html) => /^<p[^>]*>([\s\S]*)<\/p>$/.exec(html)?.[1])
@@ -85,7 +105,16 @@ const plain = (html: string): string => html.replace(/<[^>]*>/g, "").replace(/&a
     buttons={heroButtons}
   />
   {page.sections.map((section, i) =>
-    i === workIndex ? (
+    i === processIndex ? (
+      <div data-np-live="service-process" data-np-section={section.title} class="c-np-live">
+        <ServiceProcess
+          title={withPeriod(plain(section.titleHtml))}
+          description={page.process?.intro}
+          steps={processSteps}
+          id={`${section.id}-step`}
+        />
+      </div>
+    ) : i === workIndex ? (
       <div data-np-live="our-work" data-np-section={section.title} class="c-np-live">
         <OurWork clients={workClients} listClients={workListClients} title={withPeriod(plain(section.titleHtml))} />
       </div>

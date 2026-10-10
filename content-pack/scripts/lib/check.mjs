@@ -102,7 +102,7 @@ export function serialCommaHits(t) {
 
 
 // Front matter keys whose text is never shown to visitors: not scanned for banned wording.
-const HIDDEN_KEYS = new Set(['editorNotes', 'volatile', 'inbound', 'visuals', 'blockedBy', 'sources', 'related', 'hreflang', 'insertInto', 'placement', 'volatileChecked', 'primaryKeyword', 'secondaryKeywords', 'eyebrow', 'testimonial']);
+const HIDDEN_KEYS = new Set(['editorNotes', 'volatile', 'inbound', 'visuals', 'blockedBy', 'sources', 'related', 'hreflang', 'insertInto', 'placement', 'volatileChecked', 'primaryKeyword', 'secondaryKeywords', 'eyebrow', 'testimonial', 'process']);
 
 const MARKER_ANY = /\[(?:FACT NEEDED|VERIFY|PERSON)\b[^\]]*\]/g;
 const MARKER_OK = /^\[(FACT NEEDED|VERIFY|PERSON) #(G\d+|[A-Z][A-Z0-9]{1,4}-\d+): ([^|\]\[]+?) \| default: (DELETE-LINE|DELETE-SECTION|DELETE-ITEM|KEEP|REPLACE: [^\]\[|]+)\]$/;
