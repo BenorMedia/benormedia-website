@@ -14,7 +14,7 @@ primaryKeyword: cybersecurity website design
 secondaryKeywords: [cybersecurity web design agency, web design for cybersecurity companies, cybersecurity marketing agency, security company website design]
 targetCountry: US
 publishedAt: 2026-10-09
-updatedAt: 2026-10-09
+updatedAt: 2026-10-10
 reviewEvery: 90
 breadcrumb:
   - name: Home
@@ -118,9 +118,9 @@ volatile:
 volatileChecked: 2026-10-09
 editorNotes:
   - "Copy from docs/cybersecurity-web-design.md (draft v2, 2026-10-09), word for word. Review sheet: docs/review-cybersecurity-web-design.md."
-  - "Two markers: CYB-1 (DeepSeas in the hero proof line, facts sheet item 7) and CYB-2 (self-guided product tours, item 6)."
+  - "Version 2 (2026-10-10): CYB-1 (DeepSeas stays, a client) and CYB-2 kept as written after Sergio confirmed everything in chat."
   - "The Ponemon study's co-sponsor is another agency and is not named on the page."
-  - "The meta description is 157 characters, over the 149 limit for service pages."
+  - "The meta description is 157 characters (commercial limit raised to 160 on 2026-10-09)."
 visuals:
   - after: Write for a buying committee that doesn't trust vendors.
     side: right
@@ -156,7 +156,7 @@ visuals:
 
 Cybersecurity website design has to work for skeptics: CISOs, security engineers and procurement teams who check every claim. We design and build sites that give each of them the evidence they look for, from detection coverage and integrations to SOC 2 reports and pricing logic. No fear tactics, because they tune them out.
 
-Security and risk companies on our work page include Sublime Security, Unit21, TripleKey, DeepSeas and Base Operations. [VERIFY #CYB-1: keep DeepSeas in this list? Its live site now runs on WordPress, not Webflow | default: DELETE-LINE]
+Security and risk companies on our work page include Sublime Security, Unit21, TripleKey, DeepSeas and Base Operations.
 
 ## Write for a buying committee that doesn't trust vendors.
 
@@ -185,7 +185,7 @@ Security sites tend to look alike: padlocks, hooded hackers, glowing globes and 
 - **Product visuals over stock imagery.** Real UI, architecture diagrams and data visualizations explain more than illustrations, and they age more slowly.
 - **A visual identity that holds up on every page.** Your brand identity turned into a design system, so research posts, product pages and the trust center look like one company.
 - **Fast and accessible.** Readable contrast, keyboard navigation and alt text, tested with browsers, speed and mobile layouts before launch. No autoplaying video background slowing the home page down.
-- **Calls to action for each stage.** A short demo video or a self-guided product tour for buyers who are still researching, and a demo request for those ready to talk. No pop-ups pushing either. [VERIFY #CYB-2: confirm you build or embed self-guided product tours | default: DELETE-LINE]
+- **Calls to action for each stage.** A short demo video or a self-guided product tour for buyers who are still researching, and a demo request for those ready to talk. No pop-ups pushing either.
 
 ## Technical depth your engineers can find in two clicks.
 

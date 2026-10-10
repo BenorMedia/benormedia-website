@@ -14,7 +14,7 @@ primaryKeyword: webflow seo agency
 secondaryKeywords: [webflow seo services, webflow seo company, webflow seo expert, webflow aeo, webflow seo]
 targetCountry: US
 publishedAt: 2026-10-09
-updatedAt: 2026-10-09
+updatedAt: 2026-10-10
 reviewEvery: 30
 breadcrumb:
   - name: Home
@@ -233,7 +233,7 @@ Webflow handles a lot of SEO well out of the box: clean markup, an auto-generate
 - **The staging site is indexed.** The webflow.io copy of your site can compete with the real one unless Staging indexing is switched off in site settings.
 - **CMS content crawlers can't see.** Collection lists show 100 items by default, and scripts that load the rest in the browser can hide them from crawlers. Webflow itself advises rendering important content on the server, because most AI crawlers don't run JavaScript yet.
 - **Duplicate content across CMS pages.** Canonical tags come from one global setting, and Webflow documents per-page overrides for static pages only. Overlapping Collection items need a content fix, not a tag.
-- **URL structures that can't change later.** CMS items always live at /collection/item. Category-style paths have to be planned when the Collections are designed.
+- **URL structures that can't change later.** CMS items live at /collection/item, optionally inside a parent folder. Category-style paths have to be planned when the Collections are designed.
 - **Redirect imports that wipe old rules.** A CSV import replaces every existing redirect in Webflow, so we merge the old list into the new file before importing.
 - **Heavy images in blog posts.** Webflow creates responsive image sizes for most uploads, but not for images in rich text, background images or files imported by CSV or API. That's where article pages slow down.
 - **Schema gaps.** Webflow's native schema field can pull from CMS fields, but not from reference, multi-reference or multi-image fields, so some markup still needs custom code.

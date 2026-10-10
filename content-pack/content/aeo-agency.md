@@ -14,7 +14,7 @@ primaryKeyword: aeo agency
 secondaryKeywords: [geo agency, generative engine optimization services, generative engine optimization agency, answer engine optimization services, answer engine optimization agency, ai seo agency, aeo services]
 targetCountry: US
 publishedAt: 2026-10-09
-updatedAt: 2026-10-09
+updatedAt: 2026-10-10
 reviewEvery: 90
 breadcrumb:
   - name: Home
@@ -141,7 +141,7 @@ process:
   imagesFrom: growth
 editorNotes:
   - "Copy from docs/aeo-agency.md (draft v2, 2026-10-09), word for word. Review sheet: docs/review-aeo-agency.md."
-  - "One marker: AEO-1 (own tracking data, facts sheet item 4)."
+  - "Version 2 (2026-10-10): AEO-1 kept as written after Sergio confirmed everything in chat."
   - "Confirmations with no marker (facts sheet item 5) are gated by the review sheet only."
   - "Ahrefs is named as the publisher of a cited study, not as a tool: the tool-name warning is expected."
 visuals:
@@ -212,7 +212,7 @@ Our generative engine optimization services follow the same six steps every time
 A lot of what's sold as AEO is guesswork. These are the findings we work from, with their sources.
 
 - **Statistics, quotations and sources.** In the [research paper that coined GEO](https://arxiv.org/abs/2311.09735) (KDD 2024), which tested generative search engines, adding citations, quotations and statistics raised visibility in AI answers by up to 40% in the authors' benchmark. Keyword stuffing didn't help.
-- **Lists and third-party pages.** In an [Ahrefs study of 750 prompts](https://ahrefs.com/blog/best-lists-research/), "best of" lists made up 43.8% of the page types ChatGPT cited. In our own tracking for the web agency category, roundups were 25 of the 40 pages AI assistants cited most. [VERIFY #AEO-1: OK to publish our own tracking data | default: DELETE-LINE]
+- **Lists and third-party pages.** In an [Ahrefs study of 750 prompts](https://ahrefs.com/blog/best-lists-research/), "best of" lists made up 43.8% of the page types ChatGPT cited. In our own tracking for the web agency category, roundups were 25 of the 40 pages AI assistants cited most.
 - **llms.txt isn't a lever yet.** Google says its Search ignores the file, and an [SE Ranking analysis of about 300,000 domains](https://www.searchenginejournal.com/llms-txt-shows-no-clear-effect-on-ai-citations-based-on-300k-domains/561542/) found no measurable effect on AI citations. We add one, but we don't sell it as strategy.
 - **Schema supports, it doesn't switch anything on.** Google says [structured data isn't required](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide) for generative AI search. We use it where it describes the page accurately.
 

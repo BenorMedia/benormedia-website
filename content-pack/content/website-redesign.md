@@ -14,7 +14,7 @@ primaryKeyword: website redesign services
 secondaryKeywords: [website redesign agency, b2b website redesign, saas website redesign, website redesign company]
 targetCountry: US
 publishedAt: 2026-10-09
-updatedAt: 2026-10-09
+updatedAt: 2026-10-10
 reviewEvery: 90
 breadcrumb:
   - name: Home
@@ -104,7 +104,7 @@ process:
   imagesFrom: custom-websites-migrations
 editorNotes:
   - "Copy from docs/website-redesign.md (draft v2, 2026-10-09), word for word. Review sheet: docs/review-website-redesign.md."
-  - "Two markers: RED-1 (custom code examples and frameworks, facts sheet item 1) and RED-2 (30-day support, item 2)."
+  - "Version 2 (2026-10-10): RED-1 and RED-2 kept as written after Sergio confirmed everything in chat."
   - "Confirmations with no marker (facts sheet item 3) are gated by the review sheet only."
   - "The JOOR link in the component library section points to /work until /work/joor is released."
 visuals:
@@ -178,7 +178,7 @@ A redesign that only an agency can update starts aging on launch day. We build a
 
 - **Component library.** Sections designed and built once, then reused, with variables and design tokens that keep every page consistent.
 - **CMS structure.** Collections for case studies, resources, integrations and jobs, with SEO fields bound to each item.
-- **The right platform.** Webflow for most marketing sites, and custom code when the site needs logic Webflow doesn't handle well, such as deep product integrations or heavy personalization. [VERIFY #RED-1: confirm the examples and the frameworks you build custom sites in | default: DELETE-LINE]
+- **The right platform.** Webflow for most marketing sites, and custom code when the site needs logic Webflow doesn't handle well, such as deep product integrations or heavy personalization.
 - **Integrations.** CRM, analytics, consent and enrichment tools connected during the build, not bolted on after launch.
 - **Training.** Live sessions, video walkthroughs and documentation your marketers will actually open.
 
@@ -207,7 +207,7 @@ Every redesign ships with the groundwork for search engine optimization and AI s
 
 Launch is the halfway point of a redesign. For the first weeks we watch rankings, conversions and errors, then hand you a short plan for what to improve next.
 
-- **Post-launch support.** Fixes and adjustments while traffic settles. Support continues for 30 days after launch. [VERIFY #RED-2: same 30-day window as migrations? | default: DELETE-LINE]
+- **Post-launch support.** Fixes and adjustments while traffic settles. Support continues for 30 days after launch.
 - **Before-and-after report.** Search Console, analytics, form and CRM data, including lead quality, for every page that changed, compared with the baseline from the audit.
 - **Ongoing website support.** Weekly updates, quarterly CRO audits and technical SEO monitoring, with SLA-backed response times, through [ongoing website support](/ongoing-website-support).
 - **Growth.** SEO, AEO and conversion optimization through [Growth](/growth), for teams that want ongoing optimization and more pipeline every quarter.
