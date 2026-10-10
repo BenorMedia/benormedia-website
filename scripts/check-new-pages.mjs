@@ -227,7 +227,7 @@ for (const { f, family, draft } of built) {
   const expectedOther = [
     ...(family === 'commercial' && d.eyebrow ? [{ src: 'eyebrow', text: norm(d.eyebrow) }] : []),
     { src: 'faqHeading', text: head(norm(d.faqHeading)) },
-    ...faq.flatMap((x) => [{ src: 'faq.q', text: norm(x.q) }, { src: 'faq.a', text: norm(x.a) }]),
+    ...faq.flatMap((x) => [{ src: 'faq.q', text: norm(x.q) }, { src: 'faq.a', text: norm(String(x.a ?? '').replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')) }]),
     ...(family === 'article' ? (d.takeaways ?? []).map((t) => ({ src: 'takeaway', text: norm(t) })) : []),
     ...(family === 'commercial' ? [{ src: 'closing.heading', text: head(norm(d.closing?.heading)) }, { src: 'closing.text', text: norm(d.closing?.text) }] : []),
   ];
