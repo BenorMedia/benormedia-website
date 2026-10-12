@@ -1,0 +1,132 @@
+---
+/**
+ * FlowDiagram — steps in order (brief 7.3): a row that wraps on wide
+ * figures and a vertical list under 440px. A step can carry a note under it
+ * (e.g. the role that acts) and can be a `gate` (an approval step, in the
+ * accent colour). Used for flows and the role map.
+ */
+interface Step {
+  label: string;
+  note?: string;
+  gate?: boolean;
+}
+
+interface Props {
+  steps: readonly Step[];
+  numbered?: boolean;
+  /** Max steps per row on wide figures. */
+  columns?: number;
+}
+
+const { steps, numbered = false, columns = steps.length } = Astro.props;
+---
+
+<div class="c-np-flow" style={`--np-flow-cols: ${columns};`}>
+  <ol class="c-np-flow__list">
+    {steps.map((step, i) => (
+      <li class={["c-np-flow__step", step.gate && "is-gate", (i + 1) % columns === 0 && "is-row-end"].filter(Boolean).join(" ")}>
+        <span class="c-np-flow__box">
+          {numbered && <span class="c-np-flow__n">{i + 1}</span>}
+          <span class="c-np-flow__label">{step.label}</span>
+        </span>
+        {step.note && <span class="c-np-flow__note">{step.note}</span>}
+      </li>
+    ))}
+  </ol>
+</div>
+
+<style>
+  .c-np-flow {
+    container-type: inline-size;
+    font-family: var(--font-body);
+    font-size: var(--fs-p);
+    line-height: 1.35;
+  }
+  .c-np-flow__list {
+    display: grid;
+    grid-template-columns: repeat(var(--np-flow-cols), minmax(0, 1fr));
+    gap: 2.286rem 1.714rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .c-np-flow__step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.571rem;
+  }
+  /* Connector to the next step: a 1px line and a chevron, drawn in CSS. */
+  .c-np-flow__step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 1.75rem;
+    right: -1.714rem;
+    width: 1.714rem;
+    height: 1px;
+    background: var(--color-gray);
+  }
+  .c-np-flow__step:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    top: calc(1.75rem - 0.25rem);
+    right: -0.15rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-top: 1px solid var(--color-gray);
+    border-right: 1px solid var(--color-gray);
+    transform: rotate(45deg);
+  }
+  .c-np-flow__step.is-row-end::after,
+  .c-np-flow__step.is-row-end::before {
+    display: none;
+  }
+  .c-np-flow__box {
+    display: flex;
+    align-items: center;
+    gap: 0.571rem;
+    min-height: 3.5rem;
+    padding: 0.857rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--np-radius);
+    background: var(--color-white);
+    color: var(--color-heading);
+  }
+  .c-np-flow__step.is-gate .c-np-flow__box {
+    border-color: var(--color-accent);
+    background: var(--np-surface-tint);
+    color: var(--color-accent);
+  }
+  .c-np-flow__n {
+    flex: 0 0 auto;
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+  .c-np-flow__note {
+    color: var(--color-text);
+  }
+
+  @container (max-width: 440px) {
+    .c-np-flow__list {
+      grid-template-columns: 1fr;
+      gap: 1.714rem;
+    }
+    .c-np-flow__step:not(:last-child)::after,
+    .c-np-flow__step.is-row-end:not(:last-child)::after {
+      top: auto;
+      bottom: -1.714rem;
+      right: auto;
+      left: 1.5rem;
+      width: 1px;
+      height: 1.714rem;
+      display: block;
+    }
+    .c-np-flow__step:not(:last-child)::before {
+      display: none;
+    }
+  }
+  @media (max-width: 767px) {
+    .c-np-flow { font-size: 1.556rem; /* 14px at the 9px root */ }
+    .c-np-flow__box { min-height: 4.889rem; padding: 1.111rem 1.333rem; }
+  }
+</style>

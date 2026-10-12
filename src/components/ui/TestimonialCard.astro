@@ -9,14 +9,16 @@
  * Fallbacks: missing photo → author initial in a circle; missing role → name only.
  */
 import type { Testimonial } from "../../lib/sanity/types";
-import { urlFor, type Source } from "../../lib/sanity/image";
+import { urlFor, clientImageAlt, type Source } from "../../lib/sanity/image";
 
 interface Props {
   testimonial: Testimonial;
+  /** Marquee repeat (wrapper is `aria-hidden`): the logo gets `alt=""`. */
+  repeat?: boolean;
   class?: string;
 }
 
-const { testimonial: t, class: className } = Astro.props;
+const { testimonial: t, repeat = false, class: className } = Astro.props;
 
 const photoUrl = t.authorPhoto?.asset
   ? urlFor(t.authorPhoto as Source).width(96).height(96).fit("crop").auto("format").url()
@@ -27,7 +29,7 @@ const logoSource = t.client?.logo?.asset ? t.client.logo : t.companyLogo?.asset 
 const logoUrl = logoSource
   ? urlFor(logoSource as Source).height(64).fit("max").auto("format").url()
   : undefined;
-const logoAlt = logoSource?.alt ?? t.client?.name ?? "";
+const logoAlt = clientImageAlt(logoSource?.alt, t.client?.name, "logo");
 
 const rootClass = ["c-testimonial-card", className].filter(Boolean).join(" ");
 ---
@@ -41,7 +43,7 @@ const rootClass = ["c-testimonial-card", className].filter(Boolean).join(" ");
         <img
           class="c-testimonial-card__photo"
           src={photoUrl}
-          alt={t.authorPhoto?.alt ?? t.authorName}
+          alt=""
           width="48"
           height="48"
           loading="lazy"
@@ -58,7 +60,12 @@ const rootClass = ["c-testimonial-card", className].filter(Boolean).join(" ");
       </span>
     </div>
 
-    {logoUrl && (
+    {/* Literal `alt=""` on repeats: Astro writes an expression that is ""
+        as a bare `alt`, which crawlers report as missing. */}
+    {logoUrl && repeat && (
+      <img class="c-testimonial-card__logo" src={logoUrl} alt="" loading="lazy" decoding="async" />
+    )}
+    {logoUrl && !repeat && (
       <img class="c-testimonial-card__logo" src={logoUrl} alt={logoAlt} loading="lazy" decoding="async" />
     )}
   </footer>

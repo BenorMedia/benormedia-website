@@ -38,3 +38,6 @@ docs/refs/
 
 # Claude Code local session state
 .claude/scheduled_tasks.lock
+
+# new pages: pages:verify build output (scripts/verify-new-pages.mjs)
+dist-np-*/

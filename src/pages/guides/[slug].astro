@@ -1,0 +1,27 @@
+---
+/**
+ * Article new pages (guide, comparison, data-study) from
+ * `content-pack/content/*.md` at /guides/<slug>. Drafts are built in
+ * previews and dev only (src/lib/new-pages/registry.mjs). Docs:
+ * docs/new-pages.md.
+ */
+import NpArticlePage from "../../components/new-pages/NpArticlePage.astro";
+import { pagesOf, type NpPage } from "../../lib/new-pages/loader";
+
+export function getStaticPaths() {
+  return pagesOf("article").map((page) => {
+    if (page.url !== `/guides/${page.slug}`) {
+      throw new Error(`[new-pages] ${page.slug}: url "${page.url}" does not match the article route /guides/${page.slug}`);
+    }
+    return { params: { slug: page.slug }, props: { page } };
+  });
+}
+
+interface Props {
+  page: NpPage;
+}
+
+const { page } = Astro.props;
+---
+
+<NpArticlePage page={page} />

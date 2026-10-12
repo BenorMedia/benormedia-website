@@ -76,7 +76,7 @@ const homeLd = {
 <BaseLayout pageSeo={home?.seo ?? null} title={PAGE_META.home.title} description={PAGE_META.home.description}>
   <JsonLd data={homeLd} />
   <HomeHero clients={heroClients} />
-  {/* Hidden on Home only (lead 2026-09-30). */}
+  {/* Hidden on Home above 767px (lead 2026-09-30); shown on phones (2026-10-06). */}
   <LogoStrip clients={logoClients} hidden />
   <FeaturedWork clients={featuredClients} />
   <Services />

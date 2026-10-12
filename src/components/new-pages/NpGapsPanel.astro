@@ -1,0 +1,79 @@
+---
+/**
+ * NpGapsPanel — preview-only, review view: every open gap on the page at the
+ * end of `<main>` (brief 5.8): id, kind, question and default action, all
+ * taken from the marker. A native `<details>`: no JavaScript.
+ */
+import copy from "../../lib/new-pages/copy.json";
+import type { Gap } from "../../lib/new-pages/markers";
+import Container from "../ui/Container.astro";
+
+interface Props {
+  gaps: readonly Gap[];
+}
+
+const { gaps } = Astro.props;
+---
+
+{gaps.length > 0 && (
+  <div class="c-np-gaps" id="np-gaps" data-np-gaps-panel>
+    <Container>
+      <details class="c-np-gaps__details">
+        <summary class="c-np-gaps__summary c-paragraph_m">{copy.gapsPanelHeading}</summary>
+        <ol class="c-np-gaps__list">
+          {gaps.map((gap) => (
+            <li class="c-np-gaps__item c-paragraph">
+              <span class="c-np-gaps__id">{gap.id}</span>
+              <span class="c-np-gaps__kind">{gap.kind}</span>
+              <span class="c-np-gaps__question">{gap.question}</span>
+              <code class="c-np-gaps__default">{gap.action}</code>
+            </li>
+          ))}
+        </ol>
+      </details>
+    </Container>
+  </div>
+)}
+
+<style>
+  .c-np-gaps :global(.c-container) {
+    padding-top: 0;
+  }
+  .c-np-gaps__details {
+    border: var(--border-default);
+    border-radius: var(--np-radius);
+    background: var(--np-gap-bg);
+  }
+  .c-np-gaps__summary {
+    padding: 1.143rem 1.714rem;
+    color: var(--color-heading);
+    cursor: pointer;
+  }
+  .c-np-gaps__summary:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  .c-np-gaps__list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.143rem;
+    margin: 0;
+    padding: 0 1.714rem 1.714rem 3.429rem;
+    color: var(--color-heading);
+  }
+  .c-np-gaps__item {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.857rem;
+  }
+  .c-np-gaps__id {
+    font-weight: 600;
+  }
+  .c-np-gaps__kind {
+    letter-spacing: 0.064em;
+    text-transform: uppercase;
+  }
+  .c-np-gaps__question {
+    flex: 1 1 100%;
+  }
+</style>

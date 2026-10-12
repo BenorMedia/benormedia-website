@@ -1,0 +1,49 @@
+---
+/**
+ * NpKeyTakeaways — `takeaways` as an aside under the lead (brief 7.2). The
+ * label is a `<p>` that names the aside, not a heading.
+ */
+import copy from "../../lib/new-pages/copy.json";
+
+interface Props {
+  items: readonly string[];
+}
+
+const { items } = Astro.props;
+---
+
+{items.length > 0 && (
+  <aside class="c-np-takeaways" aria-labelledby="np-takeaways-label">
+    <p id="np-takeaways-label" class="c-np-takeaways__label c-paragraph_s">{copy.takeawaysLabel}</p>
+    <div class="c-np-prose c-np-takeaways__list">
+      <ul>
+        {items.map((item) => <li data-np-src="takeaway" set:html={item} />)}
+      </ul>
+    </div>
+  </aside>
+)}
+
+<style>
+  .c-np-takeaways {
+    max-width: var(--np-measure);
+    padding: 2.286rem; /* 32px */
+    border: var(--border-default);
+    border-radius: var(--np-radius);
+    background: var(--np-surface-tint);
+  }
+  .c-np-takeaways__label {
+    margin: 0;
+    color: var(--color-accent);
+    font-weight: 600;
+    letter-spacing: 0.064em;
+    text-transform: uppercase;
+  }
+  .c-np-takeaways__list {
+    margin-top: 1.143rem;
+  }
+  @media (max-width: 767px) {
+    .c-np-takeaways {
+      padding: 2.667rem 2.222rem; /* 24 / 20px */
+    }
+  }
+</style>

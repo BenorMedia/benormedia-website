@@ -1,0 +1,263 @@
+---
+/**
+ * NpFitCards — the commercial blueprint's last section ("when another
+ * option is better", RULES.md §10), as cards (lead 2026-10-07, Figma
+ * BenorMedia node 3696:7378): a centered header (H2, framing line), then
+ * one card per bullet with an icon tile, a small bold title and the text
+ * below. Anything after the list follows the cards.
+ *
+ * Title / text split of a bullet, in order:
+ *   1. a `**Bold lead-in.**` → title = the bold text;
+ *   2. the first ", " → title before it, text after it (the Figma drops the
+ *      comma: it stays in the DOM for screen readers and search, hidden);
+ *   3. the first ". " → title = the first sentence;
+ *   4. no break → the whole bullet is the title.
+ * The card's text content is always the bullet's text, unchanged.
+ *
+ * Icon: the most relevant one from the Figma icon set for each card's
+ * message (`src/lib/new-pages/fit-icons.ts`), with its Figma window and
+ * crop, served resized by astro:assets. Icon tile values from the Figma
+ * (1920 frame, 1/14 rem), like the nav's service icons.
+ */
+import { getImage } from "astro:assets";
+import Container from "../ui/Container.astro";
+import { fitIconFor, type FitIcon } from "../../lib/new-pages/fit-icons";
+import type { PageSection } from "../../lib/new-pages/loader";
+
+interface Props {
+  section: PageSection;
+}
+
+const { section } = Astro.props;
+const list = /<ul>([\s\S]*?)<\/ul>/.exec(section.html);
+const before = list ? section.html.slice(0, list.index) : section.html;
+const after = list ? section.html.slice(list.index + list[0].length) : "";
+
+interface Card {
+  icon: FitIcon;
+  titleHtml: string;
+  /** Text hidden on screen between title and text (the dropped comma). */
+  hiddenSep: string;
+  textHtml: string;
+}
+
+const plainText = (html: string): string => html.replace(/<[^>]*>/g, "");
+
+function split(inner: string): Omit<Card, "icon"> {
+  const bold = /^<strong>([\s\S]*?)<\/strong>\s*([\s\S]*)$/.exec(inner);
+  if (bold) return { titleHtml: bold[1] ?? "", hiddenSep: "", textHtml: bold[2] ?? "" };
+  // Split points outside tags only (links and highlights stay whole).
+  const plainAt = (re: RegExp): number => {
+    let depth = 0;
+    for (let i = 0; i < inner.length; i++) {
+      const ch = inner[i];
+      if (ch === "<") depth++;
+      else if (ch === ">") depth--;
+      else if (depth === 0 && re.test(inner.slice(i, i + 2))) return i;
+    }
+    return -1;
+  };
+  const comma = plainAt(/^, $/);
+  const stop = plainAt(/^\. $/);
+  if (comma >= 0 && (stop < 0 || comma < stop)) {
+    return { titleHtml: inner.slice(0, comma), hiddenSep: ",", textHtml: inner.slice(comma + 2) };
+  }
+  if (stop >= 0) return { titleHtml: inner.slice(0, stop + 1), hiddenSep: "", textHtml: inner.slice(stop + 2) };
+  return { titleHtml: inner, hiddenSep: "", textHtml: "" };
+}
+
+const cards: Card[] = list
+  ? [...list[1]!.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/g)].map((m) => {
+      const card = split(m[1] ?? "");
+      return { ...card, icon: fitIconFor(plainText(card.titleHtml), plainText(card.textHtml)) };
+    })
+  : [];
+// Resized icon files (astro:assets). Rendered as plain <img> with a literal
+// alt="" (Astro writes an `alt` expression that is "" as a bare `alt`).
+const icons = await Promise.all(cards.map((c) => getImage({ src: c.icon.src, width: 136, height: 136 })));
+const rem = (px: number): string => `${(px / 14).toFixed(3)}rem`;
+const iconStyle = (icon: FitIcon): string => `--np-icon-w: ${rem(icon.width)}; --np-icon-h: ${rem(icon.height)};`;
+const imgStyle = (icon: FitIcon): string =>
+  icon.crop
+    ? `width: ${icon.crop.w}%; height: ${icon.crop.h}%; left: ${icon.crop.left}%; top: ${icon.crop.top}%;`
+    : "width: 100%; height: 100%; left: 0; top: 0; object-position: bottom;";
+---
+
+<section class="c-np-fit" aria-labelledby={section.id}>
+  <Container>
+    <header class="c-section-header c-np-fit__header">
+      <div class="c-section-header__text">
+        <h2 id={section.id} class="c-section-header__title c-text_xl c-np-fit__title" data-np-src="h2" set:html={section.titleHtml} />
+        <div class="c-np-fit__intro" set:html={before} />
+      </div>
+    </header>
+    {cards.length > 0 && (
+      <ul class="c-np-fit__grid">
+        {cards.map((card, i) => (
+          <li class="c-np-fit__card" data-np-src="li">
+            <span class="c-np-fit__icon" aria-hidden="true">
+              <span class="c-np-fit__icon-crop" style={iconStyle(card.icon)}>
+                <img src={icons[i]?.src} alt="" width="136" height="136" class="c-np-fit__icon-img" style={imgStyle(card.icon)} loading="lazy" decoding="async" />
+              </span>
+            </span>
+            <span class="c-np-fit__copy">
+              <span class="c-np-fit__card-title c-paragraph" set:html={card.titleHtml} />
+              {card.hiddenSep && <span class="c-np-fit__sep">{card.hiddenSep}</span>}
+              {card.textHtml && " "}
+              {card.textHtml && <span class="c-np-fit__card-text c-paragraph" set:html={card.textHtml} />}
+            </span>
+          </li>
+        ))}
+      </ul>
+    )}
+    {after.trim() && <div class="c-np-fit__after" set:html={after} />}
+  </Container>
+</section>
+
+<style>
+  /* Figma 3696:7378 (1920 frame, 1 px = 1/14 rem). */
+  .c-np-fit :global(.c-container) {
+    padding-top: 7.857rem; /* 110px */
+    padding-bottom: 7.857rem;
+  }
+  /* Two lines, balanced (lead 2026-10-07). */
+  .c-np-fit__title {
+    max-width: 52rem;
+    text-wrap: balance;
+    scroll-margin-top: calc(var(--c-nav-height, 0px) + 2rem);
+  }
+  .c-np-fit__intro,
+  .c-np-fit__after {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.714rem;
+    max-width: 47.321rem; /* 662.5px */
+    margin: 0 auto;
+    text-align: center;
+    text-wrap: balance;
+    color: var(--color-text);
+  }
+  .c-np-fit__after {
+    margin-top: 4.286rem;
+  }
+  .c-np-fit__intro :global(p),
+  .c-np-fit__after :global(p) {
+    margin: 0;
+  }
+  .c-np-fit__intro :global(a),
+  .c-np-fit__after :global(a) {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  /* Three equal columns, so five cards make two rows (lead 2026-10-07);
+     a short last row is centered (six tracks, each card spans two). */
+  .c-np-fit__grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 2rem 1.429rem; /* 28 / 20px */
+    margin: 4.286rem 0 0; /* 60px */
+    padding: 0;
+    list-style: none;
+  }
+  .c-np-fit__grid > li {
+    grid-column: span 2;
+  }
+  .c-np-fit__grid > li:nth-last-child(2):nth-child(3n + 1) {
+    grid-column: 2 / span 2;
+  }
+  .c-np-fit__grid > li:last-child:nth-child(3n + 1) {
+    grid-column: 3 / span 2;
+  }
+  .c-np-fit__card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.571rem; /* 22px */
+    padding: 1rem 1.571rem; /* 14 / 22px */
+    border: var(--border-default);
+    border-radius: 8px;
+    background: var(--color-white);
+  }
+  /* Icon tile: 59.2px, light grey, 5.481px radius (as the nav service icons). */
+  .c-np-fit__icon {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 4.229rem;
+    height: 4.229rem;
+    border-radius: 5.481px;
+    overflow: hidden;
+    background: var(--color-gray-light); /* TODO: DS — Figma #F8F8F8 */
+  }
+  /* Each icon's Figma window (`--np-icon-w/h`) and crop (inline style on the
+     image, % of the window). */
+  .c-np-fit__icon-crop {
+    position: relative;
+    display: block;
+    width: var(--np-icon-w);
+    height: var(--np-icon-h);
+    overflow: hidden;
+  }
+  .c-np-fit__icon :global(.c-np-fit__icon-img) {
+    position: absolute;
+    max-width: none;
+  }
+  .c-np-fit__copy {
+    display: flex;
+    flex-direction: column;
+  }
+  .c-np-fit__card-title {
+    padding-bottom: 0.4rem;
+    color: var(--color-grey-700);
+    font-weight: 600;
+    line-height: normal;
+  }
+  .c-np-fit__card-text {
+    color: var(--color-grey-700);
+  }
+  /* The comma the Figma drops: kept for screen readers and search. */
+  .c-np-fit__sep {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 991px) {
+    .c-np-fit__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .c-np-fit__grid > li,
+    .c-np-fit__grid > li:nth-last-child(2):nth-child(3n + 1),
+    .c-np-fit__grid > li:last-child:nth-child(3n + 1) {
+      grid-column: auto;
+    }
+  }
+  @media (max-width: 767px) {
+    .c-np-fit :global(.c-container) {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
+    .c-np-fit__grid {
+      grid-template-columns: 1fr;
+      margin-top: 3.333rem;
+    }
+    .c-np-fit__card {
+      gap: 1.778rem;
+      padding: 1.556rem 1.778rem;
+    }
+    .c-np-fit__icon {
+      width: 5.333rem;
+      height: 5.333rem;
+    }
+    /* Phone tile is 5.333rem (4.229rem × 1.26): windows scale the same. */
+    .c-np-fit__icon-crop {
+      width: calc(var(--np-icon-w) * 1.26);
+      height: calc(var(--np-icon-h) * 1.26);
+    }
+  }
+</style>

@@ -1,0 +1,45 @@
+---
+/**
+ * IlAccessFlow — who edits, who reviews, the approval step and who
+ * publishes, in a lane; the security work as chips in a card below.
+ */
+import IlFrame from "./IlFrame.astro";
+import IlNode from "./IlNode.astro";
+import IlChip from "./IlChip.astro";
+import type { IconName } from "./assets";
+
+interface Props {
+  tag: string;
+  steps: readonly { icon: IconName; label: string; big?: boolean }[];
+  cardTag: string;
+  chips: readonly { icon: IconName; label: string }[];
+}
+
+const { tag, steps, cardTag, chips } = Astro.props;
+const H = 450;
+const xs = [70, 210, 350, 490];
+const y = 132;
+---
+
+<IlFrame h={H} glow={{ x: 330, y: 150, w: 600, h: 340 }}>
+  <svg class="np-il__lines" viewBox={`0 0 560 ${H}`} preserveAspectRatio="none" aria-hidden="true">
+    {xs.slice(0, -1).map((x, i) => (
+      <>
+        <path class={steps[i + 1]?.big || steps[i]?.big ? "is-accent" : undefined} d={`M${x + 30} ${y} H${xs[i + 1]! - 30}`} />
+        <path class="np-il-flow" d={`M${x + 30} ${y} H${xs[i + 1]! - 30}`} style={`animation-delay: ${-i * 0.8}s;`} />
+        <path class={steps[i + 1]?.big || steps[i]?.big ? "is-accent" : undefined} d={`M${xs[i + 1]! - 36} ${y - 4} L${xs[i + 1]! - 31} ${y} L${xs[i + 1]! - 36} ${y + 4}`} />
+      </>
+    ))}
+    <path d={`M280 206 V254`} />
+    <path class="np-il-flow" d={`M280 206 V254`} />
+    <rect x="277" y="226" width="6" height="6" rx="1" />
+  </svg>
+  <span class="np-il-at np-il-tag is-accent" style="--x: 280; --y: 38;">{tag}</span>
+  {steps.map((s, i) => <IlNode x={xs[i]!} y={y} icon={s.icon} label={s.label} w={118} big={s.big === true} />)}
+  <div class="np-il-card" style="--x: 24; --y: 254; --w: 512; gap: 1.3em; padding: 1.6em 1.2em;">
+    <span class="np-il-tag">{cardTag}</span>
+    <span class="np-il-row is-wrap" style="gap: 0.8em;">
+      {chips.map((c) => <IlChip icon={c.icon} label={c.label} />)}
+    </span>
+  </div>
+</IlFrame>

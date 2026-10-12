@@ -1,0 +1,53 @@
+---
+/**
+ * IlHero — the article header illustration (lead 2026-10-07): a "from"
+ * card and a "to" card of chips, each row flowing into the breathing
+ * BenorMedia mark between them. Same language as the section
+ * illustrations (Figma 3702:9167). Labels from the article's text.
+ */
+import IlFrame from "./IlFrame.astro";
+import IlChip from "./IlChip.astro";
+import type { IconName } from "./assets";
+
+interface Side {
+  tag: string;
+  items: readonly { icon: IconName; label: string }[];
+}
+
+interface Props {
+  from: Side;
+  to: Side;
+}
+
+const { from, to } = Astro.props;
+const H = 330;
+const top = 59;
+const rowY = (i: number) => top + 12 + 30 + 11 + 21 + i * 52;
+const mark = { x: 280, y: rowY(1) };
+---
+
+<IlFrame h={H} glow={{ x: 280, y: mark.y, w: 640, h: 380 }}>
+  <svg class="np-il__lines" viewBox={`0 0 560 ${H}`} preserveAspectRatio="none" aria-hidden="true">
+    {from.items.map((_, i) => (
+      <>
+        <path d={`M210 ${rowY(i)} C226 ${rowY(i)}, 218 ${mark.y}, 234 ${mark.y}`} />
+        <path class="np-il-flow" d={`M210 ${rowY(i)} C226 ${rowY(i)}, 218 ${mark.y}, 234 ${mark.y}`} style={`animation-delay: ${-i * 0.7}s;`} />
+      </>
+    ))}
+    {to.items.map((_, i) => (
+      <>
+        <path d={`M326 ${mark.y} C342 ${mark.y}, 334 ${rowY(i)}, 350 ${rowY(i)}`} />
+        <path class="np-il-flow" d={`M326 ${mark.y} C342 ${mark.y}, 334 ${rowY(i)}, 350 ${rowY(i)}`} style={`animation-delay: ${-i * 0.7 - 0.4}s;`} />
+      </>
+    ))}
+  </svg>
+  <div class="np-il-card" style={`--x: 10; --y: ${top}; --w: 200; align-items: stretch;`}>
+    <span class="np-il-tag is-fixed">{from.tag}</span>
+    {from.items.map((c) => <IlChip icon={c.icon} label={c.label} />)}
+  </div>
+  <span class="np-il-mark" style={`--x: ${mark.x}; --y: ${mark.y}; --d: 88;`}></span>
+  <div class="np-il-card" style={`--x: 350; --y: ${top}; --w: 200; align-items: stretch;`}>
+    <span class="np-il-tag is-accent is-fixed">{to.tag}</span>
+    {to.items.map((c) => <IlChip icon={c.icon} label={c.label} />)}
+  </div>
+</IlFrame>

@@ -10,15 +10,28 @@ const target = (process.argv[2] ?? 'dist').replace(/\/$/, '');
 const isUrl = /^https?:\/\//.test(target);
 const SITE = 'https://www.benormedia.com';
 
-// expected = JSON-LD @types that must be present. keyword = words that must all appear in title + H1.
+// expected = JSON-LD @types that must be present. keyword = words that must all appear in title + meta description.
 const PAGES = {
   '/': { expected: ['Organization', 'WebSite'], keyword: 'webflow agency' },
   '/custom-websites-migrations': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'webflow development agency' },
   '/growth': { expected: ['Service', 'BreadcrumbList'], keyword: 'b2b saas seo agency' },
   '/ongoing-website-support': { expected: ['Service', 'BreadcrumbList'], keyword: 'webflow maintenance service' },
-  // FAQ rendered hidden (lead 2026-09-30), so no FAQPage yet: add 'FAQPage' here when it goes live.
-  '/pricing': { expected: [], keyword: null },
+  '/pricing': { expected: ['FAQPage'], keyword: null },
   '/work': { expected: [], keyword: null },
+  // New pages (content-pack), released 2026-10-07.
+  '/webflow-migration': { expected: ['Service', 'FAQPage', 'BreadcrumbList'], keyword: 'wordpress to webflow migration' },
+  '/b2b-saas-web-design': { expected: ['Service', 'FAQPage', 'BreadcrumbList'], keyword: 'b2b web design' },
+  '/webflow-enterprise-agency': { expected: ['Service', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow enterprise agency' },
+  '/guides/wordpress-to-webflow-migration': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'migrate wordpress to webflow' },
+  '/guides/b2b-saas-website-pages': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'saas website' },
+  '/guides/webflow-enterprise': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow enterprise' },
+  // Service pages from docs/brief-next-pages.md (drafts until sign-off: built in previews only).
+  '/website-redesign': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'website redesign' },
+  '/webflow-seo-agency': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'webflow seo' },
+  '/cybersecurity-web-design': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'cybersecurity website design' },
+  '/aeo-agency': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'aeo geo b2b saas' },
+  // Author pages (src/lib/new-pages/authors.ts), 2026-10-08.
+  '/authors/sergio-gancedo': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'sergio gancedo' },
 };
 const NOINDEX_PAGES = ['/testimonials', '/cookie-policy']; // must stay out of the sitemap
 
@@ -83,12 +96,15 @@ for (const [path, rule] of Object.entries(PAGES)) {
   check(parseErrors === 0, 'all JSON-LD blocks parse', `${parseErrors} JSON-LD block(s) fail to parse`);
   for (const t of rule.expected) check(types.includes(t), `JSON-LD has ${t}`, `JSON-LD missing ${t}`);
   check(!/lorem ipsum/i.test(html), 'no Lorem ipsum', 'Lorem ipsum found in HTML');
+  // H1s are brand taglines (lead 2026-10-06), so keywords are checked in title + meta.
   if (rule.keyword) {
-    const hay = `${title} ${h1s.join(' ')}`.toLowerCase();
+    const hay = `${title} ${meta}`.toLowerCase();
     const missing = rule.keyword.split(' ').filter((w) => !hay.includes(w));
-    check(missing.length === 0, `title+h1 cover "${rule.keyword}"`, `title+h1 miss: ${missing.join(', ')}`);
-    check(h1s[0] && h1s[0].toLowerCase() !== title.toLowerCase().split(' | ')[0], 'h1 differs from title', 'h1 equals title');
+    check(missing.length === 0, `title+meta cover "${rule.keyword}"`, `title+meta miss: ${missing.join(', ')}`);
   }
+  const imgs = [...html.matchAll(/<img\b[^>]*>/gi)].map((m) => m[0]);
+  const noAlt = imgs.filter((t) => !/\salt\s*=/i.test(t));
+  check(noAlt.length === 0, `all ${imgs.length} img tags have alt`, `${noAlt.length} of ${imgs.length} img tags have no alt attribute, for example: ${noAlt.slice(0, 2).map((t) => t.slice(0, 90)).join(' | ')}`);
 }
 
 console.log('\nsitemap');

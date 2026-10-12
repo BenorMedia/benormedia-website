@@ -1,0 +1,47 @@
+---
+/**
+ * New pages kit (preview only, brief T2): every shared new-page block with
+ * real pack content, at `/dev/new-pages-kit`. Returns no path unless drafts
+ * are included (Vercel preview, `astro dev`, PAGES_INCLUDE_DRAFTS=1), so a
+ * production build has no such URL. `/dev/*` is outside the sitemap.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Container from "../../components/ui/Container.astro";
+import Eyebrow from "../../components/ui/Eyebrow.astro";
+import Breadcrumbs from "../../components/layout/Breadcrumbs.astro";
+import NpProse from "../../components/new-pages/NpProse.astro";
+import NpVisual from "../../components/new-pages/NpVisual.astro";
+import NpRelatedLinks from "../../components/new-pages/NpRelatedLinks.astro";
+import NpDraftBanner from "../../components/new-pages/NpDraftBanner.astro";
+import NpGapsPanel from "../../components/new-pages/NpGapsPanel.astro";
+import { loadPages } from "../../lib/new-pages/loader";
+import "../../components/new-pages/new-pages.css";
+
+export function getStaticPaths() {
+  const pages = loadPages();
+  const includeDrafts = pages.some((p) => p.includeDrafts);
+  return includeDrafts ? [{ params: { kit: "new-pages-kit" } }] : [];
+}
+
+const pages = loadPages();
+const article = pages.find((p) => p.family === "article" && p.sections.some((s) => s.html.includes("<table")));
+const commercial = pages.find((p) => p.family === "commercial" && p.gaps.length > 0);
+const tableSection = article?.sections.find((s) => s.html.includes("<table"));
+const visualSection = [...(commercial?.sections ?? [])].find((s) => s.visual);
+---
+
+<BaseLayout title="New pages kit" noIndex showCtaBanner={false}>
+  {commercial && <NpDraftBanner view={commercial.view} gaps={commercial.gaps.length} />}
+  <Container>
+    {article && <Breadcrumbs items={article.breadcrumbVisible} class="c-np-kit__breadcrumbs" />}
+    <p><Eyebrow>{article?.pageType}</Eyebrow></p>
+    {tableSection && (
+      <NpProse html={`<h2 id="${tableSection.id}">${tableSection.titleHtml}</h2>${tableSection.html}`} />
+    )}
+    {commercial && <NpProse html={commercial.lead.join("")} />}
+    {visualSection?.visual && <NpVisual visual={visualSection.visual} includeDrafts={true} />}
+    {article && <NpVisual visual={article.sections.find((s) => s.visual)?.visual} includeDrafts={true} layout="full" />}
+    {commercial && <NpRelatedLinks items={commercial.related} />}
+  </Container>
+  {commercial && <NpGapsPanel gaps={commercial.gaps} />}
+</BaseLayout>

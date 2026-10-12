@@ -7,6 +7,7 @@ import vercel from '@astrojs/vercel';
 import react from '@astrojs/react';
 import sanity from '@sanity/astro';
 import sitemap from '@astrojs/sitemap';
+import { sitemapInfo } from './src/lib/new-pages/registry.mjs';
 
 /** @type {{ env: { NODE_ENV?: string }, cwd(): string, argv: string[] }} */
 const proc = /** @type {any} */ (globalThis).process;
@@ -120,11 +121,17 @@ const LASTMOD = {
   '/custom-websites-migrations': '2026-10-06',
   '/growth': '2026-10-06',
   '/ongoing-website-support': '2026-10-06',
-  '/pricing': '2026-10-05',
-  '/work': '2026-10-05',
+  '/pricing': '2026-10-06',
+  '/work': '2026-10-06',
   '/privacy-policy': '2026-10-05',
   '/terms-conditions': '2026-10-05',
+  '/authors/sergio-gancedo': '2026-10-08',
 };
+
+// New pages (content-pack/content/*.md, docs/new-pages.md): draft pages stay
+// out of the sitemap (they are built in previews only); released pages take
+// `lastmod` from their front matter `updatedAt`, so nobody edits LASTMOD.
+const NEW_PAGES = sitemapInfo();
 
 // https://astro.build/config
 export default defineConfig({
@@ -155,10 +162,10 @@ export default defineConfig({
       filter: (page) =>
         !/\/(dev|studio)(\/|$)|\/404$|^\/(cookie-policy|testimonials)\/?$/.test(
           new URL(page).pathname,
-        ),
+        ) && !NEW_PAGES.draftPaths.has(new URL(page).pathname.replace(/\/$/, '')),
       serialize(item) {
         const path = new URL(item.url).pathname.replace(/\/$/, '') || '/';
-        const lastmod = LASTMOD[path];
+        const lastmod = LASTMOD[path] ?? NEW_PAGES.lastmod[path];
         if (lastmod) item.lastmod = lastmod;
         return item;
       },
