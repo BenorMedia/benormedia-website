@@ -1,6 +1,6 @@
 # Review sheet: /headless-cms-agency
 
-Draft version: 1 | Preview: (added after the push) | Prepared: 2026-10-12 | Content file: docs/content/headless-cms-agency.md (built as content-pack/content/headless-cms-agency.md)
+Draft version: 1 | Preview: https://benormedia-git-seo-headless-guide-benor-media.vercel.app/headless-cms-agency (Vercel login required) | Prepared: 2026-10-12 | Content file: docs/content/headless-cms-agency.md (built as content-pack/content/headless-cms-agency.md)
 
 How to use: go to the rows marked `open`. For each, write the fact in "Your answer", or write "delete". Don't use the | character in an answer. Claude Code applies your answers with `/seo-revise` and then sets the status and the date. Rows marked `ok` were checked against their source by Claude Code; open the source if one looks wrong to you.
 

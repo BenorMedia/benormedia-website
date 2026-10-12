@@ -1,6 +1,6 @@
 # Review sheet: /guides/webflow-vs-custom-code
 
-Draft version: 1 | Preview: (added after the push) | Prepared: 2026-10-12 | Content file: docs/content/guide-webflow-vs-custom-code.md (built as content-pack/content/webflow-vs-custom-code.md)
+Draft version: 1 | Preview: https://benormedia-git-seo-headless-guide-benor-media.vercel.app/guides/webflow-vs-custom-code (Vercel login required) | Prepared: 2026-10-12 | Content file: docs/content/guide-webflow-vs-custom-code.md (built as content-pack/content/webflow-vs-custom-code.md)
 
 How to use: go to the rows marked `open`. For each, write the fact in "Your answer", or write "delete". Don't use the | character in an answer. Claude Code applies your answers with `/seo-revise` and then sets the status and the date. Rows marked `ok` were checked against their source by Claude Code; open the source if one looks wrong to you.
 
