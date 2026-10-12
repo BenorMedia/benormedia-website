@@ -87,6 +87,29 @@
    "companionGuide": "generative-engine-optimization"
   },
   {
+   "slug": "headless-cms-agency",
+   "url": "/headless-cms-agency",
+   "pageType": "service",
+   "wave": 1,
+   "lang": "en-US",
+   "primaryKeyword": "headless cms agency",
+   "role": "Revenue",
+   "pillar": "/custom-websites-migrations",
+   "label": "Headless CMS agency",
+   "companionGuide": "webflow-vs-custom-code"
+  },
+  {
+   "slug": "webflow-vs-custom-code",
+   "url": "/guides/webflow-vs-custom-code",
+   "pageType": "guide",
+   "wave": 1,
+   "lang": "en-US",
+   "primaryKeyword": "webflow vs custom code",
+   "role": "AI visibility",
+   "pillar": "headless-cms-agency",
+   "label": "Webflow vs custom code guide"
+  },
+  {
    "slug": "fintech-web-design",
    "url": "/fintech-web-design",
    "pageType": "industry",

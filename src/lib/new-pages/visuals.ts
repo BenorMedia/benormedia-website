@@ -714,6 +714,40 @@ export const DIAGRAMS: Record<string, DiagramEntry> = {
       ],
     },
   },
+  // "How a headless CMS works": the content note's four boxes; chips = "CRM, analytics, product data" feeding the front end.
+  "headless-cms-agency:1": {
+    framed: true,
+    component: IlJourney,
+    props: {
+      tag: "Content delivery",
+      steps: [
+        { icon: "cms", label: "Headless CMS" },
+        { icon: "api", label: "Content API" },
+        { icon: "code", label: "Next.js or Astro front end" },
+        { icon: "speed", label: "CDN" },
+      ],
+      cardTag: "The front end",
+      chips: [
+        { icon: "person", label: "CRM" },
+        { icon: "analytics", label: "Analytics" },
+        { icon: "systems", label: "Product data" },
+      ],
+    },
+  },
+  // "When a headless build is worth it": the content note's five labels.
+  "headless-cms-agency:2": {
+    framed: true,
+    component: IlBuilder,
+    props: {
+      tag: "Headless build",
+      items: [
+        { icon: "systems", label: "Product data" },
+        { icon: "devices", label: "App features" },
+        { icon: "code", label: "Engineering workflow" },
+      ],
+      tokens: ["Platform limits", "Coding agents"],
+    },
+  },
 };
 
 export type ResolvedVisual =

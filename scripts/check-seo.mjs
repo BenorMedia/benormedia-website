@@ -30,6 +30,8 @@ const PAGES = {
   '/webflow-seo-agency': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'webflow seo' },
   '/cybersecurity-web-design': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'cybersecurity website design' },
   '/aeo-agency': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'aeo geo b2b saas' },
+  // docs/brief-headless-guide.md (drafts until sign-off: built in previews only).
+  '/headless-cms-agency': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'headless cms agency' },
   // Author pages (src/lib/new-pages/authors.ts), 2026-10-08.
   '/authors/sergio-gancedo': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'sergio gancedo' },
 };
