@@ -14,7 +14,7 @@ primaryKeyword: cybersecurity website design
 secondaryKeywords: [cybersecurity web design agency, web design for cybersecurity companies, cybersecurity marketing agency, security company website design]
 targetCountry: US
 publishedAt: 2026-10-10
-updatedAt: 2026-10-10
+updatedAt: 2026-10-12
 reviewEvery: 90
 breadcrumb:
   - name: Home
@@ -50,7 +50,7 @@ faq:
   - q: How long does a cybersecurity website project take?
     a: "The same drivers as any B2B site set the timeline: templates, content volume, integrations and review rounds. Security companies add legal and compliance reviews, so we schedule those from the start and fix the timeline in the website strategy plan before the build begins."
   - q: Do you work with security companies that aren't on Webflow?
-    a: "Yes. We build most sites in Webflow, migrate sites from WordPress and other platforms, and build custom-coded sites when a project needs it."
+    a: "Yes. We build most sites in Webflow, migrate sites from WordPress and other platforms, and build [custom-coded sites](page:headless-cms-agency) when a project needs it."
 related: [b2b-saas-web-design, webflow-enterprise-agency, aeo-agency]
 inbound:
   - from: /b2b-saas-web-design
