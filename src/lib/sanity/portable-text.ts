@@ -9,6 +9,8 @@
  * - `portableTextToPlain`: FAQ answers → plain text, one paragraph per block
  *   separated by a blank line (the format `FaqAccordion` and the FAQPage
  *   JSON-LD take). Inline marks and link annotations are dropped.
+ * - `linkRuns`: one paragraph → `{ text, href }` runs, keeping `link`
+ *   annotations (process step notes).
  */
 import type { AccentTitle, PortableTextBlock } from './types';
 
@@ -58,4 +60,22 @@ export function portableTextToPlain(blocks: PortableTextBlock[] | null | undefin
     )
     .filter(Boolean)
     .join('\n\n');
+}
+
+export interface LinkRun {
+  text: string;
+  href?: string;
+}
+
+/** First text block → runs; a span with a `link` annotation carries its href. */
+export function linkRuns(blocks: PortableTextBlock[] | null | undefined): LinkRun[] {
+  const block = (blocks ?? []).find((b) => b._type === 'block');
+  if (!block) return [];
+  const links = new Map((block.markDefs ?? []).filter((d) => d._type === 'link' && d.href).map((d) => [d._key, d.href]));
+  return (block.children ?? [])
+    .filter((span) => span.text)
+    .map((span) => {
+      const href = span.marks?.map((m) => links.get(m)).find(Boolean);
+      return href ? { text: span.text ?? '', href } : { text: span.text ?? '' };
+    });
 }

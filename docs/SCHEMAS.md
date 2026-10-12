@@ -85,6 +85,7 @@ Step list items show their number (01, 02…) next to the step preview (name · 
 |---|---|---|---|
 | Step name | `name` | string | required. Tab label and step heading |
 | Description | `description` | text (3 rows) | optional |
+| Note with a link | `note` | Portable Text, one `normal` block, no lists or decorators, `link` annotation (`href`: url, relative paths allowed) | optional, max 1 block. Rendered as a paragraph under the description (added 2026-10-12 for the /headless-cms-agency link on step 03) |
 | Features | `features` | array of string (tags input) | optional, no duplicates, order has no meaning |
 | Image | `image` | image (hotspot) + `alt` | optional. Alt required when an image is set |
 
@@ -171,7 +172,7 @@ Seed: Fintech · SaaS · HR Tech · Cleantech · Venture Capital · E-Commerce �
 | `stat` | value (string, e.g. "$700M+"), label |
 | `kpi` | value, description |
 | `accentTitle` | one-block Portable Text title with the "Gradient" (`accent`) decorator (see `service`) |
-| `processStep` | name, description, features[], image + alt (see `service`) |
+| `processStep` | name, description, note (optional link line), features[], image + alt (see `service`) |
 
 ---
 
