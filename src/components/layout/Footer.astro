@@ -202,6 +202,7 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   /* Barcelona card */
   .c-footer__card {
     position: relative;
+    width: 75%; /* 25% narrower than its column (lead 2026-10-12) */
     border-radius: 12px;
     overflow: hidden;
   }
@@ -426,6 +427,7 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
       grid-template-columns: 1fr;
       gap: 2rem;
     }
+    .c-footer__card { width: 100%; }
     .c-footer__cols {
       grid-template-columns: 1fr 1fr;
       gap: 2rem;
