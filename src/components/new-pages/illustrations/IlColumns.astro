@@ -1,0 +1,55 @@
+---
+/**
+ * IlColumns — an article header illustration with three option cards side
+ * by side, each a box label over its chips, with a flow line between the
+ * labels (a choice that runs from one option to the next). Same language as
+ * IlHero (Figma 3702:9167). Labels may wrap to two lines. Labels from the
+ * article's text.
+ */
+import IlFrame from "./IlFrame.astro";
+import IlChip from "./IlChip.astro";
+import type { IconName } from "./assets";
+
+interface Column {
+  tag: string;
+  items: readonly { icon: IconName; label: string }[];
+}
+
+interface Props {
+  columns: readonly [Column, Column, Column];
+}
+
+const { columns } = Astro.props;
+const H = 330;
+const W = 166;
+const gap = 21;
+const top = 78;
+const th = 40;
+const x = (i: number) => 10 + i * (W + gap);
+// Card border (1) + padding (12) + half the box label.
+const tagY = top + 1 + 12 + th / 2;
+---
+
+<IlFrame h={H} glow={{ x: 280, y: H / 2, w: 640, h: 380 }}>
+  <svg class="np-il__lines" viewBox={`0 0 560 ${H}`} preserveAspectRatio="none" aria-hidden="true">
+    {[0, 1].map((i) => (
+      <>
+        <path d={`M${x(i) + W} ${tagY} L${x(i + 1)} ${tagY}`} />
+        <path class="np-il-flow" d={`M${x(i) + W} ${tagY} L${x(i + 1)} ${tagY}`} style={`animation-delay: ${-i * 0.7}s;`} />
+      </>
+    ))}
+  </svg>
+  {columns.map((c, i) => (
+    <div class="np-il-card np-il-columns__card" style={`--x: ${x(i)}; --y: ${top}; --w: ${W}; --th: ${th}; align-items: stretch;`}>
+      <span class={["np-il-tag", "is-fixed", i === columns.length - 1 && "is-accent"].filter(Boolean).join(" ")}>{c.tag}</span>
+      {c.items.map((it) => <IlChip icon={it.icon} label={it.label} />)}
+    </div>
+  ))}
+</IlFrame>
+
+<style>
+  /* Narrow cards: chip labels wrap instead of overflowing the card. */
+  .np-il-columns__card :global(.np-il-chip__label) {
+    white-space: normal;
+  }
+</style>

@@ -175,6 +175,10 @@ visuals:
     type: diagram
     brief: "The eight steps of a move off Webflow: Benchmark, Export everything, Map URLs, Rebuild the SEO basics, Move the files, Test on staging, Launch, Monitor. Text outside the image."
     alt: "The eight steps of a move off Webflow, from benchmarking to monitoring"
+  - after: Why are teams moving off Webflow in 2026?
+    type: diagram
+    brief: "Two bars, \"Webflow to Next.js: 988\" and \"Next.js to Webflow: 95\", with \"TechnologyChecker, crawl published July 2, 2026\" under them. Text outside the image."
+    alt: "Two bars: 988 domains moved from Webflow to Next.js and 95 from Next.js to Webflow, TechnologyChecker, July 2026"
 ---
 
 Stay on Webflow if your marketing team runs the website and it does its job. Move to custom code, usually Next.js or Astro with a headless CMS, when the site has to work like part of your product, or when your engineers want it in their own repo. In between, Webflow Cloud, code components and the Webflow Data API let you add code without leaving.

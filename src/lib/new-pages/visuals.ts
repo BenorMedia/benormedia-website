@@ -13,6 +13,7 @@ import FlowDiagram from "../../components/new-pages/diagrams/FlowDiagram.astro";
 import OutlineDiagram from "../../components/new-pages/diagrams/OutlineDiagram.astro";
 import SiteMapDiagram from "../../components/new-pages/diagrams/SiteMapDiagram.astro";
 import TimelineDiagram from "../../components/new-pages/diagrams/TimelineDiagram.astro";
+import BarDiagram from "../../components/new-pages/diagrams/BarDiagram.astro";
 import IlAccessFlow from "../../components/new-pages/illustrations/IlAccessFlow.astro";
 import IlBuilder from "../../components/new-pages/illustrations/IlBuilder.astro";
 import IlHub from "../../components/new-pages/illustrations/IlHub.astro";
@@ -22,6 +23,7 @@ import IlRedirectMap from "../../components/new-pages/illustrations/IlRedirectMa
 import IlRings from "../../components/new-pages/illustrations/IlRings.astro";
 import IlSiteMap from "../../components/new-pages/illustrations/IlSiteMap.astro";
 import IlHero from "../../components/new-pages/illustrations/IlHero.astro";
+import IlColumns from "../../components/new-pages/illustrations/IlColumns.astro";
 
 type AstroComponent = (...args: any[]) => any;
 
@@ -766,6 +768,17 @@ export const DIAGRAMS: Record<string, DiagramEntry> = {
       ],
     },
   },
+  // Labels: the content note of section 5 ("Webflow to Next.js: 988", "Next.js to Webflow: 95", source line).
+  "webflow-vs-custom-code:2": {
+    component: BarDiagram,
+    props: {
+      bars: [
+        { label: "Webflow to Next.js", value: 988 },
+        { label: "Next.js to Webflow", value: 95 },
+      ],
+      source: "TechnologyChecker, crawl published July 2, 2026",
+    },
+  },
 };
 
 export type ResolvedVisual =
@@ -859,6 +872,35 @@ export const HEROES: Record<string, DiagramEntry> = {
           { icon: "person", label: "Roles & permissions" },
         ],
       },
+    },
+  },
+  // The section 1 content note: three columns, two labels each.
+  "webflow-vs-custom-code": {
+    component: IlColumns,
+    props: {
+      columns: [
+        {
+          tag: "Stay on Webflow",
+          items: [
+            { icon: "person", label: "Marketers build pages" },
+            { icon: "systems", label: "Webflow runs hosting" },
+          ],
+        },
+        {
+          tag: "Add code to Webflow",
+          items: [
+            { icon: "api", label: "Webflow Cloud apps" },
+            { icon: "puzzle", label: "React code components" },
+          ],
+        },
+        {
+          tag: "Move to custom code",
+          items: [
+            { icon: "code", label: "Next.js or Astro" },
+            { icon: "cms", label: "Headless CMS" },
+          ],
+        },
+      ],
     },
   },
 };
