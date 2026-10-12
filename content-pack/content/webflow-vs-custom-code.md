@@ -69,9 +69,9 @@ sources:
   - label: "Webflow Help Center, How do I export my Webflow site code?, updated October 31, 2025"
     url: https://help.webflow.com/hc/en-us/articles/33961386739347
     accessed: 2026-10-09
-  - label: "Webflow, Export CMS content as a CSV"
-    url: https://webflow.com/feature/export-content-as-a-csv
-    accessed: 2026-10-09
+  - label: "Webflow Help Center, How do I import content into the Webflow CMS?"
+    url: https://help.webflow.com/hc/en-us/articles/33961290794771
+    accessed: 2026-10-12
   - label: "Webflow Developers, Rate limits"
     url: https://developers.webflow.com/data/reference/rate-limits
     accessed: 2026-10-09
@@ -132,9 +132,9 @@ sources:
   - label: "Payload, home page"
     url: https://payloadcms.com/
     accessed: 2026-10-09
-  - label: "Payload, Hosting"
-    url: https://payloadcms.com/hosting
-    accessed: 2026-10-09
+  - label: "Payload Docs, Production deployment"
+    url: https://payloadcms.com/docs/production/deployment
+    accessed: 2026-10-12
   - label: "Google Search Central, Site moves with URL changes"
     url: https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes
     accessed: 2026-10-09
@@ -154,9 +154,9 @@ volatile:
   - claim: "TechnologyChecker: 988 domains from Webflow to Next.js in about five weeks, 95 the other way; 249,194 active Webflow domains; 570,205 on Next.js; 32.8% of movers in software, IT services or technology"
     source: https://technologychecker.io/blog/webflow-to-nextjs
     recheck: open the article and confirm the Next.js figures (it was revised after July 2 without a new date)
-  - claim: "Payload is self-hosted and new Payload Cloud sign-ups are paused"
-    source: https://payloadcms.com/hosting
-    recheck: open the hosting page and confirm both statements
+  - claim: "Payload is self-hosted"
+    source: https://payloadcms.com/docs/production/deployment
+    recheck: open the deployment docs and confirm Payload is still self-hosted
   - claim: "Webflow Cloud runs Next.js and Astro apps on Cloudflare Workers, with or without a Webflow site, with SQLite, key-value and object storage"
     source: https://webflow.com/blog/cloud-apps-without-sites
     recheck: open the Webflow Cloud pages and confirm the frameworks, hosting and storage
@@ -263,7 +263,7 @@ Table: What the Webflow code export includes and leaves out
 | Code components | No |
 | Localized pages and content | No. Only the primary locale is exported |
 
-CMS content comes out separately. Each Collection exports [as a CSV file](https://webflow.com/feature/export-content-as-a-csv) from the Designer, with image and file fields as URLs, so download those files before you delete the Webflow project. For many Collections, the [Webflow Data API](https://developers.webflow.com/data/reference/rate-limits) reads the items in code, at 60 to 120 requests a minute depending on the plan. If you want a React app out of Webflow, [DevLink Export](https://help.webflow.com/hc/en-us/articles/44746282129427-Component-export-using-DevLink) pulls Webflow components into a React codebase, though components bound to CMS content don't export fully and page-level interactions stay behind. All of it is raw material for a rebuild. None of it is a migration on its own.
+CMS content comes out separately. Each Collection exports [as a CSV file](https://help.webflow.com/hc/en-us/articles/33961290794771) from the Designer, with image and file fields as URLs, so download those files before you delete the Webflow project. For many Collections, the [Webflow Data API](https://developers.webflow.com/data/reference/rate-limits) reads the items in code, at 60 to 120 requests a minute depending on the plan. If you want a React app out of Webflow, [DevLink Export](https://help.webflow.com/hc/en-us/articles/44746282129427-Component-export-using-DevLink) pulls Webflow components into a React codebase, though components bound to CMS content don't export fully and page-level interactions stay behind. All of it is raw material for a rebuild. None of it is a migration on its own.
 
 ## Is there a middle path between Webflow and custom code?
 
@@ -287,7 +287,7 @@ Table: Common choices for a site that leaves Webflow
 | Astro | Content-heavy marketing sites, docs and blogs where page speed comes first | App-heavy features take more work; interactive parts are added component by component |
 | Sanity | Structured content reused across pages, with live preview for editors | The content model needs planning before the build |
 | Storyblok | Marketers who want visual, block-based page building | How flexible editing feels depends on how the blocks are designed |
-| Payload | Teams that want an [open-source CMS](https://payloadcms.com/) built into their Next.js app | You [host it yourself](https://payloadcms.com/hosting), since new Payload Cloud sign-ups are paused, so backups and updates are on you |
+| Payload | Teams that want an [open-source CMS](https://payloadcms.com/) built into their Next.js app | You [host it yourself](https://payloadcms.com/docs/production/deployment), so backups and updates are on you |
 | Webflow CMS, used headless | Teams that want to keep editing in Webflow | API rate limits, and the Designer no longer controls the layout |
 
 Our own site runs on Astro, with Sanity as the CMS. We chose Astro because almost everything on our site is content, and Astro sends JavaScript only to the parts of a page that need it. In our crawl on October 5, 2026, the home page's HTML linked to a single JavaScript file. We picked Sanity because it stores content as structured data rather than page layouts, so one piece of content can feed several pages. Running both ourselves also lets us test the setup we recommend, from server-rendered HTML to structured data, before we suggest it to a client.
