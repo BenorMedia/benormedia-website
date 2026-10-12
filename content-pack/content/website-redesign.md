@@ -14,7 +14,7 @@ primaryKeyword: website redesign services
 secondaryKeywords: [website redesign agency, b2b website redesign, saas website redesign, website redesign company]
 targetCountry: US
 publishedAt: 2026-10-10
-updatedAt: 2026-10-10
+updatedAt: 2026-10-12
 reviewEvery: 90
 breadcrumb:
   - name: Home
@@ -178,7 +178,7 @@ A redesign that only an agency can update starts aging on launch day. We build a
 
 - **Component library.** Sections designed and built once, then reused, with variables and design tokens that keep every page consistent.
 - **CMS structure.** Collections for case studies, resources, integrations and jobs, with SEO fields bound to each item.
-- **The right platform.** Webflow for most marketing sites, and custom code when the site needs logic Webflow doesn't handle well, such as deep product integrations or heavy personalization.
+- **The right platform.** Webflow for most marketing sites, and [custom code](page:headless-cms-agency) when the site needs logic Webflow doesn't handle well, such as deep product integrations or heavy personalization.
 - **Integrations.** CRM, analytics, consent and enrichment tools connected during the build, not bolted on after launch.
 - **Training.** Live sessions, video walkthroughs and documentation your marketers will actually open.
 

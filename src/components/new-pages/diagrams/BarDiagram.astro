@@ -1,0 +1,87 @@
+---
+/**
+ * BarDiagram — horizontal bars comparing a few counts of one measure, each
+ * labelled with its name and value, with the source line under them. One
+ * series, so one color and no legend. Bars run from the label column's edge;
+ * under 440px the label sits above its bar.
+ */
+interface Props {
+  bars: readonly { label: string; value: number }[];
+  source?: string;
+}
+
+const { bars, source } = Astro.props;
+const max = Math.max(...bars.map((b) => b.value));
+const fmt = new Intl.NumberFormat("en-US");
+---
+
+<div class="c-np-bars">
+  <ul class="c-np-bars__list">
+    {bars.map((b) => (
+      <li class="c-np-bars__row">
+        <span class="c-np-bars__label">{b.label}</span>
+        <span class="c-np-bars__track">
+          <span class="c-np-bars__bar" style={`--np-bar: ${(b.value / max) * 100}%;`} />
+          <span class="c-np-bars__value">{fmt.format(b.value)}</span>
+        </span>
+      </li>
+    ))}
+  </ul>
+  {source && <p class="c-np-bars__source">{source}</p>}
+</div>
+
+<style>
+  .c-np-bars {
+    container-type: inline-size;
+    font-family: var(--font-body);
+    font-size: var(--fs-p);
+    line-height: 1.35;
+    color: var(--color-heading);
+  }
+  .c-np-bars__list {
+    display: grid;
+    gap: 1.714rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .c-np-bars__row {
+    display: grid;
+    grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
+    align-items: center;
+    gap: 1.143rem;
+  }
+  .c-np-bars__track {
+    display: flex;
+    align-items: center;
+    gap: 0.571rem;
+    min-width: 0;
+  }
+  /* Thin bar, square at the baseline, rounded at the data end. */
+  .c-np-bars__bar {
+    flex: none;
+    width: calc(var(--np-bar) * 0.85);
+    min-width: 0.143rem;
+    height: 1.143rem;
+    border-radius: 0 4px 4px 0;
+    background: var(--color-accent);
+  }
+  .c-np-bars__value {
+    font-variant-numeric: tabular-nums;
+  }
+  .c-np-bars__source {
+    margin: 1.714rem 0 0;
+    font-size: var(--fs-p-s);
+    color: var(--color-text);
+  }
+  @container (max-width: 440px) {
+    .c-np-bars__row {
+      grid-template-columns: 1fr;
+      gap: 0.571rem;
+    }
+  }
+  @media (max-width: 767px) {
+    .c-np-bars { font-size: 1.556rem; }
+    .c-np-bars__bar { height: 1.556rem; }
+  }
+</style>

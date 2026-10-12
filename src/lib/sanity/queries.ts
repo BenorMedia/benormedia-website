@@ -360,6 +360,7 @@ export const SERVICE_BY_SLUG = /* groq */ `
     _key,
     name,
     description,
+    note,
     features,
     "image": image${IMAGE}
   },

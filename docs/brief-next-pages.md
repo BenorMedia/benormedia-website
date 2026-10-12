@@ -4,6 +4,8 @@ Task brief for Claude Code. Prepared 2026-10-09 for Sergio Gancedo, from the nex
 
 The rule from the pilot stays: **Claude drafts, a person owns the facts and the final edit, and nothing publishes without that person's sign-off.**
 
+**Updated 2026-10-10.** Changes since the first version of this brief: facts sheet item 1 is partly answered and the `/website-redesign` marker in section 5 is gone (content file v2.1); `/webflow-seo-agency` v2.1 corrects the Collection URL wording (item pages sit under their Collection's path, which can sit inside a folder); and Google retired FAQ rich results on 2026-05-07, so the verification step now checks `FAQPage` with validator.schema.org. If you already built pages from the earlier content files, apply the two v2.1 changes on `seo/next-pages`. The repo now also has the Claude Code kit: `CLAUDE.md`, the slash commands `/seo-next-pages`, `/seo-work-joor`, `/seo-revise` and `/seo-release`, and `.claude/settings.json`. With it, Discovery ends with a stop until the person replies, review sheets gain "Your answer" and "Date" columns (Appendix B), and the release gate requires every row to be `ok`, `confirmed` or `removed`, not only that none is `open`. A branch created before the kit is checked first, and the base branch is merged into it only after the person agrees.
+
 What is different from the pilot: **the copy is already written.** Each page has a content file in `docs/content/` with the SEO fields, the visible copy in page order, a note on which component to use for each section, the internal links, the sources and the open facts. Your job is to build the pages from those files word for word, wire up markup, checks and links, and prepare the review sheets. Do not rewrite, add or cut copy. If a sentence does not fit its component, or contradicts the repo or the live site, STOP and ask, or list it in the report.
 
 The work is split in two branches, because the case study depends on JOOR's approval and the service pages should not wait for it:
@@ -15,29 +17,27 @@ The work is split in two branches, because the case study depends on JOOR's appr
 
 ## How to run this (Sergio)
 
-1. Save these files in the site repo:
-   - this file as `docs/brief-next-pages.md`;
-   - the five content files as `docs/content/website-redesign.md`, `docs/content/webflow-seo-agency.md`, `docs/content/cybersecurity-web-design.md`, `docs/content/aeo-agency.md` and `docs/content/work-joor.md`.
-2. Fill in the "Inputs from Sergio" block below as far as you can. A blank is fine: the matching marker stays visible on the draft and blocks the release.
-3. Open Claude Code in the repo root and paste, for Part 1:
+1. Install the Claude Code kit as its START-HERE.md explains. It puts this file at `docs/brief-next-pages.md` and the five content files in `docs/content/`: `website-redesign.md`, `webflow-seo-agency.md`, `cybersecurity-web-design.md`, `aeo-agency.md` and `work-joor.md`.
+2. Fill in the "Inputs from Sergio" block below as far as you can, or answer G1 to G3 in your reply to Discovery. A blank is fine: the matching marker stays visible on the draft and blocks the release, and items without a marker are review-sheet rows.
+3. Open Claude Code in the repo root and type `/seo-next-pages`, or paste, for Part 1:
 
-   > Read docs/brief-next-pages.md and the four service-page files in docs/content/. Do the Discovery section first and show me what you found before you edit anything. Then do Part 1 on a new branch `seo/next-pages`, one commit per task, using the copy in docs/content/ word for word, and stop at any "STOP and ask" line. Do not merge, push to the base branch or deploy. Finish with the report described at the end of the brief.
+   > Read docs/brief-next-pages.md and the four service-page files in docs/content/. Do the Discovery section, show me what you found, and stop until I reply. Then do Part 1 on a new branch `seo/next-pages`, one commit per task, using the copy in docs/content/ word for word, and stop at any "STOP and ask" line. Do not merge into the base branch, push the base branch or deploy. Finish with the report described at the end of the brief.
 
-   For Part 2, in the same session after Part 1's report, or in a new one:
+   For Part 2, in the same session after Part 1's report, or in a new one, type `/seo-work-joor`, or paste:
 
-   > Read docs/brief-next-pages.md and docs/content/work-joor.md. Do Part 2 on a new branch `seo/work-joor` from the base branch, one commit per task, using the copy in docs/content/work-joor.md word for word, and stop at any "STOP and ask" line. Do not merge, push to the base branch or deploy. Finish with the report described at the end of the brief.
+   > Read docs/brief-next-pages.md and docs/content/work-joor.md. If Part 1's Discovery didn't cover the Part 2 items, run them, show me what you found, and stop until I reply. Then do Part 2 on a new branch `seo/work-joor` from the base branch, one commit per task, using the copy in docs/content/work-joor.md word for word, and stop at any "STOP and ask" line. Do not merge into the base branch, push the base branch or deploy. Finish with the report described at the end of the brief.
 
 4. What happens next, and who does it:
 
    | Step | Who | What |
    |---|---|---|
    | 1 | Claude Code | Builds the pages as drafts (`noindex`), lists every open fact, pushes the branch so Vercel builds a preview |
-   | 2 | You, or the person who owns the final edit | Opens the previews, answers the open facts (or says "delete that claim"), works through the review sheets |
-   | 3 | Claude Code | Fills in the facts or deletes the claims, reruns the checks |
+   | 2 | You, or the person who owns the final edit | Opens the previews and fills in "Your answer" for each `open` review-sheet row: the fact, or "delete" |
+   | 3 | Claude Code (`/seo-revise`) | Fills in the facts or deletes the claims, reruns the checks, pushes the branch |
    | 4 | The person who owns the final edit | Reads each page once more, edits, then says "approved" |
-   | 5 | You (or Claude in Cowork) | Pastes the final visible text into the same Surfer editors (Appendix D) and records the scores |
-   | 6 | Claude Code | Makes the release commit for the part that was approved, then stops |
-   | 7 | You | Merge, deploy, then the post-deploy steps |
+   | 5 | You (or Claude in Cowork), optional | Pastes the final visible text into the same Surfer editors (Appendix D) and records the scores |
+   | 6 | Claude Code (`/seo-release`) | Makes the release commit for the part that was approved, pushes the branch, gives the pull request link, then stops |
+   | 7 | You | Merge the pull request, deploy, then the post-deploy steps |
 
 5. Add the minutes for steps 2 to 4 per page to `docs/pilot-log.md` (Appendix C). The pilot's question still stands: how many person-minutes does one page take?
 
@@ -45,13 +45,13 @@ The work is split in two branches, because the case study depends on JOOR's appr
 
 General:
 
-- **G1. Base branch:** `main`, with the `/webflow-migration` pilot merged. If not, the branch to start from: `________`
+- **G1. Base branch:** `main`, with the `/webflow-migration` pilot merged. If not, the branch to start from: `dev` (this repo's integration branch; `main` is production and only the project lead releases to it)
 - **G2. Preview:** Claude Code pushes `seo/next-pages` and `seo/work-joor` (never the base branch) so Vercel builds previews. If you don't want that, say so here: `________`
 - **G3. Byline:** if `/webflow-migration` shows a byline, the person for the four service pages (same person unless you say otherwise): `________`
 
 Part 1, service pages (each item resolves one marker or one line of the review sheet):
 
-1. `/website-redesign` section 5: the frameworks you build custom-coded sites in, and whether "deep product integrations or heavy personalization" are fair examples of when you'd pick custom code: `________`
+1. `/website-redesign` section 5: answered 2026-10-10, BenorMedia builds custom-coded sites in any framework; the copy now names Next.js and Astro, and the marker is gone (content file v2.1). Still to confirm: whether "deep product integrations or heavy personalization" are fair examples of when you'd pick custom code: `________`
 2. `/website-redesign` section 8: is post-launch support for a redesign 30 days, the same as for migrations? `________`
 3. `/website-redesign` claims to confirm: the competitor-site review and wireframes in the process (section 3b), "strategy, design and development stay with one team", CRM data on lead quality in the before-and-after report, the FAQ advice that the client holds the domain, code, design files and CMS account, and "if you have an in-house design team or brand guidelines, we build from them". No marker on the page; the review sheet is the gate: `________`
 4. `/aeo-agency` section 6: OK to publish "In our own tracking for the web agency category, roundups were 25 of the 40 pages AI assistants cited most" (Trakkr, 30 days to 2026-10-08)? `________`
@@ -89,12 +89,12 @@ Measured by: positions for the terms above once they are in Ahrefs Rank Tracker,
 
 ### Surfer pass (2026-10-09)
 
-The four service pages were scored in Surfer Content Editors (workspace 1395950), revised once, and scored again. Surfer's suggested length (2,684 to 3,249 words for three pages, 10,677 for the AEO page) comes from the list posts that rank for these terms ("Top 13 agencies" and similar). Service pages don't need that length, so the revision added only sections and terms that fit true sentences: a redesign process, a cybersecurity design section, buyer FAQs on choosing an agency, and missing terms woven into existing sentences. Scores are SEO / AI Search / total.
+The four service pages were scored in Surfer Content Editors (workspace 1395950), revised once, and scored again. The two v2.1 pages were scored once more on 2026-10-10. Surfer's suggested length (2,684 to 3,249 words for three pages, 10,677 for the AEO page) comes from the list posts that rank for these terms ("Top 13 agencies" and similar). Service pages don't need that length, so the revision added only sections and terms that fit true sentences: a redesign process, a cybersecurity design section, buyer FAQs on choosing an agency, and missing terms woven into existing sentences. Scores are SEO / AI Search / total.
 
-| Page | Draft v1 | Draft v2 (these files) | Visible words, v2 |
+| Page | Draft v1 | Draft v2 or v2.1 (these files) | Visible words |
 |---|---|---|---|
-| `/website-redesign` | 35 / 53 / 44 | 62 / 63 / 63 | 2,181 |
-| `/webflow-seo-agency` | 46 / 71 / 59 | 68 / 79 / 74 | 2,011 |
+| `/website-redesign` | 35 / 53 / 44 | v2.1: 62 / 68 / 65 | 2,187 |
+| `/webflow-seo-agency` | 46 / 71 / 59 | v2.1: 68 / 84 / 76 | 2,025 |
 | `/cybersecurity-web-design` | 36 / 68 / 52 | 63 / 84 / 74 | 1,862 |
 | `/aeo-agency` | 46 / 66 / 56 | 73 / 81 / 77 | 1,897 |
 
@@ -130,7 +130,7 @@ Meta descriptions, `Service` fields and Open Graph settings are in each content 
    - No em dashes in visible copy (house style, and a common AI-writing tell). The content files have none; don't introduce any in alt text or labels.
 5. **Structure.** H2s end with a full stop, as on the live service pages. The FAQ array is the single source for the visible FAQ and the `FAQPage` markup (the `/pricing` pattern). Some answers contain links: render them as links in the visible FAQ and as plain text (the anchor words) in `acceptedAnswer.text`. No text baked into images.
 6. **Scope of edits.** Reuse the components `/webflow-migration` uses. New components only in Part 2, for the case study, built from the site's existing variables and nothing else. Don't touch positioning copy, existing JSON-LD, navigation or other pages, except the link tasks.
-7. **Safety.** One commit per task with a conventional message (`feat(seo): ...`, `chore(seo): ...`, `docs(seo): ...`). Do not merge, force-push, push the base branch or deploy. Never touch DNS, registrar settings, mail records, tokens or credentials. Add no runtime dependencies.
+7. **Safety.** One commit per task with a conventional message (`feat(seo): ...`, `chore(seo): ...`, `docs(seo): ...`). Do not merge into the base branch, force-push, push the base branch or deploy. Merging the base branch into a feature branch is fine when this brief or the person asks for it: a normal merge, never a rebase. Never touch DNS, registrar settings, mail records, tokens or credentials. Add no runtime dependencies.
 
 ## Discovery (before editing anything)
 
@@ -140,12 +140,13 @@ Report:
 - that `scripts/check-seo.mjs`, `scripts/check-draft.mjs`, `scripts/check-crawlers.sh` and `scripts/indexnow.mjs` exist, plus the output of a baseline `npm run build` and `node scripts/check-seo.mjs dist`;
 - how `/webflow-migration` is built, because it is the template for Part 1: the page file, its data file, the `DRAFT` flag and the `noindex` prop, the byline if any, and the component behind each section (hero, logo strip, the list sections with their diagrams, work grid, "When staying on WordPress is the better call.", services cards, CTA band, FAQ, related pages, contact form with testimonial);
 - how `/custom-websites-migrations` renders its numbered process (steps 01 to 09), because `/website-redesign` section 3b reuses it;
+- what a page with `DRAFT = true` does in a production build, which is also what Vercel previews run: built with `noindex` (the `/webflow-migration` pattern) or left out. If it's built, a merged draft would be live, which is why a held page leaves the branch before a release;
 - how JSON-LD is emitted (the helper, the shared Organization constants and their `@id`) and how the `/pricing` FAQ feeds both the visible FAQ and its markup;
 - what `/work` is built from (data file, content collection or Sanity), how the JOOR card is defined, whether any `/work/[slug]` route or case-study component exists, and how images are handled (Astro assets or `public/`);
 - the `PAGES` map in `scripts/check-seo.mjs`, including how it uses the `keyword` field; the `LASTMOD` map in `astro.config.*`; and the shape of the lines in `public/llms.txt`;
 - the tier A claims the content files reuse, quoted exactly from the live pages with their URLs, and any that no longer appear.
 
-**STOP and ask** if `/webflow-migration` is not on the base branch, if `scripts/check-draft.mjs` is missing, if a tier A claim is no longer on the live site, or if the live site contradicts "Webflow Professional Partner".
+**STOP and ask** if `/webflow-migration` is not on the base branch, if `scripts/check-draft.mjs` is missing, if a `DRAFT` page is left out of production builds (the previews wouldn't show the new pages), if a tier A claim is no longer on the live site, or if the live site contradicts "Webflow Professional Partner".
 
 ## Part 1: four service pages (branch `seo/next-pages`)
 
@@ -190,16 +191,16 @@ Commit: `feat(seo): link existing pages to the new service pages`.
 
 ### Task 7. Review sheets
 
-Save Appendix B four times as `docs/review-website-redesign.md`, `docs/review-webflow-seo-agency.md`, `docs/review-cybersecurity-web-design.md` and `docs/review-aeo-agency.md`, and fill each from its content file: one row per sentence or figure that states a fact, with its tier and source. A tier B row is `ok` only if you opened the source during this task and it still says that; otherwise `open`. Tier C rows start `open`. Write them in plain language: this is what the person works from.
+Save Appendix B four times as `docs/review-website-redesign.md`, `docs/review-webflow-seo-agency.md`, `docs/review-cybersecurity-web-design.md` and `docs/review-aeo-agency.md`, and fill each from its content file: one row per sentence or figure that states a fact, with its tier and source. A tier B row is `ok` only if you opened the source during this task and it still says that; otherwise `open`. Tier C rows start `open`. Number every row, leave "Your answer" empty, and put today's date in "Date" for each row you mark `ok`. Write them in plain language: this is what the person works from.
 
 Commit: `docs(seo): review sheets for the four service pages`.
 
 ### Task 8. Run, preview, report version 1, then stop
 
 1. `npm run build`, `node scripts/check-seo.mjs dist`, and `node scripts/check-draft.mjs <page file> <data file>` for each page. Paste the output.
-2. Push `seo/next-pages` (not the base branch) so Vercel builds a preview, and give the four preview URLs. If you cannot push, say so and give the local command.
+2. Push `seo/next-pages` with the branch named (`git push -u origin seo/next-pages`), never the base branch, so Vercel builds a preview, unless facts sheet G2 says otherwise, and give the four preview URLs. Get them with `gh`, from the pull request (open a draft pull request into the base branch if there is none) or from GitHub's deployment status, or ask Sergio; the Vercel CLI is blocked. If you cannot push, say so and give the local command.
 3. Look at each page at 1440 px and 390 px. Nothing may overflow the page; lists and diagrams must stay readable on a phone.
-4. Send the report described at the end of this file, with the open markers grouped by facts sheet item. Then stop and wait for answers.
+4. Send the report described at the end of this file, with the open markers and open review-sheet rows grouped by facts sheet item. Then stop and wait for answers.
 
 ## Part 2: case study template and `/work/joor` (branch `seo/work-joor`)
 
@@ -241,33 +242,59 @@ As Part 1 task 8, for `/work/joor`. Check the gallery and the team credits at 39
 
 ### Revision (Claude Code)
 
-1. Replace each marker with the fact you were given, or delete the claim. Never rephrase a claim to keep it alive without its fact. If a deletion leaves a list or section too thin, say so; don't fill the gap with new claims.
-2. Update the review sheets and rerun `check-seo.mjs` and `check-draft.mjs`. Report what changed between version 1 and version 2.
+1. Apply the person's answers from the review sheets' "Your answer" column: replace each marker with the fact you were given, confirm the row, or delete the claim. Never rephrase a claim to keep it alive without its fact. If a deletion leaves a list or section too thin, say so; don't fill the gap with new claims.
+2. Update the review sheets: set each resolved row to `confirmed` or `removed`, with the date. Rerun the build, `check-seo.mjs` and `check-draft.mjs`.
+3. Commit (`chore(seo): apply review answers`), push the branch so the previews update, and report what changed between version 1 and version 2.
 
-### Surfer (Sergio, or Claude in Cowork)
+### Surfer (optional; Sergio, or Claude in Cowork)
 
 After the final edit, paste each service page's visible text from the preview into its existing Surfer editor (Appendix D), replacing the old text, and record the score in the pilot log. No pass mark is set. Don't pad a page to reach Surfer's suggested length.
 
 ### Sign-off and release commits
 
-**Part 1.** When the person has signed off all four review sheets, one commit, `feat(seo): publish four service pages`:
+**Part 1.** The person who owns the final edit approves all four pages: "approved" in the conversation, or "Approved to publish (yes or no): yes" in each review sheet's sign-off block. Then:
 
-1. `DRAFT` to `false` on each page, and `publishedAt` and `updatedAt` to the sign-off day.
-2. `LASTMOD` for the four pages, and for every page changed in task 6, to the sign-off day.
-3. One line per page in `public/llms.txt`, built from the final meta description, in the file's existing format.
-4. `node scripts/check-draft.mjs --release <page file> <data file>` passes for each page, and so do the build and `check-seo.mjs`.
-5. No row in the four review sheets is still `open`: `grep -n '| open |' docs/review-website-redesign.md docs/review-webflow-seo-agency.md docs/review-cybersecurity-web-design.md docs/review-aeo-agency.md` returns nothing. Several confirmations (facts sheet items 3, 5 and 8) have no marker on the page, so the review sheet is their only gate. If a row is open, don't make the commit; ask.
-6. Stop. A person merges and deploys.
+1. Every row in the four review sheets is `ok`, `confirmed` or `removed`. This must print nothing:
 
-If one page holds up the other three, ask Claude Code to move it to its own branch with its task 6 links, and release the rest. The four pages link to each other (`/website-redesign`, `/webflow-seo-agency` and `/cybersecurity-web-design` link to `/aeo-agency`; `/aeo-agency` links to `/webflow-seo-agency`; `/webflow-seo-agency` links to `/website-redesign`). In the release commit, turn any link to the held page into plain text, list those links in the report, and restore them when the held page ships.
+   ```bash
+   for f in docs/review-website-redesign.md docs/review-webflow-seo-agency.md docs/review-cybersecurity-web-design.md docs/review-aeo-agency.md; do grep -qE '^\| *[0-9]+ *\|' "$f" 2>/dev/null || echo "MISSING OR EMPTY: $f"; grep -nHE '^\| *[0-9]+ *\|' "$f" 2>/dev/null | grep -viE '\| *`?(ok|confirmed|removed)`? *\| *$' || true; done
+   ```
 
-**Part 2.** When JOOR has approved and the person has signed off: first merge the base branch into `seo/work-joor` (a normal merge, no rebase and no force-push), so the branch has Part 1's pages if they shipped. Then one commit, `feat(seo): publish /work/joor`:
+   Several confirmations (facts sheet items 3, 5 and 8) have no marker on the page, so the review sheet is their only gate. If a row prints, don't make the commit; ask.
+2. If the base branch has moved since `seo/next-pages` was created, merge it into the branch first: a normal merge, never a rebase or force-push.
+3. One commit, `feat(seo): publish four service pages`:
+   - `DRAFT` to `false` on each page, and `publishedAt` and `updatedAt` to the sign-off day;
+   - `LASTMOD` for the four pages, and for every page changed in task 6, to the sign-off day;
+   - one line per page in `public/llms.txt`, built from the final meta description, in the file's existing format.
 
-1. `DRAFT` to `false`, dates to the sign-off day, `LASTMOD` updated.
-2. The links into the case study, from the content file: the JOOR card on `/work` ("Read the case study", keeping the external link), "JOOR" in the hero proof line of `/webflow-enterprise-agency`, the anchor "JOOR's site in 8+ languages" on `/guides/webflow-enterprise`, and, if Part 1 is merged, the "JOOR" link in section 5 of `/website-redesign`, switched from `/work` to `/work/joor`. `LASTMOD` for each changed page.
-3. One line for the page in `public/llms.txt`.
-4. `check-draft.mjs --release` passes on the template, the data and the entry; the build and `check-seo.mjs` pass; `grep -n '| open |' docs/review-work-joor.md` returns nothing.
-5. Stop.
+   Before you commit, `node scripts/check-draft.mjs --release <page file> <data file>` must pass for each page, and so must the build and `check-seo.mjs`. If one fails, undo the release edits with `git restore`, don't commit, and report.
+4. Push `seo/next-pages` (`git push -u origin seo/next-pages`), mark its pull request ready for review (`gh pr ready`), or open one into the base branch if there is none, and give the link.
+5. Stop. A person merges the pull request and deploys.
+
+**If one page holds up the other three.** The person can ask to release the rest (`/seo-release docs/brief-next-pages.md hold <URL of the page to hold back>`). Before any release edits:
+
+1. Create `seo/hold-<page>` from `seo/next-pages` and push it. It keeps everything as it is.
+2. On `seo/next-pages`, in one commit (`chore(seo): hold <page URL> for a later release`), remove the held page (page and data files, review sheet, `PAGES` and `LASTMOD` entries) and its task 6 links, and turn every link to it on the other pages into plain text. The four pages link to each other: `/website-redesign`, `/webflow-seo-agency` and `/cybersecurity-web-design` link to `/aeo-agency`; `/aeo-agency` links to `/webflow-seo-agency`; `/webflow-seo-agency` links to `/website-redesign`.
+3. Show the person every change to the pages that ship and wait for their OK. List the changed links in the report, to restore when the held page ships.
+4. Release the other three as above, with the gate and the checks run on those pages only.
+5. Revise the held page on its hold branch. When it's approved, the person runs `/seo-release docs/brief-next-pages.md <URL of the held page>`. Create `seo/release-<page>` from the base branch, copy the held page's files in from the hold branch (`git checkout <hold branch> -- <files>`), add back its entries and links, and release it the same way. Don't merge the base branch into the hold branch: Git would apply the removal from step 2 and delete the page.
+
+**Part 2.** When JOOR has approved the page, the quote and any result, and the person has signed off:
+
+1. The review gate prints nothing:
+
+   ```bash
+   for f in docs/review-work-joor.md; do grep -qE '^\| *[0-9]+ *\|' "$f" 2>/dev/null || echo "MISSING OR EMPTY: $f"; grep -nHE '^\| *[0-9]+ *\|' "$f" 2>/dev/null | grep -viE '\| *`?(ok|confirmed|removed)`? *\| *$' || true; done
+   ```
+
+2. Merge the base branch into `seo/work-joor` (a normal merge, no rebase and no force-push), so the branch has Part 1's pages if they shipped.
+3. One commit, `feat(seo): publish /work/joor`:
+   - `DRAFT` to `false`, dates to the sign-off day, `LASTMOD` updated;
+   - the links into the case study, from the content file: the JOOR card on `/work` ("Read the case study", keeping the external link), "JOOR" in the hero proof line of `/webflow-enterprise-agency`, the anchor "JOOR's site in 8+ languages" on `/guides/webflow-enterprise`, and, if Part 1 is merged, the "JOOR" link in section 5 of `/website-redesign`, switched from `/work` to `/work/joor`, with `LASTMOD` for each changed page;
+   - one line for the page in `public/llms.txt`.
+
+   Before you commit, `check-draft.mjs --release` must pass on the template, the data and the entry, and so must the build and `check-seo.mjs`. If one fails, undo the release edits with `git restore`, don't commit, and report.
+4. Push `seo/work-joor` (`git push -u origin seo/work-joor`), mark its pull request ready for review (`gh pr ready`), or open one into the base branch if there is none, give the link, and stop.
 
 ## Verification
 
@@ -277,7 +304,7 @@ Before Sergio merges either branch:
 npm run build
 node scripts/check-seo.mjs dist
 node scripts/check-draft.mjs --release <page file> <data file>   # once per page; must pass
-grep -n '| open |' docs/review-<page>.md                         # once per page; must print nothing
+for f in docs/review-<page>.md; do grep -qE '^\| *[0-9]+ *\|' "$f" 2>/dev/null || echo "MISSING OR EMPTY: $f"; grep -nHE '^\| *[0-9]+ *\|' "$f" 2>/dev/null | grep -viE '\| *`?(ok|confirmed|removed)`? *\| *$' || true; done   # review gate, once per page; must print nothing
 bash scripts/check-crawlers.sh                                    # production, not changed by these branches
 ```
 
@@ -286,14 +313,14 @@ After Sergio deploys (not you):
 - run `node scripts/check-seo.mjs https://www.benormedia.com` and confirm each new URL returns 200, is indexable, and appears in `sitemap-0.xml` with the sign-off date;
 - run `npm run indexnow --` with the new URLs and every page changed by the link tasks;
 - in Search Console, inspect each new URL and request indexing;
-- run each new URL through Google's Rich Results Test and validator.schema.org: no errors in `Service`, `FAQPage`, `Article` or `BreadcrumbList`;
+- run each new URL through validator.schema.org (every type, `Service` and `FAQPage` included) and Google's Rich Results Test (`Article` and `BreadcrumbList`; Google retired FAQ rich results on 2026-05-07, so the test no longer reports `FAQPage`): no errors;
 - add the terms from "What the pages must do" to Ahrefs Rank Tracker;
 - after Google has indexed the pages, check the matching prompts in the Surfer AI Tracker (project 12538) and Trakkr, and note the date, platform and result next to the baseline;
 - finish `docs/pilot-log.md`.
 
 ## Report (end of your last message)
 
-For each part, and again after revision: the status of each task, the files changed, the output of the checks, the preview URLs, the visible word count per page (it should roughly match the counts in "Research behind the pages"; explain a gap of more than 5%), the open markers grouped by facts sheet item, and the visuals still to make. Then say what you chose that this brief did not decide, and give three lists: what Sergio or the person must do, what you could not verify, and what you noticed but left alone.
+For each part, and again after revision: the status of each task, the files changed, the output of the checks, the preview URLs, the visible word count per page (it should roughly match the counts in "Research behind the pages"; explain a gap of more than 5%), the open markers and open review-sheet rows grouped by facts sheet item, and the visuals still to make. Then say what you chose that this brief did not decide, and give three lists: what Sergio or the person must do, what you could not verify, and what you noticed but left alone.
 
 ## Noticed, out of scope (do not change in these branches)
 
@@ -331,20 +358,20 @@ const MARKERS = /\[(?:FACT NEEDED|VERIFY|PERSON|QUOTE|RESULT NEEDED)\b[^\]]*\]|\
 
 ## Appendix B: review sheet template
 
-Statuses: `ok` (tier A or B, checked against its source), `open` (needs the person), `confirmed` (the person confirmed it), `removed` (cut from the page).
+Statuses: `ok` (tier A or B, checked against its source), `open` (needs the person), `confirmed` (the person confirmed it), `removed` (cut from the page). Number every row, the facts sheet and slot rows included (put the item, such as "item 2", in the Section column): the review gate reads only numbered rows, and it passes when every Status is `ok`, `confirmed` or `removed`.
 
 ```md
 # Review sheet: <page URL>
 
 Draft version: 1 | Preview: <url> | Prepared: <date> | Content file: docs/content/<file>.md
 
-How to use: go to the rows marked `open`. For each, give the fact, or write "delete". Rows marked `ok` were checked against their source by Claude Code; open the source if one looks wrong to you.
+How to use: go to the rows marked `open`. For each, write the fact in "Your answer", or write "delete". Don't use the | character in an answer. Claude Code applies your answers with `/seo-revise` and then sets the status and the date. Rows marked `ok` were checked against their source by Claude Code; open the source if one looks wrong to you.
 
-| # | Section | Sentence or figure on the page | Tier | Source, or who confirms | Status |
-|---|---|---|---|---|---|
-| 1 | Hero | "100+ launches in 6+ years, including 60+ B2B SaaS websites." | A | benormedia.com (live page named in the content file) | ok |
-| 2 | Section 6 | "Google advises keeping redirects for at least a year." | B | Google: site moves with URL changes (URL) | ok |
-| 3 | Section 8 | "Support continues for 30 days after launch." [VERIFY] | C | Sergio, facts sheet item 2 | open |
+| # | Section | Sentence or figure on the page | Tier | Source, or who confirms | Your answer | Date | Status |
+|---|---|---|---|---|---|---|---|
+| 1 | Hero | "100+ launches in 6+ years, including 60+ B2B SaaS websites." | A | benormedia.com (live page named in the content file) |  | <date> | ok |
+| 2 | Section 6 | "Google advises keeping redirects for at least a year." | B | Google: site moves with URL changes (URL) |  | <date> | ok |
+| 3 | Section 8 | "Support continues for 30 days after launch." [VERIFY] | C | Sergio, facts sheet item 2 |  |  | open |
 
 ## Sign-off
 
@@ -368,7 +395,7 @@ Add one block per page under the pilot's entry.
 | Minutes: answering the facts sheet | |
 | Minutes: checking facts against sources | |
 | Minutes: final edit | |
-| Surfer score (SEO / AI Search / total): v2 draft, then final | see Appendix D for v2 |
+| Surfer score (SEO / AI Search / total): draft, then final | see Appendix D for the draft |
 | Sentences or figures that were wrong or unsupported (count) | |
 | Markers resolved by supplying a fact, and by deleting the claim | |
 | Signed off (date), merged and deployed (date) | |
@@ -377,10 +404,10 @@ Add one block per page under the pilot's entry.
 
 ## Appendix D: Surfer editors
 
-| Page | Editor (main keyword, id) | Link | v2 score (SEO / AI Search / total) |
+| Page | Editor (main keyword, id) | Link | Latest score (SEO / AI Search / total) |
 |---|---|---|---|
-| `/website-redesign` | website redesign agency, 16833350 | https://app.surferseo.com/drafts/s/HiMJo0xmMXY8FLdVVPOXdNa1ZgOnq7N6 | 62 / 63 / 63 |
-| `/webflow-seo-agency` | webflow seo agency, 16833353 | https://app.surferseo.com/drafts/s/RP8asbLTmmHGc1ICUlPFvJJ2ojg5k20a | 68 / 79 / 74 |
+| `/website-redesign` | website redesign agency, 16833350 | https://app.surferseo.com/drafts/s/HiMJo0xmMXY8FLdVVPOXdNa1ZgOnq7N6 | 62 / 68 / 65 (v2.1) |
+| `/webflow-seo-agency` | webflow seo agency, 16833353 | https://app.surferseo.com/drafts/s/RP8asbLTmmHGc1ICUlPFvJJ2ojg5k20a | 68 / 84 / 76 (v2.1) |
 | `/cybersecurity-web-design` | cybersecurity website design, 16833471 | https://app.surferseo.com/drafts/s/9WJ8Kp3UwvJG8BH9iOUJiW0qbSedCMlb | 63 / 84 / 74 |
 | `/aeo-agency` | aeo agency, 16833498 | https://app.surferseo.com/drafts/s/13GLBs4A35Q2BnuQkpH20NKOZIRLsfcX | 73 / 81 / 77 |
 

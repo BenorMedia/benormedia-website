@@ -14,12 +14,14 @@
 - [Webflow SEO Agency: SEO & AEO for B2B](https://www.benormedia.com/webflow-seo-agency): Webflow SEO services from a Webflow Professional Partner: technical fixes, CMS structure and content that get B2B sites found on Google and in AI answers.
 - [Cybersecurity Website Design Agency](https://www.benormedia.com/cybersecurity-web-design): Website design for cybersecurity companies: proof-first messaging, technical depth for engineers, trust centers for procurement, and sites your team can run.
 - [AEO & GEO Agency for B2B SaaS](https://www.benormedia.com/aeo-agency): AEO and GEO services for B2B SaaS. We track the questions your buyers ask ChatGPT, Perplexity, Gemini and Google AI, then fix what keeps you out of the answers.
+- [Headless CMS Agency: Next.js & Astro Development](https://www.benormedia.com/headless-cms-agency): Headless CMS agency for B2B SaaS. We build Next.js and Astro sites your marketers can edit, and plan moves off Webflow or WordPress around your search traffic.
 
 ## Guides
 
 - [How to Migrate WordPress to Webflow](https://www.benormedia.com/guides/wordpress-to-webflow-migration): How to migrate from WordPress to Webflow without losing SEO: map URLs, move content, set 301 redirects, test, and monitor. Sourced from Google and Webflow.
 - [B2B SaaS Website Pages: What to Build](https://www.benormedia.com/guides/b2b-saas-website-pages): Which pages a B2B SaaS website needs, what each should hold, and how to keep it easy for marketing to run. Sourced from Webflow, Google, and Gartner.
 - [Webflow Enterprise: What to Check](https://www.benormedia.com/guides/webflow-enterprise): What makes a website project enterprise, what Webflow Enterprise includes as of October 2026, and how to vet an agency. Sourced from Webflow, Google, and W3C.
+- [Webflow vs Custom Code: When to Leave Webflow](https://www.benormedia.com/guides/webflow-vs-custom-code): Should you move from Webflow to Next.js, Astro or a headless CMS? What you gain, what you give up, what the code export leaves out, and when to stay.
 
 ## Company
 

@@ -40,7 +40,7 @@
 import Container from "../ui/Container.astro";
 import SectionHeader from "../ui/SectionHeader.astro";
 import type { ProcessStep } from "../../lib/sanity/types";
-import type { TitleSegment } from "../../lib/sanity/portable-text";
+import { linkRuns, type TitleSegment } from "../../lib/sanity/portable-text";
 import { urlFor, assetDimensions, isSvgAsset, type Source } from "../../lib/sanity/image";
 
 interface Props {
@@ -87,6 +87,7 @@ const items = steps
       num,
       name: step.name.trim(),
       description: step.description?.trim() || null,
+      note: linkRuns(step.note),
       features: (step.features ?? []).map((f) => f.trim()).filter(Boolean),
       img,
       panelId: `${id}-${num}`,
@@ -169,6 +170,11 @@ const headerOptional = {
                   </h3>
                   {item.description && (
                     <p class="c-service-process__step-description c-paragraph_m">{item.description}</p>
+                  )}
+                  {item.note.length > 0 && (
+                    <p class="c-service-process__step-note c-paragraph_m">
+                      {item.note.map((run) => (run.href ? <a href={run.href}>{run.text}</a> : run.text))}
+                    </p>
                   )}
                   {item.features.length > 0 && (
                     <ul class="c-service-process__features">
@@ -444,6 +450,18 @@ const headerOptional = {
   .c-service-process__step-description {
     margin: 0.857rem 0 0; /* ≈12px — TODO: DS */
     color: var(--color-text);
+  }
+
+  /* Optional cross-link note under the description (same spacing). */
+  .c-service-process__step-note {
+    margin: 0.857rem 0 0; /* ≈12px — TODO: DS */
+    color: var(--color-text);
+
+    & a {
+      color: var(--color-accent);
+      text-decoration: underline;
+      text-underline-offset: 0.15em;
+    }
   }
 
   /* Feature pills: sentence case, gray outline (ref). The shared `Tag` is
