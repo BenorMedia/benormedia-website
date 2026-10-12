@@ -19,7 +19,8 @@ import {
 } from "../lib/sanity/queries";
 import { OUR_WORK_GRID_IDS, OUR_WORK_LIST_IDS } from "../lib/content/our-work";
 import { PRICING_PLANS } from "../lib/content/pricing";
-import { PRICING_FAQ_GROUPS } from "../lib/content/faqs";
+import { PRICING_FAQ_GROUPS, faqPageLd } from "../lib/content/faqs";
+import JsonLd from "../components/layout/JsonLd.astro";
 import { PAGE_META } from "../lib/content/seo";
 import PageHero from "../components/sections/PageHero.astro";
 import PricingPlans from "../components/sections/PricingPlans.astro";
@@ -36,6 +37,7 @@ const [pricingPage, logoClients, testimonials, workClients, workListClients] = a
   getClientsByIds(OUR_WORK_LIST_IDS),
 ]);
 
+const pricingFaqLd = faqPageLd(PRICING_FAQ_GROUPS);
 ---
 
 <BaseLayout pageSeo={pricingPage?.seo ?? null} title={PAGE_META.pricing.title} description={PAGE_META.pricing.description}>
@@ -48,8 +50,10 @@ const [pricingPage, logoClients, testimonials, workClients, workListClients] = a
     <PricingPlans plans={PRICING_PLANS} />
   </div>
   {logoClients.length > 0 && <LogoStrip clients={logoClients} />}
-  {/* FAQs hidden for now (lead 2026-09-30). */}
+  {/* FAQs hidden for now (lead 2026-09-30). FAQPage JSON-LD from the same
+      array (lead 2026-10-06); FaqSection drops its own while hidden. */}
   <FaqSection title="Frequently asked questions." groups={PRICING_FAQ_GROUPS} scrollTabs hidden />
+  {pricingFaqLd && <JsonLd data={pricingFaqLd} />}
   <Testimonials testimonials={testimonials} />
   {(workClients.length > 0 || workListClients.length > 0) && (
     <OurWork clients={workClients} listClients={workListClients} />

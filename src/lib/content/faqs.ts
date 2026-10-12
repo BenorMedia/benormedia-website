@@ -98,3 +98,27 @@ export const FAQ_AEO: FaqGroup = {
 
 /** Pricing page tabs, in ref order. */
 export const PRICING_FAQ_GROUPS: readonly FaqGroup[] = [FAQ_WEB_DESIGN_DEVELOPMENT, FAQ_AEO];
+
+/**
+ * FAQPage JSON-LD (schema.org) from FAQ groups: one Question per item with a
+ * question and an answer, answer as plain text. `null` when there are none.
+ * Used by FaqSection and by Pricing (whose FaqSection renders `hidden`).
+ */
+export function faqPageLd(groups: readonly FaqGroup[]): Record<string, unknown> | null {
+  const answered = groups.flatMap((group) =>
+    group.items.filter((item) => item.question.trim().length > 0 && item.answer.trim().length > 0),
+  );
+  if (answered.length === 0) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: answered.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer.replace(/\s*\n\s*\n\s*/g, "\n\n").trim(),
+      },
+    })),
+  };
+}

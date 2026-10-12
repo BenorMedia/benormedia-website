@@ -1,0 +1,60 @@
+---
+/**
+ * NpSources — the article's source list (brief 7.2 `SourcesList`): an H2
+ * "Sources" and the list, each label as an external link with its access
+ * date. No wrapper of its own (lead 2026-10-07): it sits in the article
+ * column.
+ */
+import copy from "../../lib/new-pages/copy.json";
+import { fill, formatDate } from "../../lib/new-pages/html";
+
+interface Props {
+  items: readonly { labelHtml: string; url: string; accessed: string }[];
+}
+
+const { items } = Astro.props;
+---
+
+{items.length > 0 && (
+  <>
+    <h2 id="np-sources" class="c-np-sources__title c-text_m">{copy.sourcesHeading}</h2>
+    <ol class="c-np-sources__list">
+      {items.map((item) => (
+        <li class="c-np-sources__item c-paragraph">
+          <a class="c-np-sources__link" href={item.url} target="_blank" rel="noopener" data-np-src="source" set:html={item.labelHtml} />{" "}
+          <span class="c-np-sources__date">{fill(copy.sourceAccessed, { date: formatDate(item.accessed) })}</span>
+        </li>
+      ))}
+    </ol>
+  </>
+)}
+
+<style>
+  .c-np-sources__title {
+    margin: 0;
+    color: var(--color-heading);
+    scroll-margin-top: calc(var(--c-nav-height, 0px) + 2rem);
+  }
+  .c-np-sources__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.857rem;
+    margin: -2rem 0 0;
+    padding: 0 0 0 1.25em;
+    color: var(--color-text);
+  }
+  .c-np-sources__link {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    text-decoration-thickness: 1px;
+    overflow-wrap: anywhere;
+  }
+  .c-np-sources__link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  .c-np-sources__date {
+    color: var(--color-text);
+  }
+</style>

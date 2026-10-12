@@ -61,24 +61,3 @@ export const SERVICE_META: Record<string, PageMeta> = {
   },
 };
 
-/**
- * Service hero h1, keyed by `service.slug` (SEO quick changes, lead
- * 2026-10-06): the h1 names the service and the buyer; the Sanity
- * `headline` (brand line) renders as the first paragraph under it.
- * `accent` = the gradient phrase (SectionHeader `accent`). Unknown slugs
- * keep the Sanity headline as the h1.
- */
-export const SERVICE_H1: Record<string, { title: string; accent?: string }> = {
-  "custom-websites-migrations": {
-    title: "Webflow design and development for B2B companies",
-    accent: "design and development",
-  },
-  growth: {
-    title: "B2B SaaS SEO for Google and AI search",
-    accent: "Google and AI search",
-  },
-  "ongoing-website-support": {
-    title: "Webflow maintenance and support for B2B teams",
-    accent: "maintenance and support",
-  },
-};

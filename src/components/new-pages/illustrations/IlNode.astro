@@ -1,0 +1,24 @@
+---
+/** IlNode — icon tile + uppercase label, centered on (x, y) design px. */
+import { ICON, type IconName } from "./assets";
+
+interface Props {
+  x: number;
+  y: number;
+  icon: IconName;
+  label?: string;
+  /** Label box width, design px. */
+  w?: number;
+  muted?: boolean;
+  big?: boolean;
+}
+
+const { x, y, icon, label, w, muted = false, big = false } = Astro.props;
+const a = ICON[icon];
+const cls = ["np-il-node", muted && "is-muted", big && "is-big"].filter(Boolean).join(" ");
+---
+
+<span class={cls} style={`--x: ${x}; --y: ${y};${w ? ` --w: ${w};` : ""}`}>
+  <span class="np-il-tile"><img src={a.src} width={a.w} height={a.h} alt="" loading="lazy" decoding="async" /></span>
+  {label && <span class="np-il-label">{label}</span>}
+</span>

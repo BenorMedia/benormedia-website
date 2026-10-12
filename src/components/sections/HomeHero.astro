@@ -8,7 +8,7 @@
  * inside `.c-hero__lines`, aria-hidden.
  *
  * Content stack (24px internal gap):
- *   - title sub-block (eyebrow row + h1 + tagline + subtitle, gap 1.15rem). Eyebrow row:
+ *   - title sub-block (eyebrow row + h1 + subtitle, 24px gap). Eyebrow row:
  *     "$700M+" eyebrow left of the partner one; stacked on mobile, new on top.
  *   - `CtaActions` (lead 2026-09-30): the CTA banner's buttons + the
  *     "Trusted by" badge (`c-cta__actions`, dark tone on the gradient), with
@@ -53,9 +53,24 @@ import type { Button as ButtonType, Client } from "../../lib/sanity/types";
 
 interface Props {
   clients?: Client[];
+  /**
+   * Optional page copy (the new pages, content-pack). Without it the Home
+   * copy below renders unchanged. With it the section also gets `is-page`
+   * (layout tweaks live in the new pages' stylesheet). `eyebrowHtml` and each `paragraphsHtml`
+   * entry are escaped HTML from the new-pages loader; `npSrc` adds the
+   * `data-np-src` attributes its checks read.
+   */
+  content?: {
+    eyebrowHtml?: string;
+    title: string;
+    paragraphsHtml: readonly string[];
+    npSrc?: boolean;
+  };
+  /** Optional buttons (Sanity `button` objects). Default: Home's. */
+  buttons?: ButtonType[];
 }
 
-const { clients = [] } = Astro.props;
+const { clients = [], content, buttons } = Astro.props;
 
 const BUTTONS: ButtonType[] = [
   { variant: "white", link: { label: "Get in Touch", type: "contact" } },
@@ -70,7 +85,7 @@ const BUTTONS: ButtonType[] = [
 ];
 ---
 
-<section class="c-hero">
+<section class:list={["c-hero", content && "is-page"]}>
   <div class="c-hero__lines" aria-hidden="true">
     <img
       class="c-hero__lines-img is-left"
@@ -102,6 +117,25 @@ const BUTTONS: ButtonType[] = [
 
   <div class="c-hero__container">
     <div class="c-hero__block">
+      {content ? (
+        <div class="c-hero__title-block">
+          {content.eyebrowHtml && (
+            <div class="c-hero__eyebrows">
+              <Eyebrow variant="default" class="c-hero__eyebrow">
+                <span data-np-src={content.npSrc ? "eyebrow" : undefined} set:html={content.eyebrowHtml} />
+              </Eyebrow>
+            </div>
+          )}
+
+          <h1 class="c-hero__title" data-anim="hero-headline" data-np-src={content.npSrc ? "h1" : undefined}>
+            {content.title}
+          </h1>
+
+          {content.paragraphsHtml.map((html) => (
+            <p class="c-paragraph_m c-hero__desc" data-np-src={content.npSrc ? "lead" : undefined} set:html={html} />
+          ))}
+        </div>
+      ) : (
       <div class="c-hero__title-block">
         <div class="c-hero__eyebrows">
           <Eyebrow variant="default" class="c-hero__eyebrow">
@@ -112,24 +146,19 @@ const BUTTONS: ButtonType[] = [
           </Eyebrow>
         </div>
 
-        {/* H1 names the service and the buyer; the brand line stays as the
-            first paragraph (SEO quick changes, lead 2026-10-06). */}
         <h1 class="c-hero__title" data-anim="hero-headline">
-          Webflow agency for B2B SaaS and tech companies
-        </h1>
-
-        <p class="c-paragraph_m c-hero__desc">
           We turn your website into a revenue engine built to scale.
-        </p>
+        </h1>
 
         <p class="c-paragraph_m c-hero__desc">
           We create high-converting and AEO optimized websites that anyone in
           your team can update, maintain, and scale.
         </p>
       </div>
+      )}
 
       <CtaActions
-        buttons={BUTTONS}
+        buttons={buttons ?? BUTTONS}
         badges={[]}
         circles={false}
         trustedText="Trusted by +100 B2B companies:"
@@ -139,7 +168,7 @@ const BUTTONS: ButtonType[] = [
   </div>
 
   {clients.length > 0 && (
-    <div class="c-hero__physics" data-hero-physics aria-hidden="true">
+    <div class="c-hero__physics" data-hero-physics aria-hidden="true" data-np-live={content?.npSrc ? "hero-physics" : undefined}>
       {clients.map((client) => (
         <ClientIcon
           client={client}
@@ -229,6 +258,15 @@ const BUTTONS: ButtonType[] = [
       var(--c-hero-content),
       min(var(--c-hero-cap), var(--c-hero-content) + var(--c-hero-pile-room))
     );
+  }
+
+  /* Mobile (lead 2026-10-06): no pile (see `.c-hero__physics`), so the box
+     follows its content + 4rem. */
+  @media (max-width: 767px) {
+    .c-hero.is-measured {
+      height: auto;
+      padding-bottom: 4rem;
+    }
   }
 
   /* --- Decorative lines ------------------------------------------------- */
@@ -338,13 +376,16 @@ const BUTTONS: ButtonType[] = [
     gap: 2.143rem; /* 30px ÷14 (1440 root) — lead 2026-09-30 */
   }
 
-  /* Mobile (lead 2026-10-05): 1rem gap; eyebrow text 2.5vw (vw on purpose,
-     the lead's value: it follows the screen width). */
+  /* Mobile (lead 2026-10-05): 1rem gap. Eyebrow text 2.5vw (vw on purpose,
+     the lead's value: it follows the screen width) only at ≤500px (lead
+     2026-10-06); 501–767 keeps the default eyebrow size. */
   @media (max-width: 767px) {
     .c-hero__eyebrows {
       flex-direction: column;
       gap: 1rem;
     }
+  }
+  @media (max-width: 500px) {
     .c-hero__eyebrows :global(.c-eyebrow.c-hero__eyebrow) {
       font-size: 2.5vw;
     }
@@ -371,13 +412,21 @@ const BUTTONS: ButtonType[] = [
     align-items: center;
     width: fit-content;
     margin: 0 auto;
-    /* Glass, like the "See Our Work" button (`is-glass`: white 10% + 10px
-       blur); the 10% white fill comes from CtaActions. Lead 2026-10-01. */
-    -webkit-backdrop-filter: blur(10px);
-            backdrop-filter: blur(10px);
+    /* Glass, like the "See Our Work" button (`is-glass`: white 10%); the
+       10% white fill comes from CtaActions. Lead 2026-10-01; blur 20px
+       (was 10px), lead 2026-10-07. */
+    -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
   }
   .c-hero :global(.c-hero__actions .c-cta__badge-text) {
     text-align: center;
+  }
+
+  /* Mobile (lead 2026-10-06): no "Trusted by" badge in the hero. */
+  @media (max-width: 767px) {
+    .c-hero :global(.c-hero__actions .c-cta__badge) {
+      display: none;
+    }
   }
 
   /* --- Physics pile (hero-physics.ts) ---------------------------------
@@ -409,10 +458,11 @@ const BUTTONS: ButtonType[] = [
     padding: 0.575rem; /* 0.5rem x 1.15 */
     border-radius: 0.575rem;
   }
+  /* Mobile (lead 2026-10-06): no physics pile. Hidden, it never intersects,
+     so hero-physics.ts never starts (matter-js is not loaded). */
   @media (max-width: 767px) {
-    .c-hero__physics :global(.c-hero__physics-item) {
-      width: 3rem;  /* lead 2026-09-30 */
-      height: 3rem;
+    .c-hero__physics {
+      display: none;
     }
   }
   /* JS on: the static row stays hidden until the physics goes live (no

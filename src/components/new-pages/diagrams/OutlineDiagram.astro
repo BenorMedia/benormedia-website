@@ -1,0 +1,98 @@
+---
+/**
+ * OutlineDiagram — a page skeleton with callout labels (brief 7.3). The
+ * skeleton rows are abstract bars (no fake text); each callout names the
+ * part of the page it points at. Labels move under their rows below 440px.
+ */
+interface Props {
+  /** `heading`, `text`, `answer` or `schema` skeleton rows, with an optional label. */
+  rows: readonly { kind: "heading" | "text" | "answer" | "schema"; label?: string }[];
+}
+
+const { rows } = Astro.props;
+---
+
+<div class="c-np-outline">
+  <ul class="c-np-outline__rows">
+    {rows.map((row) => (
+      <li class={`c-np-outline__row is-${row.kind}`}>
+        <span class="c-np-outline__shape">
+          {row.kind === "text" && (<><span class="c-np-outline__bar" /><span class="c-np-outline__bar is-short" /></>)}
+          {row.kind === "heading" && <span class="c-np-outline__bar is-heading" />}
+          {row.kind === "answer" && (<><span class="c-np-outline__bar is-q" /><span class="c-np-outline__bar" /><span class="c-np-outline__bar is-short" /></>)}
+          {row.kind === "schema" && (<><span class="c-np-outline__bar is-code" /><span class="c-np-outline__bar is-code is-short" /></>)}
+        </span>
+        {row.label && <span class="c-np-outline__callout">{row.label}</span>}
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .c-np-outline {
+    container-type: inline-size;
+    font-family: var(--font-body);
+    font-size: var(--fs-p);
+    line-height: 1.35;
+    color: var(--color-heading);
+  }
+  .c-np-outline__rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.857rem;
+    margin: 0;
+    padding: 1.143rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--np-radius);
+    list-style: none;
+  }
+  .c-np-outline__row {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    align-items: center;
+    gap: 1.143rem;
+  }
+  .c-np-outline__shape {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding: 0.571rem;
+    border-radius: 4px;
+  }
+  .c-np-outline__row.is-answer .c-np-outline__shape,
+  .c-np-outline__row.is-schema .c-np-outline__shape {
+    border: 1px dashed var(--color-gray);
+  }
+  .c-np-outline__bar {
+    display: block;
+    height: 0.5rem;
+    border-radius: 2px;
+    background: var(--color-gray-light);
+  }
+  .c-np-outline__bar.is-short { width: 60%; }
+  .c-np-outline__bar.is-heading { height: 1rem; width: 80%; background: var(--color-gray); }
+  .c-np-outline__bar.is-q { width: 70%; background: var(--color-gray); }
+  .c-np-outline__bar.is-code { background: var(--np-surface-tint); border: 1px solid var(--color-accent); }
+  /* Callout: a 1px leader line to the label. */
+  .c-np-outline__callout {
+    position: relative;
+    padding-left: 1.714rem;
+  }
+  .c-np-outline__callout::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 1.143rem;
+    height: 1px;
+    background: var(--color-accent);
+  }
+  @container (max-width: 440px) {
+    .c-np-outline__row { grid-template-columns: 1fr; gap: 0.571rem; }
+  }
+  @media (max-width: 767px) {
+    .c-np-outline { font-size: 1.556rem; }
+    .c-np-outline__bar { height: 0.778rem; }
+    .c-np-outline__bar.is-heading { height: 1.333rem; }
+  }
+</style>

@@ -1,0 +1,32 @@
+---
+/**
+ * Author pages at /authors/<slug>: one per registered author
+ * (`src/lib/new-pages/authors.ts`), listing the article pages built in this
+ * mode whose front matter `author` names them (drafts in previews only).
+ */
+import NpAuthorPage from "../../components/new-pages/NpAuthorPage.astro";
+import { AUTHORS, findAuthor, type Author } from "../../lib/new-pages/authors";
+import { pagesOf, type NpPage } from "../../lib/new-pages/loader";
+
+export function getStaticPaths() {
+  const articles = pagesOf("article");
+  return AUTHORS.map((author) => ({
+    params: { slug: author.slug },
+    props: {
+      author,
+      articles: articles
+        .filter((p) => !p.author.hasGap && findAuthor(p.author.text)?.slug === author.slug)
+        .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt)),
+    },
+  }));
+}
+
+interface Props {
+  author: Author;
+  articles: NpPage[];
+}
+
+const { author, articles } = Astro.props;
+---
+
+<NpAuthorPage author={author} articles={articles} />

@@ -1,0 +1,25 @@
+---
+/**
+ * IlFrame — the stage of every new-page illustration (`il.css`): a white
+ * frame `560 × h` design px that scales with its column, with the soft
+ * accent glow. Children place themselves in design px.
+ */
+import "./il.css";
+
+interface Props {
+  /** Stage height in design px (width is 560). */
+  h: number;
+  /** Glow center and size in design px. */
+  glow?: { x: number; y: number; w?: number; h?: number };
+}
+
+const { h, glow = { x: 280, y: h / 2 } } = Astro.props;
+const glowStyle = `--x: ${glow.x}; --y: ${glow.y};${glow.w ? ` --gw: ${glow.w};` : ""}${glow.h ? ` --gh: ${glow.h};` : ""}`;
+---
+
+<div class="np-il-wrap">
+  <div class="np-il" style={`--np-il-h: ${h};`}>
+    <span class="np-il__glow" style={glowStyle}></span>
+    <slot />
+  </div>
+</div>

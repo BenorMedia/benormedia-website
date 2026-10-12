@@ -1,0 +1,109 @@
+---
+/**
+ * SiteMapDiagram — a root page and grouped children (brief 7.3): root on
+ * top, one column per group (group label in the accent colour, its pages
+ * below). Groups stack under 440px.
+ */
+interface Props {
+  root: string;
+  groups: readonly { label: string; items: readonly string[] }[];
+}
+
+const { root, groups } = Astro.props;
+---
+
+<div class="c-np-sitemap">
+  <div class="c-np-sitemap__root"><span class="c-np-sitemap__node is-root">{root}</span></div>
+  <ul class="c-np-sitemap__groups" style={`--np-sm-cols: ${groups.length};`}>
+    {groups.map((g) => (
+      <li class="c-np-sitemap__group">
+        <span class="c-np-sitemap__label">{g.label}</span>
+        <ul class="c-np-sitemap__items">
+          {g.items.map((item) => <li class="c-np-sitemap__node">{item}</li>)}
+        </ul>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .c-np-sitemap {
+    container-type: inline-size;
+    font-family: var(--font-body);
+    font-size: var(--fs-p);
+    line-height: 1.35;
+    color: var(--color-heading);
+  }
+  .c-np-sitemap ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .c-np-sitemap__root {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 1.714rem;
+  }
+  .c-np-sitemap__root::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    height: 1.714rem;
+    background: var(--color-gray);
+  }
+  .c-np-sitemap__groups {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(var(--np-sm-cols), minmax(0, 1fr));
+    gap: 1.143rem;
+    padding-top: 1.714rem;
+    border-top: 1px solid var(--color-gray);
+  }
+  .c-np-sitemap__group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.857rem;
+  }
+  .c-np-sitemap__label {
+    color: var(--color-accent);
+    font-weight: 600;
+    letter-spacing: 0.064em;
+    text-transform: uppercase;
+  }
+  .c-np-sitemap__items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.571rem;
+  }
+  .c-np-sitemap__node {
+    display: block;
+    padding: 0.714rem 0.857rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--np-radius);
+    background: var(--color-white);
+  }
+  .c-np-sitemap__node.is-root {
+    border-color: var(--color-accent);
+    background: var(--np-surface-tint);
+  }
+  @container (max-width: 440px) {
+    .c-np-sitemap__root { justify-content: flex-start; }
+    .c-np-sitemap__root::after { left: 1.5rem; }
+    .c-np-sitemap__groups {
+      grid-template-columns: 1fr;
+      gap: 1.714rem;
+      margin-left: 1.5rem;
+      padding-top: 0;
+      padding-left: 1.143rem;
+      border-top: 0;
+      border-left: 1px solid var(--color-gray);
+    }
+  }
+  @media (max-width: 767px) {
+    .c-np-sitemap { font-size: 1.556rem; }
+    .c-np-sitemap__node { padding: 1rem 1.111rem; }
+  }
+</style>

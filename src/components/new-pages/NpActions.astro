@@ -1,0 +1,47 @@
+---
+/**
+ * NpActions — the new pages' button row (section 8): "Get in Touch" does
+ * exactly what the header button does (`js-open-contact` → ContactModal,
+ * Nav.astro), the second button links to Pricing (service pages) or Work
+ * (industry and regional pages). Layout copied from `CtaActions`
+ * (`.c-cta__buttons`: equal columns, stacked on phones), without its
+ * "Trusted by" badge, whose text is not in the new pages' copy.
+ */
+import Button from "../ui/Button.astro";
+import copy from "../../lib/new-pages/copy.json";
+
+interface Props {
+  /** `light` = white sections (gradient buttons), `dark` = the CTA band (white / glass). */
+  tone?: "light" | "dark";
+  /** Second button; none on the article closing block. */
+  second?: { label: string; href: string } | undefined;
+  class?: string;
+}
+
+const { tone = "light", second, class: className } = Astro.props;
+const rootClass = ["c-np-actions", second && "has-two", className].filter(Boolean).join(" ");
+---
+
+<div class={rootClass}>
+  <Button variant={tone === "light" ? "gradient" : "white"} class="js-open-contact">{copy.buttons.contact}</Button>
+  {second && <Button variant={tone === "light" ? "gradient-outline" : "glass"} href={second.href}>{second.label}</Button>}
+</div>
+
+<style>
+  .c-np-actions {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 1.071rem; /* 15px, as .c-cta__buttons */
+    width: fit-content;
+    max-width: 100%;
+  }
+  @media (max-width: 767px) {
+    .c-np-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+    }
+  }
+</style>

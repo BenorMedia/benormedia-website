@@ -1,0 +1,88 @@
+---
+/**
+ * NpCtaBand — closing call to action (brief 6.1 row 6, 6.2 row 7). Rung 3
+ * sibling of the global `CtaBanner`: same gradient card, decorative vector
+ * (its scroll motion comes from cta-vector.ts, reduced-motion safe) and
+ * white / glass buttons, with the page's own heading and text and without
+ * the banner's "GET IN TOUCH" eyebrow and Trusted badge (not in the new
+ * pages' copy). Pages that render it pass `showCtaBanner={false}`.
+ */
+import Container from "../ui/Container.astro";
+import NpActions from "./NpActions.astro";
+
+interface Props {
+  headingHtml: string;
+  textHtml: string;
+  /** `data-np-src` names: `closing.*` (commercial) or `copy` (article template text). */
+  src: "closing" | "copy";
+  second?: { label: string; href: string } | undefined;
+}
+
+const { headingHtml, textHtml, src, second } = Astro.props;
+---
+
+<section class="c-np-cta-section" aria-labelledby="np-closing-title">
+  <Container>
+    <div class="c-np-cta">
+      <div class="c-np-cta__inner">
+        <h2 id="np-closing-title" class="c-text_xl c-np-cta__title" data-np-src={src === "closing" ? "closing.heading" : undefined} set:html={headingHtml} />
+        <p class="c-paragraph_m c-np-cta__text" data-np-src={src === "closing" ? "closing.text" : undefined} set:html={textHtml} />
+        <NpActions tone="dark" second={second} />
+      </div>
+      <img src="/images/cta-banner-vector.svg" alt="" aria-hidden="true" width="1272" height="197" class="c-np-cta__vector" data-cta-vector />
+    </div>
+  </Container>
+</section>
+
+<style>
+  /* Copied from CtaBanner (.c-cta), lead-approved values. */
+  .c-np-cta-section :global(.c-container) {
+    padding-top: 0;
+  }
+  .c-np-cta {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.875rem;
+    padding: 5rem 2.625rem 0;
+    border-radius: 0.455rem;
+    background: linear-gradient(290deg, var(--color-blue-light) 8.49%, var(--color-blue) 91.51%);
+    color: var(--color-white);
+  }
+  .c-np-cta__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    text-align: center;
+  }
+  .c-np-cta__title {
+    max-width: 60%;
+    color: var(--color-white);
+  }
+  .c-np-cta__text {
+    max-width: 42rem;
+    color: var(--color-white);
+  }
+  .c-np-cta__vector {
+    position: relative;
+    z-index: 0;
+    display: block;
+    width: min(60rem, 90%);
+    height: auto;
+    pointer-events: none;
+  }
+  @media (max-width: 991px) {
+    .c-np-cta { padding: 4rem 2rem 0; }
+  }
+  @media (max-width: 767px) {
+    .c-np-cta { padding: 3rem 1.25rem 0; }
+    .c-np-cta__inner { gap: 1.25rem; width: 100%; }
+    .c-np-cta__title { max-width: 100%; }
+  }
+</style>

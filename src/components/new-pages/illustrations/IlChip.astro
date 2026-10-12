@@ -1,0 +1,17 @@
+---
+/** IlChip — the Figma capability pill: icon tile + label. */
+import { ICON, type IconName } from "./assets";
+
+interface Props {
+  icon: IconName;
+  label: string;
+}
+
+const { icon, label } = Astro.props;
+const a = ICON[icon];
+---
+
+<span class="np-il-chip">
+  <span class="np-il-chip__tile"><img src={a.src} width={a.w} height={a.h} alt="" loading="lazy" decoding="async" /></span>
+  <span class="np-il-chip__label">{label}</span>
+</span>

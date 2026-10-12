@@ -5,7 +5,9 @@
  * Layout:
  *   1. .c-footer__inner  — max-width container with the top row:
  *      - Barcelona card (image + tint overlay + city/address text)
- *      - SERVICES + ABOUT link columns (Eyebrow labels)
+ *      - SERVICES + SOLUTIONS/GUIDES + ABOUT link columns (Eyebrow labels;
+ *        GUIDES and the new service pages added 2026-10-07; services grouped
+ *        by pillar and SOLUTIONS stacked above GUIDES 2026-10-10)
  *      - Socials, then the partner badges (images) — swapped lead 2026-09-30
  *   2. .c-footer__wordmark-strip — FULL-WIDTH strip, height 258px,
  *      border top + bottom, containing the wordmark image (move-in on
@@ -27,10 +29,27 @@ interface Props {
 }
 
 // --- Link columns ---------------------------------------------------------
+// Services by pillar: each pillar, then its spoke pages (lead 2026-10-10).
 const servicesLinks = [
   { label: "Custom Websites & Migrations", href: "/custom-websites-migrations" },
+  { label: "Website Redesign", href: "/website-redesign" },
+  { label: "WordPress to Webflow Migration", href: "/webflow-migration" },
   { label: "Growth (SEO/GEO + CRO)", href: "/growth" },
+  { label: "Webflow SEO & AEO", href: "/webflow-seo-agency" },
+  { label: "AEO & GEO Agency", href: "/aeo-agency" },
   { label: "Ongoing Website Support", href: "/ongoing-website-support" },
+];
+// Pages by audience (industry and company size), stacked above GUIDES.
+const solutionsLinks = [
+  { label: "B2B SaaS Web Design", href: "/b2b-saas-web-design" },
+  { label: "Cybersecurity Web Design", href: "/cybersecurity-web-design" },
+  { label: "Webflow Enterprise Agency", href: "/webflow-enterprise-agency" },
+];
+// Guides (content-pack articles, released 2026-10-07).
+const guidesLinks = [
+  { label: "How to Migrate WordPress to Webflow", href: "/guides/wordpress-to-webflow-migration" },
+  { label: "B2B SaaS Website Pages", href: "/guides/b2b-saas-website-pages" },
+  { label: "Webflow Enterprise Guide", href: "/guides/webflow-enterprise" },
 ];
 // `hidden`: kept in the markup, not shown. Testimonials stays out of
 // production for now (lead 2026-09-30, same as the nav).
@@ -80,6 +99,20 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
           </ul>
         </div>
         <div class="c-footer__col">
+          <Eyebrow class="c-footer__col-label">SOLUTIONS</Eyebrow>
+          <ul class="c-footer__col-list">
+            {solutionsLinks.map((l) => (
+              <li><a href={l.href} class="c-footer__col-link">{l.label}</a></li>
+            ))}
+          </ul>
+          <Eyebrow class="c-footer__col-label is-next">GUIDES</Eyebrow>
+          <ul class="c-footer__col-list">
+            {guidesLinks.map((l) => (
+              <li><a href={l.href} class="c-footer__col-link">{l.label}</a></li>
+            ))}
+          </ul>
+        </div>
+        <div class="c-footer__col">
           <Eyebrow class="c-footer__col-label">ABOUT</Eyebrow>
           <ul class="c-footer__col-list">
             {aboutLinks.map((l) => (
@@ -100,7 +133,7 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
         <div class="c-footer__badges">
           {/* Webflow profile (lead 2026-10-05). */}
           <a href="https://webflow.com/@benor-media" class="c-footer__badge-link" target="_blank" rel="noopener">
-            <img src="/images/webflow-partner.png" alt="Official Webflow Partner (opens BenorMedia's Webflow profile in a new tab)" class="c-footer__badge-img" />
+            <img src="/images/webflow-partner.png" alt="Webflow Professional Partner (opens BenorMedia's Webflow profile in a new tab)" class="c-footer__badge-img" />
           </a>
           <img src="/images/claude-partner.png" alt="Claude Partner Network" class="c-footer__badge-img" />
         </div>
@@ -206,7 +239,7 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   /* Link columns */
   .c-footer__cols {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, auto);
     gap: 3rem;
     /* Center content so Eyebrow (inline-flex, fit-content) and centered
        links share the same axis. */
@@ -219,6 +252,11 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
     align-items: flex-start;
     gap: 1.25rem;
     text-align: center;
+  }
+  /* A second group in the same column (SOLUTIONS, then GUIDES): the column
+     gap plus the same again, so the groups read apart. */
+  .c-footer__col :global(.c-footer__col-label.is-next) {
+    margin-top: 1.25rem;
   }
   /* Eyebrow used as the col-label — width fits text automatically (inline-flex). */
   .c-footer__col-list {
@@ -388,6 +426,7 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
     .c-footer__cols {
       grid-template-columns: 1fr 1fr;
       gap: 2rem;
+      justify-items: start; /* three columns wrap: keep them on one left edge */
     }
     .c-footer__wordmark-strip { height: 8rem; }
     /* Socials + badges side by side, pushed apart (lead visual QA

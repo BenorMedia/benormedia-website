@@ -34,6 +34,8 @@ interface Props {
   noindex?: boolean;
   pageSeo?: SeoData | null;
   showCtaBanner?: boolean;
+  /** Apply the "%s | BenorMedia" title template (Seo). Default true. */
+  titleTemplate?: boolean;
 }
 
 const {
@@ -44,6 +46,7 @@ const {
   noindex,
   pageSeo,
   showCtaBanner = true,
+  titleTemplate = true,
 } = Astro.props;
 
 const noIndexResolved = noIndex ?? noindex ?? false;
@@ -63,6 +66,11 @@ const siteSettings: SiteSettings | null = await getSiteSettingsCached();
 // Keep the cookie name in sync with src/scripts/ui/cookie-consent.ts.
 const GTM_ID = "GTM-M4MHRTDM";
 const loadGtm = import.meta.env["PUBLIC_SITE_ENV"] === "production";
+
+// --- Ahrefs Web Analytics (lead 2026-10-07) ---------------------------------
+// Production only, the same switch as GTM: previews and local dev never send
+// visits. The key is Ahrefs' public site key for www.benormedia.com.
+const loadAhrefs = loadGtm;
 const gtmHead = `<script>
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
@@ -149,6 +157,9 @@ if (siteSettings) {
     <meta charset="UTF-8" />
     {loadGtm && <Fragment set:html={gtmHead} />}
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {loadAhrefs && (
+      <script is:inline src="https://analytics.ahrefs.com/analytics.js" data-key="frSOv/uJHEnNrchxbVrxBw" async></script>
+    )}
     <!-- Brand icons (docs/refs/benor, lead 2026-10-01): favicon 32px PNG +
          ICO (16/32), web clip = 180px apple-touch-icon on white. -->
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -182,6 +193,7 @@ if (siteSettings) {
       noIndex={noIndexResolved}
       pageSeo={pageSeo}
       siteSettings={siteSettings}
+      titleTemplate={titleTemplate}
     />
 
     {orgLd && (

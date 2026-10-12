@@ -38,7 +38,7 @@ import Container from "../ui/Container.astro";
 import SectionHeader from "../ui/SectionHeader.astro";
 import SegmentedControl from "../ui/SegmentedControl.astro";
 import FaqAccordion from "../ui/FaqAccordion.astro";
-import type { FaqGroup } from "../../lib/content/faqs";
+import { faqPageLd, type FaqGroup } from "../../lib/content/faqs";
 
 interface Props {
   title: string;
@@ -85,26 +85,10 @@ const rootClass = ["c-faq-section", background && "is-bg", className]
   .filter(Boolean)
   .join(" ");
 
-// FAQPage structured data (schema.org). `<` is escaped so the JSON can never
-// close the script element.
-const answered = visibleGroups.flatMap((group) =>
-  group.items.filter((item) => item.answer.trim().length > 0),
-);
-const ldJson =
-  jsonLd && !hidden && answered.length > 0
-    ? JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        mainEntity: answered.map((item) => ({
-          "@type": "Question",
-          name: item.question,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: item.answer.replace(/\s*\n\s*\n\s*/g, "\n\n").trim(),
-          },
-        })),
-      }).replace(/</g, "\\u003c")
-    : null;
+// FAQPage structured data (`faqPageLd`, same data as the accordions). `<` is
+// escaped so the JSON can never close the script element.
+const ld = jsonLd && !hidden ? faqPageLd(visibleGroups) : null;
+const ldJson = ld ? JSON.stringify(ld).replace(/</g, "\\u003c") : null;
 ---
 
 {visibleGroups.length > 0 && (
