@@ -157,7 +157,7 @@ Required on every page (a `section` is exempt from `title`, `description`, `h1`,
 | `wave` | 1, 2 or 3. Release wave suggested by the plan. |
 | `draft` | `true` while drafting. The person who owns the final edit flips it at sign-off. |
 | `blockedBy` | List of ids that need a real answer or a build before release. Usually `[]`. |
-| `title` | 60 characters or fewer (commercial pages were 49 or fewer until 2026-10-09; `docs/brief-next-pages.md` sets 42 to 53). End in `\| BenorMedia` unless that breaks the limit. |
+| `title` | 60 characters or fewer; service pages 61 (Sergio, 2026-10-12, for `/headless-cms-agency`) (commercial pages were 49 or fewer until 2026-10-09; `docs/brief-next-pages.md` sets 42 to 53). End in `\| BenorMedia` unless that breaks the limit. |
 | `description` | 70 to 160 characters (commercial pages were 70 to 149 until 2026-10-09; `docs/brief-next-pages.md` runs to 160). Every word must be tier A, S or B. No promise, no price. |
 | `h1` | Names the page's subject. 90 characters or fewer. |
 | `primaryKeyword`, `secondaryKeywords` | From `data/keyword-map.csv`. `targetCountry`: `US`, `GB`, `DE` or `ES`. |
@@ -167,7 +167,7 @@ Required on every page (a `section` is exempt from `title`, `description`, `h1`,
 | `breadcrumb` | List of `{name, url}` from Home to this page. |
 | `schema` | Any of `Service`, `Article`, `FAQPage`, `BreadcrumbList`, `CollectionPage`, `WebPage`, `WebApplication`. Services: `Service`. Guides, comparisons, studies: `Article`. Any page with an FAQ: `FAQPage`. All pages: `BreadcrumbList`. |
 | `service` | `{name, serviceType}` when `Service` is in `schema`. Optional: `audience` (the `audienceType`; default "B2B SaaS and tech companies") and `alternateName` (a `[a, b]` list). |
-| `faq` | List of `{q, a}`. Commercial pages: 5 to 8 items (12 at most: the brief-next-pages copy runs to 11), answers of 20 to 70 words. Articles: 5 to 10 items, answers of 40 to 90 words. Each question ends in `?`. The answer is in the first sentence. Plain text only. |
+| `faq` | List of `{q, a}`. Commercial pages: 5 to 8 items (13 at most: the brief-next-pages copy runs to 11, `/headless-cms-agency` to 13, Sergio 2026-10-12), answers of 20 to 70 words. Articles: 5 to 10 items, answers of 40 to 90 words. Each question ends in `?`. The answer is in the first sentence. Plain text only. |
 | `faqHeading` | The H2 shown above the FAQ. |
 | `takeaways` | Guides, comparisons and data studies: 3 to 5 plain sentences shown under the lead. Not used on commercial pages. |
 | `related` | List of slugs of other new pages, or live paths such as `/custom-websites-migrations`, pillar first. Each is linked from the page's closing block. |

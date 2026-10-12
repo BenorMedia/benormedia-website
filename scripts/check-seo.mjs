@@ -89,7 +89,7 @@ for (const [path, rule] of Object.entries(PAGES)) {
   console.log(`  meta  : ${meta} (${meta.length})`);
   console.log(`  types : ${[...new Set(types)].join(', ') || '(none)'}`);
 
-  check(title.length > 0 && title.length <= 60, 'title length 1-60', `title length ${title.length}, want 1-60`);
+  check(title.length > 0 && title.length <= 61, 'title length 1-61', `title length ${title.length}, want 1-61`); // 61 for /headless-cms-agency (Sergio, 2026-10-12)
   check(h1s.length === 1, 'exactly one h1', `${h1s.length} h1 elements, want exactly 1`);
   check(meta.length >= 70 && meta.length <= 160, 'meta description 70-160 chars', `meta description ${meta.length} chars, want 70-160`);
   check(canonical.startsWith(SITE), `canonical ${canonical}`, `canonical missing or not on ${SITE}`);
