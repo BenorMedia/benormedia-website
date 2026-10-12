@@ -55,6 +55,40 @@ export const processStep = defineType({
       rows: 3,
     }),
     defineField({
+      name: 'note',
+      title: 'Note with a link',
+      description:
+        'Optional one-line note under the description, e.g. "Building in code? See headless CMS development." Select words and add a link. Use a path such as /headless-cms-agency for pages on this site.',
+      type: 'array',
+      of: [
+        defineArrayMember({
+          type: 'block',
+          styles: [{ title: 'Paragraph', value: 'normal' }],
+          lists: [],
+          marks: {
+            decorators: [],
+            annotations: [
+              {
+                name: 'link',
+                type: 'object',
+                title: 'Link',
+                fields: [
+                  {
+                    name: 'href',
+                    type: 'url',
+                    title: 'URL',
+                    validation: (Rule) =>
+                      Rule.required().uri({ allowRelative: true, scheme: ['http', 'https'] }),
+                  },
+                ],
+              },
+            ],
+          },
+        }),
+      ],
+      validation: (Rule) => Rule.max(1).error('Keep the note to one paragraph.'),
+    }),
+    defineField({
       name: 'features',
       title: 'Features',
       description:

@@ -323,6 +323,8 @@ export interface ProcessStep {
   _key: string;
   name: string;
   description?: string | null;
+  /** One paragraph; spans may carry a `link` annotation (relative or absolute href). */
+  note?: PortableTextBlock[] | null;
   features?: string[] | null;
   image?: SanityImage | null;
 }
@@ -340,6 +342,7 @@ export interface PortableTextBlock {
   _type: string;
   style?: string;
   children?: PortableTextSpan[];
+  markDefs?: { _key: string; _type: string; href?: string }[];
 }
 
 export interface ServiceFaq {
