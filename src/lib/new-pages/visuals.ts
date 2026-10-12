@@ -748,6 +748,24 @@ export const DIAGRAMS: Record<string, DiagramEntry> = {
       tokens: ["Platform limits", "Coding agents"],
     },
   },
+  // Labels: the content note's eight step names (section 12), the guide's numbered steps.
+  "webflow-vs-custom-code:1": {
+    component: FlowDiagram,
+    props: {
+      numbered: true,
+      columns: 4,
+      steps: [
+        { label: "Benchmark" },
+        { label: "Export everything" },
+        { label: "Map URLs" },
+        { label: "Rebuild the SEO basics" },
+        { label: "Move the files" },
+        { label: "Test on staging" },
+        { label: "Launch" },
+        { label: "Monitor" },
+      ],
+    },
+  },
 };
 
 export type ResolvedVisual =
