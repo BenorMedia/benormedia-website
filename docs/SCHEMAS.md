@@ -172,7 +172,7 @@ Seed: Fintech · SaaS · HR Tech · Cleantech · Venture Capital · E-Commerce �
 | `stat` | value (string, e.g. "$700M+"), label |
 | `kpi` | value, description |
 | `accentTitle` | one-block Portable Text title with the "Gradient" (`accent`) decorator (see `service`) |
-| `processStep` | name, description, features[], image + alt (see `service`) |
+| `processStep` | name, description, note (optional link line), features[], image + alt (see `service`) |
 
 ---
 
