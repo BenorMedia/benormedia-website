@@ -14,7 +14,7 @@ secondaryKeywords: [webflow for enterprise, webflow enterprise pricing, enterpri
 targetCountry: US
 author: "Sergio Gancedo, Managing Director, BenorMedia"
 publishedAt: 2026-10-07
-updatedAt: 2026-10-07
+updatedAt: 2026-10-12
 reviewEvery: 30
 breadcrumb:
   - name: Home
@@ -258,6 +258,8 @@ Webflow suits an enterprise team whose website is a marketing and content system
 - **Procurement requires a certification the platform does not hold.** Compare the requirement with the evidence on Webflow's security page and trust center before you shortlist the platform.
 - **Your editors need an approval flow Webflow does not offer.** Map each approval step to the release flow described above before you commit.
 - **You only need a refreshed marketing site for one team of editors.** A smaller plan or a simpler build may be enough, and the [Webflow pricing guide](page:webflow-pricing) covers the other plans.
+
+Weighing a move to code? See [Webflow vs custom code](page:webflow-vs-custom-code).
 
 ## How was this guide written and checked?
 
