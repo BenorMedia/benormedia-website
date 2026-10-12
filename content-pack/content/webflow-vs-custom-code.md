@@ -290,7 +290,7 @@ Table: Common choices for a site that leaves Webflow
 | Payload | Teams that want an [open-source CMS](https://payloadcms.com/) built into their Next.js app | You [host it yourself](https://payloadcms.com/docs/production/deployment), so backups and updates are on you |
 | Webflow CMS, used headless | Teams that want to keep editing in Webflow | API rate limits, and the Designer no longer controls the layout |
 
-Our own site runs on Astro, with Sanity as the CMS. We chose Astro because almost everything on our site is content, and Astro sends JavaScript only to the parts of a page that need it. In our crawl on October 5, 2026, the home page's HTML linked to a single JavaScript file. We picked Sanity because it stores content as structured data rather than page layouts, so one piece of content can feed several pages. Running both ourselves also lets us test the setup we recommend, from server-rendered HTML to structured data, before we suggest it to a client.
+Our own site runs on Astro, with Sanity as the CMS. We chose Astro because almost everything on our site is content, and Astro sends JavaScript only to the parts of a page that need it. We picked Sanity because it stores content as structured data rather than page layouts, so one piece of content can feed several pages. Running both ourselves also lets us test the setup we recommend, from server-rendered HTML to structured data, before we suggest it to a client.
 
 ## What does moving off Webflow cost?
 
@@ -334,4 +334,4 @@ If you need more control, security reviews or governance inside Webflow, our [We
 
 ## How was this guide written and checked?
 
-This guide draws on BenorMedia's Webflow projects and on building our own site in Astro and Sanity. We checked every outside fact against its source on October 9, 2026: Webflow's help center and developer docs, Google Search Central, the Next.js, Astro, Sanity, Storyblok and Payload docs, and the public migration data and write-ups listed below. We recheck it every 30 days. One disclosure: BenorMedia earns money on both sides of this decision. We're a Webflow Professional Partner, and we also build [custom-coded sites on a headless CMS](page:headless-cms-agency).
+This guide draws on BenorMedia's Webflow projects and on building our own site in Astro and Sanity. We checked every outside fact against its source on October 12, 2026: Webflow's help center and developer docs, Google Search Central, the Next.js, Astro, Sanity, Storyblok and Payload docs, and the public migration data and write-ups listed below. We recheck it every 30 days. One disclosure: BenorMedia earns money on both sides of this decision. We're a Webflow Professional Partner, and we also build [custom-coded sites on a headless CMS](page:headless-cms-agency).
