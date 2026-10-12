@@ -194,7 +194,9 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   /* --- Top row: 3 columns ------------------------------------------------ */
   .c-footer__top {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 0.6fr);
+    /* Card column 25% narrower than the original 1fr; the link columns
+       take the space (lead 2026-10-12). */
+    grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.45fr) minmax(0, 0.6fr);
     gap: 3rem;
     align-items: start;
   }
@@ -202,13 +204,16 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   /* Barcelona card */
   .c-footer__card {
     position: relative;
-    width: 75%; /* 25% narrower than its column (lead 2026-10-12) */
     border-radius: 12px;
     overflow: hidden;
   }
   .c-footer__card-img {
     width: 100%;
     height: auto;
+    /* Same height as before the column narrowed: the photo's own ratio
+       (654 / 312) at 75% width, cropped to fit. */
+    aspect-ratio: 490.5 / 312;
+    object-fit: cover;
     display: block;
   }
   /* Dark tint overlay (Figma: black-500 at 30% opacity) */
@@ -243,7 +248,8 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   /* Link columns */
   .c-footer__cols {
     display: grid;
-    grid-template-columns: repeat(3, auto);
+    /* Services and Solutions wider than About (lead 2026-10-12). */
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.3fr) minmax(0, 0.7fr);
     gap: 3rem;
     /* Center content so Eyebrow (inline-flex, fit-content) and centered
        links share the same axis. */
@@ -418,6 +424,8 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
       grid-column: 1 / -1;
       align-items: flex-start;
     }
+    /* Tablet and phone grids are unchanged: the photo's own ratio. */
+    .c-footer__card-img { aspect-ratio: 654 / 312; }
     .c-footer__wordmark-strip { height: 12rem; }
   }
   @media (max-width: 767px) {
@@ -427,7 +435,6 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
       grid-template-columns: 1fr;
       gap: 2rem;
     }
-    .c-footer__card { width: 100%; }
     .c-footer__cols {
       grid-template-columns: 1fr 1fr;
       gap: 2rem;
