@@ -581,7 +581,7 @@ Without adding to your team." with "website moving." marked Gradient (published 
 #### Lead / CEO
 - ~~**Build or keep out**~~ — RESOLVED 2026-10-15: built (see Decisions). Footer "Blog" link still hidden; show it when the first post is released. (2026-09-29)
 - ~~**`/blog` meta copy**~~ — RESOLVED 2026-10-15: SEO meta set (see Decisions). The hero H1 "Articles on B2B websites, SEO and AI search." and the visually hidden H2 "All articles" are the orchestrator's wording; change them if you want other copy. (2026-10-15)
-- **Footer "Blog" link** — still hidden, so in production only the sitemap and the post's breadcrumb lead to /blog. Show it now that a post is released? (2026-10-15)
+- ~~**Footer "Blog" link**~~ — RESOLVED 2026-10-15: a BLOG group in the footer's last column, above ABOUT (the released post + "All articles" → /blog). Asked as a new column; a fourth column wrapped every footer link to three lines at 1440, so it is stacked like GUIDES under SOLUTIONS. Add each released post to `blogLinks` (`Footer.astro`). (2026-10-15)
 - **llms.txt post** — says benormedia.com/llms.txt has "about 19 links"; with the Blog section it has 20. Recheck when that post is released. (2026-10-15)
 - **`/blog` index design** — no Figma frame; built from the hero and Resources cards. Send the frame if there is one. Cards have no search or category filter (SITEMAP) because the posts have no category. (2026-10-15)
 - **Code block style** — no monospace font or code style in the DS: `.c-np-code` (`new-pages.css`) uses `--color-gray-light`, the table border and an 8px radius, font `ui-monospace` stack marked `TODO: DS`. (2026-10-15)
