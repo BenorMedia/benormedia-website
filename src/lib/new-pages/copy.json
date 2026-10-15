@@ -76,7 +76,7 @@
     "eyebrow": "Author",
     "title": "{name}, {role}",
     "social": "{name} on LinkedIn",
-    "articlesEyebrow": "Guides",
-    "articlesHeading": "Guides by {name}."
+    "articlesEyebrow": "Articles",
+    "articlesHeading": "Guides and blog posts by {name}."
   }
 }
