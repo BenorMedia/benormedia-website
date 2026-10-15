@@ -6,12 +6,13 @@
  *   commercial  Service, FAQPage, BreadcrumbList (no offers, no author)
  *   article     Article, FAQPage, BreadcrumbList
  *   author      ProfilePage (mainEntity Person), BreadcrumbList
+ *   blog index  CollectionPage (mainEntity ItemList of the posts), BreadcrumbList
  *
  * FAQPage comes from the same array as the visible FAQ. In the review view,
  * items that hold a gap marker are left out. BreadcrumbList keeps only
  * released and live levels (`links.ts`), renumbered from 1.
  */
-import { AREA_SERVED_LD, ORG_ID, PROVIDER_LD, SITE } from "../content/entity";
+import { AREA_SERVED_LD, ORG_ID, PROVIDER_LD, SITE, WEBSITE_ID } from "../content/entity";
 import type { NpPage } from "./loader";
 import { authorId, authorPath, findAuthor, type Author } from "./authors";
 
@@ -68,6 +69,45 @@ export function authorPageJsonLd(a: Author, articles: readonly NpPage[]): Ld[] {
       itemListElement: [
         { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
         { "@type": "ListItem", position: 2, name: a.name, item: url },
+      ],
+    },
+  ];
+}
+
+/** The /blog index: a CollectionPage whose main entity lists the posts built
+ *  in this mode (newest first), each pointing at its Article `@id`, and the
+ *  breadcrumb. `dateModified` = the latest `updatedAt` of those posts. */
+export function blogIndexJsonLd(meta: { name: string; description: string }, posts: readonly NpPage[]): Ld[] {
+  const url = abs("/blog");
+  const dates = posts.map((p) => p.updatedAt).filter(Boolean).sort();
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "@id": `${url}#webpage`,
+      url,
+      name: meta.name,
+      description: meta.description,
+      inLanguage: "en-US",
+      isPartOf: { "@id": WEBSITE_ID },
+      publisher: { ...PROVIDER_LD },
+      ...(dates.length > 0 ? { dateModified: dates[dates.length - 1] } : {}),
+      mainEntity: {
+        "@type": "ItemList",
+        numberOfItems: posts.length,
+        itemListElement: posts.map((p, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          item: { "@type": "Article", "@id": `${abs(p.url)}#article`, headline: p.h1, url: abs(p.url), datePublished: p.publishedAt },
+        })),
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
+        { "@type": "ListItem", position: 2, name: meta.name, item: url },
       ],
     },
   ];
