@@ -207,7 +207,10 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   /* --- Top row: 3 columns ------------------------------------------------ */
   .c-footer__top {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 0.6fr);
+    /* The card column is the card's width (0.75 of the former 1fr), and the
+       links take the space it left (lead 2026-10-15: fill the gaps around
+       the link columns). Same 2.8fr total, so the card keeps its size. */
+    grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.45fr) minmax(0, 0.6fr);
     gap: 3rem;
     align-items: start;
   }
@@ -215,7 +218,7 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   /* Barcelona card */
   .c-footer__card {
     position: relative;
-    width: 75%; /* 25% narrower than its column (lead 2026-10-12) */
+    width: 100%; /* its column is 25% narrower instead (lead 2026-10-12, 2026-10-15) */
     border-radius: 12px;
     overflow: hidden;
   }
@@ -256,12 +259,12 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   /* Link columns */
   .c-footer__cols {
     display: grid;
-    grid-template-columns: repeat(3, auto);
+    /* Equal columns across the whole area, each group left-aligned in its
+       column (lead 2026-10-15). */
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 3rem;
-    /* Center content so Eyebrow (inline-flex, fit-content) and centered
-       links share the same axis. */
     text-align: center;
-    justify-items: center;
+    justify-items: start;
   }
   .c-footer__col {
     display: flex;
@@ -427,6 +430,7 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
       grid-template-columns: 1fr 1fr;
       gap: 2rem;
     }
+    .c-footer__card { width: 75%; } /* as before the 2026-10-15 desktop grid */
     .c-footer__side {
       grid-column: 1 / -1;
       align-items: flex-start;
