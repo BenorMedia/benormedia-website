@@ -181,6 +181,8 @@ function gate(files: string[], release: boolean): void {
   }
 }
 
+/** The blog posts' closing method note, left off the page. */
+const BLOG_DROPPED_SECTION = /^How was this post written and checked\??$/i;
 const BLOG_MARKER = /\[(?:FACT NEEDED|VERIFY|PERSON|QUOTE|RESULT NEEDED)\b[^\]]*\]/;
 const BLOG_REQUIRED = ["slug", "url", "title", "description", "h1", "author", "publishedAt", "updatedAt"] as const;
 
@@ -346,7 +348,11 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
   });
 
   // Visuals: numbered from 1 in file order, placed after the H2 named in `after`.
-  const sections: PageSection[] = rendered.sections.map((s) => ({ ...s, visual: undefined }));
+  // Blog posts drop their closing method note (lead 2026-10-15), in every
+  // post: the file keeps it, the page and its table of contents don't.
+  const sections: PageSection[] = rendered.sections
+    .filter((s) => !(family === "blog" && BLOG_DROPPED_SECTION.test(s.title)))
+    .map((s) => ({ ...s, visual: undefined }));
   (d.visuals ?? []).forEach((v, i) => {
     const n = i + 1;
     const key = `${slug}:${n}`;
