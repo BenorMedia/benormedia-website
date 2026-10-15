@@ -2,7 +2,7 @@
 slug: webflow-price-increase
 url: /blog/webflow-price-increase
 pageType: guide
-draft: true
+draft: false
 blockedBy: []
 topicId: "2.1"
 wave: 1
@@ -11,8 +11,8 @@ description: "Webflow's new Site plans reach Freelancer and Agency Workspace sit
 h1: "Webflow price increase: what to check before the November 16, 2026 change"
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
-publishedAt: 2026-10-27
-updatedAt: 2026-10-27
+publishedAt: 2026-10-15
+updatedAt: 2026-10-15
 reviewEvery: none
 primaryKeyword: "webflow price increase"
 secondaryKeywords: []

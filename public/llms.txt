@@ -23,6 +23,10 @@
 - [Webflow Enterprise: What to Check](https://www.benormedia.com/guides/webflow-enterprise): What makes a website project enterprise, what Webflow Enterprise includes as of October 2026, and how to vet an agency. Sourced from Webflow, Google, and W3C.
 - [Webflow vs Custom Code: When to Leave Webflow](https://www.benormedia.com/guides/webflow-vs-custom-code): Should you move from Webflow to Next.js, Astro or a headless CMS? What you gain, what you give up, what the code export leaves out, and when to stay.
 
+## Blog
+
+- [Webflow Price Increase: What to Check Now](https://www.benormedia.com/blog/webflow-price-increase): Webflow's new Site plans reach Freelancer and Agency Workspace sites from November 16, 2026: who pays more, how to keep your plan, and what to check.
+
 ## Company
 
 - [Our work](https://www.benormedia.com/work): Webflow websites designed and built for B2B SaaS, professional services and agencies.
