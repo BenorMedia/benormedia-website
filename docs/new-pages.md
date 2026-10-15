@@ -67,6 +67,16 @@ H1, H2s, the FAQ heading and the closing heading end in a period (added by the t
 
 `/authors/<slug>` (`src/pages/authors/[slug].astro`, `NpAuthorPage.astro`), one per entry in `src/lib/new-pages/authors.ts` (name, job title, photo, meta description, bio, LinkedIn). An article's front matter `author` ("Name, Role") is matched on the name: the author card links to the page (`rel="author"`) and the Article JSON-LD `author` gets the Person `@id`, `url` and `sameAs`. The page lists the author's article pages built in the current mode and emits ProfilePage (mainEntity Person, `hasPart` the articles) + BreadcrumbList. To add an author: add an entry and a 216×216 photo in `public/images/new-pages/authors/`, plus the path in `LASTMOD` (`astro.config.mjs`) and `scripts/check-seo.mjs`.
 
+## Blog posts (lead 2026-10-15)
+
+One file per post in `content-drafts/blog/*.md` (front matter + Markdown body, final copy: never edited), rendered with the article template at `/blog/<slug>` (`src/pages/blog/[slug].astro`). The family is `blog`, set by the folder, so a post keeps its `pageType`. The index `/blog` (`src/pages/blog/[...index].astro`) is `PageHero` + every built post as the Resources cards, newest first.
+
+- **Gate** (`blogGate` in `loader.ts`, not the pack checker): required `slug`, `url` (= `/blog/<slug>`), `title`, `description`, `h1`, `author`, `publishedAt`, `updatedAt`, a boolean `draft`, unique slugs, and no gap marker (`[FACT NEEDED`, `[VERIFY`, `[PERSON`, `[QUOTE`, `[RESULT NEEDED`) anywhere in the file. A failure stops the build.
+- **Rendered:** title, description, h1, author, dates, takeaways, the body (tables with `Table:` captions, fenced code blocks), faqHeading + faq (FAQPage), related (Resources cards for pack pages), sources. JSON-LD: Article, FAQPage, BreadcrumbList (Home › Blog › post).
+- **Never rendered:** editorNotes, volatile, volatileChecked, blockedBy, inbound, primaryKeyword, secondaryKeywords, topicId, wave, reviewEvery.
+- **Drafts:** `draft: true` posts build in previews and dev only (noindex, draft banner, out of the sitemap). `/blog` builds only when a post builds, and is noindex and out of the sitemap while all its posts are drafts.
+- **Release a post:** set `draft: false` (dates as signed off), add the URL to the PAGES map of `scripts/check-seo.mjs` (`Article`, `FAQPage`, `BreadcrumbList`) and, for the first post, `/blog`; one line in `public/llms.txt`; show the footer "Blog" link with the first post; inbound links from `inbound` in a separate PR. The sitemap picks up `lastmod` from `updatedAt`.
+
 ## Component map as built
 
 | Block | Decision | File |

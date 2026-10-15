@@ -568,8 +568,15 @@ Without adding to your team." with "website moving." marked Gradient (published 
 ### Decisions
 | Date | Decision | Reason | Status |
 |---|---|---|---|
+| 2026-10-15 | Blog built (resolves "Build or keep out"): posts are Markdown files in `content-drafts/blog/` (not Sanity `post`), rendered at `/blog/<slug>` with the guides' article template (`NpArticlePage`), family `blog` from the folder. Index `/blog` = `PageHero` + the Resources cards (`NpBlogResources`, `headingHidden`) three per row, newest first | Lead: "use the same template as the guides; the index is a regular hero and a 3-column grid of blog cards". The posts carry takeaways, FAQ, sources, related and code blocks, which the Sanity `post` schema doesn't hold (and it requires a thumbnail and a category the posts don't have) | Lead |
+| 2026-10-15 | No scheduling: posts are saved with `draft: true` and released by hand (`draft: false`, then a production deploy). Drafts build in previews and dev only; `/blog` builds only when at least one post builds, and stays noindex and out of the sitemap while every post on it is a draft | Lead: "no need for scheduling, too complex, just save them as drafts" | Lead |
+| 2026-10-15 | Post breadcrumb: Home › Blog › the post's `title` without " \| BenorMedia"; card and hero tag "Blog"; fenced code blocks supported by `markdown.ts` (escaped, scroll inside the block) | Posts have no `breadcrumb` front matter; three posts have code examples | Orchestrator |
 
 ### Open questions
 
 #### Lead / CEO
-- **Build or keep out** — optional page (see Global Decisions 2026-09-29). Decide at the end of Phase 5. If it stays out, hide the footer "Blog" link. The article page has no refs. (2026-09-29) Footer "Blog" link hidden meanwhile (lead, 2026-09-30).
+- ~~**Build or keep out**~~ — RESOLVED 2026-10-15: built (see Decisions). Footer "Blog" link still hidden; show it when the first post is released. (2026-09-29)
+- **`/blog` hero and meta copy** — placeholders marked `TODO: COPY`: eyebrow "Blog", H1 "Articles on B2B websites, SEO and AI search." (`src/pages/blog/[...index].astro`), `PAGE_META.blog` (`src/lib/content/seo.ts`), visually hidden H2 "All articles". (2026-10-15)
+- **`/blog` index design** — no Figma frame; built from the hero and Resources cards. Send the frame if there is one. Cards have no search or category filter (SITEMAP) because the posts have no category. (2026-10-15)
+- **Code block style** — no monospace font or code style in the DS: `.c-np-code` (`new-pages.css`) uses `--color-gray-light`, the table border and an 8px radius, font `ui-monospace` stack marked `TODO: DS`. (2026-10-15)
+- **Related live pages on posts** — `related` entries that are Sanity pages (`/growth`, `/ongoing-website-support`, `/custom-websites-migrations`) get no Resources card, as on the guides (cards are pack pages only). (2026-10-15)
