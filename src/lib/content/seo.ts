@@ -34,6 +34,12 @@ export const PAGE_META = {
     description:
       "Read what B2B marketing leaders say about working with BenorMedia, the Webflow agency trusted by 100+ clients to launch and grow their websites.",
   },
+  // TODO: COPY — placeholder meta for /blog (no approved copy yet).
+  blog: {
+    title: "Blog: B2B Websites, SEO and AI Search",
+    description:
+      "Articles from BenorMedia on B2B SaaS websites: redesigns, Webflow, analytics, headless CMS, SEO, and how AI assistants find and cite your site.",
+  },
   notFound: {
     title: "Page Not Found",
     description:

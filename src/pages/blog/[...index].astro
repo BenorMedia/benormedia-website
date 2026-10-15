@@ -1,0 +1,51 @@
+---
+/**
+ * Blog index at /blog: the secondary-page hero, then every post built in
+ * this mode as the Resources cards, three per row, newest first.
+ *
+ * A rest route so it can build nothing: /blog exists only when at least one
+ * post is built (in production, a released post). While every post shown is
+ * a draft (previews), the page is noindex and stays out of the sitemap
+ * (`sitemapInfo`). No draft banner: importing it here splits its styles into
+ * a chunk Astro inlines on every article page (check-new-pages check 9).
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../../components/sections/PageHero.astro";
+import NpBlogResources from "../../components/new-pages/NpBlogResources.astro";
+import { getPageSeo } from "../../lib/sanity/queries";
+import { PAGE_META } from "../../lib/content/seo";
+import { pagesOf, type NpPage } from "../../lib/new-pages/loader";
+import { clientShots } from "../../lib/new-pages/shots";
+
+export function getStaticPaths() {
+  const posts = pagesOf("blog").sort((a, b) => b.publishedAt.localeCompare(a.publishedAt) || a.slug.localeCompare(b.slug));
+  return posts.length > 0 ? [{ params: { index: undefined }, props: { posts } }] : [];
+}
+
+interface Props {
+  posts: NpPage[];
+}
+
+const { posts } = Astro.props;
+const allDrafts = posts.every((p) => p.draft);
+const [blogPage, shots] = await Promise.all([getPageSeo("blogPage"), clientShots()]);
+const cards = posts.map((p) => ({
+  href: p.url,
+  title: p.h1,
+  description: p.description,
+  family: p.family,
+  data: p.draft ? { "data-draft-target": p.slug } : ({} as Record<string, string>),
+}));
+---
+
+<BaseLayout
+  pageSeo={blogPage?.seo ?? null}
+  title={PAGE_META.blog.title}
+  description={PAGE_META.blog.description}
+  noIndex={allDrafts}
+>
+  {/* TODO: COPY — hero eyebrow, title and accent (placeholder). */}
+  <PageHero eyebrow="Blog" title={"Articles on B2B websites,\nSEO and AI search."} accent="SEO and AI search." />
+  {/* TODO: COPY — section heading (visually hidden; keeps the outline h1 → h2). */}
+  <NpBlogResources cards={cards} shots={shots} heading="All articles" limit={cards.length} headingHidden />
+</BaseLayout>

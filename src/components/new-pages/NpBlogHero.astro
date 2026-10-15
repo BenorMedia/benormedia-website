@@ -26,7 +26,10 @@ interface Props {
 const { page, shots } = Astro.props;
 const hero = HEROES[page.slug];
 const Hero = hero?.component;
-const tag = (copy.articleEyebrow as Record<string, string>)[page.pageType] ?? copy.articleEyebrow.guide;
+const tag =
+  page.family === "blog"
+    ? copy.articleEyebrow.blog
+    : ((copy.articleEyebrow as Record<string, string>)[page.pageType] ?? copy.articleEyebrow.guide);
 const [updBefore = "", updAfter = ""] = copy.byline.updated.split("{date}");
 // Collage slots (Figma frame 2147237081, % of the card).
 const slots = [

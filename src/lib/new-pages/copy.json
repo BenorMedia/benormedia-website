@@ -28,7 +28,8 @@
   "articleEyebrow": {
     "guide": "Guides",
     "comparison": "Guides",
-    "data-study": "Original data"
+    "data-study": "Original data",
+    "blog": "Blog"
   },
   "byline": {
     "author": "By {author}",
@@ -57,6 +58,7 @@
     "screenshot": "Screenshot to come"
   },
   "blog": {
+    "indexName": "Blog",
     "readTime": "{n} min read",
     "share": "Share",
     "copyLink": "Copy link",
