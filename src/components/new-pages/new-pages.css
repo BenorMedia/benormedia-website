@@ -295,6 +295,35 @@
     color: var(--color-black-secondary);
   }
 }
+/* Fenced code blocks (blog posts). No code style in the design system:
+   existing tokens, the table border and the card radius. Long lines scroll
+   inside the block, never the page. */
+.c-np-prose > .c-np-code {
+  margin: 1.44rem 0 0;
+}
+.c-np-code {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 1.714rem;
+  border: var(--border-default);
+  border-radius: 8px;
+  background: var(--color-gray-light);
+  color: var(--color-black-secondary);
+  /* TODO: DS: no monospace font token. */
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: var(--fs-p-s);
+  line-height: 1.6;
+  white-space: pre;
+  tab-size: 2;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  & code {
+    font: inherit;
+  }
+}
 /* Mobile body H2s 30% bigger (lead 2026-10-08). */
 @media (max-width: 767px) {
   .c-np-prose.is-blog > h2 {

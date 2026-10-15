@@ -5,6 +5,8 @@
  *
  *   commercial  service, industry, regional  → `src/pages/[...page].astro`
  *   article     guide, comparison, data-study → `src/pages/guides/[slug].astro`
+ *   blog        every file in `content-drafts/blog/` → `src/pages/blog/[slug].astro`
+ *               (the article template; family from the folder, not `pageType`)
  *
  * Everything is keyed on the family, never on a slug. Docs: docs/new-pages.md.
  */
@@ -19,6 +21,7 @@ import {
   FAMILY,
   PLAN_FILE,
   ROOT,
+  readBlogFiles,
   readPackFiles,
   resolveMode,
 } from "./registry.mjs";
@@ -26,8 +29,9 @@ import { escapeHtml, Slugger } from "./html";
 import { GapTable, hasToken, stripTokens, type Gap } from "./markers";
 import { breadcrumbs, relatedItem, type Crumb, type LinkContext, type PlanPage, type RelatedItem, type VisibleCrumb } from "./links";
 import { inline, plainInline, renderBody, type RenderedSection } from "./markdown";
+import copy from "./copy.json";
 
-export type Family = "commercial" | "article";
+export type Family = "commercial" | "article" | "blog";
 export type View = "review" | "defaults";
 
 interface FrontMatter {
@@ -177,6 +181,37 @@ function gate(files: string[], release: boolean): void {
   }
 }
 
+const BLOG_MARKER = /\[(?:FACT NEEDED|VERIFY|PERSON|QUOTE|RESULT NEEDED)\b[^\]]*\]/;
+const BLOG_REQUIRED = ["slug", "url", "title", "description", "h1", "author", "publishedAt", "updatedAt"] as const;
+
+/**
+ * Blog post gate (the pack checker's rules are for pack pages): required
+ * front matter, `url` = `/blog/<slug>`, unique slugs, and no gap marker
+ * anywhere in the file, draft or not. A failure stops the build.
+ */
+function blogGate(
+  files: readonly { file: string; parsed: { data: unknown; errors: { line: number; msg: string }[]; raw?: string | undefined; body: string } }[],
+): void {
+  const problems: string[] = [];
+  const seen = new Map<string, string>();
+  for (const { file, parsed } of files) {
+    const rel = relative(ROOT, file);
+    const d = parsed.data as FrontMatter;
+    const add = (m: string): number => problems.push(`${rel}: ${m}`);
+    for (const e of parsed.errors) add(`front matter L${e.line}: ${e.msg}`);
+    for (const key of BLOG_REQUIRED) if (!d[key]) add(`missing front matter "${key}"`);
+    if (typeof d.draft !== "boolean") add(`"draft" must be true or false`);
+    if (d.slug && d.url !== `/blog/${d.slug}`) add(`url "${d.url}" must be /blog/${d.slug}`);
+    // `raw` is the front matter only, so the body is scanned too.
+    const marker = BLOG_MARKER.exec(`${parsed.raw ?? ""}\n${parsed.body}`);
+    if (marker) add(`gap marker ${marker[0].slice(0, 60)}: answer it before importing the post`);
+    const slug = String(d.slug ?? "");
+    if (seen.has(slug)) add(`slug "${slug}" is also used by ${seen.get(slug)}`);
+    seen.set(slug, rel);
+  }
+  if (problems.length) throw new Error(`[new-pages] blog check failed:\n${problems.join("\n")}`);
+}
+
 function readPlan(): Map<string, PlanPage> {
   const plan = JSON.parse(readFileSync(PLAN_FILE, "utf8")) as { pages: PlanPage[] };
   return new Map(plan.pages.map((p) => [p.slug, p]));
@@ -207,6 +242,10 @@ export function loadPages(): NpPage[] {
 
   gate(built.filter((b) => b.data.draft !== false).map((b) => relative(ROOT, b.file)), false);
   gate(built.filter((b) => b.data.draft === false).map((b) => relative(ROOT, b.file)), true);
+
+  const blogFiles = readBlogFiles();
+  blogGate(blogFiles);
+  const blogBuilt = blogFiles.filter(({ parsed }) => (parsed.data as FrontMatter).draft === false || mode.includeDrafts);
 
   const pack = new Map(
     files.map(({ parsed }) => {
@@ -247,6 +286,20 @@ export function loadPages(): NpPage[] {
     });
   });
 
+  // Blog posts: already final, so no defaults view.
+  for (const { file, parsed } of blogBuilt) {
+    pages.push(
+      buildPage(parsed.data as FrontMatter, parsed.body, {
+        view: mode.view,
+        includeDrafts: mode.includeDrafts,
+        pack,
+        plan,
+        file: relative(ROOT, file),
+        family: "blog",
+      }),
+    );
+  }
+
   cache = { key, pages };
   return pages;
 }
@@ -259,12 +312,14 @@ interface BuildContext {
   pack: LinkContext["pack"];
   plan: Map<string, PlanPage>;
   file: string;
+  /** Overrides the family from `pageType` (blog posts). */
+  family?: Family;
 }
 
 function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
   const slug = String(d.slug);
   const pageType = String(d.pageType);
-  const family = (FAMILY as Record<string, Family>)[pageType] as Family;
+  const family = ctx.family ?? ((FAMILY as Record<string, Family>)[pageType] as Family);
   const gaps = new GapTable();
   const slugger = new Slugger();
   const links: LinkContext = {
@@ -329,7 +384,11 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
   });
 
   const authorTok = gaps.tokenize(String(d.author ?? ""));
-  const crumbs = breadcrumbs(d.breadcrumb ?? [], links);
+  // Blog posts: Home › Blog › the post (its title without the brand suffix).
+  const crumbs =
+    family === "blog"
+      ? blogCrumbs(String(d.title ?? "").replace(/\s*\|\s*BenorMedia$/, ""), String(d.url))
+      : breadcrumbs(d.breadcrumb ?? [], links);
   const related = (d.related ?? []).map((r) => relatedItem(String(r), links)).filter((r): r is RelatedItem => r !== null);
 
   return {
@@ -395,4 +454,14 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
     }),
     gaps: gaps.unique(),
   };
+}
+
+/** The blog post breadcrumb. `/blog` is built whenever a post is. */
+function blogCrumbs(name: string, url: string): { visible: VisibleCrumb[]; ld: Crumb[] } {
+  const ld: Crumb[] = [
+    { name: copy.livePathNames["/"], url: "/" },
+    { name: copy.blog.indexName, url: "/blog" },
+    { name, url },
+  ];
+  return { visible: [{ label: ld[0]!.name, href: "/" }, { label: ld[1]!.name, href: "/blog" }, { label: name }], ld };
 }

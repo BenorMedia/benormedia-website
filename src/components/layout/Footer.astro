@@ -8,7 +8,8 @@
  *      - SERVICES + SOLUTIONS/GUIDES + ABOUT link columns (Eyebrow labels;
  *        GUIDES and the new service pages added 2026-10-07; services grouped
  *        by pillar and SOLUTIONS stacked above GUIDES 2026-10-10; headless
- *        service and Webflow vs custom code guide added 2026-10-12)
+ *        service and Webflow vs custom code guide added 2026-10-12; BLOG
+ *        stacked above ABOUT 2026-10-15)
  *      - Socials, then the partner badges (images) — swapped lead 2026-09-30
  *   2. .c-footer__wordmark-strip — FULL-WIDTH strip, height 258px,
  *      border top + bottom, containing the wordmark image (move-in on
@@ -19,7 +20,7 @@
  * Content sourcing:
  *   - Address = hardcoded (fixed office).
  *   - Social links: the company X and LinkedIn profiles (lead 2026-09-30).
- *   - "Blog" is left out of ABOUT until the blog exists (lead 2026-09-30).
+ *   - The blog has its own column (lead 2026-10-15), not an ABOUT link.
  *   - Everything else hardcoded per v0.5 (nav/footer content lives in code).
  */
 import type { SiteSettings } from "../../lib/sanity/types";
@@ -54,6 +55,11 @@ const guidesLinks = [
   { label: "Webflow Enterprise Guide", href: "/guides/webflow-enterprise" },
   { label: "Webflow vs Custom Code", href: "/guides/webflow-vs-custom-code" },
 ];
+// Blog: released posts only (drafts are not built in production), then the index.
+const blogLinks = [
+  { label: "Webflow Price Increase", href: "/blog/webflow-price-increase" },
+  { label: "All articles", href: "/blog" },
+];
 // `hidden`: kept in the markup, not shown. Testimonials stays out of
 // production for now (lead 2026-09-30, same as the nav).
 const aboutLinks: Array<{ label: string; href: string; openContact?: boolean; hidden?: boolean }> = [
@@ -61,7 +67,6 @@ const aboutLinks: Array<{ label: string; href: string; openContact?: boolean; hi
   { label: "Pricing", href: "/pricing" },
   { label: "Contact", href: "#", openContact: true },
   { label: "Testimonials", href: "/testimonials", hidden: true },
-  // Blog: add back `{ label: "Blog", href: "/blog" }` when the blog ships.
 ];
 
 // --- Legal links (bottom strip) -------------------------------------------
@@ -116,7 +121,15 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
           </ul>
         </div>
         <div class="c-footer__col">
-          <Eyebrow class="c-footer__col-label">ABOUT</Eyebrow>
+          {/* BLOG stacked above ABOUT, like GUIDES under SOLUTIONS: a fourth
+              column wrapped every link to three lines at 1440. */}
+          <Eyebrow class="c-footer__col-label">BLOG</Eyebrow>
+          <ul class="c-footer__col-list">
+            {blogLinks.map((l) => (
+              <li><a href={l.href} class="c-footer__col-link">{l.label}</a></li>
+            ))}
+          </ul>
+          <Eyebrow class="c-footer__col-label is-next">ABOUT</Eyebrow>
           <ul class="c-footer__col-list">
             {aboutLinks.map((l) => (
               <li hidden={l.hidden}>
@@ -194,7 +207,10 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   /* --- Top row: 3 columns ------------------------------------------------ */
   .c-footer__top {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 0.6fr);
+    /* The card column is the card's width (0.75 of the former 1fr), and the
+       links take the space it left (lead 2026-10-15: fill the gaps around
+       the link columns). Same 2.8fr total, so the card keeps its size. */
+    grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.45fr) minmax(0, 0.6fr);
     gap: 3rem;
     align-items: start;
   }
@@ -202,7 +218,7 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   /* Barcelona card */
   .c-footer__card {
     position: relative;
-    width: 75%; /* 25% narrower than its column (lead 2026-10-12) */
+    width: 100%; /* its column is 25% narrower instead (lead 2026-10-12, 2026-10-15) */
     border-radius: 12px;
     overflow: hidden;
   }
@@ -243,12 +259,12 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   /* Link columns */
   .c-footer__cols {
     display: grid;
-    grid-template-columns: repeat(3, auto);
+    /* Equal columns across the whole area, each group left-aligned in its
+       column (lead 2026-10-15). */
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 3rem;
-    /* Center content so Eyebrow (inline-flex, fit-content) and centered
-       links share the same axis. */
     text-align: center;
-    justify-items: center;
+    justify-items: start;
   }
   .c-footer__col {
     display: flex;
@@ -257,7 +273,7 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
     gap: 1.25rem;
     text-align: center;
   }
-  /* A second group in the same column (SOLUTIONS, then GUIDES): the column
+  /* A second group in the same column (SOLUTIONS, then GUIDES; BLOG, then ABOUT): the column
      gap plus the same again, so the groups read apart. */
   .c-footer__col :global(.c-footer__col-label.is-next) {
     margin-top: 1.25rem;
@@ -414,6 +430,7 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
       grid-template-columns: 1fr 1fr;
       gap: 2rem;
     }
+    .c-footer__card { width: 75%; } /* as before the 2026-10-15 desktop grid */
     .c-footer__side {
       grid-column: 1 / -1;
       align-items: flex-start;

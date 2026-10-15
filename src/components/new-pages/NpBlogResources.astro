@@ -6,6 +6,8 @@
  * for the related pack pages built in this mode. The author pages reuse it
  * for the author's guides (own eyebrow and heading, every card, each
  * guide's header illustration as its thumbnail, static: lead 2026-10-09).
+ * The /blog index reuses it as the card grid under its hero: every post,
+ * the heading visually hidden (`headingHidden`), Work's spacing.
  */
 import Container from "../ui/Container.astro";
 import Eyebrow from "../ui/Eyebrow.astro";
@@ -23,21 +25,40 @@ interface Props {
   limit?: number;
   /** Use a guide's header illustration (`HEROES`) as its thumbnail. */
   heroThumbs?: boolean;
+  /** Screen-reader heading only, no section header (the /blog index). */
+  headingHidden?: boolean;
 }
 
-const { cards, shots, eyebrow = copy.resources.eyebrow, heading = copy.resources.heading, limit = 3, heroThumbs = false } = Astro.props;
+const {
+  cards,
+  shots,
+  eyebrow = copy.resources.eyebrow,
+  heading = copy.resources.heading,
+  limit = 3,
+  heroThumbs = false,
+  headingHidden = false,
+} = Astro.props;
 const list = cards.slice(0, limit);
+const TAGS: Record<NpPage["family"], string> = {
+  article: copy.articleEyebrow.guide,
+  blog: copy.articleEyebrow.blog,
+  commercial: copy.resources.serviceTag,
+};
 ---
 
 {list.length > 0 && (
-  <section class="c-np-res" aria-labelledby="np-resources">
+  <section class={["c-np-res", headingHidden && "is-heading-hidden"].filter(Boolean).join(" ")} aria-labelledby="np-resources">
     <Container>
-      <header class="c-section-header">
-        <Eyebrow>{eyebrow}</Eyebrow>
-        <div class="c-section-header__text">
-          <h2 id="np-resources" class="c-section-header__title c-text_xl">{heading}</h2>
-        </div>
-      </header>
+      {headingHidden ? (
+        <h2 id="np-resources" class="c-np-res__sr-only">{heading}</h2>
+      ) : (
+        <header class="c-section-header">
+          <Eyebrow>{eyebrow}</Eyebrow>
+          <div class="c-section-header__text">
+            <h2 id="np-resources" class="c-section-header__title c-text_xl">{heading}</h2>
+          </div>
+        </header>
+      )}
       <ul class="c-np-res__grid">
         {list.map((card, i) => {
           const hero = heroThumbs && card.slug ? HEROES[card.slug] : undefined;
@@ -57,7 +78,7 @@ const list = cards.slice(0, limit);
             </span>
             )}
             <span class="c-np-res__texts">
-              <Eyebrow variant="accent">{card.family === "article" ? copy.articleEyebrow.guide : copy.resources.serviceTag}</Eyebrow>
+              <Eyebrow variant="accent">{TAGS[card.family]}</Eyebrow>
               <span class="c-np-res__title c-text_m">{card.title}</span>
               <span class="c-np-res__desc c-paragraph">{card.description}</span>
               <a class="c-np-res__more c-paragraph" href={card.href} {...card.data}>
@@ -84,6 +105,24 @@ const list = cards.slice(0, limit);
   }
   .c-np-res :global(.c-section-header) {
     gap: 1.714rem;
+  }
+  /* /blog index: hero → grid spacing as Work's hero → listing. */
+  .c-np-res.is-heading-hidden :global(.c-container) {
+    padding-top: 7.5rem;
+  }
+  .c-np-res.is-heading-hidden .c-np-res__grid {
+    margin-top: 0;
+  }
+  .c-np-res__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
   }
   /* Three columns; fewer cards stay centered. */
   .c-np-res__grid {
@@ -210,7 +249,8 @@ const list = cards.slice(0, limit);
     }
   }
   @media (max-width: 767px) {
-    .c-np-res :global(.c-container) {
+    .c-np-res :global(.c-container),
+    .c-np-res.is-heading-hidden :global(.c-container) {
       padding-top: 5rem;
       padding-bottom: 5rem;
     }

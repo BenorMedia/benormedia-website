@@ -33,6 +33,9 @@ const PAGES = {
   // docs/brief-headless-guide.md (drafts until sign-off: built in previews only).
   '/headless-cms-agency': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'headless cms agency' },
   '/guides/webflow-vs-custom-code': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow vs custom code' },
+  // Blog (content-drafts/blog/, docs/new-pages.md), released 2026-10-15.
+  '/blog': { expected: ['CollectionPage', 'BreadcrumbList'], keyword: 'b2b saas blog' },
+  '/blog/webflow-price-increase': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow price increase' },
   // Author pages (src/lib/new-pages/authors.ts), 2026-10-08.
   '/authors/sergio-gancedo': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'sergio gancedo' },
 };

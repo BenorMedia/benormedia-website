@@ -34,6 +34,11 @@ export const PAGE_META = {
     description:
       "Read what B2B marketing leaders say about working with BenorMedia, the Webflow agency trusted by 100+ clients to launch and grow their websites.",
   },
+  blog: {
+    title: "B2B SaaS Website, Webflow & AI Search Blog",
+    description:
+      "The BenorMedia blog for B2B SaaS marketing teams: Webflow, website redesigns, analytics, headless CMS SEO, and getting cited in ChatGPT and AI search.",
+  },
   notFound: {
     title: "Page Not Found",
     description:

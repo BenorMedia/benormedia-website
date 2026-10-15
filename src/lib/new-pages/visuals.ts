@@ -903,4 +903,233 @@ export const HEROES: Record<string, DiagramEntry> = {
       ],
     },
   },
+
+  // Blog posts (content-drafts/blog/, lead 2026-10-15), keyed by slug.
+  // The baseline to record, then the redirect map, launch day and the 90-day plan.
+  "website-redesign-seo-checklist": {
+    component: IlHero,
+    props: {
+      from: {
+        tag: "Baseline",
+        items: [
+          { icon: "chartSearch", label: "Search performance" },
+          { icon: "funnel", label: "Conversions" },
+          { icon: "doc", label: "Every URL" },
+        ],
+      },
+      to: {
+        tag: "Launch",
+        items: [
+          { icon: "api", label: "Redirect map" },
+          { icon: "calendar", label: "Launch day" },
+          { icon: "reporting", label: "90-day monitoring" },
+        ],
+      },
+    },
+  },
+  // The example plan's seven phases, grouped by week.
+  "how-long-does-a-website-redesign-take": {
+    component: IlColumns,
+    props: {
+      columns: [
+        {
+          tag: "Weeks 1 to 2",
+          items: [
+            { icon: "ux", label: "Audit and business goals" },
+            { icon: "reporting", label: "Website strategy plan" },
+          ],
+        },
+        {
+          tag: "Weeks 3 to 8",
+          items: [
+            { icon: "docPencil", label: "Wireframes and content" },
+            { icon: "graphics", label: "UI design" },
+            { icon: "code", label: "Development" },
+          ],
+        },
+        {
+          tag: "Weeks 9 to 11",
+          items: [
+            { icon: "api", label: "Content migration" },
+            { icon: "speed", label: "Launch and handoff" },
+          ],
+        },
+      ],
+    },
+  },
+  // "What changes for each Site plan": plan today → plan after, with its main limit.
+  "webflow-price-increase": {
+    component: IlHero,
+    props: {
+      from: {
+        tag: "Plan today",
+        items: [
+          { icon: "doc", label: "Basic" },
+          { icon: "cms", label: "CMS" },
+          { icon: "systems", label: "Business" },
+        ],
+      },
+      to: {
+        tag: "Plan after",
+        items: [
+          { icon: "doc", label: "Basic: 300 pages" },
+          { icon: "cms", label: "Premium: 20,000 items" },
+          { icon: "speed", label: "Premium: 50 GB" },
+        ],
+      },
+    },
+  },
+  // What becomes "your code's job instead of the platform's" on a headless build.
+  "headless-cms-seo": {
+    component: IlHero,
+    props: {
+      from: {
+        tag: "Headless CMS",
+        items: [
+          { icon: "cms", label: "Content" },
+          { icon: "techSeo", label: "SEO fields" },
+          { icon: "devices", label: "Previews" },
+        ],
+      },
+      to: {
+        tag: "Your code",
+        items: [
+          { icon: "code", label: "Rendering" },
+          { icon: "api", label: "Redirects" },
+          { icon: "chartSearch", label: "Sitemaps" },
+        ],
+      },
+    },
+  },
+  // Where buyers research, and the pages they need before a first call.
+  "what-b2b-buyers-need-from-your-website": {
+    component: IlHero,
+    props: {
+      from: {
+        tag: "Buyers",
+        items: [
+          { icon: "ux", label: "Research alone" },
+          { icon: "ai", label: "AI chatbots" },
+          { icon: "person", label: "Review sites" },
+        ],
+      },
+      to: {
+        tag: "Your website",
+        items: [
+          { icon: "doc", label: "Pricing" },
+          { icon: "shield", label: "Security" },
+          { icon: "puzzle", label: "Integrations" },
+        ],
+      },
+    },
+  },
+  // The three tools compared, in the order to set them up.
+  "webflow-analytics": {
+    component: IlColumns,
+    props: {
+      columns: [
+        {
+          tag: "Webflow Analyze",
+          items: [
+            { icon: "analytics", label: "Clicks" },
+            { icon: "devices", label: "Scroll depth" },
+          ],
+        },
+        {
+          tag: "GA4",
+          items: [
+            { icon: "funnel", label: "Leads" },
+            { icon: "reporting", label: "Key events" },
+          ],
+        },
+        {
+          tag: "Google Tag Manager",
+          items: [
+            { icon: "puzzle", label: "Several tags" },
+            { icon: "code", label: "Third-party tags" },
+          ],
+        },
+      ],
+    },
+  },
+  // "Where each AI source should show up in GA4".
+  "ai-traffic-in-ga4": {
+    component: IlHero,
+    props: {
+      from: {
+        tag: "AI assistants",
+        items: [
+          { icon: "ai", label: "ChatGPT" },
+          { icon: "ai", label: "Perplexity" },
+          { icon: "ai", label: "Claude" },
+        ],
+      },
+      to: {
+        tag: "GA4",
+        items: [
+          { icon: "analytics", label: "AI Assistant channel" },
+          { icon: "api", label: "Referral" },
+          { icon: "reporting", label: "Custom channel group" },
+        ],
+      },
+    },
+  },
+  // "robots.txt, sitemap.xml, and llms.txt compared".
+  "do-you-need-an-llms-txt-file": {
+    component: IlColumns,
+    props: {
+      columns: [
+        {
+          tag: "robots.txt",
+          items: [
+            { icon: "shield", label: "URLs they may request" },
+            { icon: "ai", label: "AI crawlers" },
+          ],
+        },
+        {
+          tag: "sitemap.xml",
+          items: [
+            { icon: "doc", label: "URLs to find" },
+            { icon: "chartSearch", label: "Search engines" },
+          ],
+        },
+        {
+          tag: "llms.txt",
+          items: [
+            { icon: "docPencil", label: "Key pages" },
+            { icon: "ai", label: "AI agents" },
+          ],
+        },
+      ],
+    },
+  },
+  // Separate crawlers "for training, for search, and for visits a user triggers".
+  "ai-crawlers-robots-txt": {
+    component: IlColumns,
+    props: {
+      columns: [
+        {
+          tag: "Training",
+          items: [
+            { icon: "ai", label: "GPTBot" },
+            { icon: "ai", label: "ClaudeBot" },
+          ],
+        },
+        {
+          tag: "Search",
+          items: [
+            { icon: "chartSearch", label: "OAI-SearchBot" },
+            { icon: "chartSearch", label: "Claude-SearchBot" },
+          ],
+        },
+        {
+          tag: "User-triggered",
+          items: [
+            { icon: "person", label: "ChatGPT-User" },
+            { icon: "person", label: "Claude-User" },
+          ],
+        },
+      ],
+    },
+  },
 };
