@@ -1,8 +1,9 @@
 /**
  * Markdown → HTML for the pack bodies (brief 5.2). The body syntax is limited
  * by RULES.md section 8: `##` / `###` headings, paragraphs, `-` and `1.`
- * lists, `**bold**`, `[text](href)` links and GFM tables with a `Table: `
- * caption line. No raw HTML, images, code or quotes. Astro 7 does not ship a
+ * lists, `**bold**`, `[text](href)` links, GFM tables with a `Table: `
+ * caption line, and fenced code blocks (blog posts: printed as is, escaped).
+ * No raw HTML, images, inline code or quotes. Astro 7 does not ship a
  * Markdown processor this repo can import, so this small converter covers
  * exactly that subset, with no dependency.
  *
@@ -68,6 +69,7 @@ const CAPTION = /^Table:\s+(.*)$/;
 const TABLE_ROW = /^\s*\|/;
 const TABLE_SEP = /^\s*\|?(\s*:?-+:?\s*\|)+\s*:?-*:?\s*$/;
 const UL = /^\s*[-*]\s+(.*)$/;
+const FENCE = /^\s*```/;
 const OL = /^\s*\d+\.\s+(.*)$/;
 
 const cells = (row: string): string[] =>
@@ -110,6 +112,7 @@ export function renderBody(body: string, opts: RenderOptions): RenderedBody {
   let list: { ordered: boolean; items: string[] } | null = null;
   let caption: string | undefined;
   let rows: string[] = [];
+  let code: string[] | null = null;
 
   const flushPara = (): void => {
     if (para.length === 0) return;
@@ -140,6 +143,22 @@ export function renderBody(body: string, opts: RenderOptions): RenderedBody {
   };
 
   for (const line of lines) {
+    // Fenced code: every line verbatim until the closing fence. Focusable,
+    // because long lines scroll inside the block.
+    if (FENCE.test(line)) {
+      if (code) {
+        push(`<pre${attrs({ class: "c-np-code", tabindex: "0", "data-np-src": "code" })}><code>${opts.finish(escapeHtml(code.join("\n")))}</code></pre>`, true);
+        code = null;
+      } else {
+        flushAll();
+        code = [];
+      }
+      continue;
+    }
+    if (code) {
+      code.push(line);
+      continue;
+    }
     if (line.trim() === "") {
       flushPara();
       flushList();
@@ -195,6 +214,7 @@ export function renderBody(body: string, opts: RenderOptions): RenderedBody {
     flushTable();
     para.push(line.trim());
   }
+  if (code) throw new Error("[new-pages] a fenced code block is never closed");
   flushAll();
   return { lead, sections };
 }
