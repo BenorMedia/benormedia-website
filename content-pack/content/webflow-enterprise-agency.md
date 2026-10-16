@@ -115,8 +115,6 @@ visuals:
 
 Enterprise website projects add security reviews, approval steps, several teams, and several languages to the usual design and build. We build Webflow websites for B2B companies from growing teams to large enterprises, and stay on after launch with a dedicated team.
 
-JOOR, a direct client for more than 3 years, is listed on our [work page](/work).
-
 ## Security and access questions answered up front
 
 Enterprise reviews ask about access, data handling, and who can publish, and the Global & secure step of our process covers the parts your security and compliance teams ask about.
