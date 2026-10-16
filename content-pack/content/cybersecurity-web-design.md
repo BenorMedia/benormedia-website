@@ -122,16 +122,6 @@ editorNotes:
   - "The Ponemon study's co-sponsor is another agency and is not named on the page."
   - "The meta description is 157 characters (commercial limit raised to 160 on 2026-10-09)."
 visuals:
-  - after: Write for a buying committee that doesn't trust vendors.
-    side: right
-    type: diagram
-    brief: "Four lanes labelled CISO, Engineers, Procurement, Finance, each pointing to the pages it reads."
-    alt: "Four buyer lanes, CISO, engineers, procurement and finance, each with the pages it reads"
-  - after: Proof before persuasion.
-    side: left
-    type: diagram
-    brief: "The proof a security buyer checks: trust center, security.txt and disclosure policy, customer evidence, independent validation."
-    alt: "Trust center, security.txt, customer evidence and independent validation on a security website"
   - after: Technical depth your engineers can find in two clicks.
     side: right
     type: diagram
@@ -155,27 +145,6 @@ visuals:
 ---
 
 Cybersecurity website design has to work for skeptics: CISOs, security engineers and procurement teams who check every claim. We design and build sites that give each of them the evidence they look for, from detection coverage and integrations to SOC 2 reports and pricing logic. No fear tactics, because they tune them out.
-
-Security and risk companies on our work page include Sublime Security, Unit21, TripleKey, DeepSeas and Base Operations.
-
-## Write for a buying committee that doesn't trust vendors.
-
-Buyers in the cybersecurity industry are hard to convince, and the research says so. In a [Sophos-commissioned survey](https://www.sophos.com/en-us/press/press-releases/2026/03/only-5-of-organizations-have-full-trust-in-their-cybersecurity-vendors) of 5,000 IT and security decision-makers published in March 2026, 79% said new vendors are hard to assess and 47% said vendor information isn't factual or detailed enough. A [Ponemon Institute study](https://ponemonsullivanreport.com/2026/06/the-state-of-cybersecurity-marketing-influence-2026-from-awareness-to-selection-how-buyers-evaluate-vendors/) published in June 2026 found 52% of enterprise security buyers think vendor messaging lacks technical depth. So we design a separate path for each person in the deal.
-
-- **CISO and security leadership.** How you reduce risk, the team time you save, and how you fit the stack they already run, in plain language.
-- **Security engineers and analysts.** Architecture, detection logic, integrations, API documentation and deployment options, one click from any product page.
-- **IT, procurement, legal and risk management.** Security questionnaire answers, SOC 2 and ISO evidence, subprocessors and data processing terms, collected in a trust center.
-- **Finance.** How pricing works, and what the problem costs the business today.
-
-## Proof before persuasion.
-
-The Sophos study found the strongest trust driver was verifiable evidence of security maturity, such as a public trust center, published advisories, bug bounty programs and third-party certifications. We design that evidence into the site instead of saving it for the sales deck.
-
-- **A trust center.** A trust page on your site, or a hosted trust center from a platform such as Vanta, Drata or SafeBase. Buyers can request your SOC 2 report there and see certifications, policies and subprocessors.
-- **security.txt and a disclosure policy.** A /.well-known/security.txt file as defined in [RFC 9116](https://www.rfc-editor.org/rfc/rfc9116.html), plus a vulnerability disclosure page. Researchers look for both, and they show buyers you practice what you sell.
-- **Customer evidence.** Case studies with numbers, and named customers where contracts allow, placed next to the claims they support.
-- **Independent validation.** Analyst mentions, third-party test results and certifications, each linked to its source.
-- **Specific claims.** "Blocks credential phishing before it reaches the inbox" beats "unmatched protection". No absolutes, and no fear-led headlines.
 
 ## Design that explains the product, not the threat.
 

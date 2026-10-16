@@ -523,41 +523,8 @@ export const DIAGRAMS: Record<string, DiagramEntry> = {
   },
 
   // /cybersecurity-web-design (docs/brief-next-pages.md). Labels from the page text.
-  // "Write for a buying committee that doesn't trust vendors": the four buyer lanes in the content note (stand-in).
-  "cybersecurity-web-design:1": {
-    framed: true,
-    component: IlSiteMap,
-    props: {
-      root: "Buying committee",
-      pages: [
-        { icon: "shield", label: "CISO" },
-        { icon: "code", label: "Engineers" },
-        { icon: "doc", label: "Procurement" },
-        { icon: "reporting", label: "Finance" },
-      ],
-    },
-  },
-  // "Proof before persuasion": the bold lead-ins and the trust center contents.
-  "cybersecurity-web-design:2": {
-    framed: true,
-    component: IlRings,
-    props: {
-      outer: [
-        { icon: "shield", label: "Trust center" },
-        { icon: "code", label: "security.txt" },
-        { icon: "person", label: "Customer evidence" },
-        { icon: "chartSearch", label: "Independent validation" },
-      ],
-      inner: [
-        { icon: "doc", label: "SOC 2 report" },
-        { icon: "reporting", label: "Certifications" },
-        { icon: "docPencil", label: "Policies" },
-        { icon: "systems", label: "Subprocessors" },
-      ],
-    },
-  },
   // "Technical depth your engineers can find in two clicks": the page types.
-  "cybersecurity-web-design:3": {
+  "cybersecurity-web-design:1": {
     framed: true,
     component: IlSiteMap,
     props: {
@@ -572,7 +539,7 @@ export const DIAGRAMS: Record<string, DiagramEntry> = {
     },
   },
   // "A website built to pass your own security review": the bold lead-ins.
-  "cybersecurity-web-design:4": {
+  "cybersecurity-web-design:2": {
     framed: true,
     component: IlAccessFlow,
     props: {
@@ -591,7 +558,7 @@ export const DIAGRAMS: Record<string, DiagramEntry> = {
     },
   },
   // "Search and AI visibility for security vendors": the content file's tags (outer) and the lead-ins (inner).
-  "cybersecurity-web-design:5": {
+  "cybersecurity-web-design:3": {
     framed: true,
     component: IlRings,
     props: {
@@ -610,7 +577,7 @@ export const DIAGRAMS: Record<string, DiagramEntry> = {
     },
   },
   // "Built for the team that runs it after launch": the bold lead-ins; card = ongoing website support.
-  "cybersecurity-web-design:6": {
+  "cybersecurity-web-design:4": {
     framed: true,
     component: IlJourney,
     props: {

@@ -49,6 +49,8 @@ const gridClass = ["c-np-split__grid", hasVisual && "has-visual", hasVisual && `
   }
   .c-np-split__title {
     color: var(--color-heading);
+    /* 15% under `.c-text_xl` (lead 2026-10-16). */
+    font-size: calc(var(--fs-text-xl) * 0.85);
     scroll-margin-top: calc(var(--c-nav-height, 0px) + 2rem);
   }
   .c-np-split__body {
