@@ -2,7 +2,7 @@
 slug: what-b2b-buyers-need-from-your-website
 url: /blog/what-b2b-buyers-need-from-your-website
 pageType: guide
-draft: true
+draft: false
 blockedBy: []
 topicId: "4.1"
 wave: 1
@@ -11,8 +11,8 @@ description: "Most B2B software buyers rank their shortlist before they talk to 
 h1: "What B2B software buyers need from your website before they talk to sales"
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
-publishedAt: 2026-11-03
-updatedAt: 2026-11-03
+publishedAt: 2026-10-16
+updatedAt: 2026-10-16
 reviewEvery: none
 primaryKeyword: "none"
 secondaryKeywords: []
