@@ -27,6 +27,7 @@
 
 - [Webflow Price Increase: What to Check Now](https://www.benormedia.com/blog/webflow-price-increase): Webflow's new Site plans reach Freelancer and Agency Workspace sites from November 16, 2026: who pays more, how to keep your plan, and what to check.
 - [What B2B Software Buyers Need From Your Website](https://www.benormedia.com/blog/what-b2b-buyers-need-from-your-website): Most B2B software buyers rank their shortlist before they talk to sales. What the 2025 and 2026 research says they need from your website, page by page.
+- [How to Track ChatGPT and AI Traffic in GA4](https://www.benormedia.com/blog/ai-traffic-in-ga4): GA4 now has an AI Assistant channel. How to find ChatGPT, Perplexity, Claude, and Copilot visits, fill the gaps with a custom channel group, and read them.
 
 ## Company
 

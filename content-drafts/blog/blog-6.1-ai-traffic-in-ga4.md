@@ -2,7 +2,7 @@
 slug: ai-traffic-in-ga4
 url: /blog/ai-traffic-in-ga4
 pageType: guide
-draft: true
+draft: false
 blockedBy: []
 topicId: "6.1"
 wave: 1
@@ -11,8 +11,8 @@ description: "GA4 now has an AI Assistant channel. How to find ChatGPT, Perplexi
 h1: "How to track ChatGPT traffic in GA4, plus Perplexity, Claude, and Copilot"
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
-publishedAt: 2026-11-10
-updatedAt: 2026-11-10
+publishedAt: 2026-10-17
+updatedAt: 2026-10-17
 reviewEvery: none
 primaryKeyword: "how to track chatgpt traffic in ga4"
 secondaryKeywords: []
