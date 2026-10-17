@@ -36,21 +36,20 @@ export const AUTHORS: readonly Author[] = [
     knowsAbout: ["Webflow development", "Webflow migrations", "B2B SaaS website design", "Technical SEO"],
   },
   {
-    // Lead 2026-10-17. Job title not given yet: "BenorMedia" only, so the
-    // page reads "David Garay, BenorMedia" and the JSON-LD has no jobTitle.
-    // The bio states only what the site shows: the topics he writes on.
+    // Lead 2026-10-17: title from the lead; bio drafted by Claude at the
+    // lead's request (role and topics only, no dates, employers or clients).
     slug: "david-garay",
     name: "David Garay",
-    jobTitle: "BenorMedia",
+    jobTitle: "Webflow Developer and UX/UI Designer, BenorMedia",
     photo: { src: "/images/new-pages/authors/david-garay.png", w: 129, h: 129 },
-    description: "David Garay writes for the BenorMedia blog about B2B software buyers, website redesign timelines, Webflow pricing, and conversion audits for SaaS teams.",
+    description: "David Garay is a Webflow Developer and UX/UI Designer at BenorMedia. Read his articles on B2B buyers, redesign timelines, Webflow pricing and CRO.",
     bio: [
-      "David Garay writes for the BenorMedia blog, BenorMedia's publication for marketing leads and founders at B2B SaaS companies.",
-      "His articles cover the business side of a B2B website: what software buyers need to find before they talk to sales, how long a website redesign takes, what Webflow's plan changes mean for your budget, and how to find what stops visitors from converting.",
-      "Each article draws on published research and vendor documentation, listed in its sources.",
+      "David Garay is a Webflow Developer and UX/UI Designer at BenorMedia, a Webflow agency based in Barcelona that designs, builds and grows websites for B2B SaaS and tech companies.",
+      "He designs and builds client websites in Webflow, from wireframes and user flows to the finished pages, with a focus on clear layouts that help buyers find what they need and on sites that marketing teams can update on their own.",
+      "On the BenorMedia blog he writes about the business side of a B2B website: what software buyers look for before a sales call, how long a redesign takes, what Webflow's plan changes mean for your budget, and how to find what stops visitors from converting.",
     ],
     linkedin: "https://www.linkedin.com/in/david-garay19/",
-    knowsAbout: ["B2B buyer research", "Website redesign planning", "Webflow pricing", "Conversion rate optimization"],
+    knowsAbout: ["Webflow development", "UX design", "UI design", "Website redesign planning", "Conversion rate optimization"],
   },
 ];
 

@@ -10,7 +10,7 @@ title: "What B2B Software Buyers Need From Your Website | BenorMedia"
 description: "Most B2B software buyers rank their shortlist before they talk to sales. What the 2025 and 2026 research says they need from your website, page by page."
 h1: "What B2B software buyers need from your website before they talk to sales"
 lang: en-US
-author: "David Garay, BenorMedia"
+author: "David Garay, Webflow Developer and UX/UI Designer"
 publishedAt: 2026-10-16
 updatedAt: 2026-10-16
 reviewEvery: none

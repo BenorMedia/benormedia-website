@@ -32,11 +32,15 @@ interface Props {
 
 const { author, articles } = Astro.props;
 const role = author.jobTitle.split(",")[0]?.trim() ?? author.jobTitle;
+// "Name, Role", or the name alone when the role is only the brand. Over 48
+// characters (61 with " | BenorMedia"), "and" becomes "&" (check-seo limit).
+const fullTitle = role === ENTITY.name ? author.name : fill(copy.author.title, { name: author.name, role });
+const pageTitle = fullTitle.length > 48 ? fullTitle.replace(" and ", " & ") : fullTitle;
 const shots = await clientShots();
 const cards = articles.map(cardOf);
 ---
 
-<BaseLayout title={role === ENTITY.name ? author.name : fill(copy.author.title, { name: author.name, role })} description={author.description}>
+<BaseLayout title={pageTitle} description={author.description}>
   {authorPageJsonLd(author, articles).map((data) => <JsonLd data={data} />)}
   <header class="c-np-author-hero">
     <Container>
