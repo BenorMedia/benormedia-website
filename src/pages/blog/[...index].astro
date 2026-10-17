@@ -15,7 +15,7 @@ import NpBlogResources from "../../components/new-pages/NpBlogResources.astro";
 import JsonLd from "../../components/layout/JsonLd.astro";
 import { getPageSeo } from "../../lib/sanity/queries";
 import { PAGE_META } from "../../lib/content/seo";
-import { pagesOf, type NpPage } from "../../lib/new-pages/loader";
+import { cardOf, pagesOf, type NpPage } from "../../lib/new-pages/loader";
 import { clientShots } from "../../lib/new-pages/shots";
 import { blogIndexJsonLd } from "../../lib/new-pages/jsonld";
 import copy from "../../lib/new-pages/copy.json";
@@ -33,14 +33,7 @@ const { posts } = Astro.props;
 const allDrafts = posts.every((p) => p.draft);
 const [blogPage, shots] = await Promise.all([getPageSeo("blogPage"), clientShots()]);
 // Each post's header illustration as its card thumbnail (as the author page).
-const cards = posts.map((p) => ({
-  slug: p.slug,
-  href: p.url,
-  title: p.h1,
-  description: p.description,
-  family: p.family,
-  data: p.draft ? { "data-draft-target": p.slug } : ({} as Record<string, string>),
-}));
+const cards = posts.map(cardOf);
 ---
 
 <BaseLayout

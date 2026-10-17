@@ -20,9 +20,10 @@ import copy from "../../lib/new-pages/copy.json";
 import { fill } from "../../lib/new-pages/html";
 import { authorPageJsonLd } from "../../lib/new-pages/jsonld";
 import type { Author } from "../../lib/new-pages/authors";
-import type { NpPage } from "../../lib/new-pages/loader";
+import { cardOf, type NpPage } from "../../lib/new-pages/loader";
 import { clientShots } from "../../lib/new-pages/shots";
 import { SHARE_LINKEDIN } from "./blog-icons";
+import { ENTITY } from "../../lib/content/entity";
 
 interface Props {
   author: Author;
@@ -31,18 +32,15 @@ interface Props {
 
 const { author, articles } = Astro.props;
 const role = author.jobTitle.split(",")[0]?.trim() ?? author.jobTitle;
+// "Name, Role", or the name alone when the role is only the brand. Over 48
+// characters (61 with " | BenorMedia"), "and" becomes "&" (check-seo limit).
+const fullTitle = role === ENTITY.name ? author.name : fill(copy.author.title, { name: author.name, role });
+const pageTitle = fullTitle.length > 48 ? fullTitle.replace(" and ", " & ") : fullTitle;
 const shots = await clientShots();
-const cards = articles.map((p) => ({
-  slug: p.slug,
-  href: p.url,
-  title: p.h1,
-  description: p.description,
-  family: p.family,
-  data: p.draft ? { "data-draft-target": p.slug } : ({} as Record<string, string>),
-}));
+const cards = articles.map(cardOf);
 ---
 
-<BaseLayout title={fill(copy.author.title, { name: author.name, role })} description={author.description}>
+<BaseLayout title={pageTitle} description={author.description}>
   {authorPageJsonLd(author, articles).map((data) => <JsonLd data={data} />)}
   <header class="c-np-author-hero">
     <Container>
