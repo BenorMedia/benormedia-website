@@ -37,6 +37,7 @@ const PAGES = {
   '/blog': { expected: ['CollectionPage', 'BreadcrumbList'], keyword: 'b2b saas blog' },
   '/blog/webflow-price-increase': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow price increase' },
   '/blog/what-b2b-buyers-need-from-your-website': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'b2b software buyers website' },
+  '/blog/ai-traffic-in-ga4': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'chatgpt traffic ga4' },
   // Author pages (src/lib/new-pages/authors.ts), 2026-10-08.
   '/authors/sergio-gancedo': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'sergio gancedo' },
 };
