@@ -6,18 +6,24 @@
  * for the related pack pages built in this mode. The author pages reuse it
  * for the author's guides (own eyebrow and heading, every card, each
  * guide's header illustration as its thumbnail, static: lead 2026-10-09).
- * The /blog index reuses it as the card grid under its hero: every post,
- * the heading visually hidden (`headingHidden`), Work's spacing.
+ * The /blog and /guides indexes reuse it as the card grid under their hero:
+ * every article, the heading visually hidden (`headingHidden`), Work's
+ * spacing. Article cards (lead 2026-10-17): category tag (`categories.ts`)
+ * and "Published on" tag, then the author row, title, description, link;
+ * service cards keep the "Services" tag only.
  */
 import Container from "../ui/Container.astro";
 import Eyebrow from "../ui/Eyebrow.astro";
 import copy from "../../lib/new-pages/copy.json";
-import type { NpPage } from "../../lib/new-pages/loader";
+import type { Card } from "../../lib/new-pages/loader";
 import { ARROW_RIGHT } from "./blog-icons";
 import { HEROES } from "../../lib/new-pages/visuals";
+import { categoryOf } from "../../lib/new-pages/categories";
+import { findAuthor } from "../../lib/new-pages/authors";
+import { fill, formatShortDate } from "../../lib/new-pages/html";
 
 interface Props {
-  cards: readonly (NpPage["relatedCards"][number] & { slug?: string })[];
+  cards: readonly Card[];
   shots: readonly { src: string; srcset: string }[];
   eyebrow?: string;
   heading?: string;
@@ -39,11 +45,7 @@ const {
   headingHidden = false,
 } = Astro.props;
 const list = cards.slice(0, limit);
-const TAGS: Record<NpPage["family"], string> = {
-  article: copy.articleEyebrow.guide,
-  blog: copy.articleEyebrow.blog,
-  commercial: copy.resources.serviceTag,
-};
+const nameOf = (author: string): string => author.split(",")[0]?.trim() ?? author;
 ---
 
 {list.length > 0 && (
@@ -63,6 +65,7 @@ const TAGS: Record<NpPage["family"], string> = {
         {list.map((card, i) => {
           const hero = heroThumbs && card.slug ? HEROES[card.slug] : undefined;
           const Hero = hero?.component;
+          const profile = card.author ? findAuthor(card.author) : undefined;
           return (
           <li class="c-np-res__card">
             {Hero ? (
@@ -78,7 +81,22 @@ const TAGS: Record<NpPage["family"], string> = {
             </span>
             )}
             <span class="c-np-res__texts">
-              <Eyebrow variant="accent">{TAGS[card.family]}</Eyebrow>
+              <span class="c-np-res__tags">
+                <Eyebrow variant="accent">{categoryOf(card.slug, card.family)}</Eyebrow>
+                {card.publishedAt && (
+                  <Eyebrow>
+                    {fill(copy.card.published, { date: formatShortDate(card.publishedAt) })}
+                  </Eyebrow>
+                )}
+              </span>
+              {card.author && (
+                <span class="c-np-res__author">
+                  {profile && (
+                    <img class="c-np-res__author-photo" src={profile.photo.src} width={profile.photo.w} height={profile.photo.h} alt="" loading="lazy" decoding="async" />
+                  )}
+                  <span class="c-paragraph">{profile?.name ?? nameOf(card.author)}</span>
+                </span>
+              )}
               <span class="c-np-res__title c-text_m">{card.title}</span>
               <span class="c-np-res__desc c-paragraph">{card.description}</span>
               <a class="c-np-res__more c-paragraph" href={card.href} {...card.data}>
@@ -207,6 +225,29 @@ const TAGS: Record<NpPage["family"], string> = {
   }
   .c-np-res__title {
     color: var(--color-black-secondary);
+  }
+  /* Category + published tags on one row; they wrap on narrow cards. */
+  .c-np-res__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.571rem 0.857rem;
+  }
+  /* Author row: photo + name in a bordered box across the card. */
+  .c-np-res__author {
+    display: flex;
+    align-items: center;
+    gap: 0.857rem;
+    align-self: stretch;
+    padding: 0.571rem 0.857rem;
+    border: var(--border-default);
+    border-radius: 8px;
+    color: var(--color-black-secondary);
+  }
+  .c-np-res__author-photo {
+    width: 2.286rem;
+    height: 2.286rem;
+    border-radius: 50%;
+    object-fit: cover;
   }
   .c-np-res__desc {
     color: var(--color-text);
