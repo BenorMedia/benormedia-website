@@ -214,6 +214,7 @@
 | 2026-10-07 | Ahrefs Web Analytics in `BaseLayout` `<head>` (`analytics.ahrefs.com/analytics.js`, `data-key` = the Ahrefs site key, `async`, `is:inline` so Astro does not bundle it). Production only (`PUBLIC_SITE_ENV === "production"`, same switch as GTM): previews and dev never send visits | Lead: install Ahrefs analytics | Lead |
 | 2026-10-17 | Google tag (gtag.js) for GA4 `G-LC2VQ4Z1VV` in `BaseLayout` `<head>`, the official snippet verbatim right after GTM. Production only (`PUBLIC_SITE_ENV === "production"`, same switch as GTM): previews and dev never send hits. If GTM also fires a GA4 tag for this ID, page views count twice | Lead: install the Google tag in the head | Lead |
 | 2026-10-17 | GTM container replaced: `GTM-5HNF8BWX` (was `GTM-M4MHRTDM`) in both the head snippet and the `<noscript>` iframe. Same loader and production-only switch as before | Lead: new GTM scripts | Lead |
+| 2026-10-17 | Direct Google tag for GA4 `G-LC2VQ4Z1VV` removed from `BaseLayout` (supersedes the 2026-10-17 install): GA4 now fires from the GTM container `GTM-5HNF8BWX` (Google Analytics tag, Initialization - All Pages), so page views are not counted twice | Lead: GA set up in GTM | Lead |
 
 ### Open questions
 
