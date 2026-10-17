@@ -37,11 +37,12 @@ const classList = ["c-tag", `is-${variant}`, className].filter(Boolean).join(" "
     white-space: nowrap;
   }
 
-  /* Mobile: 12px (1.3333rem at the 9px mobile root). Global — every c-tag.
-     Lead request 2026-09-29. */
+  /* Mobile: 12px (1.3333rem at the 9px mobile root), then 15% smaller
+     (lead 2026-10-16): 1.1333rem ≈ 10.2px. Global — every c-tag. Lead
+     request 2026-09-29. */
   @media (max-width: 767px) {
     .c-tag {
-      font-size: 1.3333rem;
+      font-size: 1.1333rem;
     }
   }
 

@@ -521,6 +521,12 @@ const BodyTag = websiteUrl ? "a" : "div";
     color: var(--color-text);
     margin: 0;
   }
+  /* Mobile (lead 2026-10-16): the quote 15% above `.c-paragraph`. */
+  @media (max-width: 767px) {
+    .c-client-card__quote {
+      font-size: calc(var(--fs-p) * 1.15);
+    }
+  }
 
   /* --- Author ---------------------------------------------------------- */
   .c-client-card__author {
@@ -710,7 +716,7 @@ const BodyTag = websiteUrl ? "a" : "div";
   }
 
   /* Grid cards only (every page with a clients grid) — lead 2026-09-30.
-     Desktop only: mobile keeps the global 12px c-tag size (.8rem = 7.2px). */
+     Desktop only: mobile keeps the global c-tag size (Tag.astro). */
   @media (min-width: 768px) {
     .c-client-card.is-grid :global(.c-tag) {
       font-size: 0.8rem;

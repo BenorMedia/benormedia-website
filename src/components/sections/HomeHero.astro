@@ -319,6 +319,16 @@ const BUTTONS: ButtonType[] = [
     gap: 2.25rem;
     width: 100%;
     max-width: 70%; /* lead visual QA 2026-09-30 (was 60%) */
+    /* Click-through: only the text and the buttons cover the tiles. With
+       a long title and lead (new pages) the block reaches over the pile,
+       and as one hit area it blocked every tile behind it. */
+    pointer-events: none;
+  }
+  .c-hero__block :global(.c-eyebrow),
+  .c-hero__title,
+  .c-hero__desc,
+  .c-hero__block :global(a),
+  .c-hero__block :global(button) {
     pointer-events: auto;
   }
 

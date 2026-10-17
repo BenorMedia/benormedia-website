@@ -36,6 +36,8 @@ interface Props {
   showCtaBanner?: boolean;
   /** Apply the "%s | BenorMedia" title template (Seo). Default true. */
   titleTemplate?: boolean;
+  /** Page-scope modifier on <body> (e.g. `is-home`) for page-only rules. */
+  bodyClass?: string;
 }
 
 const {
@@ -47,6 +49,7 @@ const {
   pageSeo,
   showCtaBanner = true,
   titleTemplate = true,
+  bodyClass,
 } = Astro.props;
 
 const noIndexResolved = noIndex ?? noindex ?? false;
@@ -202,7 +205,7 @@ if (siteSettings) {
 
     <meta name="generator" content={Astro.generator} />
   </head>
-  <body>
+  <body class={bodyClass}>
     {loadGtm && <Fragment set:html={gtmBody} />}
     <Nav siteSettings={siteSettings} />
     <main><slot /></main>
