@@ -127,6 +127,7 @@ const LASTMOD = {
   '/terms-conditions': '2026-10-05',
   '/authors/sergio-gancedo': '2026-10-17',
   '/guides': '2026-10-17',
+  '/authors/david-garay': '2026-10-17',
 };
 
 // New pages (content-pack/content/*.md, docs/new-pages.md): draft pages stay

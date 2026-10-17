@@ -12,7 +12,7 @@
  * items that hold a gap marker are left out. BreadcrumbList keeps only
  * released and live levels (`links.ts`), renumbered from 1.
  */
-import { AREA_SERVED_LD, ORG_ID, PROVIDER_LD, SITE, WEBSITE_ID } from "../content/entity";
+import { AREA_SERVED_LD, ENTITY, ORG_ID, PROVIDER_LD, SITE, WEBSITE_ID } from "../content/entity";
 import type { NpPage } from "./loader";
 import { authorId, authorPath, findAuthor, type Author } from "./authors";
 
@@ -28,7 +28,9 @@ function authorLd(page: NpPage): Ld {
   if (page.author.hasGap || !text || text === "BenorMedia team") return { ...PROVIDER_LD };
   const comma = text.indexOf(",");
   const name = comma >= 0 ? text.slice(0, comma).trim() : text;
-  const jobTitle = comma >= 0 ? text.slice(comma + 1).trim() : "";
+  // "Name, BenorMedia" names no job title: leave jobTitle out.
+  const role = comma >= 0 ? text.slice(comma + 1).trim() : "";
+  const jobTitle = role === ENTITY.name ? "" : role;
   const a = findAuthor(text);
   const profile = a ? { "@id": authorId(a), url: abs(authorPath(a)), sameAs: [a.linkedin] } : {};
   return { "@type": "Person", ...profile, name, ...(jobTitle ? { jobTitle } : {}), worksFor: { ...PROVIDER_LD } };
@@ -55,7 +57,7 @@ export function authorPageJsonLd(a: Author, articles: readonly NpPage[]): Ld[] {
         name: a.name,
         url,
         image: abs(a.photo.src),
-        jobTitle: a.jobTitle.split(",")[0]?.trim(),
+        ...(a.jobTitle.includes(",") ? { jobTitle: a.jobTitle.split(",")[0]?.trim() } : {}),
         description: a.bio[0],
         worksFor: { ...PROVIDER_LD },
         sameAs: [a.linkedin],

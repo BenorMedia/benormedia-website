@@ -23,6 +23,7 @@ import type { Author } from "../../lib/new-pages/authors";
 import { cardOf, type NpPage } from "../../lib/new-pages/loader";
 import { clientShots } from "../../lib/new-pages/shots";
 import { SHARE_LINKEDIN } from "./blog-icons";
+import { ENTITY } from "../../lib/content/entity";
 
 interface Props {
   author: Author;
@@ -35,7 +36,7 @@ const shots = await clientShots();
 const cards = articles.map(cardOf);
 ---
 
-<BaseLayout title={fill(copy.author.title, { name: author.name, role })} description={author.description}>
+<BaseLayout title={role === ENTITY.name ? author.name : fill(copy.author.title, { name: author.name, role })} description={author.description}>
   {authorPageJsonLd(author, articles).map((data) => <JsonLd data={data} />)}
   <header class="c-np-author-hero">
     <Container>

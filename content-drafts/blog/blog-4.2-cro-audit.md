@@ -10,7 +10,7 @@ title: "CRO Audit for Low-Traffic B2B SaaS Sites | BenorMedia"
 description: "How to run a CRO audit on a B2B SaaS site without enough traffic for A/B tests: the sample-size math, the funnel checks, and how to prioritize fixes."
 h1: "How to run a CRO audit on a B2B SaaS site that's below testing traffic"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "David Garay, BenorMedia"
 publishedAt: 2026-10-17
 updatedAt: 2026-10-17
 reviewEvery: none

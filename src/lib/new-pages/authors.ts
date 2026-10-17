@@ -25,7 +25,7 @@ export const AUTHORS: readonly Author[] = [
     slug: "sergio-gancedo",
     name: "Sergio Gancedo",
     jobTitle: "Managing Director, BenorMedia",
-    photo: { src: "/images/new-pages/authors/sergio-gancedo.webp", w: 216, h: 216 },
+    photo: { src: "/images/new-pages/authors/sergio-gancedo.png", w: 129, h: 129 }, // lead 2026-10-17
     description: "Sergio Gancedo is the Managing Director of BenorMedia, a Webflow agency for B2B SaaS. Read his guides on Webflow, migrations and SaaS web design.",
     bio: [
       "Sergio Gancedo is the Managing Director of BenorMedia, a Webflow agency based in Barcelona that designs, builds and grows websites for B2B SaaS and tech companies.",
@@ -34,6 +34,23 @@ export const AUTHORS: readonly Author[] = [
     ],
     linkedin: "https://www.linkedin.com/in/sergio-gancedo/",
     knowsAbout: ["Webflow development", "Webflow migrations", "B2B SaaS website design", "Technical SEO"],
+  },
+  {
+    // Lead 2026-10-17. Job title not given yet: "BenorMedia" only, so the
+    // page reads "David Garay, BenorMedia" and the JSON-LD has no jobTitle.
+    // The bio states only what the site shows: the topics he writes on.
+    slug: "david-garay",
+    name: "David Garay",
+    jobTitle: "BenorMedia",
+    photo: { src: "/images/new-pages/authors/david-garay.png", w: 129, h: 129 },
+    description: "David Garay writes for the BenorMedia blog about B2B software buyers, website redesign timelines, Webflow pricing, and conversion audits for SaaS teams.",
+    bio: [
+      "David Garay writes for the BenorMedia blog, BenorMedia's publication for marketing leads and founders at B2B SaaS companies.",
+      "His articles cover the business side of a B2B website: what software buyers need to find before they talk to sales, how long a website redesign takes, what Webflow's plan changes mean for your budget, and how to find what stops visitors from converting.",
+      "Each article draws on published research and vendor documentation, listed in its sources.",
+    ],
+    linkedin: "https://www.linkedin.com/in/david-garay19/",
+    knowsAbout: ["B2B buyer research", "Website redesign planning", "Webflow pricing", "Conversion rate optimization"],
   },
 ];
 

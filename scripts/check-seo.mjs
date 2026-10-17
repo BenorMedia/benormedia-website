@@ -51,6 +51,7 @@ const PAGES = {
   '/blog/webflow-analytics': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow analytics' },
   // Author pages (src/lib/new-pages/authors.ts), 2026-10-08.
   '/authors/sergio-gancedo': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'sergio gancedo' },
+  '/authors/david-garay': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'david garay' },
 };
 const NOINDEX_PAGES = ['/testimonials', '/cookie-policy']; // must stay out of the sitemap
 
