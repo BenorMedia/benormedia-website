@@ -187,7 +187,7 @@ Keep the list to the pages with the key information you'd want an AI assistant t
 
 On Webflow, go to Site settings, then SEO, then LLMs.txt, upload the file, save your changes, and publish. The file must be UTF-8 encoded and under 100 KB. Webflow publishes only the llms.txt file itself, not Markdown files for each page, and doesn't publish it to the Webflow staging domain. Webflow's help article calls the format "experimental" and says its current impact is not proven.
 
-On a custom site, serve it as a static file at the root, as you would robots.txt. On our own website, the file at benormedia.com/llms.txt has an H1, a one-line summary, and sections for services, guides, company pages, and optional links, with about 19 links in total.
+On a custom site, serve it as a static file at the root, as you would robots.txt. On our own website, the file at benormedia.com/llms.txt has an H1, a one-line summary, and sections for services, guides, blog posts, company pages, and optional links.
 
 ## How can you tell whether anything reads your llms.txt file?
 
