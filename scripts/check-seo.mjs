@@ -38,6 +38,12 @@ const PAGES = {
   '/blog/webflow-price-increase': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow price increase' },
   '/blog/what-b2b-buyers-need-from-your-website': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'b2b software buyers website' },
   '/blog/ai-traffic-in-ga4': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'chatgpt traffic ga4' },
+  '/blog/how-long-does-a-website-redesign-take': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'website redesign take' },
+  '/blog/ai-crawlers-robots-txt': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'gptbot ai crawlers' },
+  '/blog/do-you-need-an-llms-txt-file': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'llms.txt' },
+  '/blog/headless-cms-seo': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'headless cms seo' },
+  '/blog/website-redesign-seo-checklist': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'website redesign seo checklist' },
+  '/blog/webflow-analytics': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow analytics' },
   // Author pages (src/lib/new-pages/authors.ts), 2026-10-08.
   '/authors/sergio-gancedo': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'sergio gancedo' },
 };

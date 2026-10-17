@@ -2,7 +2,7 @@
 slug: headless-cms-seo
 url: /blog/headless-cms-seo
 pageType: guide
-draft: true
+draft: false
 blockedBy: []
 topicId: "3.1"
 wave: 1
@@ -11,8 +11,8 @@ description: "What a headless CMS changes for SEO on an Astro or Next.js build: 
 h1: "Headless CMS SEO: what changes, what breaks, and what to check before launch"
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
-publishedAt: 2026-12-08
-updatedAt: 2026-12-08
+publishedAt: 2026-10-17
+updatedAt: 2026-10-17
 reviewEvery: none
 primaryKeyword: "headless cms seo"
 secondaryKeywords: []

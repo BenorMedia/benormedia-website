@@ -2,7 +2,7 @@
 slug: ai-crawlers-robots-txt
 url: /blog/ai-crawlers-robots-txt
 pageType: guide
-draft: true
+draft: false
 blockedBy: []
 topicId: "6.3"
 wave: 1
@@ -11,8 +11,8 @@ description: "GPTBot trains models, while OAI-SearchBot puts you in ChatGPT answ
 h1: "GPTBot, ClaudeBot, and other AI crawlers: which to allow in robots.txt"
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
-publishedAt: 2026-11-24
-updatedAt: 2026-11-24
+publishedAt: 2026-10-17
+updatedAt: 2026-10-17
 reviewEvery: none
 primaryKeyword: "gptbot"
 secondaryKeywords: ["claudebot"]
