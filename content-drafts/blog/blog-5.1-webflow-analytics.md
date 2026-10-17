@@ -2,7 +2,7 @@
 slug: webflow-analytics
 url: /blog/webflow-analytics
 pageType: guide
-draft: true
+draft: false
 blockedBy: []
 topicId: "5.1"
 wave: 1
@@ -11,8 +11,8 @@ description: "What Webflow Analyze, GA4, and Google Tag Manager each measure on 
 h1: "Webflow analytics for B2B SaaS: Analyze, GA4, Tag Manager, and what to set up first"
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
-publishedAt: 2027-01-05
-updatedAt: 2027-01-05
+publishedAt: 2026-10-17
+updatedAt: 2026-10-17
 reviewEvery: none
 primaryKeyword: "webflow analytics"
 secondaryKeywords: []

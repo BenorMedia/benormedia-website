@@ -28,6 +28,12 @@
 - [Webflow Price Increase: What to Check Now](https://www.benormedia.com/blog/webflow-price-increase): Webflow's new Site plans reach Freelancer and Agency Workspace sites from November 16, 2026: who pays more, how to keep your plan, and what to check.
 - [What B2B Software Buyers Need From Your Website](https://www.benormedia.com/blog/what-b2b-buyers-need-from-your-website): Most B2B software buyers rank their shortlist before they talk to sales. What the 2025 and 2026 research says they need from your website, page by page.
 - [How to Track ChatGPT and AI Traffic in GA4](https://www.benormedia.com/blog/ai-traffic-in-ga4): GA4 now has an AI Assistant channel. How to find ChatGPT, Perplexity, Claude, and Copilot visits, fill the gaps with a custom channel group, and read them.
+- [How Long Does a B2B Website Redesign Take?](https://www.benormedia.com/blog/how-long-does-a-website-redesign-take): An example plan for a B2B SaaS website redesign, phase by phase: how long each step takes, what stretches it, and a timeline you can adapt to your site.
+- [GPTBot and AI Crawlers: Which to Allow](https://www.benormedia.com/blog/ai-crawlers-robots-txt): GPTBot trains models, while OAI-SearchBot puts you in ChatGPT answers. Which AI crawlers a B2B SaaS site should allow in robots.txt, vendor by vendor.
+- [Do You Need an llms.txt File?](https://www.benormedia.com/blog/do-you-need-an-llms-txt-file): What llms.txt is, whether Google, ChatGPT, Claude, or Perplexity use it, what a 137,000-domain study found, and how to add one in Webflow or on any site.
+- [Headless CMS SEO: What Changes and What Breaks](https://www.benormedia.com/blog/headless-cms-seo): What a headless CMS changes for SEO on an Astro or Next.js build: rendering, metadata, redirects, sitemaps, and previews, plus checks to run before launch.
+- [Website Redesign SEO Checklist for B2B SaaS](https://www.benormedia.com/blog/website-redesign-seo-checklist): An SEO checklist for a B2B SaaS website redesign: what to freeze, how to build the redirect map, what to test at launch, and what to watch for 90 days.
+- [Webflow Analytics: What to Set Up First](https://www.benormedia.com/blog/webflow-analytics): What Webflow Analyze, GA4, and Google Tag Manager each measure on a B2B SaaS site, the order to set them up, a starter event list, and the Google tag gateway.
 
 ## Company
 

@@ -2,7 +2,7 @@
 slug: do-you-need-an-llms-txt-file
 url: /blog/do-you-need-an-llms-txt-file
 pageType: guide
-draft: true
+draft: false
 blockedBy: []
 topicId: "6.2"
 wave: 1
@@ -11,8 +11,8 @@ description: "What llms.txt is, whether Google, ChatGPT, Claude, or Perplexity u
 h1: "Do you need an llms.txt file? What the documentation and the studies say"
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
-publishedAt: 2026-12-01
-updatedAt: 2026-12-01
+publishedAt: 2026-10-17
+updatedAt: 2026-10-17
 reviewEvery: none
 primaryKeyword: "llms.txt"
 secondaryKeywords: []

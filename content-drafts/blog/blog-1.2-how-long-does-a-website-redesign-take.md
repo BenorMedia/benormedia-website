@@ -2,7 +2,7 @@
 slug: how-long-does-a-website-redesign-take
 url: /blog/how-long-does-a-website-redesign-take
 pageType: guide
-draft: true
+draft: false
 blockedBy: []
 topicId: "1.2"
 wave: 1
@@ -11,8 +11,8 @@ description: "An example plan for a B2B SaaS website redesign, phase by phase: h
 h1: "How long does a website redesign take? A phase-by-phase plan for B2B SaaS teams"
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
-publishedAt: 2026-11-17
-updatedAt: 2026-11-17
+publishedAt: 2026-10-17
+updatedAt: 2026-10-17
 reviewEvery: none
 primaryKeyword: "how long does a website redesign take"
 secondaryKeywords: []

@@ -2,7 +2,7 @@
 slug: website-redesign-seo-checklist
 url: /blog/website-redesign-seo-checklist
 pageType: guide
-draft: true
+draft: false
 blockedBy: []
 topicId: "1.1"
 wave: 1
@@ -11,8 +11,8 @@ description: "An SEO checklist for a B2B SaaS website redesign: what to freeze, 
 h1: "Website redesign SEO: a checklist for B2B SaaS teams, from the URL map to day 90"
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
-publishedAt: 2026-12-15
-updatedAt: 2026-12-15
+publishedAt: 2026-10-17
+updatedAt: 2026-10-17
 reviewEvery: none
 primaryKeyword: "website redesign seo"
 secondaryKeywords: []
