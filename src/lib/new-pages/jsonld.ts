@@ -74,11 +74,12 @@ export function authorPageJsonLd(a: Author, articles: readonly NpPage[]): Ld[] {
   ];
 }
 
-/** The /blog index: a CollectionPage whose main entity lists the posts built
- *  in this mode (newest first), each pointing at its Article `@id`, and the
- *  breadcrumb. `dateModified` = the latest `updatedAt` of those posts. */
-export function blogIndexJsonLd(meta: { name: string; description: string }, posts: readonly NpPage[]): Ld[] {
-  const url = abs("/blog");
+/** An article index (/blog, /guides): a CollectionPage whose main entity
+ *  lists the articles built in this mode (newest first), each pointing at its
+ *  Article `@id`, and the breadcrumb. `dateModified` = the latest
+ *  `updatedAt` of those articles. */
+export function blogIndexJsonLd(meta: { name: string; description: string }, posts: readonly NpPage[], path = "/blog"): Ld[] {
+  const url = abs(path);
   const dates = posts.map((p) => p.updatedAt).filter(Boolean).sort();
   return [
     {
