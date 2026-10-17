@@ -125,7 +125,8 @@ const LASTMOD = {
   '/work': '2026-10-06',
   '/privacy-policy': '2026-10-05',
   '/terms-conditions': '2026-10-05',
-  '/authors/sergio-gancedo': '2026-10-15',
+  '/authors/sergio-gancedo': '2026-10-17',
+  '/guides': '2026-10-17',
 };
 
 // New pages (content-pack/content/*.md, docs/new-pages.md): draft pages stay
