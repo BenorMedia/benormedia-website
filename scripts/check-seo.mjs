@@ -35,6 +35,11 @@ const PAGES = {
   '/guides/webflow-vs-custom-code': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow vs custom code' },
   // Blog (content-drafts/blog/, docs/new-pages.md), released 2026-10-15.
   '/blog': { expected: ['CollectionPage', 'BreadcrumbList'], keyword: 'b2b saas blog' },
+  '/guides': { expected: ['CollectionPage', 'BreadcrumbList'], keyword: 'webflow guides' },
+  '/blog/import-wordpress-to-webflow': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'import wordpress webflow' },
+  '/blog/website-launch-checklist': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'website launch checklist' },
+  '/blog/is-webflow-good-for-seo': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow seo' },
+  '/blog/cro-audit': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'cro audit' },
   '/blog/webflow-price-increase': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow price increase' },
   '/blog/what-b2b-buyers-need-from-your-website': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'b2b software buyers website' },
   '/blog/ai-traffic-in-ga4': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'chatgpt traffic ga4' },
