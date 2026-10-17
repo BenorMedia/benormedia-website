@@ -69,6 +69,7 @@
   "resources": {
     "eyebrow": "Resources",
     "heading": "Related resources.",
+    "blogHeading": "Related blog articles.",
     "learnMore": "Learn more",
     "serviceTag": "Services"
   },

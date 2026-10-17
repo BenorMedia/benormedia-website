@@ -55,6 +55,8 @@ interface FrontMatter {
   faq?: { q?: string; a?: string }[];
   takeaways?: string[];
   related?: string[];
+  /** Blog posts: "<cluster>.<n>" from the content plan (e.g. "6.2"). */
+  topicId?: string | number;
   sources?: { label?: string; url?: string; accessed?: string }[];
   visuals?: { after?: string; side?: string; type?: string; brief?: string; alt?: string }[];
   process?: { section?: string; imagesFrom?: string };
@@ -112,6 +114,8 @@ export interface NpPage {
   publishedAt: string;
   updatedAt: string;
   reviewEvery: string;
+  /** Blog posts: content plan topic, "<cluster>.<n>"; "" elsewhere. */
+  topicId: string;
   takeaways: string[];
   sources: { labelHtml: string; url: string; accessed: string }[];
   /** Article read time, minutes (body + FAQ at 230 words a minute). */
@@ -434,6 +438,7 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
     publishedAt: String(d.publishedAt ?? ""),
     updatedAt: String(d.updatedAt ?? ""),
     reviewEvery: String(d.reviewEvery ?? ""),
+    topicId: String(d.topicId ?? ""),
     takeaways: (d.takeaways ?? []).map((t) => text(t)),
     sources: (d.sources ?? []).map((s) => ({
       labelHtml: text(s.label),

@@ -7,7 +7,8 @@
  *   collage, the author card below it) → two columns (sticky table of
  *   contents with Get in Touch and Share; the article: key takeaways, body
  *   with tables and figures, sources) → FAQ → the global CTA banner (lead
- *   2026-10-07: right below the FAQ) → Related resources. The author card
+ *   2026-10-07: right below the FAQ) → Related resources (blog posts:
+ *   "Related blog articles.", three other posts, lead 2026-10-17). The author card
  *   moved from a third column into the header and the article took its
  *   width (Figma 3718:7504, lead 2026-10-12).
  * Draft banner and gaps panel in previews.
@@ -27,7 +28,8 @@ import NpGapsPanel from "./NpGapsPanel.astro";
 import CtaBanner from "../layout/CtaBanner.astro";
 import { getSiteSettingsCached } from "../../lib/sanity/site";
 import { pageJsonLd } from "../../lib/new-pages/jsonld";
-import type { NpPage } from "../../lib/new-pages/loader";
+import { pagesOf, type NpPage } from "../../lib/new-pages/loader";
+import copy from "../../lib/new-pages/copy.json";
 import { resolveVisual } from "../../lib/new-pages/visuals";
 import { clientShots } from "../../lib/new-pages/shots";
 import { SITE } from "../../lib/content/entity";
@@ -47,6 +49,31 @@ const toc = [
 
 // Client site screenshots (Our Work) for the header collage and the cards.
 const shots = await clientShots();
+
+// Blog posts (lead 2026-10-17): three other posts built in this mode, the
+// same topic cluster first (`topicId` "<cluster>.<n>"), then the newest.
+// Each post's header illustration as its thumbnail, as on /blog.
+const cluster = (p: NpPage): string => p.topicId.split(".")[0] ?? "";
+const relatedPosts =
+  page.family === "blog"
+    ? pagesOf("blog")
+        .filter((p) => p.slug !== page.slug)
+        .sort(
+          (a, b) =>
+            Number(cluster(b) === cluster(page)) - Number(cluster(a) === cluster(page)) ||
+            b.publishedAt.localeCompare(a.publishedAt) ||
+            a.slug.localeCompare(b.slug),
+        )
+        .slice(0, 3)
+        .map((p) => ({
+          slug: p.slug,
+          href: p.url,
+          title: p.h1,
+          description: p.description,
+          family: p.family,
+          data: p.draft ? { "data-draft-target": p.slug } : ({} as Record<string, string>),
+        }))
+    : [];
 ---
 
 <BaseLayout title={page.title} description={page.description} noIndex={page.draft} showCtaBanner={false} titleTemplate={false}>
@@ -84,7 +111,11 @@ const shots = await clientShots();
   <div data-np-live="cta-banner" class="c-np-live-banner">
     <CtaBanner siteSettings={siteSettings} />
   </div>
-  <NpBlogResources cards={page.relatedCards} shots={[...shots.slice(1), ...shots.slice(0, 1)]} />
+  {page.family === "blog" ? (
+    <NpBlogResources cards={relatedPosts} shots={shots} heading={copy.resources.blogHeading} heroThumbs />
+  ) : (
+    <NpBlogResources cards={page.relatedCards} shots={[...shots.slice(1), ...shots.slice(0, 1)]} />
+  )}
   {page.includeDrafts && page.view === "review" && <NpGapsPanel gaps={page.gaps} />}
 </BaseLayout>
 
