@@ -276,8 +276,10 @@ export function loadPages(): NpPage[] {
   blogGate(blogFiles);
   const blogBuilt = blogFiles.filter(({ parsed }) => (parsed.data as FrontMatter).draft === false || mode.includeDrafts);
 
+  // Every linkable page by slug: the pack pages and the blog posts (so a
+  // post can link to another post; drafts follow the draft rules).
   const pack = new Map(
-    files.map(({ parsed }) => {
+    [...files.map((f) => ({ ...f, family: undefined as Family | undefined })), ...blogFiles.map((f) => ({ ...f, family: "blog" as Family }))].map(({ parsed, family }) => {
       const d = parsed.data as FrontMatter;
       return [
         String(d.slug),
@@ -289,6 +291,7 @@ export function loadPages(): NpPage[] {
           pageType: String(d.pageType ?? ""),
           publishedAt: String(d.publishedAt ?? ""),
           author: String(d.author ?? ""),
+          family,
         },
       ] as const;
     }),
@@ -483,7 +486,7 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
       const p = s ? ctx.pack.get(s) : undefined;
       if (!s || !p || s === slug) return [];
       if (p.draft && !ctx.includeDrafts) return [];
-      const fam = (FAMILY as Record<string, Family>)[p.pageType ?? ""];
+      const fam = p.family ?? (FAMILY as Record<string, Family>)[p.pageType ?? ""];
       if (!fam) return [];
       const article = fam !== "commercial";
       return [

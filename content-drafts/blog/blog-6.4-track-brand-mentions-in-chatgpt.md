@@ -161,7 +161,7 @@ Look at the cited URLs too. If AI answers keep citing third-party roundups and c
 
 Mentions matter when they bring buyers. Two sources help you check that they do.
 
-**Google Analytics.** GA4's default channel group includes an AI Assistant channel, and ChatGPT adds utm_source=chatgpt.com to the links it sends. Track ChatGPT referral traffic, sessions, and key events from that channel next to your mention rate. On many B2B sites these visits are few, so look at the trend over several months.
+**Google Analytics.** GA4's default channel group includes an AI Assistant channel, and ChatGPT adds utm_source=chatgpt.com to the links it sends. Track ChatGPT referral traffic, sessions, and key events from that channel next to your mention rate. On many B2B sites these visits are few, so look at the trend over several months. For the setup, see [how to track ChatGPT traffic in GA4](/blog/ai-traffic-in-ga4).
 
 **A self-reported source field.** Add "How did you hear about us?" as an open text field on your demo request form. A buyer who researched in an AI assistant may later arrive directly or through search, and analytics alone won't show that. Count the answers that mention ChatGPT, Perplexity, or "AI" every month.
 

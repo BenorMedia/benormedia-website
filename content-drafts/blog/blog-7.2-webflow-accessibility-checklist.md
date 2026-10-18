@@ -179,6 +179,6 @@ Combine Webflow's checks with manual tests, because automated checks catch only 
 5. **Check contrast** for text with the color picker and for buttons, icons, and focus outlines by hand.
 6. **Repeat after big changes,** such as a new template, a new interaction, or a new cookie banner.
 
-Record what you tested, when, and on which pages. When an accessibility question comes up later, that record shows what the site met at launch.
+Record what you tested, when, and on which pages. When an accessibility question comes up later, that record shows what the site met at launch. For the other launch-week checks, see our [website launch checklist](/blog/website-launch-checklist).
 
 We design and build B2B and SaaS websites on Webflow and test accessibility before launch, so we have an interest in this topic. For how testing fits into a project, see our [website redesign](/website-redesign) page.

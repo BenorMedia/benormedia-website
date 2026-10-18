@@ -31,7 +31,17 @@ export interface LinkContext {
   /** Pack pages by slug. */
   pack: ReadonlyMap<
     string,
-    { url: string; draft: boolean; h1: string; description?: string; pageType?: string; publishedAt?: string; author?: string }
+    {
+      url: string;
+      draft: boolean;
+      h1: string;
+      description?: string;
+      pageType?: string;
+      publishedAt?: string;
+      author?: string;
+      /** Set for blog posts (their family comes from the folder). */
+      family?: "commercial" | "article" | "blog" | undefined;
+    }
   >;
   plan: ReadonlyMap<string, PlanPage>;
   warn: (message: string) => void;
