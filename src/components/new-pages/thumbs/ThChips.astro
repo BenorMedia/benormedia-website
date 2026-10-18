@@ -1,0 +1,55 @@
+---
+/**
+ * ThChips — card thumbnail (Figma 3736:8810): a wall of capability chips
+ * (icon tile + label) in four centered rows, wider than the card and cut
+ * by its edges. Motion: the rows drift sideways, alternating direction.
+ */
+import "./th.css";
+import { TH_ICON, type ThItem } from "./assets";
+
+interface Props {
+  /** Four rows of chips (five each in the design). */
+  rows: readonly (readonly ThItem[])[];
+}
+
+const { rows } = Astro.props;
+---
+
+<span class="np-th" aria-hidden="true" data-np-illustration>
+  <span class="np-th__stage np-th-chips">
+    {rows.slice(0, 4).map((row, r) => (
+      <span class="np-th-chips__row" style={`--d: ${r % 2 ? 1 : -1}; --delay: ${r * -2.5}s;`}>
+        {row.map((it) => (
+          <span class="np-th-chip">
+            <span class="np-th-tile"><img src={TH_ICON[it.icon].src} width={TH_ICON[it.icon].w} height={TH_ICON[it.icon].h} alt="" loading="lazy" decoding="async" /></span>
+            <span>{it.label}</span>
+          </span>
+        ))}
+      </span>
+    ))}
+  </span>
+</span>
+
+<style>
+  /* Rows: 24.7px apart, 1425px wide, centered on the stage. */
+  .np-th-chips {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: calc(24.7 * var(--u));
+  }
+  .np-th-chips__row {
+    display: flex;
+    flex: none;
+    justify-content: center;
+    gap: calc(17.6 * var(--u));
+    width: calc(1425 * var(--u));
+    animation: np-th-drift 14s ease-in-out infinite alternate;
+    animation-delay: var(--delay);
+  }
+  @keyframes np-th-drift {
+    from { transform: translateX(calc(var(--d) * -36 * var(--u))); }
+    to { transform: translateX(calc(var(--d) * 36 * var(--u))); }
+  }
+</style>

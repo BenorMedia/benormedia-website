@@ -324,6 +324,17 @@
     font: inherit;
   }
 }
+/* Inline code (blog posts): the code block's font and tint, inline. */
+.c-np-prose :not(pre) > code {
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: var(--color-gray-light);
+  color: var(--color-black-secondary);
+  /* TODO: DS: no monospace font token. */
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  overflow-wrap: anywhere;
+}
 /* Mobile body H2s 30% bigger (lead 2026-10-08). */
 @media (max-width: 767px) {
   .c-np-prose.is-blog > h2 {

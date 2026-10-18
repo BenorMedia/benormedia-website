@@ -1,0 +1,111 @@
+---
+/**
+ * ThLogos — card thumbnail (Figma 3736:9210): tool groups, each a card
+ * with a hairline box label over a row of logo tiles; two cards per row,
+ * the last one centered, over a soft glow. Motion: the logo tiles float in
+ * turn.
+ */
+import "./th.css";
+import { TH_LOGO, TH_SVG, type ThLogo } from "./assets";
+
+interface Props {
+  groups: readonly { tag: string; logos: readonly ThLogo[] }[];
+}
+
+const { groups } = Astro.props;
+const rows: (typeof groups)[number][][] = [];
+for (let i = 0; i < groups.length; i += 2) rows.push(groups.slice(i, i + 2));
+let n = 0;
+---
+
+<span class="np-th" aria-hidden="true" data-np-illustration>
+  <span class="np-th__stage np-th-logos">
+    <img class="np-th__art" style="--x: -70; --y: 57; --w: 681.9; --h: 771.3;" src={TH_SVG.logosGlow.src} width={TH_SVG.logosGlow.w} height={TH_SVG.logosGlow.h} alt="" loading="lazy" decoding="async" />
+    <span class="np-th-logos__grid">
+      {rows.map((row) => (
+        <span class="np-th-logos__row">
+          {row.map((g) => (
+            <span class="np-th-logos__card">
+              <span class="np-th-logos__tag">{g.tag}</span>
+              <span class="np-th-logos__tiles">
+                {g.logos.map((l) => (
+                  <span class="np-th-logos__tile" style={`--delay: ${n++ * -0.6}s;`}>
+                    <img src={TH_LOGO[l].src} width={TH_LOGO[l].w} height={TH_LOGO[l].h} alt="" loading="lazy" decoding="async" />
+                  </span>
+                ))}
+              </span>
+            </span>
+          ))}
+        </span>
+      ))}
+    </span>
+  </span>
+</span>
+
+<style>
+  .np-th-logos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .np-th-logos__grid {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(19.2 * var(--u));
+  }
+  .np-th-logos__row {
+    display: flex;
+    gap: calc(18.9 * var(--u));
+  }
+  .np-th-logos__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(13.2 * var(--u));
+    width: calc(214.2 * var(--u));
+    padding: calc(12.6 * var(--u));
+    border: calc(0.6 * var(--u)) solid var(--color-border);
+    border-radius: calc(4.8 * var(--u));
+    background: var(--color-white);
+  }
+  .np-th-logos__tag {
+    align-self: stretch;
+    padding: calc(6 * var(--u)) calc(9.6 * var(--u)) calc(4.8 * var(--u));
+    border: calc(0.3 * var(--u)) solid var(--color-gray);
+    border-radius: calc(1.8 * var(--u));
+    color: var(--color-text);
+    font-size: calc(9 * var(--u));
+    letter-spacing: calc(0.58 * var(--u));
+    line-height: 1.2;
+    text-align: center;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .np-th-logos__tiles {
+    display: flex;
+    gap: calc(6 * var(--u));
+  }
+  .np-th-logos__tile {
+    display: grid;
+    place-items: center;
+    width: calc(33.6 * var(--u));
+    height: calc(33.6 * var(--u));
+    padding: calc(6.5 * var(--u));
+    border: calc(0.6 * var(--u)) solid var(--color-border);
+    border-radius: calc(4.8 * var(--u));
+    background: var(--color-white);
+    animation: np-th-bob 5s ease-in-out infinite;
+    animation-delay: var(--delay);
+  }
+  .np-th-logos__tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  @keyframes np-th-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(calc(-3 * var(--u))); }
+  }
+</style>

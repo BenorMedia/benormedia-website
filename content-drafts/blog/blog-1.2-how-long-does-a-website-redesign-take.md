@@ -10,7 +10,7 @@ title: "How Long Does a B2B Website Redesign Take? | BenorMedia"
 description: "An example plan for a B2B SaaS website redesign, phase by phase: how long each step takes, what stretches it, and a timeline you can adapt to your site."
 h1: "How long does a website redesign take? A phase-by-phase plan for B2B SaaS teams"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "David Garay, Webflow Developer and UX/UI Designer"
 publishedAt: 2026-10-17
 updatedAt: 2026-10-17
 reviewEvery: none
