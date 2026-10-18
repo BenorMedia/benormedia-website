@@ -1,0 +1,59 @@
+---
+/**
+ * ThOrbit — card thumbnail (Figma 3736:9454): two hairline rings around a
+ * blue glow, with eight white icon tiles around them. Motion: the tiles
+ * sway around the rings' center and stay upright.
+ */
+import "./th.css";
+import { TH_ICON, TH_SVG, type ThIcon } from "./assets";
+
+interface Props {
+  /** Eight icons, in the design's tile order. */
+  icons: readonly ThIcon[];
+}
+
+const { icons } = Astro.props;
+// Tile centers, design px (Figma 3736:9454); the rings' center is (273, 208).
+const AT = [[187, 170], [370, 199], [344, 356], [224, 45], [521, 280], [93, 263], [452, 16], [55, 22]] as const;
+---
+
+<span class="np-th" aria-hidden="true" data-np-illustration>
+  <span class="np-th__stage">
+    <img class="np-th__art" style="--x: -68.9; --y: -159.9; --w: 681.9; --h: 681.9;" src={TH_SVG.orbitGlow.src} width={TH_SVG.orbitGlow.w} height={TH_SVG.orbitGlow.h} alt="" loading="lazy" decoding="async" />
+    <img class="np-th__art" style="--x: 1; --y: -64.4; --w: 544.8; --h: 544.8;" src={TH_SVG.orbitRings.src} width={TH_SVG.orbitRings.w} height={TH_SVG.orbitRings.h} alt="" loading="lazy" decoding="async" />
+    <span class="np-th-orbit">
+      {icons.slice(0, 8).map((icon, i) => (
+        <span class="np-th-orbit__tile" style={`--x: ${AT[i]?.[0]}; --y: ${AT[i]?.[1]};`}>
+          <span class="np-th-tile is-white"><img src={TH_ICON[icon].src} width={TH_ICON[icon].w} height={TH_ICON[icon].h} alt="" loading="lazy" decoding="async" /></span>
+        </span>
+      ))}
+    </span>
+  </span>
+</span>
+
+<style>
+  /* The tile layer turns about the rings' center; each tile turns back. */
+  .np-th-orbit {
+    position: absolute;
+    inset: 0;
+    transform-origin: calc(273 * var(--u)) calc(208 * var(--u));
+    animation: np-th-sway 18s ease-in-out infinite alternate;
+  }
+  .np-th-orbit__tile {
+    position: absolute;
+    left: calc(var(--x) * var(--u));
+    top: calc(var(--y) * var(--u));
+    transform: translate(-50%, -50%);
+  }
+  .np-th-orbit__tile > .np-th-tile {
+    animation: np-th-sway-back 18s ease-in-out infinite alternate;
+  }
+  @keyframes np-th-sway {
+    from { transform: rotate(-7deg); }
+    to { transform: rotate(7deg); }
+  }
+  @keyframes np-th-sway-back {
+    from { transform: rotate(7deg); }
+    to { transform: rotate(-7deg); }
+  }
+</style>
