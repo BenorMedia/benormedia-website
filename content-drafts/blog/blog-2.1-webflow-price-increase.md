@@ -10,7 +10,7 @@ title: "Webflow Price Increase: What to Check Now | BenorMedia"
 description: "Webflow's new Site plans reach Freelancer and Agency Workspace sites from November 16, 2026: who pays more, how to keep your plan, and what to check."
 h1: "Webflow price increase: what to check before the November 16, 2026 change"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "David Garay, Webflow Developer and UX/UI Designer"
 publishedAt: 2026-10-15
 updatedAt: 2026-10-15
 reviewEvery: none
