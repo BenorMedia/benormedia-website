@@ -258,6 +258,71 @@ export const THUMBS: Record<string, ThumbEntry> = {
     icon: "contentStack",
     labels: ["Title", "Slug", "Rich text", "Featured image", "Categories"],
   }),
+  // Blog wave 3 (lead 2026-10-18).
+  // "The first 12 checks of a SaaS technical SEO audit", in order.
+  "saas-technical-seo": t(ThDome, {
+    outer: [
+      { icon: "shieldLock", label: "robots.txt" },
+      { icon: "doc", label: "Noindex tags" },
+      { icon: "devices3d", label: "Staging and app" },
+      { icon: "reporting", label: "Page indexing report" },
+      { icon: "chartSearch", label: "XML sitemaps" },
+    ],
+    middle: [
+      { icon: "techSeo", label: "Canonical tags" },
+      { icon: "plugs", label: "Redirects" },
+      { icon: "codeBlocks", label: "JavaScript rendering" },
+      { icon: "ux", label: "Internal links" },
+    ],
+    inner: [
+      { icon: "speedGauge", label: "Core Web Vitals" },
+      { icon: "designGrid", label: "Structured data" },
+      { icon: "seoChart", label: "Search Console" },
+    ],
+  }),
+  // The five prompt types of the 30-prompt set.
+  "track-brand-mentions-in-chatgpt": t(ThIconWall, {
+    icon: "ai",
+    labels: ["Category", "Problem", "Comparison", "Alternatives", "Pricing"],
+  }),
+  // The consent parameters, the two modes and the setup pieces.
+  "consent-mode-v2-webflow": t(ThChips, {
+    rows: [
+      [
+        { icon: "shieldLock", label: "ad_storage" },
+        { icon: "analytics", label: "analytics_storage" },
+        { icon: "crmCard", label: "ad_user_data" },
+        { icon: "person", label: "ad_personalization" },
+        { icon: "docPencil", label: "Consent banner" },
+      ],
+      [
+        { icon: "devices3d", label: "Basic consent mode" },
+        { icon: "contentStack", label: "Advanced consent mode" },
+        { icon: "seoChart", label: "Behavioral modeling" },
+        { icon: "flask", label: "Tag Assistant" },
+        { icon: "calendar", label: "wait_for_update" },
+      ],
+      [
+        { icon: "plugs", label: "url_passthrough" },
+        { icon: "codeBlocks", label: "ads_data_redaction" },
+        { icon: "funnelTarget", label: "Consent Initialization" },
+        { icon: "pencilDoc", label: "Head code" },
+        { icon: "geoPin", label: "Region defaults" },
+      ],
+      [
+        { icon: "techSeo", label: "Google Tag Manager" },
+        { icon: "ux", label: "Webflow Analyze" },
+        { icon: "speedGauge", label: "Cookieless pings" },
+        { icon: "reporting", label: "Consent settings" },
+        { icon: "designGrid", label: "Google Ads" },
+      ],
+    ],
+  }),
+  // Checks from the designer, developer and editor lists.
+  "webflow-accessibility-checklist": t(ThIconWall, {
+    icon: "accessibility",
+    labels: ["Color contrast", "Focus visible", "Target size", "Alt text", "Keyboard navigation"],
+  }),
   // Content from the CMS, rendered for every device.
   "headless-cms-seo": t(ThObject, { object: "deviceStack" }),
   // Launch week.

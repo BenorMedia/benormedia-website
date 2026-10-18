@@ -86,7 +86,11 @@
     "webflow-analytics": "Analytics",
     "ai-traffic-in-ga4": "AI Search",
     "do-you-need-an-llms-txt-file": "AI Search",
-    "ai-crawlers-robots-txt": "AI Search"
+    "ai-crawlers-robots-txt": "AI Search",
+    "saas-technical-seo": "SEO",
+    "track-brand-mentions-in-chatgpt": "AI Search",
+    "consent-mode-v2-webflow": "Analytics",
+    "webflow-accessibility-checklist": "Web Design"
   },
   "resources": {
     "eyebrow": "Resources",
