@@ -70,7 +70,7 @@ const nameOf = (author: string): string => author.split(",")[0]?.trim() ?? autho
       )}
       <ul class="c-np-res__grid">
         {list.map((card, i) => {
-          const thumb = card.slug && card.family !== "commercial" ? THUMBS[card.slug] : undefined;
+          const thumb = card.slug ? THUMBS[card.slug] : undefined;
           const Thumb = thumb?.component as ((props: Record<string, unknown>) => unknown) | undefined;
           const hero = !thumb && card.slug && card.family !== "commercial" ? HEROES[card.slug] : undefined;
           const Hero = hero?.component;

@@ -1,6 +1,7 @@
 /**
  * Card thumbnails by article slug (lead 2026-10-18, Figma BenorMedia
- * 3736:7123): which of the six layouts each guide and blog post uses, with
+ * 3736:7123): which of the six layouts each guide, blog post and service
+ * page (lead 2026-10-18) uses, with
  * its own content. Labels come from the article's text; logos only for
  * products the article names. The Resources cards (/blog, /guides, author
  * pages, related cards) and the article header show these; a slug without
@@ -86,6 +87,134 @@ export const THUMBS: Record<string, ThumbEntry> = {
       { tag: "AI tools", logos: ["claude"] },
     ],
   }),
+
+  // ---- Service pages (shown on their related cards) ----------------------
+  // "Start with what your current site already wins." and the process.
+  "website-redesign": t(ThDome, {
+    outer: [
+      { icon: "crmCard", label: "Keep" },
+      { icon: "seoChart", label: "Improve" },
+      { icon: "contentStack", label: "Merge" },
+      { icon: "doc", label: "Retire" },
+      { icon: "designGrid", label: "Add" },
+    ],
+    middle: [
+      { icon: "ux", label: "Audit" },
+      { icon: "reporting", label: "Strategy plan" },
+      { icon: "pencilDoc", label: "Wireframes" },
+      { icon: "palette", label: "UI/UX design" },
+    ],
+    inner: [
+      { icon: "codeBlocks", label: "Component library" },
+      { icon: "api", label: "Content migration" },
+      { icon: "speedGauge", label: "Launch" },
+    ],
+  }),
+  // Security, languages, integrations and the team after launch.
+  "webflow-enterprise-agency": t(ThDome, {
+    outer: [
+      { icon: "person", label: "Access controls" },
+      { icon: "shieldLock", label: "Security audits" },
+      { icon: "shield", label: "SSL" },
+      { icon: "crmCard", label: "Stakeholder alignment" },
+      { icon: "geoPin", label: "Languages" },
+    ],
+    middle: [
+      { icon: "reporting", label: "Strategy" },
+      { icon: "designGrid", label: "Component system" },
+      { icon: "plugs", label: "Integrations" },
+      { icon: "analytics", label: "Analytics" },
+    ],
+    inner: [
+      { icon: "ux", label: "Dedicated team" },
+      { icon: "calendar", label: "Response times" },
+      { icon: "speedGauge", label: "After launch" },
+    ],
+  }),
+  // The URL map, the migration and the SEO work in the build.
+  "webflow-migration": t(ThChips, {
+    rows: [
+      [
+        { icon: "ux", label: "Technical audit" },
+        { icon: "contentStack", label: "Content inventory" },
+        { icon: "api", label: "Redirect map" },
+        { icon: "designGrid", label: "Sitemap architecture" },
+        { icon: "calendar", label: "Timeline and sign-off" },
+      ],
+      [
+        { icon: "docPencil", label: "Content migration" },
+        { icon: "seoChart", label: "SEO verification" },
+        { icon: "plugs", label: "Redirect testing" },
+        { icon: "speedGauge", label: "Launch coordination" },
+        { icon: "analytics", label: "Post-launch monitoring" },
+      ],
+      [
+        { icon: "techSeo", label: "Technical SEO" },
+        { icon: "codeBlocks", label: "Schema" },
+        { icon: "pencilDoc", label: "Semantic structure" },
+        { icon: "ai", label: "AEO" },
+        { icon: "puzzle3d", label: "Component library" },
+      ],
+      [
+        { icon: "person", label: "Training" },
+        { icon: "crmCard", label: "Forms" },
+        { icon: "cms", label: "Plugins" },
+        { icon: "devices3d", label: "Integrations" },
+        { icon: "shieldLock", label: "Support" },
+      ],
+    ],
+  }),
+  // The audit, the problems fixed most often and the content strategy.
+  "webflow-seo-agency": t(ThChips, {
+    rows: [
+      [
+        { icon: "techSeo", label: "Index and crawl check" },
+        { icon: "cms", label: "CMS architecture" },
+        { icon: "speedGauge", label: "Performance" },
+        { icon: "reporting", label: "Search baseline" },
+        { icon: "ai", label: "AI visibility baseline" },
+      ],
+      [
+        { icon: "devices3d", label: "Staging site" },
+        { icon: "contentStack", label: "Duplicate content" },
+        { icon: "plugs", label: "Redirect imports" },
+        { icon: "graphics", label: "Heavy images" },
+        { icon: "codeBlocks", label: "Schema gaps" },
+      ],
+      [
+        { icon: "funnelTarget", label: "Commercial pages" },
+        { icon: "pencilDoc", label: "Answers up front" },
+        { icon: "designGrid", label: "CMS templates" },
+        { icon: "calendar", label: "Refreshes" },
+        { icon: "seoChart", label: "Structured data" },
+      ],
+      [
+        { icon: "shieldLock", label: "Crawler access" },
+        { icon: "docPencil", label: "llms.txt" },
+        { icon: "analytics", label: "Core Web Vitals" },
+        { icon: "chartSearch", label: "Canonical tags" },
+        { icon: "geoPin", label: "robots.txt" },
+      ],
+    ],
+  }),
+  // "The pages a SaaS buyer expects."
+  "b2b-saas-web-design": t(ThIconWall, {
+    icon: "designGrid",
+    labels: ["Product pages", "Pricing", "Integrations", "Customers and proof", "Security and trust"],
+  }),
+  // Prompt tracking, answer-shaped pages, mentions and reporting.
+  "aeo-agency": t(ThOrbit, {
+    icons: ["ai", "seoChart", "pencilDoc", "geoPin", "reporting", "crmCard", "chartSearch", "designGrid"],
+  }),
+  // The headless CMSs the page works with, and the move from Webflow.
+  "headless-cms-agency": t(ThLogos, {
+    groups: [
+      { tag: "Headless CMS", logos: ["sanity", "contentful", "storyblok"] },
+      { tag: "Moving from Webflow", logos: ["webflow"] },
+    ],
+  }),
+  // Security vendors.
+  "cybersecurity-web-design": t(ThObject, { object: "shield" }),
 
   // ---- Blog posts --------------------------------------------------------
   // The example plan's phases, what sets the timeline.
