@@ -117,10 +117,37 @@ export interface NpPage {
   /** Article read time, minutes (body + FAQ at 230 words a minute). */
   readMinutes: number;
   /** Related pack pages built in this mode (articles' Resources cards). */
-  relatedCards: { href: string; title: string; description: string; family: Family; data: Record<string, string> }[];
+  relatedCards: Card[];
   gaps: Gap[];
   /** A section rendered with the live service `ServiceProcess` tabs (front matter `process`). */
   process: PageProcess | undefined;
+}
+
+/** A card in the Resources grid (articles' related pages, /blog, /guides,
+ *  author pages). `publishedAt` and `author` only for articles. */
+export interface Card {
+  slug?: string;
+  href: string;
+  title: string;
+  description: string;
+  family: Family;
+  data: Record<string, string>;
+  publishedAt?: string;
+  author?: string;
+}
+
+/** The card for a built article page (guide or blog post). */
+export function cardOf(p: NpPage): Card {
+  return {
+    slug: p.slug,
+    href: p.url,
+    title: p.h1,
+    description: p.description,
+    family: p.family,
+    data: p.draft ? { "data-draft-target": p.slug } : {},
+    publishedAt: p.publishedAt,
+    ...(p.author.hasGap || !p.author.text ? {} : { author: p.author.text }),
+  };
 }
 
 export interface PageProcess {
@@ -249,8 +276,10 @@ export function loadPages(): NpPage[] {
   blogGate(blogFiles);
   const blogBuilt = blogFiles.filter(({ parsed }) => (parsed.data as FrontMatter).draft === false || mode.includeDrafts);
 
+  // Every linkable page by slug: the pack pages and the blog posts (so a
+  // post can link to another post; drafts follow the draft rules).
   const pack = new Map(
-    files.map(({ parsed }) => {
+    [...files.map((f) => ({ ...f, family: undefined as Family | undefined })), ...blogFiles.map((f) => ({ ...f, family: "blog" as Family }))].map(({ parsed, family }) => {
       const d = parsed.data as FrontMatter;
       return [
         String(d.slug),
@@ -260,6 +289,9 @@ export function loadPages(): NpPage[] {
           h1: String(d.h1 ?? ""),
           description: String(d.description ?? ""),
           pageType: String(d.pageType ?? ""),
+          publishedAt: String(d.publishedAt ?? ""),
+          author: String(d.author ?? ""),
+          family,
         },
       ] as const;
     }),
@@ -454,9 +486,21 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
       const p = s ? ctx.pack.get(s) : undefined;
       if (!s || !p || s === slug) return [];
       if (p.draft && !ctx.includeDrafts) return [];
-      const fam = (FAMILY as Record<string, Family>)[p.pageType ?? ""];
+      const fam = p.family ?? (FAMILY as Record<string, Family>)[p.pageType ?? ""];
       if (!fam) return [];
-      return [{ href: p.url, title: p.h1, description: p.description ?? "", family: fam, data: p.draft ? { "data-draft-target": s } : {} }];
+      const article = fam !== "commercial";
+      return [
+        {
+          slug: s,
+          href: p.url,
+          title: p.h1,
+          description: p.description ?? "",
+          family: fam,
+          data: p.draft ? { "data-draft-target": s } : {},
+          ...(article && p.publishedAt ? { publishedAt: p.publishedAt } : {}),
+          ...(article && p.author ? { author: p.author } : {}),
+        },
+      ];
     }),
     gaps: gaps.unique(),
   };

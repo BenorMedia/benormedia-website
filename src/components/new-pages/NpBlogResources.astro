@@ -6,25 +6,38 @@
  * for the related pack pages built in this mode. The author pages reuse it
  * for the author's guides (own eyebrow and heading, every card, each
  * guide's header illustration as its thumbnail, static: lead 2026-10-09).
- * The /blog index reuses it as the card grid under its hero: every post,
- * the heading visually hidden (`headingHidden`), Work's spacing.
+ * The /blog and /guides indexes reuse it as the card grid under their hero:
+ * every article, the heading visually hidden (`headingHidden`), Work's
+ * spacing. Article cards (lead 2026-10-17): category tag (`categories.ts`)
+ * and "Published on" tag, then the author row, title, description, link;
+ * service cards keep the "Services" tag only.
+ * Thumbnails (lead 2026-10-18): each article's card thumbnail (`THUMBS`,
+ * Figma 3736:7123), else its header illustration (`HEROES`), else the
+ * screenshot collage. Animated on the article pages; `still` (the /blog and
+ * /guides indexes, the author pages) stops every thumbnail's motion. Hover = Our Work's grid cards:
+ * the card lifts, the thumbnail gets the accent border and a soft shadow;
+ * no text changes color.
  */
 import Container from "../ui/Container.astro";
 import Eyebrow from "../ui/Eyebrow.astro";
 import copy from "../../lib/new-pages/copy.json";
-import type { NpPage } from "../../lib/new-pages/loader";
+import type { Card } from "../../lib/new-pages/loader";
 import { ARROW_RIGHT } from "./blog-icons";
 import { HEROES } from "../../lib/new-pages/visuals";
+import { THUMBS } from "../../lib/new-pages/thumbs";
+import { categoryOf } from "../../lib/new-pages/categories";
+import { findAuthor } from "../../lib/new-pages/authors";
+import { fill, formatShortDate } from "../../lib/new-pages/html";
 
 interface Props {
-  cards: readonly (NpPage["relatedCards"][number] & { slug?: string })[];
+  cards: readonly Card[];
   shots: readonly { src: string; srcset: string }[];
   eyebrow?: string;
   heading?: string;
   /** Max cards; the article Resources show three. */
   limit?: number;
-  /** Use a guide's header illustration (`HEROES`) as its thumbnail. */
-  heroThumbs?: boolean;
+  /** Static thumbnails, no motion (index and author pages). */
+  still?: boolean;
   /** Screen-reader heading only, no section header (the /blog index). */
   headingHidden?: boolean;
 }
@@ -35,19 +48,15 @@ const {
   eyebrow = copy.resources.eyebrow,
   heading = copy.resources.heading,
   limit = 3,
-  heroThumbs = false,
+  still = false,
   headingHidden = false,
 } = Astro.props;
 const list = cards.slice(0, limit);
-const TAGS: Record<NpPage["family"], string> = {
-  article: copy.articleEyebrow.guide,
-  blog: copy.articleEyebrow.blog,
-  commercial: copy.resources.serviceTag,
-};
+const nameOf = (author: string): string => author.split(",")[0]?.trim() ?? author;
 ---
 
 {list.length > 0 && (
-  <section class={["c-np-res", headingHidden && "is-heading-hidden"].filter(Boolean).join(" ")} aria-labelledby="np-resources">
+  <section class={["c-np-res", headingHidden && "is-heading-hidden", still && "is-still"].filter(Boolean).join(" ")} aria-labelledby="np-resources">
     <Container>
       {headingHidden ? (
         <h2 id="np-resources" class="c-np-res__sr-only">{heading}</h2>
@@ -61,11 +70,18 @@ const TAGS: Record<NpPage["family"], string> = {
       )}
       <ul class="c-np-res__grid">
         {list.map((card, i) => {
-          const hero = heroThumbs && card.slug ? HEROES[card.slug] : undefined;
+          const thumb = card.slug ? THUMBS[card.slug] : undefined;
+          const Thumb = thumb?.component as ((props: Record<string, unknown>) => unknown) | undefined;
+          const hero = !thumb && card.slug && card.family !== "commercial" ? HEROES[card.slug] : undefined;
           const Hero = hero?.component;
+          const profile = card.author ? findAuthor(card.author) : undefined;
           return (
           <li class="c-np-res__card">
-            {Hero ? (
+            {thumb && Thumb ? (
+              <span class="c-np-res__thumb is-thumb" aria-hidden="true">
+                <Thumb {...thumb.props} />
+              </span>
+            ) : Hero ? (
               <span class="c-np-res__thumb is-illustration" aria-hidden="true">
                 <Hero {...hero.props} />
               </span>
@@ -78,7 +94,22 @@ const TAGS: Record<NpPage["family"], string> = {
             </span>
             )}
             <span class="c-np-res__texts">
-              <Eyebrow variant="accent">{TAGS[card.family]}</Eyebrow>
+              <span class="c-np-res__tags">
+                <Eyebrow variant="accent">{categoryOf(card.slug, card.family)}</Eyebrow>
+                {card.publishedAt && (
+                  <Eyebrow>
+                    {fill(copy.card.published, { date: formatShortDate(card.publishedAt) })}
+                  </Eyebrow>
+                )}
+              </span>
+              {card.author && (
+                <span class="c-np-res__author">
+                  {profile && (
+                    <img class="c-np-res__author-photo" src={profile.photo.src} width={profile.photo.w} height={profile.photo.h} alt="" loading="lazy" decoding="async" />
+                  )}
+                  <span class="c-paragraph">{profile?.name ?? nameOf(card.author)}</span>
+                </span>
+              )}
               <span class="c-np-res__title c-text_m">{card.title}</span>
               <span class="c-np-res__desc c-paragraph">{card.description}</span>
               <a class="c-np-res__more c-paragraph" href={card.href} {...card.data}>
@@ -140,6 +171,19 @@ const TAGS: Record<NpPage["family"], string> = {
     display: flex;
     flex-direction: column;
     gap: 1.786rem;
+    transition: transform var(--duration-hover) var(--ease-smooth);
+  }
+  /* Hover (lead 2026-10-18): Our Work's grid cards (ClientCard `.is-grid`):
+     the card lifts 3%, the thumbnail's border turns accent with the
+     c-button hover shadow. No text changes color. Keyboard focus too. */
+  .c-np-res__card:hover,
+  .c-np-res__card:has(.c-np-res__more:focus-visible) {
+    transform: translateY(-3%);
+  }
+  .c-np-res__card:hover .c-np-res__thumb,
+  .c-np-res__card:has(.c-np-res__more:focus-visible) .c-np-res__thumb {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--color-black-secondary) 20%, transparent);
   }
   .c-np-res__thumb {
     position: relative;
@@ -149,9 +193,15 @@ const TAGS: Record<NpPage["family"], string> = {
     border: var(--border-default);
     border-radius: 8px;
     background: color-mix(in srgb, var(--color-accent) 8%, var(--color-white));
+    transition:
+      border-color var(--duration-hover) var(--ease-smooth),
+      box-shadow var(--duration-hover) var(--ease-smooth);
+  }
+  .c-np-res__thumb.is-thumb {
+    background: var(--color-white);
   }
   /* Header illustration as the thumbnail: centered on white, its own
-     frame border dropped (the thumb has one), motion off. */
+     frame border dropped (the thumb has one). */
   .c-np-res__thumb.is-illustration {
     display: flex;
     align-items: center;
@@ -161,7 +211,8 @@ const TAGS: Record<NpPage["family"], string> = {
     border: 0;
     border-radius: 0;
   }
-  .c-np-res__thumb.is-illustration :global(*) {
+  /* Index and author pages: still pictures (lead 2026-10-18). */
+  .c-np-res.is-still .c-np-res__thumb :global(*) {
     animation: none !important;
   }
   /* Centered header (SectionHeader's rules, also in new-pages.css): here
@@ -203,10 +254,33 @@ const TAGS: Record<NpPage["family"], string> = {
     flex-direction: column;
     align-items: flex-start;
     gap: 1.143rem;
-    padding: 0 1.714rem 1.714rem;
+    padding: 0; /* lead 2026-10-17 */
   }
   .c-np-res__title {
     color: var(--color-black-secondary);
+  }
+  /* Category + published tags on one row; they wrap on narrow cards. */
+  .c-np-res__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.571rem 0.857rem;
+  }
+  /* Author row: photo + name in a bordered box across the card. */
+  .c-np-res__author {
+    display: flex;
+    align-items: center;
+    gap: 0.857rem;
+    align-self: stretch;
+    padding: 0.571rem 0.857rem;
+    border: var(--border-default);
+    border-radius: 8px;
+    color: var(--color-black-secondary);
+  }
+  .c-np-res__author-photo {
+    width: 2.286rem;
+    height: 2.286rem;
+    border-radius: 50%;
+    object-fit: cover;
   }
   .c-np-res__desc {
     color: var(--color-text);
@@ -224,9 +298,6 @@ const TAGS: Record<NpPage["family"], string> = {
     content: "";
     position: absolute;
     inset: 0;
-  }
-  .c-np-res__more:hover {
-    color: var(--color-accent);
   }
   .c-np-res__more:focus-visible {
     outline: 2px solid var(--color-accent);
