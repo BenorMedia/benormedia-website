@@ -32,7 +32,7 @@ interface Props {
 const { posts } = Astro.props;
 const allDrafts = posts.every((p) => p.draft);
 const [blogPage, shots] = await Promise.all([getPageSeo("blogPage"), clientShots()]);
-// Each post's header illustration as its card thumbnail (as the author page).
+// Each post's card thumbnail, still on the index (lead 2026-10-18).
 const cards = posts.map(cardOf);
 ---
 
@@ -45,5 +45,5 @@ const cards = posts.map(cardOf);
   {blogIndexJsonLd({ name: copy.blog.indexName, description: PAGE_META.blog.description }, posts).map((data) => <JsonLd data={data} />)}
   <PageHero eyebrow={copy.blog.indexName} title={"Articles on B2B websites,\nSEO and AI search."} accent="SEO and AI search." />
   {/* TODO: COPY — section heading (visually hidden; keeps the outline h1 → h2). */}
-  <NpBlogResources cards={cards} shots={shots} heading="All articles" limit={cards.length} headingHidden heroThumbs />
+  <NpBlogResources cards={cards} shots={shots} heading="All articles" limit={cards.length} headingHidden still />
 </BaseLayout>

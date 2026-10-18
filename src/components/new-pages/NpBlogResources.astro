@@ -12,8 +12,9 @@
  * and "Published on" tag, then the author row, title, description, link;
  * service cards keep the "Services" tag only.
  * Thumbnails (lead 2026-10-18): each article's card thumbnail (`THUMBS`,
- * Figma 3736:7123, animated), else its header illustration when
- * `heroThumbs`, else the screenshot collage. Hover = Our Work's grid cards:
+ * Figma 3736:7123), else its header illustration (`HEROES`), else the
+ * screenshot collage. Animated on the article pages; `still` (the /blog and
+ * /guides indexes, the author pages) stops every thumbnail's motion. Hover = Our Work's grid cards:
  * the card lifts, the thumbnail gets the accent border and a soft shadow;
  * no text changes color.
  */
@@ -35,8 +36,8 @@ interface Props {
   heading?: string;
   /** Max cards; the article Resources show three. */
   limit?: number;
-  /** Use a guide's header illustration (`HEROES`) as its thumbnail. */
-  heroThumbs?: boolean;
+  /** Static thumbnails, no motion (index and author pages). */
+  still?: boolean;
   /** Screen-reader heading only, no section header (the /blog index). */
   headingHidden?: boolean;
 }
@@ -47,7 +48,7 @@ const {
   eyebrow = copy.resources.eyebrow,
   heading = copy.resources.heading,
   limit = 3,
-  heroThumbs = false,
+  still = false,
   headingHidden = false,
 } = Astro.props;
 const list = cards.slice(0, limit);
@@ -55,7 +56,7 @@ const nameOf = (author: string): string => author.split(",")[0]?.trim() ?? autho
 ---
 
 {list.length > 0 && (
-  <section class={["c-np-res", headingHidden && "is-heading-hidden"].filter(Boolean).join(" ")} aria-labelledby="np-resources">
+  <section class={["c-np-res", headingHidden && "is-heading-hidden", still && "is-still"].filter(Boolean).join(" ")} aria-labelledby="np-resources">
     <Container>
       {headingHidden ? (
         <h2 id="np-resources" class="c-np-res__sr-only">{heading}</h2>
@@ -71,7 +72,7 @@ const nameOf = (author: string): string => author.split(",")[0]?.trim() ?? autho
         {list.map((card, i) => {
           const thumb = card.slug && card.family !== "commercial" ? THUMBS[card.slug] : undefined;
           const Thumb = thumb?.component as ((props: Record<string, unknown>) => unknown) | undefined;
-          const hero = !thumb && heroThumbs && card.slug ? HEROES[card.slug] : undefined;
+          const hero = !thumb && card.slug && card.family !== "commercial" ? HEROES[card.slug] : undefined;
           const Hero = hero?.component;
           const profile = card.author ? findAuthor(card.author) : undefined;
           return (
@@ -200,7 +201,7 @@ const nameOf = (author: string): string => author.split(",")[0]?.trim() ?? autho
     background: var(--color-white);
   }
   /* Header illustration as the thumbnail: centered on white, its own
-     frame border dropped (the thumb has one), motion off. */
+     frame border dropped (the thumb has one). */
   .c-np-res__thumb.is-illustration {
     display: flex;
     align-items: center;
@@ -210,7 +211,8 @@ const nameOf = (author: string): string => author.split(",")[0]?.trim() ?? autho
     border: 0;
     border-radius: 0;
   }
-  .c-np-res__thumb.is-illustration :global(*) {
+  /* Index and author pages: still pictures (lead 2026-10-18). */
+  .c-np-res.is-still .c-np-res__thumb :global(*) {
     animation: none !important;
   }
   /* Centered header (SectionHeader's rules, also in new-pages.css): here

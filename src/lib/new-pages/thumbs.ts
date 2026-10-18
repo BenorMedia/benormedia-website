@@ -3,8 +3,10 @@
  * 3736:7123): which of the six layouts each guide and blog post uses, with
  * its own content. Labels come from the article's text; logos only for
  * products the article names. The Resources cards (/blog, /guides, author
- * pages, related cards) show these; a slug without an entry falls back to
- * the header illustration (`HEROES`) or the screenshot collage.
+ * pages, related cards) and the article header show these; a slug without
+ * an entry keeps its header illustration (`HEROES`; lead 2026-10-18 for
+ * ai-crawlers-robots-txt and what-b2b-buyers-need-from-your-website), else
+ * the screenshot collage.
  */
 import ThDome from "../../components/new-pages/thumbs/ThDome.astro";
 import ThChips from "../../components/new-pages/thumbs/ThChips.astro";
@@ -256,10 +258,6 @@ export const THUMBS: Record<string, ThumbEntry> = {
     icon: "contentStack",
     labels: ["Title", "Slug", "Rich text", "Featured image", "Categories"],
   }),
-  // Allow or block each crawler.
-  "ai-crawlers-robots-txt": t(ThObject, { object: "shield" }),
-  // Buyers who research before they call.
-  "what-b2b-buyers-need-from-your-website": t(ThObject, { object: "globePeople" }),
   // Content from the CMS, rendered for every device.
   "headless-cms-seo": t(ThObject, { object: "deviceStack" }),
   // Launch week.
