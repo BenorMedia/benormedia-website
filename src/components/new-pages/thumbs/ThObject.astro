@@ -1,7 +1,8 @@
 ---
 /**
  * ThObject — card thumbnail (Figma 3736:10002): one large 3D object over a
- * wireframe globe and a soft glow. Motion: the object floats.
+ * wireframe globe and a soft glow. Motion: the object floats (stronger
+ * motion: lead 2026-10-19).
  */
 import "./th.css";
 import { TH_OBJECT, TH_SVG, type ThObjectName } from "./assets";
@@ -28,7 +29,7 @@ const { object } = Astro.props;
     display: flex;
     align-items: flex-end;
     justify-content: center;
-    animation: np-th-float 6s ease-in-out infinite;
+    animation: np-th-float 4.5s ease-in-out infinite;
   }
   .np-th-object img {
     width: 100%;
@@ -38,6 +39,6 @@ const { object } = Astro.props;
   }
   @keyframes np-th-float {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(calc(-8 * var(--u))); }
+    50% { transform: translateY(calc(-14 * var(--u))); }
   }
 </style>

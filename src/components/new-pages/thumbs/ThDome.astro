@@ -3,7 +3,8 @@
  * ThDome — card thumbnail (Figma 3736:9123): the services half-dome. Five
  * glowing nodes on the outer arc, four muted nodes on the middle ring, three
  * inside the inner circle, each an icon tile over an uppercase label.
- * Motion: the outer nodes' glow pulses in turn; the bottom glow breathes.
+ * Motion: every node floats in turn, the outer nodes' glow pulses, the
+ * bottom glow breathes (stronger motion: lead 2026-10-19).
  */
 import "./th.css";
 import { TH_ICON, TH_SVG, type ThItem } from "./assets";
@@ -66,6 +67,8 @@ const nodes = [
     gap: calc(9 * var(--u));
     width: calc(86 * var(--u));
     transform: translate(-50%, calc(-12.2 * var(--u)));
+    animation: np-th-node 5s ease-in-out infinite;
+    animation-delay: var(--d);
   }
   .np-th-dome__tile {
     display: grid;
@@ -97,6 +100,10 @@ const nodes = [
   @keyframes np-th-glow {
     0%, 100% { box-shadow: 0 0 calc(17.7 * var(--u)) 0 var(--np-th-glow); }
     50% { box-shadow: 0 0 calc(6 * var(--u)) 0 color-mix(in srgb, var(--color-accent) 20%, transparent); }
+  }
+  @keyframes np-th-node {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 calc(-7 * var(--u)); }
   }
   @keyframes np-th-breathe {
     0%, 100% { opacity: 1; transform: scale(1); }

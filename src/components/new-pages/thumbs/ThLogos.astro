@@ -2,8 +2,8 @@
 /**
  * ThLogos — card thumbnail (Figma 3736:9210): tool groups, each a card
  * with a hairline box label over a row of logo tiles; two cards per row,
- * the last one centered, over a soft glow. Motion: the logo tiles float in
- * turn.
+ * the last one centered, over a soft glow. Motion: the cards drift and the
+ * logo tiles bob in turn (stronger motion: lead 2026-10-19).
  */
 import "./th.css";
 import { TH_LOGO, TH_SVG, type ThLogo } from "./assets";
@@ -69,6 +69,11 @@ let n = 0;
     border: calc(0.6 * var(--u)) solid var(--color-border);
     border-radius: calc(4.8 * var(--u));
     background: var(--color-white);
+    animation: np-th-card 7s ease-in-out infinite alternate;
+  }
+  .np-th-logos__row:nth-child(even) .np-th-logos__card,
+  .np-th-logos__card:nth-child(even) {
+    animation-direction: alternate-reverse;
   }
   .np-th-logos__tag {
     align-self: stretch;
@@ -106,6 +111,10 @@ let n = 0;
   }
   @keyframes np-th-bob {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(calc(-3 * var(--u))); }
+    50% { transform: translateY(calc(-7 * var(--u))); }
+  }
+  @keyframes np-th-card {
+    from { translate: calc(-6 * var(--u)) calc(4 * var(--u)); }
+    to { translate: calc(6 * var(--u)) calc(-4 * var(--u)); }
   }
 </style>
