@@ -35,6 +35,19 @@ const PAGES = {
   '/guides/webflow-vs-custom-code': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow vs custom code' },
   // Blog (content-drafts/blog/, docs/new-pages.md), released 2026-10-15.
   '/blog': { expected: ['CollectionPage', 'BreadcrumbList'], keyword: 'b2b saas blog' },
+  '/guides': { expected: ['CollectionPage', 'BreadcrumbList'], keyword: 'webflow guides' },
+  '/blog/import-wordpress-to-webflow': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'import wordpress webflow' },
+  '/blog/website-launch-checklist': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'website launch checklist' },
+  '/blog/is-webflow-good-for-seo': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow seo' },
+  '/blog/cro-audit': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'cro audit' },
+  '/blog/website-rfp-template': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'website rfp template' },
+  '/blog/saas-pricing-page': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'saas pricing page' },
+  '/blog/b2b-marketing-attribution': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'b2b marketing attribution' },
+  '/blog/european-accessibility-act-saas': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'european accessibility act' },
+  '/blog/saas-technical-seo': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'saas technical seo' },
+  '/blog/track-brand-mentions-in-chatgpt': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'brand mentions chatgpt' },
+  '/blog/consent-mode-v2-webflow': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'consent mode v2' },
+  '/blog/webflow-accessibility-checklist': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow accessibility checklist' },
   '/blog/webflow-price-increase': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow price increase' },
   '/blog/what-b2b-buyers-need-from-your-website': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'b2b software buyers website' },
   '/blog/ai-traffic-in-ga4': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'chatgpt traffic ga4' },
@@ -46,6 +59,7 @@ const PAGES = {
   '/blog/webflow-analytics': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow analytics' },
   // Author pages (src/lib/new-pages/authors.ts), 2026-10-08.
   '/authors/sergio-gancedo': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'sergio gancedo' },
+  '/authors/david-garay': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'david garay' },
 };
 const NOINDEX_PAGES = ['/testimonials', '/cookie-policy']; // must stay out of the sitemap
 

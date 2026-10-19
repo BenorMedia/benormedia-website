@@ -166,6 +166,13 @@ const pack = readdirSync(join(PACK, 'content')).filter((f) => f.endsWith('.md'))
   return { f, data: r.data };
 });
 const packBySlug = new Map(pack.map((p) => [p.data.slug, p.data]));
+// Blog posts (content-drafts/blog/): their titles, descriptions and authors
+// can appear on the guides' Resources cards (lead 2026-10-19).
+const BLOG = join(ROOT, 'content-drafts', 'blog');
+const blogPosts = existsSync(BLOG)
+  ? readdirSync(BLOG).filter((f) => f.endsWith('.md')).map((f) => readContentFile(readFileSync(join(BLOG, f), 'utf8')).data)
+  : [];
+const cardText = blogPosts.flatMap((d) => [d.h1, d.description, String(d.author ?? '').split(',')[0]]).concat(pack.map((p) => String(p.data.author ?? '').split(',')[0]));
 const htmlPath = (url) => join(DIST, url === '/' ? 'index.html' : `${url.slice(1)}/index.html`);
 const existsUrl = (url) => {
   const clean = url.split('#')[0].split('?')[0].replace(/\/$/, '') || '/';
@@ -267,6 +274,7 @@ for (const { f, family, draft } of built) {
       ...plan.map((p) => norm(p.label)),
       ...pack.map((p) => norm(p.data.h1)),
       ...pack.map((p) => norm(p.data.description)),
+      ...cardText.map((t) => norm(t)),
       norm(d.author),
       // The author card splits "Name, Role" over two lines.
       ...String(d.author ?? '').split(/,(.*)/s).map((x) => norm(x)).filter(Boolean),
