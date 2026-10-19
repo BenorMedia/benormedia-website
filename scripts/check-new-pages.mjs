@@ -166,6 +166,13 @@ const pack = readdirSync(join(PACK, 'content')).filter((f) => f.endsWith('.md'))
   return { f, data: r.data };
 });
 const packBySlug = new Map(pack.map((p) => [p.data.slug, p.data]));
+// Blog posts (content-drafts/blog/): their titles, descriptions and authors
+// can appear on the guides' Resources cards (lead 2026-10-19).
+const BLOG = join(ROOT, 'content-drafts', 'blog');
+const blogPosts = existsSync(BLOG)
+  ? readdirSync(BLOG).filter((f) => f.endsWith('.md')).map((f) => readContentFile(readFileSync(join(BLOG, f), 'utf8')).data)
+  : [];
+const cardText = blogPosts.flatMap((d) => [d.h1, d.description, String(d.author ?? '').split(',')[0]]).concat(pack.map((p) => String(p.data.author ?? '').split(',')[0]));
 const htmlPath = (url) => join(DIST, url === '/' ? 'index.html' : `${url.slice(1)}/index.html`);
 const existsUrl = (url) => {
   const clean = url.split('#')[0].split('?')[0].replace(/\/$/, '') || '/';
@@ -197,12 +204,14 @@ for (const { f, family, draft } of built) {
   const marker = /\[(FACT NEEDED|VERIFY|PERSON)\b/;
   // Commercial headings end in a period (lead 2026-10-07), added by the template.
   const head = (t) => (family === 'commercial' && t && !/[.?!]$/.test(t) ? `${t}.` : t);
+  // H1s and card titles end in a full stop on every page (lead 2026-10-19).
+  const dot = (t) => (t && !/[.?!]$/.test(t) ? `${t}.` : t);
   const hasGap = (s) => marker.test(String(s ?? ''));
 
   // 1. One h1, equal to the front matter.
   const h1s = all(main, (n) => n.tag === 'h1');
   if (h1s.length !== 1) fail(f, 1, `${h1s.length} <h1> elements`);
-  else if (norm(textOf(h1s[0])) !== head(norm(d.h1))) fail(f, 1, `h1 "${norm(textOf(h1s[0]))}"`);
+  else if (norm(textOf(h1s[0])) !== dot(norm(d.h1))) fail(f, 1, `h1 "${norm(textOf(h1s[0]))}"`);
 
   // 2. Head.
   const title = norm(textOf(all(doc, (n) => n.tag === 'title')[0] ?? { children: [] }));
@@ -258,7 +267,7 @@ for (const { f, family, draft } of built) {
 
     // 4. Fidelity backward: every unit is a source block, section 8 copy, a visual's alt or brief, or live text.
     const allowed = new Set([
-      head(norm(d.h1)),
+      dot(norm(d.h1)),
       ...sourceBody.map((b) => b.text),
       ...expectedOther.map((e) => e.text),
       ...(d.visuals ?? []).flatMap((v) => [norm(v.alt), norm(v.brief)]),
@@ -266,7 +275,10 @@ for (const { f, family, draft } of built) {
       ...(d.sources ?? []).map((s) => norm(s.label)),
       ...plan.map((p) => norm(p.label)),
       ...pack.map((p) => norm(p.data.h1)),
+      ...pack.map((p) => dot(norm(p.data.h1))),
+      ...blogPosts.map((d) => dot(norm(d.h1))),
       ...pack.map((p) => norm(p.data.description)),
+      ...cardText.map((t) => norm(t)),
       norm(d.author),
       // The author card splits "Name, Role" over two lines.
       ...String(d.author ?? '').split(/,(.*)/s).map((x) => norm(x)).filter(Boolean),
