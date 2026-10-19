@@ -21,7 +21,7 @@ takeaways:
   - "Every page you care about needs a crawlable link from at least one other page. Google sets no ideal number of links per page, and the documentation we read sets no click-depth limit."
   - "A B2B SaaS marketing site works as a flat set of commercial pages, with folders only where a section grows, such as a blog, guides, integrations, or customer stories."
   - "Use readable, hyphenated URLs, give each page one parent, and redirect every moved URL straight to its final address, keeping the redirects for at least a year."
-  - "benormedia.com had 45 URLs in its sitemap on October 19, 2026: 18 root pages, 21 posts, 4 guides, and 2 author pages, with service pages at the root and grouped in the navigation."
+  - "benormedia.com had 53 URLs in its sitemap on October 19, 2026: 18 root pages, 29 posts, 4 guides, and 2 author pages, with service pages at the root and grouped in the navigation."
 faqHeading: "Questions about website architecture"
 faq:
   - q: "What is website architecture?"
@@ -106,11 +106,11 @@ sources:
   - label: "Search Engine Journal: Google, click depth matters more than URL structure (June 9, 2018)"
     url: https://searchenginejournal.com/google-click-depth-matters-seo-url-structure/256779/
     accessed: 2026-10-19
-  - label: "BenorMedia: sitemap-0.xml (45 URLs on October 19, 2026)"
+  - label: "BenorMedia: sitemap-0.xml (53 URLs on October 19, 2026)"
     url: https://www.benormedia.com/sitemap-0.xml
     accessed: 2026-10-19
 volatile:
-  - "benormedia.com sitemap counts: 45 URLs on 2026-10-19 (18 root pages, 21 posts, 4 guides, 2 author pages); recount on publish day (source: sitemap-0.xml)"
+  - "benormedia.com sitemap counts: 53 URLs on 2026-10-19 (18 root pages, 29 posts, 4 guides, 2 author pages); recount on publish day (source: sitemap-0.xml)"
   - "benormedia.com navigation and breadcrumbs: header Services menu with three pages, footer groups Services, Solutions, Guides, Blog, and About, trail Home > Blog > post (source: the live site on 2026-10-19)"
   - "Google guidance on crawlable links, orphan pages, anchor text, and the absence of an ideal number of links (source: Link best practices)"
   - "Google sitemap guidance: about 500 pages or fewer, comprehensively linked sites, and lastmod accuracy (source: Sitemaps overview and Build and submit a sitemap)"
@@ -132,6 +132,7 @@ editorNotes:
   - "The benormedia.com counts were refreshed from the live sitemap on 2026-10-19: 45 URLs, where the other draft said 41 on October 18. Marker #P52-1 asks for a recount on publish day. Marker #P52-2 offers a sentence on one gap in your own structure; today the B2B SaaS website pages guide shows Home then the guide title in its breadcrumb, with no Guides level. Marker #P52-3 invites one real before-and-after from a client restructure. All three can stay empty."
   - "The post names three vendor-guide claims and says what Google documents instead: a three- or four-click rule, page authority from internal links, and lower bounce rates from a clearer structure. No vendor-published study is cited, so there is no decision-6 dependency. One secondary source, Search Engine Journal, reports a 2018 Google hangout on click depth; it is the only Google statement on the topic we found, and it is dated in the text."
   - "Body runs well above the 1,800-word guide spec and uses ten body H2s instead of five to eight, because three tables and the extra sections on crawling, speed, and mobile cover terms and facts that the content tool recommends for this keyword. The hand-off explains."
+  - "Sitemap counts updated to the release build on 2026-10-19 (lead): 53 URLs, 29 posts; newest lastmod 2026-10-20."
   - "Markers resolved to their defaults on publish (lead 2026-10-19): #P52-1 kept as written; #P52-2 and #P52-3 removed."
 ---
 
@@ -268,17 +269,17 @@ Treat it as a small technical SEO project with its own redirect list, so search 
 
 Here is benormedia.com's own structure, from its sitemap on October 19, 2026.
 
-Table: benormedia.com site architecture, 45 URLs on October 19, 2026
+Table: benormedia.com site architecture, 53 URLs on October 19, 2026
 
 | Section | URLs | Count | How it's linked |
 | --- | --- | --- | --- |
 | Root pages | /, /aeo-agency, /b2b-saas-web-design, /webflow-seo-agency, /pricing, /work, and others | 18 | Header: a Services menu with three pages, plus Work, Pricing, and Blog. Footer: groups for Services, Solutions, and About, plus legal links. The count includes the /blog and /guides index pages |
-| Blog | /blog/post-name | 21 | Header and footer links to /blog; the footer also lists three recent posts |
+| Blog | /blog/post-name | 29 | Header and footer links to /blog; the footer also lists three recent posts |
 | Guides | /guides/guide-name | 4 | Footer Guides group |
 | Authors | /authors/name | 2 | Bylines on guides and posts |
 
 Service and solution pages sit at the root, with no /services/ or /solutions/ folder, even though the footer groups them under Services and Solutions. At eleven pages, that is fine: the grouping lives in the navigation, and the URLs stay short. Folders do their job where content grows, in /blog/ and /guides/. If integration pages or customer stories were added, each would get a folder of its own for the same reason.
 
-Three details show the hub-and-spoke pattern in practice. The headless CMS SEO post carries a breadcrumb trail of Home, Blog, and the post title, with the current page not linked. It ends with related-resource links to the headless CMS page, the Webflow vs custom code guide, and the technical SEO post, so one post points to a service, a guide, and another post. And every URL in the sitemap has a lastmod date, the newest dated October 19, 2026.
+Three details show the hub-and-spoke pattern in practice. The headless CMS SEO post carries a breadcrumb trail of Home, Blog, and the post title, with the current page not linked. It ends with related-resource links to the headless CMS page, the Webflow vs custom code guide, and the technical SEO post, so one post points to a service, a guide, and another post. And every URL in the sitemap has a lastmod date, the newest dated October 20, 2026.
 
 We plan site architecture as part of B2B SaaS website builds, so we have an interest in this topic. For how we approach structure in a build, see our [B2B SaaS web design](/b2b-saas-web-design) page.
