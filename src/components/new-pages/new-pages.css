@@ -39,6 +39,8 @@
   font-family: var(--font-body);
   font-size: var(--fs-p-m);
   line-height: 1.65;
+  /* Long unbroken strings (API paths) wrap instead of widening the page at 390px. */
+  overflow-wrap: break-word;
 
   & > :first-child { margin-top: 0; }
 
