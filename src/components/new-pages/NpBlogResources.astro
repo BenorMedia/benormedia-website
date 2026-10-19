@@ -27,7 +27,7 @@ import { HEROES } from "../../lib/new-pages/visuals";
 import { THUMBS } from "../../lib/new-pages/thumbs";
 import { categoryOf } from "../../lib/new-pages/categories";
 import { findAuthor } from "../../lib/new-pages/authors";
-import { fill, formatShortDate } from "../../lib/new-pages/html";
+import { fill, formatShortDate, withPeriod } from "../../lib/new-pages/html";
 
 interface Props {
   cards: readonly Card[];
@@ -110,7 +110,7 @@ const nameOf = (author: string): string => author.split(",")[0]?.trim() ?? autho
                   <span class="c-paragraph">{profile?.name ?? nameOf(card.author)}</span>
                 </span>
               )}
-              <span class="c-np-res__title c-text_m">{card.title}</span>
+              <span class="c-np-res__title c-text_m">{withPeriod(card.title)}</span>
               <span class="c-np-res__desc c-paragraph">{card.description}</span>
               <a class="c-np-res__more c-paragraph" href={card.href} {...card.data}>
                 {copy.resources.learnMore}

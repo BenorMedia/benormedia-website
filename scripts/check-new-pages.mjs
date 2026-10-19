@@ -204,12 +204,14 @@ for (const { f, family, draft } of built) {
   const marker = /\[(FACT NEEDED|VERIFY|PERSON)\b/;
   // Commercial headings end in a period (lead 2026-10-07), added by the template.
   const head = (t) => (family === 'commercial' && t && !/[.?!]$/.test(t) ? `${t}.` : t);
+  // H1s and card titles end in a full stop on every page (lead 2026-10-19).
+  const dot = (t) => (t && !/[.?!]$/.test(t) ? `${t}.` : t);
   const hasGap = (s) => marker.test(String(s ?? ''));
 
   // 1. One h1, equal to the front matter.
   const h1s = all(main, (n) => n.tag === 'h1');
   if (h1s.length !== 1) fail(f, 1, `${h1s.length} <h1> elements`);
-  else if (norm(textOf(h1s[0])) !== head(norm(d.h1))) fail(f, 1, `h1 "${norm(textOf(h1s[0]))}"`);
+  else if (norm(textOf(h1s[0])) !== dot(norm(d.h1))) fail(f, 1, `h1 "${norm(textOf(h1s[0]))}"`);
 
   // 2. Head.
   const title = norm(textOf(all(doc, (n) => n.tag === 'title')[0] ?? { children: [] }));
@@ -265,7 +267,7 @@ for (const { f, family, draft } of built) {
 
     // 4. Fidelity backward: every unit is a source block, section 8 copy, a visual's alt or brief, or live text.
     const allowed = new Set([
-      head(norm(d.h1)),
+      dot(norm(d.h1)),
       ...sourceBody.map((b) => b.text),
       ...expectedOther.map((e) => e.text),
       ...(d.visuals ?? []).flatMap((v) => [norm(v.alt), norm(v.brief)]),
@@ -273,6 +275,8 @@ for (const { f, family, draft } of built) {
       ...(d.sources ?? []).map((s) => norm(s.label)),
       ...plan.map((p) => norm(p.label)),
       ...pack.map((p) => norm(p.data.h1)),
+      ...pack.map((p) => dot(norm(p.data.h1))),
+      ...blogPosts.map((d) => dot(norm(d.h1))),
       ...pack.map((p) => norm(p.data.description)),
       ...cardText.map((t) => norm(t)),
       norm(d.author),

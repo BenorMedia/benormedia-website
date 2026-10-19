@@ -12,7 +12,7 @@
 import Container from "../ui/Container.astro";
 import Eyebrow from "../ui/Eyebrow.astro";
 import copy from "../../lib/new-pages/copy.json";
-import { fill, formatDate } from "../../lib/new-pages/html";
+import { fill, formatDate, withPeriod } from "../../lib/new-pages/html";
 import type { NpPage } from "../../lib/new-pages/loader";
 import NpCrumbs from "./NpCrumbs.astro";
 import NpBlogAuthor from "./NpBlogAuthor.astro";
@@ -58,7 +58,7 @@ const slots = [
             <span>{fill(copy.blog.readTime, { n: String(page.readMinutes) })}</span>
           </p>
         </div>
-        <h1 class="c-np-blog-hero__title c-text_xl" data-np-src="h1">{page.h1}</h1>
+        <h1 class="c-np-blog-hero__title c-text_xl" data-np-src="h1">{withPeriod(page.h1)}</h1>
         <div class="c-np-blog-hero__lead" set:html={page.lead.join("")} />
       </div>
       <div class="c-np-blog-hero__side">
