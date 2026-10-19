@@ -150,6 +150,56 @@ export function cardOf(p: NpPage): Card {
   };
 }
 
+/** Fewest cards in an article's Resources section (lead 2026-10-19). */
+const MIN_RESOURCES = 3;
+
+const internalHrefs = (page: NpPage): Set<string> =>
+  new Set([...page.sections.map((x) => x.html).join("").matchAll(/href="(\/[^"#?]*)"/g)].map((m) => m[1] ?? ""));
+
+/**
+ * Tops up each guide's and blog post's related cards to `MIN_RESOURCES`
+ * with the most relevant pages built in this mode (lead 2026-10-19): the
+ * page's own `related` cards first, then articles and services ranked by a
+ * shared category (+3), a link between the two pages (+2 each way), a
+ * service the body links to (+2), shared related pages (+1 each), and
+ * newest first on ties. Drafts only appear where drafts are built.
+ */
+function fillResources(pages: NpPage[]): void {
+  const categories = copy.categories as Record<string, string>;
+  const info = new Map(
+    pages.map((p) => [p.slug, { links: internalHrefs(p), related: new Set(p.related.map((r) => r.href).filter((h): h is string => !!h)) }]),
+  );
+  for (const page of pages) {
+    if (page.family === "commercial" || page.relatedCards.length >= MIN_RESOURCES) continue;
+    const mine = info.get(page.slug);
+    if (!mine) continue;
+    const taken = new Set(page.relatedCards.map((c) => c.href));
+    const scored = pages
+      .filter((c) => c.slug !== page.slug && !taken.has(c.url))
+      .map((c) => {
+        const theirs = info.get(c.slug);
+        let score = 0;
+        if (c.family !== "commercial" && categories[c.slug] && categories[c.slug] === categories[page.slug]) score += 3;
+        if (mine.links.has(c.url)) score += 2;
+        if (theirs?.links.has(page.url)) score += 2;
+        if (c.family === "commercial" && mine.related.has(c.url)) score += 2;
+        for (const r of mine.related) if (theirs?.related.has(r)) score += 1;
+        return { c, score };
+      })
+      .filter((x) => x.score > 0)
+      .sort((a, b) => b.score - a.score || b.c.publishedAt.localeCompare(a.c.publishedAt) || a.c.slug.localeCompare(b.c.slug));
+    for (const { c } of scored) {
+      if (page.relatedCards.length >= MIN_RESOURCES) break;
+      const card = cardOf(c);
+      page.relatedCards.push(
+        c.family === "commercial"
+          ? { slug: c.slug, href: card.href, title: card.title, description: card.description, family: card.family, data: card.data }
+          : card,
+      );
+    }
+  }
+}
+
 export interface PageProcess {
   /** The section title (as in `sections[].title`). */
   section: string;
@@ -333,6 +383,8 @@ export function loadPages(): NpPage[] {
       }),
     );
   }
+
+  fillResources(pages);
 
   cache = { key, pages };
   return pages;

@@ -82,7 +82,7 @@ const nameOf = (author: string): string => author.split(",")[0]?.trim() ?? autho
                 <Thumb {...thumb.props} />
               </span>
             ) : Hero ? (
-              <span class="c-np-res__thumb is-illustration" aria-hidden="true">
+              <span class="c-np-res__thumb is-illustration" aria-hidden="true" data-np-illustration>
                 <Hero {...hero.props} />
               </span>
             ) : (
