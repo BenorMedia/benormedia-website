@@ -6,6 +6,8 @@
  *
  * Price: `price` (+ optional `period`, e.g. "/mo") or `priceLabel` (e.g.
  * "Let's chat", same gradient style, no period). `price` wins if both are set.
+ * `priceUsd` (optional) lands in `data-price-usd` on the amount; a page script
+ * (`src/scripts/ui/currency.ts`) swaps it in for US and Canada visitors.
  *
  * Layout contract: the card uses CSS subgrid (4 rows: header, price, features,
  * CTA) so prices and buttons line up across cards. Place cards directly in a
@@ -22,6 +24,7 @@ interface Props {
   name: string;
   description: string;
   price?: string;
+  priceUsd?: string;
   period?: string;
   priceLabel?: string;
   features: string[];
@@ -33,6 +36,7 @@ const {
   name,
   description,
   price,
+  priceUsd,
   period,
   priceLabel,
   features,
@@ -52,7 +56,7 @@ const rootClass = ["c-pricing-card", className].filter(Boolean).join(" ");
   </div>
 
   <p class="c-pricing-card__price">
-    {amount && <span class="c-pricing-card__amount c-text_xxl" data-anim="pricing-amount">{amount}</span>}
+    {amount && <span class="c-pricing-card__amount c-text_xxl" data-anim="pricing-amount" data-price-usd={price ? priceUsd : undefined}>{amount}</span>}
     {showPeriod && <span class="c-pricing-card__period c-paragraph">{period}</span>}
   </p>
 

@@ -117,10 +117,87 @@ export interface NpPage {
   /** Article read time, minutes (body + FAQ at 230 words a minute). */
   readMinutes: number;
   /** Related pack pages built in this mode (articles' Resources cards). */
-  relatedCards: { href: string; title: string; description: string; family: Family; data: Record<string, string> }[];
+  relatedCards: Card[];
   gaps: Gap[];
   /** A section rendered with the live service `ServiceProcess` tabs (front matter `process`). */
   process: PageProcess | undefined;
+}
+
+/** A card in the Resources grid (articles' related pages, /blog, /guides,
+ *  author pages). `publishedAt` and `author` only for articles. */
+export interface Card {
+  slug?: string;
+  href: string;
+  title: string;
+  description: string;
+  family: Family;
+  data: Record<string, string>;
+  publishedAt?: string;
+  author?: string;
+}
+
+/** The card for a built article page (guide or blog post). */
+export function cardOf(p: NpPage): Card {
+  return {
+    slug: p.slug,
+    href: p.url,
+    title: p.h1,
+    description: p.description,
+    family: p.family,
+    data: p.draft ? { "data-draft-target": p.slug } : {},
+    publishedAt: p.publishedAt,
+    ...(p.author.hasGap || !p.author.text ? {} : { author: p.author.text }),
+  };
+}
+
+/** Fewest cards in an article's Resources section (lead 2026-10-19). */
+const MIN_RESOURCES = 3;
+
+const internalHrefs = (page: NpPage): Set<string> =>
+  new Set([...page.sections.map((x) => x.html).join("").matchAll(/href="(\/[^"#?]*)"/g)].map((m) => m[1] ?? ""));
+
+/**
+ * Tops up each guide's and blog post's related cards to `MIN_RESOURCES`
+ * with the most relevant pages built in this mode (lead 2026-10-19): the
+ * page's own `related` cards first, then articles and services ranked by a
+ * shared category (+3), a link between the two pages (+2 each way), a
+ * service the body links to (+2), shared related pages (+1 each), and
+ * newest first on ties. Drafts only appear where drafts are built.
+ */
+function fillResources(pages: NpPage[]): void {
+  const categories = copy.categories as Record<string, string>;
+  const info = new Map(
+    pages.map((p) => [p.slug, { links: internalHrefs(p), related: new Set(p.related.map((r) => r.href).filter((h): h is string => !!h)) }]),
+  );
+  for (const page of pages) {
+    if (page.family === "commercial" || page.relatedCards.length >= MIN_RESOURCES) continue;
+    const mine = info.get(page.slug);
+    if (!mine) continue;
+    const taken = new Set(page.relatedCards.map((c) => c.href));
+    const scored = pages
+      .filter((c) => c.slug !== page.slug && !taken.has(c.url))
+      .map((c) => {
+        const theirs = info.get(c.slug);
+        let score = 0;
+        if (c.family !== "commercial" && categories[c.slug] && categories[c.slug] === categories[page.slug]) score += 3;
+        if (mine.links.has(c.url)) score += 2;
+        if (theirs?.links.has(page.url)) score += 2;
+        if (c.family === "commercial" && mine.related.has(c.url)) score += 2;
+        for (const r of mine.related) if (theirs?.related.has(r)) score += 1;
+        return { c, score };
+      })
+      .filter((x) => x.score > 0)
+      .sort((a, b) => b.score - a.score || b.c.publishedAt.localeCompare(a.c.publishedAt) || a.c.slug.localeCompare(b.c.slug));
+    for (const { c } of scored) {
+      if (page.relatedCards.length >= MIN_RESOURCES) break;
+      const card = cardOf(c);
+      page.relatedCards.push(
+        c.family === "commercial"
+          ? { slug: c.slug, href: card.href, title: card.title, description: card.description, family: card.family, data: card.data }
+          : card,
+      );
+    }
+  }
 }
 
 export interface PageProcess {
@@ -249,8 +326,10 @@ export function loadPages(): NpPage[] {
   blogGate(blogFiles);
   const blogBuilt = blogFiles.filter(({ parsed }) => (parsed.data as FrontMatter).draft === false || mode.includeDrafts);
 
+  // Every linkable page by slug: the pack pages and the blog posts (so a
+  // post can link to another post; drafts follow the draft rules).
   const pack = new Map(
-    files.map(({ parsed }) => {
+    [...files.map((f) => ({ ...f, family: undefined as Family | undefined })), ...blogFiles.map((f) => ({ ...f, family: "blog" as Family }))].map(({ parsed, family }) => {
       const d = parsed.data as FrontMatter;
       return [
         String(d.slug),
@@ -260,6 +339,9 @@ export function loadPages(): NpPage[] {
           h1: String(d.h1 ?? ""),
           description: String(d.description ?? ""),
           pageType: String(d.pageType ?? ""),
+          publishedAt: String(d.publishedAt ?? ""),
+          author: String(d.author ?? ""),
+          family,
         },
       ] as const;
     }),
@@ -301,6 +383,8 @@ export function loadPages(): NpPage[] {
       }),
     );
   }
+
+  fillResources(pages);
 
   cache = { key, pages };
   return pages;
@@ -454,9 +538,21 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
       const p = s ? ctx.pack.get(s) : undefined;
       if (!s || !p || s === slug) return [];
       if (p.draft && !ctx.includeDrafts) return [];
-      const fam = (FAMILY as Record<string, Family>)[p.pageType ?? ""];
+      const fam = p.family ?? (FAMILY as Record<string, Family>)[p.pageType ?? ""];
       if (!fam) return [];
-      return [{ href: p.url, title: p.h1, description: p.description ?? "", family: fam, data: p.draft ? { "data-draft-target": s } : {} }];
+      const article = fam !== "commercial";
+      return [
+        {
+          slug: s,
+          href: p.url,
+          title: p.h1,
+          description: p.description ?? "",
+          family: fam,
+          data: p.draft ? { "data-draft-target": s } : {},
+          ...(article && p.publishedAt ? { publishedAt: p.publishedAt } : {}),
+          ...(article && p.author ? { author: p.author } : {}),
+        },
+      ];
     }),
     gaps: gaps.unique(),
   };

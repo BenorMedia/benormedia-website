@@ -66,6 +66,36 @@
     "shareX": "Share on X",
     "shareFacebook": "Share on Facebook"
   },
+  "card": {
+    "published": "Published on {date}"
+  },
+  "categories": {
+    "wordpress-to-webflow-migration": "Migration",
+    "b2b-saas-website-pages": "Web Design",
+    "webflow-enterprise": "Webflow",
+    "webflow-vs-custom-code": "Webflow",
+    "website-redesign-seo-checklist": "Redesign",
+    "how-long-does-a-website-redesign-take": "Redesign",
+    "website-launch-checklist": "Redesign",
+    "import-wordpress-to-webflow": "Migration",
+    "webflow-price-increase": "Webflow",
+    "is-webflow-good-for-seo": "SEO",
+    "headless-cms-seo": "SEO",
+    "what-b2b-buyers-need-from-your-website": "Web Design",
+    "cro-audit": "CRO",
+    "webflow-analytics": "Analytics",
+    "ai-traffic-in-ga4": "AI Search",
+    "do-you-need-an-llms-txt-file": "AI Search",
+    "ai-crawlers-robots-txt": "AI Search",
+    "saas-technical-seo": "SEO",
+    "track-brand-mentions-in-chatgpt": "AI Search",
+    "consent-mode-v2-webflow": "Analytics",
+    "webflow-accessibility-checklist": "Web Design",
+    "website-rfp-template": "Redesign",
+    "saas-pricing-page": "Web Design",
+    "b2b-marketing-attribution": "Analytics",
+    "european-accessibility-act-saas": "Web Design"
+  },
   "resources": {
     "eyebrow": "Resources",
     "heading": "Related resources.",
