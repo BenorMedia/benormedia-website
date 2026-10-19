@@ -2,8 +2,8 @@
 /**
  * ThOrbit — card thumbnail (Figma 3736:9454): two hairline rings around a
  * blue glow, with eight white icon tiles around them. Motion: the tiles
- * sway around the rings' center, stay upright and bob (stronger motion:
- * lead 2026-10-19).
+ * orbit a full 360° around the rings' center, stay upright and bob (full
+ * turn instead of a sway: lead 2026-10-19).
  */
 import "./th.css";
 import { TH_ICON, TH_SVG, type ThIcon } from "./assets";
@@ -33,12 +33,13 @@ const AT = [[187, 170], [370, 199], [344, 356], [224, 45], [521, 280], [93, 263]
 </span>
 
 <style>
-  /* The tile layer turns about the rings' center; each tile turns back. */
+  /* The tile layer turns a full circle about the rings' center; each tile
+     turns back at the same rate, so the icons stay upright. */
   .np-th-orbit {
     position: absolute;
     inset: 0;
     transform-origin: calc(273 * var(--u)) calc(208 * var(--u));
-    animation: np-th-sway 10s ease-in-out infinite alternate;
+    animation: np-th-orbit 40s linear infinite;
   }
   .np-th-orbit__tile {
     position: absolute;
@@ -48,7 +49,7 @@ const AT = [[187, 170], [370, 199], [344, 356], [224, 45], [521, 280], [93, 263]
   }
   .np-th-orbit__tile > .np-th-tile {
     animation:
-      np-th-sway-back 10s ease-in-out infinite alternate,
+      np-th-orbit-back 40s linear infinite,
       np-th-tile-bob 4s ease-in-out infinite;
   }
   .np-th-orbit__tile:nth-child(odd) > .np-th-tile {
@@ -58,12 +59,12 @@ const AT = [[187, 170], [370, 199], [344, 356], [224, 45], [521, 280], [93, 263]
     0%, 100% { translate: 0 0; }
     50% { translate: 0 calc(-8 * var(--u)); }
   }
-  @keyframes np-th-sway {
-    from { transform: rotate(-10deg); }
-    to { transform: rotate(10deg); }
+  @keyframes np-th-orbit {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
   }
-  @keyframes np-th-sway-back {
-    from { transform: rotate(10deg); }
-    to { transform: rotate(-10deg); }
+  @keyframes np-th-orbit-back {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(-360deg); }
   }
 </style>
