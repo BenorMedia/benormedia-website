@@ -1,0 +1,29 @@
+---
+/**
+ * Guides index at /guides (lead 2026-10-17): the secondary-page hero, then
+ * every guide built in this mode as the Resources cards, three per row,
+ * newest first, with each guide's header illustration as its thumbnail.
+ * Same pattern and JSON-LD as /blog (`src/pages/blog/[...index].astro`).
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../../components/sections/PageHero.astro";
+import NpBlogResources from "../../components/new-pages/NpBlogResources.astro";
+import JsonLd from "../../components/layout/JsonLd.astro";
+import { PAGE_META } from "../../lib/content/seo";
+import { cardOf, pagesOf } from "../../lib/new-pages/loader";
+import { clientShots } from "../../lib/new-pages/shots";
+import { blogIndexJsonLd } from "../../lib/new-pages/jsonld";
+import copy from "../../lib/new-pages/copy.json";
+
+const guides = pagesOf("article").sort((a, b) => b.publishedAt.localeCompare(a.publishedAt) || a.slug.localeCompare(b.slug));
+const shots = await clientShots();
+const cards = guides.map(cardOf);
+---
+
+<BaseLayout title={PAGE_META.guides.title} description={PAGE_META.guides.description} noIndex={guides.every((p) => p.draft)}>
+  {blogIndexJsonLd({ name: copy.articleEyebrow.guide, description: PAGE_META.guides.description }, guides, "/guides").map((data) => <JsonLd data={data} />)}
+  {/* TODO: COPY — hero title and accent (orchestrator's wording). */}
+  <PageHero eyebrow={copy.articleEyebrow.guide} title={"In-depth guides for\nB2B SaaS websites."} accent="B2B SaaS websites." />
+  {/* TODO: COPY — section heading (visually hidden; keeps the outline h1 → h2). */}
+  <NpBlogResources cards={cards} shots={shots} heading="All guides" limit={cards.length} headingHidden still />
+</BaseLayout>

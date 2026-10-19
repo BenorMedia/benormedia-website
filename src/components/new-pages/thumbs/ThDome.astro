@@ -1,0 +1,112 @@
+---
+/**
+ * ThDome — card thumbnail (Figma 3736:9123): the services half-dome. Five
+ * glowing nodes on the outer arc, four muted nodes on the middle ring, three
+ * inside the inner circle, each an icon tile over an uppercase label.
+ * Motion: every node floats in turn, the outer nodes' glow pulses, the
+ * bottom glow breathes (stronger motion: lead 2026-10-19).
+ */
+import "./th.css";
+import { TH_ICON, TH_SVG, type ThItem } from "./assets";
+
+interface Props {
+  outer: readonly ThItem[];
+  middle: readonly ThItem[];
+  inner: readonly ThItem[];
+}
+
+const { outer, middle, inner } = Astro.props;
+// Tile centers, design px (Figma 3736:9123, the 539px stage centered in 544).
+const OUTER = [[61, 108], [158, 54], [277, 37], [397, 62], [489, 116]] as const;
+const MIDDLE = [[52, 282], [177, 155], [361, 148], [483, 276]] as const;
+const INNER = [[170, 288], [383, 300], [269, 243]] as const;
+const nodes = [
+  ...outer.slice(0, 5).map((it, i) => ({ it, at: OUTER[i] ?? OUTER[0], active: true, i })),
+  ...middle.slice(0, 4).map((it, i) => ({ it, at: MIDDLE[i] ?? MIDDLE[0], active: false, i })),
+  ...inner.slice(0, 3).map((it, i) => ({ it, at: INNER[i] ?? INNER[0], active: false, i })),
+];
+---
+
+<span class="np-th" aria-hidden="true" data-np-illustration>
+  <span class="np-th__stage np-th-dome">
+    <img class="np-th__art" style="--x: -70.6; --y: 41.9; --w: 685.2; --h: 685.2;" src={TH_SVG.domeOuter.src} width={TH_SVG.domeOuter.w} height={TH_SVG.domeOuter.h} alt="" loading="lazy" decoding="async" />
+    <img class="np-th__art" style="--x: -11.3; --y: 91.5; --w: 566.5; --h: 566.5;" src={TH_SVG.domeMid.src} width={TH_SVG.domeMid.w} height={TH_SVG.domeMid.h} alt="" loading="lazy" decoding="async" />
+    <img class="np-th__art" style="--x: 65.4; --y: 91.8; --w: 414.3; --h: 171.4;" src={TH_SVG.domeLines.src} width={TH_SVG.domeLines.w} height={TH_SVG.domeLines.h} alt="" loading="lazy" decoding="async" />
+    <span class="np-th__art np-th-dome__inner" style="--x: 92.2; --y: 204.3; --w: 359.5; --h: 359.5;">
+      <img src={TH_SVG.domeInner.src} width={TH_SVG.domeInner.w} height={TH_SVG.domeInner.h} alt="" loading="lazy" decoding="async" />
+    </span>
+    <img class="np-th__art np-th-dome__glow" style="--x: 165.7; --y: 310.7; --w: 212.5; --h: 212.5;" src={TH_SVG.domeGlow.src} width={TH_SVG.domeGlow.w} height={TH_SVG.domeGlow.h} alt="" loading="lazy" decoding="async" />
+    {nodes.map(({ it, at, active, i }) => (
+      <span class={["np-th-dome__node", active && "is-active"].filter(Boolean).join(" ")} style={`--x: ${at[0]}; --y: ${at[1]}; --d: ${i * -0.9}s;`}>
+        <span class="np-th-dome__tile"><img src={TH_ICON[it.icon].src} width={TH_ICON[it.icon].w} height={TH_ICON[it.icon].h} alt="" loading="lazy" decoding="async" /></span>
+        <span class="np-th-dome__label">{it.label}</span>
+      </span>
+    ))}
+  </span>
+</span>
+
+<style>
+  .np-th-dome__inner {
+    border-radius: 50%;
+    background: var(--color-white);
+  }
+  .np-th-dome__inner img {
+    width: 100%;
+    height: 100%;
+  }
+  .np-th-dome__glow {
+    animation: np-th-breathe 6s ease-in-out infinite;
+  }
+  .np-th-dome__node {
+    position: absolute;
+    left: calc(var(--x) * var(--u));
+    top: calc(var(--y) * var(--u));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(9 * var(--u));
+    width: calc(86 * var(--u));
+    transform: translate(-50%, calc(-12.2 * var(--u)));
+    animation: np-th-node 5s ease-in-out infinite;
+    animation-delay: var(--d);
+  }
+  .np-th-dome__tile {
+    display: grid;
+    place-items: center;
+    width: calc(24.3 * var(--u));
+    height: calc(24.3 * var(--u));
+    border: calc(0.3 * var(--u)) solid var(--color-border);
+    border-radius: calc(2.25 * var(--u));
+    background: var(--color-gray-light);
+  }
+  .np-th-dome__tile img {
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
+  }
+  /* Outer arc: white tiles with the accent glow, pulsing in turn. */
+  .np-th-dome__node.is-active .np-th-dome__tile {
+    background: var(--color-white);
+    box-shadow: 0 0 calc(17.7 * var(--u)) 0 var(--np-th-glow);
+    animation: np-th-glow 4.5s ease-in-out infinite;
+    animation-delay: var(--d);
+  }
+  .np-th-dome__label {
+    color: var(--color-grey-700);
+    font-size: calc(8.2 * var(--u));
+    text-align: center;
+    text-transform: uppercase;
+  }
+  @keyframes np-th-glow {
+    0%, 100% { box-shadow: 0 0 calc(17.7 * var(--u)) 0 var(--np-th-glow); }
+    50% { box-shadow: 0 0 calc(6 * var(--u)) 0 color-mix(in srgb, var(--color-accent) 20%, transparent); }
+  }
+  @keyframes np-th-node {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 calc(-7 * var(--u)); }
+  }
+  @keyframes np-th-breathe {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.12); }
+  }
+</style>
