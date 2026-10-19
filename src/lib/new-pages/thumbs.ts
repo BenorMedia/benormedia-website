@@ -491,6 +491,118 @@ export const THUMBS: Record<string, ThumbEntry> = {
   "european-accessibility-act-saas": t(ThOrbit, {
     icons: ["accessibility", "shieldLock", "geoPin", "pencilDoc", "devices3d", "reporting", "person", "chartSearch"],
   }),
+  // Blog wave 5 (lead 2026-10-19).
+  // The structured data worth keeping, the AI answers, the checks.
+  "schema-markup-ai-search": t(ThChips, {
+    rows: [
+      [
+        { icon: "crmCard", label: "Organization" },
+        { icon: "devices3d", label: "WebSite" },
+        { icon: "api", label: "BreadcrumbList" },
+        { icon: "pencilDoc", label: "Article" },
+        { icon: "codeBlocks", label: "JSON-LD" },
+      ],
+      [
+        { icon: "ai", label: "AI Overviews" },
+        { icon: "chartSearch", label: "AI Mode" },
+        { icon: "research", label: "ChatGPT" },
+        { icon: "graphics", label: "Perplexity" },
+        { icon: "systems", label: "Copilot" },
+      ],
+      [
+        { icon: "seoChart", label: "Rich results" },
+        { icon: "techSeo", label: "Search Console" },
+        { icon: "docPencil", label: "Visible text" },
+        { icon: "shieldLock", label: "Crawl access" },
+        { icon: "reporting", label: "Buyer prompts" },
+      ],
+      [
+        { icon: "contentStack", label: "Content worth citing" },
+        { icon: "flask", label: "Studies" },
+        { icon: "person", label: "Author" },
+        { icon: "calendar", label: "Dates" },
+        { icon: "plugs", label: "sameAs" },
+      ],
+    ],
+  }),
+  // Impressions, branded search and demo requests.
+  "zero-click-searches-b2b-saas": t(ThObject, { object: "seoChart" }),
+  // The six asks before a case study is written.
+  "b2b-case-study": t(ThIconWall, {
+    icon: "crmCard",
+    labels: ["Baseline and result", "The decision story", "Implementation facts", "A named quote", "Permission scope"],
+  }),
+  // Monthly, quarterly and yearly checks, and the headless extras.
+  "website-maintenance-checklist": t(ThChips, {
+    rows: [
+      [
+        { icon: "techSeo", label: "Page indexing" },
+        { icon: "crmCard", label: "Key forms" },
+        { icon: "analytics", label: "Key events" },
+        { icon: "speedGauge", label: "Core Web Vitals" },
+        { icon: "calendar", label: "Release notes" },
+      ],
+      [
+        { icon: "codeBlocks", label: "Third-party scripts" },
+        { icon: "person", label: "User access" },
+        { icon: "shieldLock", label: "Consent and cookies" },
+        { icon: "api", label: "Redirects" },
+        { icon: "seoChart", label: "Sitemaps" },
+      ],
+      [
+        { icon: "geoPin", label: "Domains" },
+        { icon: "shield", label: "Certificates" },
+        { icon: "reporting", label: "Plan limits" },
+        { icon: "accessibility", label: "Accessibility" },
+        { icon: "pencilDoc", label: "Content audit" },
+      ],
+      [
+        { icon: "systems", label: "Node.js" },
+        { icon: "puzzle3d", label: "Dependencies" },
+        { icon: "cms", label: "Sanity API version" },
+        { icon: "contentStack", label: "Content backups" },
+        { icon: "devices3d", label: "Preview deployments" },
+      ],
+    ],
+  }),
+  // The link types that carry the structure.
+  "website-architecture-seo": t(ThIconWall, {
+    icon: "api",
+    labels: ["Header navigation", "Breadcrumbs", "Contextual links", "Related resources", "XML sitemap"],
+  }),
+  // The homepage sections, in order.
+  "saas-homepage-design": t(ThDome, {
+    outer: [
+      { icon: "designGrid", label: "Hero section" },
+      { icon: "crmCard", label: "Logo bar" },
+      { icon: "devices3d", label: "Product overview" },
+      { icon: "puzzle3d", label: "Key features" },
+      { icon: "person", label: "Paths by role" },
+    ],
+    middle: [
+      { icon: "seoChart", label: "Proof" },
+      { icon: "plugs", label: "Integrations" },
+      { icon: "shieldLock", label: "Security" },
+      { icon: "reporting", label: "Pricing" },
+    ],
+    inner: [
+      { icon: "funnelTarget", label: "Final call to action" },
+      { icon: "contentStack", label: "Footer" },
+      { icon: "speedGauge", label: "Fast hero" },
+    ],
+  }),
+  // Webflow forms to Salesforce or HubSpot.
+  "webflow-salesforce-integration": t(ThLogos, {
+    groups: [
+      { tag: "Web-to-Lead", logos: ["webflow", "salesforce"] },
+      { tag: "Webflow HubSpot app", logos: ["webflow", "hubspot"] },
+      { tag: "Forms API", logos: ["hubspot"] },
+    ],
+  }),
+  // The three metrics, the scripts behind them and the tools.
+  "core-web-vitals-optimization": t(ThOrbit, {
+    icons: ["speedGauge", "codeBlocks", "analytics", "devices3d", "chartSearch", "puzzle3d", "reporting", "shieldLock"],
+  }),
   // Content from the CMS, rendered for every device.
   "headless-cms-seo": t(ThObject, { object: "deviceStack" }),
   // Launch week.
