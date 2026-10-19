@@ -452,6 +452,45 @@ export const THUMBS: Record<string, ThumbEntry> = {
     icon: "accessibility",
     labels: ["Color contrast", "Focus visible", "Target size", "Alt text", "Keyboard navigation"],
   }),
+  // Blog wave 4 (lead 2026-10-19).
+  // The RFP's sections, the requirements most RFPs miss, the evaluation.
+  "website-rfp-template": t(ThDome, {
+    outer: [
+      { icon: "funnelTarget", label: "Goals" },
+      { icon: "devices3d", label: "Current website" },
+      { icon: "designGrid", label: "Scope" },
+      { icon: "plugs", label: "Integrations" },
+      { icon: "reporting", label: "Budget range" },
+    ],
+    middle: [
+      { icon: "api", label: "URL map" },
+      { icon: "accessibility", label: "Accessibility" },
+      { icon: "speedGauge", label: "Performance" },
+      { icon: "analytics", label: "Analytics and consent" },
+    ],
+    inner: [
+      { icon: "seoChart", label: "Evaluation" },
+      { icon: "calendar", label: "Timeline" },
+      { icon: "pencilDoc", label: "One-page brief" },
+    ],
+  }),
+  // The four pricing page models and the comparison table.
+  "saas-pricing-page": t(ThIconWall, {
+    icon: "reporting",
+    labels: ["Published tiers", "Starting price", "Usage-based pricing", "Cost drivers", "Plan comparison table"],
+  }),
+  // The CRMs, GA4 and the Webflow form the post covers.
+  "b2b-marketing-attribution": t(ThLogos, {
+    groups: [
+      { tag: "CRM source fields", logos: ["hubspot", "salesforce"] },
+      { tag: "UTMs and GA4", logos: ["googleAnalytics"] },
+      { tag: "Hidden form fields", logos: ["webflow"] },
+    ],
+  }),
+  // Scope, the standard, the audit and the statement.
+  "european-accessibility-act-saas": t(ThOrbit, {
+    icons: ["accessibility", "shieldLock", "geoPin", "pencilDoc", "devices3d", "reporting", "person", "chartSearch"],
+  }),
   // Content from the CMS, rendered for every device.
   "headless-cms-seo": t(ThObject, { object: "deviceStack" }),
   // Launch week.
