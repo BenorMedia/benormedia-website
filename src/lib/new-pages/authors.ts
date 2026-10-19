@@ -25,7 +25,7 @@ export const AUTHORS: readonly Author[] = [
     slug: "sergio-gancedo",
     name: "Sergio Gancedo",
     jobTitle: "Managing Director, BenorMedia",
-    photo: { src: "/images/new-pages/authors/sergio-gancedo.webp", w: 216, h: 216 },
+    photo: { src: "/images/new-pages/authors/sergio-gancedo.png", w: 129, h: 129 }, // lead 2026-10-17
     description: "Sergio Gancedo is the Managing Director of BenorMedia, a Webflow agency for B2B SaaS. Read his guides on Webflow, migrations and SaaS web design.",
     bio: [
       "Sergio Gancedo is the Managing Director of BenorMedia, a Webflow agency based in Barcelona that designs, builds and grows websites for B2B SaaS and tech companies.",
@@ -34,6 +34,22 @@ export const AUTHORS: readonly Author[] = [
     ],
     linkedin: "https://www.linkedin.com/in/sergio-gancedo/",
     knowsAbout: ["Webflow development", "Webflow migrations", "B2B SaaS website design", "Technical SEO"],
+  },
+  {
+    // Lead 2026-10-17: title from the lead; bio drafted by Claude at the
+    // lead's request (role and topics only, no dates, employers or clients).
+    slug: "david-garay",
+    name: "David Garay",
+    jobTitle: "Webflow Developer and UX/UI Designer, BenorMedia",
+    photo: { src: "/images/new-pages/authors/david-garay.png", w: 129, h: 129 },
+    description: "David Garay is a Webflow Developer and UX/UI Designer at BenorMedia. Read his articles on B2B buyers, redesign timelines, Webflow pricing and CRO.",
+    bio: [
+      "David Garay is a Webflow Developer and UX/UI Designer at BenorMedia, a Webflow agency based in Barcelona that designs, builds and grows websites for B2B SaaS and tech companies.",
+      "He designs and builds client websites in Webflow, from wireframes and user flows to the finished pages, with a focus on clear layouts that help buyers find what they need and on sites that marketing teams can update on their own.",
+      "On the BenorMedia blog he writes about the business side of a B2B website: what software buyers look for before a sales call, how long a redesign takes, what Webflow's plan changes mean for your budget, and how to find what stops visitors from converting.",
+    ],
+    linkedin: "https://www.linkedin.com/in/david-garay19/",
+    knowsAbout: ["Webflow development", "UX design", "UI design", "Website redesign planning", "Conversion rate optimization"],
   },
 ];
 

@@ -1,0 +1,75 @@
+---
+/**
+ * ThOrbit — card thumbnail (Figma 3736:9454): two hairline rings around a
+ * blue glow, with eight white icon tiles around them. Motion: the tiles
+ * orbit a full 360° around the rings' center and stay upright (full turn
+ * instead of a sway, then slower and on the ring lines: lead 2026-10-19).
+ */
+import "./th.css";
+import { TH_ICON, TH_SVG, type ThIcon } from "./assets";
+
+interface Props {
+  /** Eight icons, in the design's tile order. */
+  icons: readonly ThIcon[];
+}
+
+const { icons } = Astro.props;
+// Tile centers, design px (Figma 3736:9454). In the design they sit near,
+// not on, the rings; each one moves to its nearest ring at the same angle, so
+// the tiles run along the lines as the layer turns.
+const AT = [[187, 170], [370, 199], [344, 356], [224, 45], [521, 280], [93, 263], [452, 16], [55, 22]] as const;
+// Rings' center and radii, design px (`orbit-rings.svg` placed at 1, -64.4).
+const CX = 273.4;
+const CY = 208;
+const RINGS = [97.9, 180.4, 272.1] as const;
+const ON_RING = AT.map(([x, y]) => {
+  const dist = Math.hypot(x - CX, y - CY);
+  const r = RINGS.reduce((a, b) => (Math.abs(b - dist) < Math.abs(a - dist) ? b : a));
+  const angle = Math.atan2(y - CY, x - CX);
+  return [CX + r * Math.cos(angle), CY + r * Math.sin(angle)].map((n) => Math.round(n * 10) / 10);
+});
+---
+
+<span class="np-th" aria-hidden="true" data-np-illustration>
+  <span class="np-th__stage">
+    <img class="np-th__art" style="--x: -68.9; --y: -159.9; --w: 681.9; --h: 681.9;" src={TH_SVG.orbitGlow.src} width={TH_SVG.orbitGlow.w} height={TH_SVG.orbitGlow.h} alt="" loading="lazy" decoding="async" />
+    <img class="np-th__art" style="--x: 1; --y: -64.4; --w: 544.8; --h: 544.8;" src={TH_SVG.orbitRings.src} width={TH_SVG.orbitRings.w} height={TH_SVG.orbitRings.h} alt="" loading="lazy" decoding="async" />
+    <span class="np-th-orbit">
+      {icons.slice(0, 8).map((icon, i) => (
+        <span class="np-th-orbit__tile" style={`--x: ${ON_RING[i]?.[0]}; --y: ${ON_RING[i]?.[1]};`}>
+          <span class="np-th-tile is-white"><img src={TH_ICON[icon].src} width={TH_ICON[icon].w} height={TH_ICON[icon].h} alt="" loading="lazy" decoding="async" /></span>
+        </span>
+      ))}
+    </span>
+  </span>
+</span>
+
+<style>
+  /* The tile layer turns a full circle about the rings' center; each tile
+     turns back at the same rate, so the icons stay upright. */
+  .np-th-orbit {
+    position: absolute;
+    inset: 0;
+    transform-origin: calc(273.4 * var(--u)) calc(208 * var(--u));
+    animation: np-th-orbit 120s linear infinite;
+    will-change: transform;
+  }
+  .np-th-orbit__tile {
+    position: absolute;
+    left: calc(var(--x) * var(--u));
+    top: calc(var(--y) * var(--u));
+    transform: translate(-50%, -50%);
+  }
+  .np-th-orbit__tile > .np-th-tile {
+    animation: np-th-orbit-back 120s linear infinite;
+    will-change: transform;
+  }
+  @keyframes np-th-orbit {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes np-th-orbit-back {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(-360deg); }
+  }
+</style>

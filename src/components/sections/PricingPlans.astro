@@ -13,6 +13,9 @@
  * No section background of its own: on /pricing it sits in `.c-pricing-intro`
  * with the hero, which paints the line art the glass cards blur.
  *
+ * Prices: EUR in the HTML; `currency.ts` swaps in `priceUsd` for visitors in
+ * the US or Canada (geo from `/api/geo`, ipinfo).
+ *
  * Each card's "Get In Touch" button carries `.js-open-contact` (contact modal).
  * The section has a visually hidden `<h2>` (plan names are `<h3>`).
  * Hides entirely when there are no plans.
@@ -43,6 +46,7 @@ const headingId = "pricing-plans-title";
               description={plan.description}
               features={plan.features}
               {...(plan.price !== undefined && { price: plan.price })}
+              {...(plan.priceUsd !== undefined && { priceUsd: plan.priceUsd })}
               {...(plan.period !== undefined && { period: plan.period })}
               {...(plan.priceLabel !== undefined && { priceLabel: plan.priceLabel })}
             />
@@ -52,6 +56,12 @@ const headingId = "pricing-plans-title";
     </Container>
   </section>
 )}
+
+<script>
+  import { initCurrency } from "../../scripts/ui/currency";
+
+  void initCurrency();
+</script>
 
 <style>
   /* Transparent: the page wrapper (`.c-pricing-intro`) paints white + line
