@@ -36,6 +36,8 @@ interface Props {
   showCtaBanner?: boolean;
   /** Apply the "%s | BenorMedia" title template (Seo). Default true. */
   titleTemplate?: boolean;
+  /** Page-scope modifier on <body> (e.g. `is-home`) for page-only rules. */
+  bodyClass?: string;
 }
 
 const {
@@ -47,6 +49,7 @@ const {
   pageSeo,
   showCtaBanner = true,
   titleTemplate = true,
+  bodyClass,
 } = Astro.props;
 
 const noIndexResolved = noIndex ?? noindex ?? false;
@@ -64,7 +67,7 @@ const siteSettings: SiteSettings | null = await getSiteSettingsCached();
 // when the `bm_consent=granted` cookie is set (cookie-consent.ts calls it on
 // "Accept all"). Consent Mode is set to granted right before GTM starts.
 // Keep the cookie name in sync with src/scripts/ui/cookie-consent.ts.
-const GTM_ID = "GTM-M4MHRTDM";
+const GTM_ID = "GTM-5HNF8BWX"; // was GTM-M4MHRTDM (lead 2026-10-17)
 const loadGtm = import.meta.env["PUBLIC_SITE_ENV"] === "production";
 
 // --- Ahrefs Web Analytics (lead 2026-10-07) ---------------------------------
@@ -90,6 +93,19 @@ window.bmLoadGtm = function () {
   // End Google Tag Manager
 };
 window.bmLoadGtm();
+</script>`;
+// --- Google tag, GA4 G-LC2VQ4Z1VV (lead 2026-10-17) -------------------------
+// The official gtag.js snippet, verbatim, in <head> right after GTM.
+// Production only, the same switch as GTM.
+const loadGtag = loadGtm;
+const gtagHead = `<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-LC2VQ4Z1VV"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-LC2VQ4Z1VV');
 </script>`;
 const gtmBody = `<!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}"
@@ -156,6 +172,7 @@ if (siteSettings) {
   <head>
     <meta charset="UTF-8" />
     {loadGtm && <Fragment set:html={gtmHead} />}
+    {loadGtag && <Fragment set:html={gtagHead} />}
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     {loadAhrefs && (
       <script is:inline src="https://analytics.ahrefs.com/analytics.js" data-key="frSOv/uJHEnNrchxbVrxBw" async></script>
@@ -202,7 +219,7 @@ if (siteSettings) {
 
     <meta name="generator" content={Astro.generator} />
   </head>
-  <body>
+  <body class={bodyClass}>
     {loadGtm && <Fragment set:html={gtmBody} />}
     <Nav siteSettings={siteSettings} />
     <main><slot /></main>

@@ -12,8 +12,9 @@
  *     card (JS only; no JS = plain hover).
  *   - Mobile (≤767, lead 2026-10-01): no diagram (its text was too small);
  *     one static image per card (`docs/refs/services-images/animation/
- *     mobile-static/drop1–3.png` as WebP 800w / 1200w), swapped when a card
- *     opens. Desktop / tablet keep the diagram below.
+ *     mobile-static/drop1–3.png` as WebP 800w / 1200w), inside that card's
+ *     dropdown below "Learn More", full card width under a divider (lead
+ *     2026-10-16). Desktop / tablet keep the diagram below.
  *   - Illustration = `ServicesDiagram` (lead 2026-10-01): the three
  *     `tab1–3` illustrations rebuilt as one HTML / CSS element (it replaced
  *     three stacked WebP images whose crossfade showed where they differ).
@@ -27,9 +28,9 @@
  *
  * Mobile ≤767 (lead 2026-09-30, `docs/refs/services-images/
  * mobile-services-preview.jpg`): an accordion inside a thin frame with
- * corner nodes — illustration on top, then the cards. Each card header is a
+ * corner nodes around the cards. Each card header is a
  * toggle button with a "+" circle (filled accent when open); the open card
- * shows its copy and a "Learn More →" link to the service page. One card
+ * shows its copy, a "Learn More →" link to the service page and its image. One card
  * open at a time (the first by default); opening a card lights its ring in
  * the diagram. CTA actions go full width. No JS: every card is open.
  * Desktop / tablet keep the hover-link cards (the toggle and "Learn More"
@@ -131,23 +132,6 @@ const badges = await getCtaBadgeUrlsCached();
         <div class="c-services__diagram">
           <ServicesDiagram active={items[0]?.ring ?? "outer"} />
         </div>
-        {/* Mobile only: one static image per card, the open card's shows. */}
-        <div class="c-services__mobile-images">
-          {items.map((item, i) => (
-            <img
-              class:list={["c-services__mobile-image", { "is-active": i === 0 }]}
-              src={`${item.mobileImage}.webp`}
-              srcset={`${item.mobileImage}.webp 800w, ${item.mobileImage}@1200.webp 1200w`}
-              sizes="100vw"
-              width="800"
-              height="590"
-              alt=""
-              loading="lazy"
-              decoding="async"
-              data-c-services-mobile-image
-            />
-          ))}
-        </div>
       </div>
 
       <div class="c-services__col-right">
@@ -187,6 +171,18 @@ const badges = await getCtaBadgeUrlsCached();
                       <path d="M15 7L19.2929 11.2929C19.6262 11.6262 19.7929 11.7929 19.7929 12C19.7929 12.2071 19.6262 12.3738 19.2929 12.7071L15 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                   </a>
+                  {/* Mobile only: the card's static image, below its copy. */}
+                  <img
+                    class="c-services__mobile-image"
+                    src={`${item.mobileImage}.webp`}
+                    srcset={`${item.mobileImage}.webp 800w, ${item.mobileImage}@1200.webp 1200w`}
+                    sizes="100vw"
+                    width="800"
+                    height="590"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </div>
               </div>
             </div>
@@ -247,7 +243,7 @@ const badges = await getCtaBadgeUrlsCached();
     }
   }
 
-  /* --- Left column (ServicesDiagram; static images on mobile) --------- */
+  /* --- Left column (ServicesDiagram; none on mobile) ------------------ */
   .c-services__col-left {
     position: relative;
     display: grid;
@@ -256,42 +252,9 @@ const badges = await getCtaBadgeUrlsCached();
   .c-services__diagram {
     width: 100%;
   }
-  /* Stacked in one cell; the open card's image crossfades in over the
-     current one (lead 2026-10-01). The outgoing image stays fully visible
-     underneath (`is-previous`) until the fade ends, so the section never
-     shows through. Reduced motion: instant. */
-  .c-services__mobile-images {
-    display: none;
-    width: 100%;
-  }
-  .c-services__mobile-image {
-    grid-area: 1 / 1;
-    display: block;
-    width: 100%;
-    height: auto;
-    opacity: 0;
-    transition: opacity var(--duration-hover) var(--ease-smooth);
-  }
-  .c-services__mobile-image.is-previous {
-    z-index: 1;
-    opacity: 1;
-    transition: none;
-  }
-  .c-services__mobile-image.is-active {
-    z-index: 2;
-    opacity: 1;
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .c-services__mobile-image {
-      transition: none;
-    }
-  }
   @media (max-width: 767px) {
-    .c-services__diagram {
+    .c-services__col-left {
       display: none;
-    }
-    .c-services__mobile-images {
-      display: grid;
     }
   }
 
@@ -430,6 +393,7 @@ const badges = await getCtaBadgeUrlsCached();
   /* Mobile-only parts: hidden on desktop / tablet. */
   .c-services__toggle,
   .c-services__more,
+  .c-services__mobile-image,
   .c-services__node {
     display: none;
   }
@@ -534,12 +498,17 @@ const badges = await getCtaBadgeUrlsCached();
       color: var(--color-white);
     }
 
-    /* Panel: copy + "Learn More". Collapsed with JS only (no JS: open). */
+    /* Panel: copy + "Learn More" + image. Collapsed with JS only (no JS:
+       open). Open, it spans the card's full width and reaches its bottom
+       edge, so the image runs edge to edge; the copy keeps the card
+       padding. */
     .c-services__panel {
       display: grid;
       grid-template-rows: 1fr;
+      margin: 0 -2.333rem -2.333rem;
       transition:
         grid-template-rows var(--duration-hover) var(--ease-smooth),
+        margin-bottom var(--duration-hover) var(--ease-smooth),
         visibility 0s linear 0s;
     }
     .c-services__panel-inner {
@@ -549,14 +518,34 @@ const badges = await getCtaBadgeUrlsCached();
       flex-direction: column;
       align-items: flex-start;
       gap: 1.5rem;
-      padding-top: 1.5rem;
+    }
+    /* Space under the title as a margin, not padding: padding would keep
+       the collapsed panel 1.5rem tall. */
+    .c-services__panel-inner > :not(.c-services__mobile-image) {
+      margin-inline: 2.333rem;
+    }
+    .c-services__panel-inner > :first-child {
+      margin-top: 1.5rem;
     }
     .c-services.is-enhanced .c-services__item:not(.is-open) .c-services__panel {
       grid-template-rows: 0fr;
+      margin-bottom: 0;
       visibility: hidden;
       transition:
         grid-template-rows var(--duration-hover) var(--ease-smooth),
+        margin-bottom var(--duration-hover) var(--ease-smooth),
         visibility 0s linear var(--duration-hover);
+    }
+
+    /* Image: full card width under a divider, the card's bottom corners
+       (lead 2026-10-16, mockup). TODO: DS space above the divider. */
+    .c-services__mobile-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin-top: 2rem;
+      border-top: var(--border-default);
+      border-radius: 0 0 calc(0.5rem - 1px) calc(0.5rem - 1px);
     }
 
     .c-services__more {
@@ -596,31 +585,10 @@ const badges = await getCtaBadgeUrlsCached();
 <script>
   // Desktop: card hover / focus → light that card's ring in the diagram
   // (ServicesDiagram, CSS transitions). Mobile accordion: opening a card
-  // does the same and shows that card's static image.
+  // does the same; its image sits in its own panel.
   document.querySelectorAll<HTMLElement>("[data-c-services]").forEach((root) => {
     const diagram = root.querySelector<HTMLElement>("[data-c-services-diagram]");
-    const mobileImages = Array.from(root.querySelectorAll<HTMLElement>("[data-c-services-mobile-image]"));
     const items = Array.from(root.querySelectorAll<HTMLElement>("[data-c-services-item]"));
-
-    // Mobile image crossfade: the new image fades in over the current one,
-    // which keeps `is-previous` (opaque, underneath) until the fade ends.
-    let currentImage = 0;
-    const showImage = (index: number): void => {
-      const next = mobileImages[index];
-      const prev = mobileImages[currentImage];
-      if (!next || !prev || index === currentImage) return;
-      mobileImages.forEach((img) => img.classList.remove("is-previous"));
-      prev.classList.remove("is-active");
-      prev.classList.add("is-previous");
-      next.classList.add("is-active");
-      currentImage = index;
-      const done = (): void => {
-        if (mobileImages[currentImage] === next) prev.classList.remove("is-previous");
-      };
-      next.addEventListener("transitionend", done, { once: true });
-      // Reduced motion (no transition) or an interrupted fade: clear anyway.
-      window.setTimeout(done, 1000);
-    };
 
     // The hovered / focused card keeps its hover look (`is-active`) until
     // another card takes over, matching the lit ring (lead 2026-10-01).
@@ -628,7 +596,6 @@ const badges = await getCtaBadgeUrlsCached();
       const ring = items[index]?.dataset["cServicesRing"];
       if (diagram && ring) diagram.dataset["active"] = ring;
       items.forEach((item, i) => item.classList.toggle("is-active", i === index));
-      showImage(index);
     };
 
     // Accordion (only visible ≤767): one card open at a time; a second tap

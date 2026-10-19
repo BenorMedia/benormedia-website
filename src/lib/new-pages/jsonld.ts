@@ -6,12 +6,13 @@
  *   commercial  Service, FAQPage, BreadcrumbList (no offers, no author)
  *   article     Article, FAQPage, BreadcrumbList
  *   author      ProfilePage (mainEntity Person), BreadcrumbList
+ *   blog index  CollectionPage (mainEntity ItemList of the posts), BreadcrumbList
  *
  * FAQPage comes from the same array as the visible FAQ. In the review view,
  * items that hold a gap marker are left out. BreadcrumbList keeps only
  * released and live levels (`links.ts`), renumbered from 1.
  */
-import { AREA_SERVED_LD, ORG_ID, PROVIDER_LD, SITE } from "../content/entity";
+import { AREA_SERVED_LD, ENTITY, ORG_ID, PROVIDER_LD, SITE, WEBSITE_ID } from "../content/entity";
 import type { NpPage } from "./loader";
 import { authorId, authorPath, findAuthor, type Author } from "./authors";
 
@@ -27,7 +28,9 @@ function authorLd(page: NpPage): Ld {
   if (page.author.hasGap || !text || text === "BenorMedia team") return { ...PROVIDER_LD };
   const comma = text.indexOf(",");
   const name = comma >= 0 ? text.slice(0, comma).trim() : text;
-  const jobTitle = comma >= 0 ? text.slice(comma + 1).trim() : "";
+  // "Name, BenorMedia" names no job title: leave jobTitle out.
+  const role = comma >= 0 ? text.slice(comma + 1).trim() : "";
+  const jobTitle = role === ENTITY.name ? "" : role;
   const a = findAuthor(text);
   const profile = a ? { "@id": authorId(a), url: abs(authorPath(a)), sameAs: [a.linkedin] } : {};
   return { "@type": "Person", ...profile, name, ...(jobTitle ? { jobTitle } : {}), worksFor: { ...PROVIDER_LD } };
@@ -54,7 +57,7 @@ export function authorPageJsonLd(a: Author, articles: readonly NpPage[]): Ld[] {
         name: a.name,
         url,
         image: abs(a.photo.src),
-        jobTitle: a.jobTitle.split(",")[0]?.trim(),
+        ...(a.jobTitle.includes(",") ? { jobTitle: a.jobTitle.split(",")[0]?.trim() } : {}),
         description: a.bio[0],
         worksFor: { ...PROVIDER_LD },
         sameAs: [a.linkedin],
@@ -68,6 +71,46 @@ export function authorPageJsonLd(a: Author, articles: readonly NpPage[]): Ld[] {
       itemListElement: [
         { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
         { "@type": "ListItem", position: 2, name: a.name, item: url },
+      ],
+    },
+  ];
+}
+
+/** An article index (/blog, /guides): a CollectionPage whose main entity
+ *  lists the articles built in this mode (newest first), each pointing at its
+ *  Article `@id`, and the breadcrumb. `dateModified` = the latest
+ *  `updatedAt` of those articles. */
+export function blogIndexJsonLd(meta: { name: string; description: string }, posts: readonly NpPage[], path = "/blog"): Ld[] {
+  const url = abs(path);
+  const dates = posts.map((p) => p.updatedAt).filter(Boolean).sort();
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "@id": `${url}#webpage`,
+      url,
+      name: meta.name,
+      description: meta.description,
+      inLanguage: "en-US",
+      isPartOf: { "@id": WEBSITE_ID },
+      publisher: { ...PROVIDER_LD },
+      ...(dates.length > 0 ? { dateModified: dates[dates.length - 1] } : {}),
+      mainEntity: {
+        "@type": "ItemList",
+        numberOfItems: posts.length,
+        itemListElement: posts.map((p, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          item: { "@type": "Article", "@id": `${abs(p.url)}#article`, headline: p.h1, url: abs(p.url), datePublished: p.publishedAt },
+        })),
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
+        { "@type": "ListItem", position: 2, name: meta.name, item: url },
       ],
     },
   ];

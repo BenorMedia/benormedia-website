@@ -523,41 +523,8 @@ export const DIAGRAMS: Record<string, DiagramEntry> = {
   },
 
   // /cybersecurity-web-design (docs/brief-next-pages.md). Labels from the page text.
-  // "Write for a buying committee that doesn't trust vendors": the four buyer lanes in the content note (stand-in).
-  "cybersecurity-web-design:1": {
-    framed: true,
-    component: IlSiteMap,
-    props: {
-      root: "Buying committee",
-      pages: [
-        { icon: "shield", label: "CISO" },
-        { icon: "code", label: "Engineers" },
-        { icon: "doc", label: "Procurement" },
-        { icon: "reporting", label: "Finance" },
-      ],
-    },
-  },
-  // "Proof before persuasion": the bold lead-ins and the trust center contents.
-  "cybersecurity-web-design:2": {
-    framed: true,
-    component: IlRings,
-    props: {
-      outer: [
-        { icon: "shield", label: "Trust center" },
-        { icon: "code", label: "security.txt" },
-        { icon: "person", label: "Customer evidence" },
-        { icon: "chartSearch", label: "Independent validation" },
-      ],
-      inner: [
-        { icon: "doc", label: "SOC 2 report" },
-        { icon: "reporting", label: "Certifications" },
-        { icon: "docPencil", label: "Policies" },
-        { icon: "systems", label: "Subprocessors" },
-      ],
-    },
-  },
   // "Technical depth your engineers can find in two clicks": the page types.
-  "cybersecurity-web-design:3": {
+  "cybersecurity-web-design:1": {
     framed: true,
     component: IlSiteMap,
     props: {
@@ -572,7 +539,7 @@ export const DIAGRAMS: Record<string, DiagramEntry> = {
     },
   },
   // "A website built to pass your own security review": the bold lead-ins.
-  "cybersecurity-web-design:4": {
+  "cybersecurity-web-design:2": {
     framed: true,
     component: IlAccessFlow,
     props: {
@@ -591,7 +558,7 @@ export const DIAGRAMS: Record<string, DiagramEntry> = {
     },
   },
   // "Search and AI visibility for security vendors": the content file's tags (outer) and the lead-ins (inner).
-  "cybersecurity-web-design:5": {
+  "cybersecurity-web-design:3": {
     framed: true,
     component: IlRings,
     props: {
@@ -610,7 +577,7 @@ export const DIAGRAMS: Record<string, DiagramEntry> = {
     },
   },
   // "Built for the team that runs it after launch": the bold lead-ins; card = ongoing website support.
-  "cybersecurity-web-design:6": {
+  "cybersecurity-web-design:4": {
     framed: true,
     component: IlJourney,
     props: {
@@ -898,6 +865,338 @@ export const HEROES: Record<string, DiagramEntry> = {
           items: [
             { icon: "code", label: "Next.js or Astro" },
             { icon: "cms", label: "Headless CMS" },
+          ],
+        },
+      ],
+    },
+  },
+
+  // Blog posts (content-drafts/blog/, lead 2026-10-15), keyed by slug.
+  // The baseline to record, then the redirect map, launch day and the 90-day plan.
+  "website-redesign-seo-checklist": {
+    component: IlHero,
+    props: {
+      from: {
+        tag: "Baseline",
+        items: [
+          { icon: "chartSearch", label: "Search performance" },
+          { icon: "funnel", label: "Conversions" },
+          { icon: "doc", label: "Every URL" },
+        ],
+      },
+      to: {
+        tag: "Launch",
+        items: [
+          { icon: "api", label: "Redirect map" },
+          { icon: "calendar", label: "Launch day" },
+          { icon: "reporting", label: "90-day monitoring" },
+        ],
+      },
+    },
+  },
+  // The example plan's seven phases, grouped by week.
+  "how-long-does-a-website-redesign-take": {
+    component: IlColumns,
+    props: {
+      columns: [
+        {
+          tag: "Weeks 1 to 2",
+          items: [
+            { icon: "ux", label: "Audit and business goals" },
+            { icon: "reporting", label: "Website strategy plan" },
+          ],
+        },
+        {
+          tag: "Weeks 3 to 8",
+          items: [
+            { icon: "docPencil", label: "Wireframes and content" },
+            { icon: "graphics", label: "UI design" },
+            { icon: "code", label: "Development" },
+          ],
+        },
+        {
+          tag: "Weeks 9 to 11",
+          items: [
+            { icon: "api", label: "Content migration" },
+            { icon: "speed", label: "Launch and handoff" },
+          ],
+        },
+      ],
+    },
+  },
+  // "What changes for each Site plan": plan today → plan after, with its main limit.
+  "webflow-price-increase": {
+    component: IlHero,
+    props: {
+      from: {
+        tag: "Plan today",
+        items: [
+          { icon: "doc", label: "Basic" },
+          { icon: "cms", label: "CMS" },
+          { icon: "systems", label: "Business" },
+        ],
+      },
+      to: {
+        tag: "Plan after",
+        items: [
+          { icon: "doc", label: "Basic: 300 pages" },
+          { icon: "cms", label: "Premium: 20,000 items" },
+          { icon: "speed", label: "Premium: 50 GB" },
+        ],
+      },
+    },
+  },
+  // What becomes "your code's job instead of the platform's" on a headless build.
+  "headless-cms-seo": {
+    component: IlHero,
+    props: {
+      from: {
+        tag: "Headless CMS",
+        items: [
+          { icon: "cms", label: "Content" },
+          { icon: "techSeo", label: "SEO fields" },
+          { icon: "devices", label: "Previews" },
+        ],
+      },
+      to: {
+        tag: "Your code",
+        items: [
+          { icon: "code", label: "Rendering" },
+          { icon: "api", label: "Redirects" },
+          { icon: "chartSearch", label: "Sitemaps" },
+        ],
+      },
+    },
+  },
+  // Where buyers research, and the pages they need before a first call.
+  "what-b2b-buyers-need-from-your-website": {
+    component: IlHero,
+    props: {
+      from: {
+        tag: "Buyers",
+        items: [
+          { icon: "ux", label: "Research alone" },
+          { icon: "ai", label: "AI chatbots" },
+          { icon: "person", label: "Review sites" },
+        ],
+      },
+      to: {
+        tag: "Your website",
+        items: [
+          { icon: "doc", label: "Pricing" },
+          { icon: "shield", label: "Security" },
+          { icon: "puzzle", label: "Integrations" },
+        ],
+      },
+    },
+  },
+  // The three tools compared, in the order to set them up.
+  "webflow-analytics": {
+    component: IlColumns,
+    props: {
+      columns: [
+        {
+          tag: "Webflow Analyze",
+          items: [
+            { icon: "analytics", label: "Clicks" },
+            { icon: "devices", label: "Scroll depth" },
+          ],
+        },
+        {
+          tag: "GA4",
+          items: [
+            { icon: "funnel", label: "Leads" },
+            { icon: "reporting", label: "Key events" },
+          ],
+        },
+        {
+          tag: "Google Tag Manager",
+          items: [
+            { icon: "puzzle", label: "Several tags" },
+            { icon: "code", label: "Third-party tags" },
+          ],
+        },
+      ],
+    },
+  },
+  // "Where each AI source should show up in GA4".
+  "ai-traffic-in-ga4": {
+    component: IlHero,
+    props: {
+      from: {
+        tag: "AI assistants",
+        items: [
+          { icon: "ai", label: "ChatGPT" },
+          { icon: "ai", label: "Perplexity" },
+          { icon: "ai", label: "Claude" },
+        ],
+      },
+      to: {
+        tag: "GA4",
+        items: [
+          { icon: "analytics", label: "AI Assistant channel" },
+          { icon: "api", label: "Referral" },
+          { icon: "reporting", label: "Custom channel group" },
+        ],
+      },
+    },
+  },
+  // "robots.txt, sitemap.xml, and llms.txt compared".
+  "do-you-need-an-llms-txt-file": {
+    component: IlColumns,
+    props: {
+      columns: [
+        {
+          tag: "robots.txt",
+          items: [
+            { icon: "shield", label: "URLs they may request" },
+            { icon: "ai", label: "AI crawlers" },
+          ],
+        },
+        {
+          tag: "sitemap.xml",
+          items: [
+            { icon: "doc", label: "URLs to find" },
+            { icon: "chartSearch", label: "Search engines" },
+          ],
+        },
+        {
+          tag: "llms.txt",
+          items: [
+            { icon: "docPencil", label: "Key pages" },
+            { icon: "ai", label: "AI agents" },
+          ],
+        },
+      ],
+    },
+  },
+  // Separate crawlers "for training, for search, and for visits a user triggers".
+  "ai-crawlers-robots-txt": {
+    component: IlColumns,
+    props: {
+      columns: [
+        {
+          tag: "Training",
+          items: [
+            { icon: "ai", label: "GPTBot" },
+            { icon: "ai", label: "ClaudeBot" },
+          ],
+        },
+        {
+          tag: "Search",
+          items: [
+            { icon: "chartSearch", label: "OAI-SearchBot" },
+            { icon: "chartSearch", label: "Claude-SearchBot" },
+          ],
+        },
+        {
+          tag: "User-triggered",
+          items: [
+            { icon: "person", label: "ChatGPT-User" },
+            { icon: "person", label: "Claude-User" },
+          ],
+        },
+      ],
+    },
+  },
+  // Blog wave 2 (lead 2026-10-17).
+  // "Mapping WordPress post data to Webflow CMS fields".
+  "import-wordpress-to-webflow": {
+    component: IlHero,
+    props: {
+      from: {
+        tag: "WordPress",
+        items: [
+          { icon: "docPencil", label: "Content" },
+          { icon: "graphics", label: "Featured image" },
+          { icon: "person", label: "Author" },
+        ],
+      },
+      to: {
+        tag: "Webflow CMS",
+        items: [
+          { icon: "doc", label: "Rich text" },
+          { icon: "graphics", label: "Image field" },
+          { icon: "cms", label: "Reference field" },
+        ],
+      },
+    },
+  },
+  // "the week before launch, launch day, and the first week after".
+  "website-launch-checklist": {
+    component: IlColumns,
+    props: {
+      columns: [
+        {
+          tag: "Week before",
+          items: [
+            { icon: "api", label: "Redirect map" },
+            { icon: "funnel", label: "Forms" },
+          ],
+        },
+        {
+          tag: "Launch day",
+          items: [
+            { icon: "techSeo", label: "Robots and noindex" },
+            { icon: "chartSearch", label: "Sitemap" },
+          ],
+        },
+        {
+          tag: "First week",
+          items: [
+            { icon: "reporting", label: "Search Console" },
+            { icon: "analytics", label: "Key events" },
+          ],
+        },
+      ],
+    },
+  },
+  // "What the platform handles and what you still own".
+  "is-webflow-good-for-seo": {
+    component: IlHero,
+    props: {
+      from: {
+        tag: "Webflow handles",
+        items: [
+          { icon: "code", label: "HTML output" },
+          { icon: "chartSearch", label: "XML sitemap" },
+          { icon: "api", label: "301 redirects" },
+        ],
+      },
+      to: {
+        tag: "You still own",
+        items: [
+          { icon: "docPencil", label: "Content" },
+          { icon: "ux", label: "Internal links" },
+          { icon: "reporting", label: "Monitoring" },
+        ],
+      },
+    },
+  },
+  // Measurement first, then research, then the ranked fixes.
+  "cro-audit": {
+    component: IlColumns,
+    props: {
+      columns: [
+        {
+          tag: "Measurement",
+          items: [
+            { icon: "analytics", label: "Key events" },
+            { icon: "funnel", label: "Funnel analysis" },
+          ],
+        },
+        {
+          tag: "Research",
+          items: [
+            { icon: "person", label: "Usability tests" },
+            { icon: "flask", label: "Session recordings" },
+          ],
+        },
+        {
+          tag: "Fixes",
+          items: [
+            { icon: "reporting", label: "Prioritize fixes" },
+            { icon: "calendar", label: "One change at a time" },
           ],
         },
       ],

@@ -5,16 +5,19 @@
  * date and the read time, the H1 and the lead on the left; on the right the
  * gradient card with a collage of client site screenshots (Our Work); a
  * divider under it. A page with a registered header illustration
- * (`HEROES`, lead 2026-10-07) shows it instead of the collage. Left-aligned (articles are the exception, lead
- * 2026-10-07).
+ * (`HEROES`, lead 2026-10-07) shows it instead of the collage. The author
+ * card sits right below the image (Figma 3718:7504, lead 2026-10-12).
+ * Left-aligned (articles are the exception, lead 2026-10-07).
  */
 import Container from "../ui/Container.astro";
 import Eyebrow from "../ui/Eyebrow.astro";
 import copy from "../../lib/new-pages/copy.json";
-import { fill, formatDate } from "../../lib/new-pages/html";
+import { fill, formatDate, withPeriod } from "../../lib/new-pages/html";
 import type { NpPage } from "../../lib/new-pages/loader";
 import NpCrumbs from "./NpCrumbs.astro";
+import NpBlogAuthor from "./NpBlogAuthor.astro";
 import { HEROES } from "../../lib/new-pages/visuals";
+import { THUMBS } from "../../lib/new-pages/thumbs";
 
 interface Props {
   page: NpPage;
@@ -22,9 +25,16 @@ interface Props {
 }
 
 const { page, shots } = Astro.props;
-const hero = HEROES[page.slug];
+// The card thumbnail (animated, lead 2026-10-18), else the header
+// illustration, else the screenshot collage.
+const thumb = THUMBS[page.slug];
+const Thumb = thumb?.component as ((props: Record<string, unknown>) => unknown) | undefined;
+const hero = thumb ? undefined : HEROES[page.slug];
 const Hero = hero?.component;
-const tag = (copy.articleEyebrow as Record<string, string>)[page.pageType] ?? copy.articleEyebrow.guide;
+const tag =
+  page.family === "blog"
+    ? copy.articleEyebrow.blog
+    : ((copy.articleEyebrow as Record<string, string>)[page.pageType] ?? copy.articleEyebrow.guide);
 const [updBefore = "", updAfter = ""] = copy.byline.updated.split("{date}");
 // Collage slots (Figma frame 2147237081, % of the card).
 const slots = [
@@ -48,22 +58,29 @@ const slots = [
             <span>{fill(copy.blog.readTime, { n: String(page.readMinutes) })}</span>
           </p>
         </div>
-        <h1 class="c-np-blog-hero__title c-text_xl" data-np-src="h1">{page.h1}</h1>
+        <h1 class="c-np-blog-hero__title c-text_xl" data-np-src="h1">{withPeriod(page.h1)}</h1>
         <div class="c-np-blog-hero__lead" set:html={page.lead.join("")} />
       </div>
-      {Hero ? (
-        <div class="c-np-blog-hero__illustration" aria-hidden="true" data-np-illustration>
-          <Hero {...hero.props} />
-        </div>
-      ) : (
-        <div class="c-np-blog-hero__media" aria-hidden="true">
-          <div class="c-np-blog-hero__collage">
-            {shots.slice(0, 4).map((s, i) => (
-              <img src={s.src} srcset={s.srcset} width="453" height="300" alt="" loading="eager" decoding="async" style={slots[i]} />
-            ))}
+      <div class="c-np-blog-hero__side">
+        {thumb && Thumb ? (
+          <div class="c-np-blog-hero__thumb" aria-hidden="true" data-np-illustration>
+            <Thumb {...thumb.props} />
           </div>
-        </div>
-      )}
+        ) : Hero ? (
+          <div class="c-np-blog-hero__illustration" aria-hidden="true" data-np-illustration>
+            <Hero {...hero.props} />
+          </div>
+        ) : (
+          <div class="c-np-blog-hero__media" aria-hidden="true">
+            <div class="c-np-blog-hero__collage">
+              {shots.slice(0, 4).map((s, i) => (
+                <img src={s.src} srcset={s.srcset} width="453" height="300" alt="" loading="eager" decoding="async" style={slots[i]} />
+              ))}
+            </div>
+          </div>
+        )}
+        <NpBlogAuthor page={page} />
+      </div>
     </div>
     <hr class="c-np-blog-hero__rule" />
   </Container>
@@ -126,6 +143,22 @@ const slots = [
   }
   .c-np-blog-hero__lead :global(p) {
     margin: 0;
+  }
+  /* The image, then the author card 12px below it (Figma 3718:7504). */
+  .c-np-blog-hero__side {
+    display: flex;
+    flex-direction: column;
+    gap: 0.857rem;
+    min-width: 0;
+  }
+  /* The card thumbnail (Figma 3736:7123) at its own 544 × 362 ratio. */
+  .c-np-blog-hero__thumb {
+    position: relative;
+    aspect-ratio: 544 / 362;
+    overflow: hidden;
+    border: var(--border-default);
+    border-radius: 8px;
+    background: var(--color-white);
   }
   /* Gradient card with the screenshot collage (Figma 3142:1618029). */
   .c-np-blog-hero__media {

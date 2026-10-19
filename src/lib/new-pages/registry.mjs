@@ -19,6 +19,9 @@ export const DEFAULTED_DIR = join(PACK_DIR, "defaulted");
 export const CHECKER = join(PACK_DIR, "scripts", "check-content.mjs");
 export const APPLY_DEFAULTS = join(PACK_DIR, "scripts", "apply-defaults.mjs");
 export const PLAN_FILE = join(PACK_DIR, "data", "plan.json");
+/** Blog posts: one file per post, rendered with the article template at
+ *  `/blog/<slug>`. Their family comes from this folder, not `pageType`. */
+export const BLOG_DIR = join(ROOT, "content-drafts", "blog");
 
 /** `pageType` → family (brief 5.2). Any other type is skipped. */
 export const FAMILY = /** @type {const} */ ({
@@ -31,7 +34,7 @@ export const FAMILY = /** @type {const} */ ({
 });
 
 /**
- * @typedef {"commercial" | "article"} Family
+ * @typedef {"commercial" | "article" | "blog"} Family
  * @typedef {{ slug: string, url: string, pageType: string, family: Family | null,
  *   draft: boolean, updatedAt: string | undefined, file: string }} PackEntry
  */
@@ -57,18 +60,24 @@ export function resolveMode(env, isDev) {
   return { production, includeDrafts, view };
 }
 
-/** Every pack file, parsed. Front matter errors are left to the checker. */
-export function readPackFiles() {
-  if (!existsSync(CONTENT_DIR)) return [];
-  return readdirSync(CONTENT_DIR)
+/** @param {string} dir */
+function readMarkdownDir(dir) {
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
     .filter((f) => f.endsWith(".md"))
     .sort()
     .map((f) => {
-      const file = join(CONTENT_DIR, f);
+      const file = join(dir, f);
       const parsed = readContentFile(readFileSync(file, "utf8"));
       return { file, parsed };
     });
 }
+
+/** Every pack file, parsed. Front matter errors are left to the checker. */
+export const readPackFiles = () => readMarkdownDir(CONTENT_DIR);
+
+/** Every blog post file, parsed (`BLOG_DIR`). The loader checks them. */
+export const readBlogFiles = () => readMarkdownDir(BLOG_DIR);
 
 /** @returns {PackEntry[]} */
 export function readPackEntries() {
@@ -101,5 +110,22 @@ export function sitemapInfo() {
     if (e.draft) draftPaths.add(e.url);
     else if (e.updatedAt) lastmod[e.url] = e.updatedAt;
   }
+  // Blog posts the same way. `/blog` is listed once a post is released,
+  // with the latest `updatedAt` of the released posts.
+  /** @type {string[]} */
+  const released = [];
+  for (const { parsed } of readBlogFiles()) {
+    const d = /** @type {Record<string, any>} */ (parsed.data);
+    const url = String(d["url"] ?? "");
+    const updatedAt = d["updatedAt"] ? String(d["updatedAt"]) : undefined;
+    if (!url) continue;
+    if (d["draft"] !== false) draftPaths.add(url);
+    else if (updatedAt) {
+      lastmod[url] = updatedAt;
+      released.push(updatedAt);
+    }
+  }
+  if (released.length === 0) draftPaths.add("/blog");
+  else lastmod["/blog"] = /** @type {string} */ (released.sort().at(-1));
   return { draftPaths, lastmod };
 }

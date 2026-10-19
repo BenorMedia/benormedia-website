@@ -138,6 +138,14 @@ const rootClass = ["c-cta__actions", tone === "light" && "is-light", className]
       flex-direction: column;
       align-items: stretch;
     }
+    /* Home only (lead 2026-10-16): side by side, equal widths. */
+    :global(.is-home) .c-cta__buttons {
+      flex-direction: row;
+    }
+    :global(.is-home) .c-cta__buttons > :global(*) {
+      flex: 1 1 0;
+      white-space: nowrap;
+    }
   }
 
   /* --- Trusted badge (docs/refs/trusted-badge.png) ------------------- */

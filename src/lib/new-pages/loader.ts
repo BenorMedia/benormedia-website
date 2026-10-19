@@ -5,6 +5,8 @@
  *
  *   commercial  service, industry, regional  → `src/pages/[...page].astro`
  *   article     guide, comparison, data-study → `src/pages/guides/[slug].astro`
+ *   blog        every file in `content-drafts/blog/` → `src/pages/blog/[slug].astro`
+ *               (the article template; family from the folder, not `pageType`)
  *
  * Everything is keyed on the family, never on a slug. Docs: docs/new-pages.md.
  */
@@ -19,6 +21,7 @@ import {
   FAMILY,
   PLAN_FILE,
   ROOT,
+  readBlogFiles,
   readPackFiles,
   resolveMode,
 } from "./registry.mjs";
@@ -26,8 +29,9 @@ import { escapeHtml, Slugger } from "./html";
 import { GapTable, hasToken, stripTokens, type Gap } from "./markers";
 import { breadcrumbs, relatedItem, type Crumb, type LinkContext, type PlanPage, type RelatedItem, type VisibleCrumb } from "./links";
 import { inline, plainInline, renderBody, type RenderedSection } from "./markdown";
+import copy from "./copy.json";
 
-export type Family = "commercial" | "article";
+export type Family = "commercial" | "article" | "blog";
 export type View = "review" | "defaults";
 
 interface FrontMatter {
@@ -113,10 +117,87 @@ export interface NpPage {
   /** Article read time, minutes (body + FAQ at 230 words a minute). */
   readMinutes: number;
   /** Related pack pages built in this mode (articles' Resources cards). */
-  relatedCards: { href: string; title: string; description: string; family: Family; data: Record<string, string> }[];
+  relatedCards: Card[];
   gaps: Gap[];
   /** A section rendered with the live service `ServiceProcess` tabs (front matter `process`). */
   process: PageProcess | undefined;
+}
+
+/** A card in the Resources grid (articles' related pages, /blog, /guides,
+ *  author pages). `publishedAt` and `author` only for articles. */
+export interface Card {
+  slug?: string;
+  href: string;
+  title: string;
+  description: string;
+  family: Family;
+  data: Record<string, string>;
+  publishedAt?: string;
+  author?: string;
+}
+
+/** The card for a built article page (guide or blog post). */
+export function cardOf(p: NpPage): Card {
+  return {
+    slug: p.slug,
+    href: p.url,
+    title: p.h1,
+    description: p.description,
+    family: p.family,
+    data: p.draft ? { "data-draft-target": p.slug } : {},
+    publishedAt: p.publishedAt,
+    ...(p.author.hasGap || !p.author.text ? {} : { author: p.author.text }),
+  };
+}
+
+/** Fewest cards in an article's Resources section (lead 2026-10-19). */
+const MIN_RESOURCES = 3;
+
+const internalHrefs = (page: NpPage): Set<string> =>
+  new Set([...page.sections.map((x) => x.html).join("").matchAll(/href="(\/[^"#?]*)"/g)].map((m) => m[1] ?? ""));
+
+/**
+ * Tops up each guide's and blog post's related cards to `MIN_RESOURCES`
+ * with the most relevant pages built in this mode (lead 2026-10-19): the
+ * page's own `related` cards first, then articles and services ranked by a
+ * shared category (+3), a link between the two pages (+2 each way), a
+ * service the body links to (+2), shared related pages (+1 each), and
+ * newest first on ties. Drafts only appear where drafts are built.
+ */
+function fillResources(pages: NpPage[]): void {
+  const categories = copy.categories as Record<string, string>;
+  const info = new Map(
+    pages.map((p) => [p.slug, { links: internalHrefs(p), related: new Set(p.related.map((r) => r.href).filter((h): h is string => !!h)) }]),
+  );
+  for (const page of pages) {
+    if (page.family === "commercial" || page.relatedCards.length >= MIN_RESOURCES) continue;
+    const mine = info.get(page.slug);
+    if (!mine) continue;
+    const taken = new Set(page.relatedCards.map((c) => c.href));
+    const scored = pages
+      .filter((c) => c.slug !== page.slug && !taken.has(c.url))
+      .map((c) => {
+        const theirs = info.get(c.slug);
+        let score = 0;
+        if (c.family !== "commercial" && categories[c.slug] && categories[c.slug] === categories[page.slug]) score += 3;
+        if (mine.links.has(c.url)) score += 2;
+        if (theirs?.links.has(page.url)) score += 2;
+        if (c.family === "commercial" && mine.related.has(c.url)) score += 2;
+        for (const r of mine.related) if (theirs?.related.has(r)) score += 1;
+        return { c, score };
+      })
+      .filter((x) => x.score > 0)
+      .sort((a, b) => b.score - a.score || b.c.publishedAt.localeCompare(a.c.publishedAt) || a.c.slug.localeCompare(b.c.slug));
+    for (const { c } of scored) {
+      if (page.relatedCards.length >= MIN_RESOURCES) break;
+      const card = cardOf(c);
+      page.relatedCards.push(
+        c.family === "commercial"
+          ? { slug: c.slug, href: card.href, title: card.title, description: card.description, family: card.family, data: card.data }
+          : card,
+      );
+    }
+  }
 }
 
 export interface PageProcess {
@@ -177,6 +258,39 @@ function gate(files: string[], release: boolean): void {
   }
 }
 
+/** The blog posts' closing method note, left off the page. */
+const BLOG_DROPPED_SECTION = /^How was this post written and checked\??$/i;
+const BLOG_MARKER = /\[(?:FACT NEEDED|VERIFY|PERSON|QUOTE|RESULT NEEDED)\b[^\]]*\]/;
+const BLOG_REQUIRED = ["slug", "url", "title", "description", "h1", "author", "publishedAt", "updatedAt"] as const;
+
+/**
+ * Blog post gate (the pack checker's rules are for pack pages): required
+ * front matter, `url` = `/blog/<slug>`, unique slugs, and no gap marker
+ * anywhere in the file, draft or not. A failure stops the build.
+ */
+function blogGate(
+  files: readonly { file: string; parsed: { data: unknown; errors: { line: number; msg: string }[]; raw?: string | undefined; body: string } }[],
+): void {
+  const problems: string[] = [];
+  const seen = new Map<string, string>();
+  for (const { file, parsed } of files) {
+    const rel = relative(ROOT, file);
+    const d = parsed.data as FrontMatter;
+    const add = (m: string): number => problems.push(`${rel}: ${m}`);
+    for (const e of parsed.errors) add(`front matter L${e.line}: ${e.msg}`);
+    for (const key of BLOG_REQUIRED) if (!d[key]) add(`missing front matter "${key}"`);
+    if (typeof d.draft !== "boolean") add(`"draft" must be true or false`);
+    if (d.slug && d.url !== `/blog/${d.slug}`) add(`url "${d.url}" must be /blog/${d.slug}`);
+    // `raw` is the front matter only, so the body is scanned too.
+    const marker = BLOG_MARKER.exec(`${parsed.raw ?? ""}\n${parsed.body}`);
+    if (marker) add(`gap marker ${marker[0].slice(0, 60)}: answer it before importing the post`);
+    const slug = String(d.slug ?? "");
+    if (seen.has(slug)) add(`slug "${slug}" is also used by ${seen.get(slug)}`);
+    seen.set(slug, rel);
+  }
+  if (problems.length) throw new Error(`[new-pages] blog check failed:\n${problems.join("\n")}`);
+}
+
 function readPlan(): Map<string, PlanPage> {
   const plan = JSON.parse(readFileSync(PLAN_FILE, "utf8")) as { pages: PlanPage[] };
   return new Map(plan.pages.map((p) => [p.slug, p]));
@@ -208,8 +322,14 @@ export function loadPages(): NpPage[] {
   gate(built.filter((b) => b.data.draft !== false).map((b) => relative(ROOT, b.file)), false);
   gate(built.filter((b) => b.data.draft === false).map((b) => relative(ROOT, b.file)), true);
 
+  const blogFiles = readBlogFiles();
+  blogGate(blogFiles);
+  const blogBuilt = blogFiles.filter(({ parsed }) => (parsed.data as FrontMatter).draft === false || mode.includeDrafts);
+
+  // Every linkable page by slug: the pack pages and the blog posts (so a
+  // post can link to another post; drafts follow the draft rules).
   const pack = new Map(
-    files.map(({ parsed }) => {
+    [...files.map((f) => ({ ...f, family: undefined as Family | undefined })), ...blogFiles.map((f) => ({ ...f, family: "blog" as Family }))].map(({ parsed, family }) => {
       const d = parsed.data as FrontMatter;
       return [
         String(d.slug),
@@ -219,6 +339,9 @@ export function loadPages(): NpPage[] {
           h1: String(d.h1 ?? ""),
           description: String(d.description ?? ""),
           pageType: String(d.pageType ?? ""),
+          publishedAt: String(d.publishedAt ?? ""),
+          author: String(d.author ?? ""),
+          family,
         },
       ] as const;
     }),
@@ -247,6 +370,22 @@ export function loadPages(): NpPage[] {
     });
   });
 
+  // Blog posts: already final, so no defaults view.
+  for (const { file, parsed } of blogBuilt) {
+    pages.push(
+      buildPage(parsed.data as FrontMatter, parsed.body, {
+        view: mode.view,
+        includeDrafts: mode.includeDrafts,
+        pack,
+        plan,
+        file: relative(ROOT, file),
+        family: "blog",
+      }),
+    );
+  }
+
+  fillResources(pages);
+
   cache = { key, pages };
   return pages;
 }
@@ -259,12 +398,14 @@ interface BuildContext {
   pack: LinkContext["pack"];
   plan: Map<string, PlanPage>;
   file: string;
+  /** Overrides the family from `pageType` (blog posts). */
+  family?: Family;
 }
 
 function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
   const slug = String(d.slug);
   const pageType = String(d.pageType);
-  const family = (FAMILY as Record<string, Family>)[pageType] as Family;
+  const family = ctx.family ?? ((FAMILY as Record<string, Family>)[pageType] as Family);
   const gaps = new GapTable();
   const slugger = new Slugger();
   const links: LinkContext = {
@@ -291,7 +432,11 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
   });
 
   // Visuals: numbered from 1 in file order, placed after the H2 named in `after`.
-  const sections: PageSection[] = rendered.sections.map((s) => ({ ...s, visual: undefined }));
+  // Blog posts drop their closing method note (lead 2026-10-15), in every
+  // post: the file keeps it, the page and its table of contents don't.
+  const sections: PageSection[] = rendered.sections
+    .filter((s) => !(family === "blog" && BLOG_DROPPED_SECTION.test(s.title)))
+    .map((s) => ({ ...s, visual: undefined }));
   (d.visuals ?? []).forEach((v, i) => {
     const n = i + 1;
     const key = `${slug}:${n}`;
@@ -329,7 +474,11 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
   });
 
   const authorTok = gaps.tokenize(String(d.author ?? ""));
-  const crumbs = breadcrumbs(d.breadcrumb ?? [], links);
+  // Blog posts: Home › Blog › the post (its title without the brand suffix).
+  const crumbs =
+    family === "blog"
+      ? blogCrumbs(String(d.title ?? "").replace(/\s*\|\s*BenorMedia$/, ""), String(d.url))
+      : breadcrumbs(d.breadcrumb ?? [], links);
   const related = (d.related ?? []).map((r) => relatedItem(String(r), links)).filter((r): r is RelatedItem => r !== null);
 
   return {
@@ -389,10 +538,32 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
       const p = s ? ctx.pack.get(s) : undefined;
       if (!s || !p || s === slug) return [];
       if (p.draft && !ctx.includeDrafts) return [];
-      const fam = (FAMILY as Record<string, Family>)[p.pageType ?? ""];
+      const fam = p.family ?? (FAMILY as Record<string, Family>)[p.pageType ?? ""];
       if (!fam) return [];
-      return [{ href: p.url, title: p.h1, description: p.description ?? "", family: fam, data: p.draft ? { "data-draft-target": s } : {} }];
+      const article = fam !== "commercial";
+      return [
+        {
+          slug: s,
+          href: p.url,
+          title: p.h1,
+          description: p.description ?? "",
+          family: fam,
+          data: p.draft ? { "data-draft-target": s } : {},
+          ...(article && p.publishedAt ? { publishedAt: p.publishedAt } : {}),
+          ...(article && p.author ? { author: p.author } : {}),
+        },
+      ];
     }),
     gaps: gaps.unique(),
   };
+}
+
+/** The blog post breadcrumb. `/blog` is built whenever a post is. */
+function blogCrumbs(name: string, url: string): { visible: VisibleCrumb[]; ld: Crumb[] } {
+  const ld: Crumb[] = [
+    { name: copy.livePathNames["/"], url: "/" },
+    { name: copy.blog.indexName, url: "/blog" },
+    { name, url },
+  ];
+  return { visible: [{ label: ld[0]!.name, href: "/" }, { label: ld[1]!.name, href: "/blog" }, { label: name }], ld };
 }
