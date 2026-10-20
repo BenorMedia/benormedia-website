@@ -2,7 +2,7 @@
 
 ## How this file works (read before writing)
 
-**Structure.** `## Global` first (stack, workflow, design system, layout shell, and any component reused on more than one page), then one `## <Page>` section per page in `SITEMAP.md` order: Home · Service pages · Work · Testimonials · Pricing · Blog. Add a page section the first time that page needs an entry. Nothing goes outside these sections.
+**Structure.** `## Global` first (stack, workflow, design system, layout shell, and any component reused on more than one page), then one `## <Page>` section per page in `SITEMAP.md` order: Home · Service pages · Work · Case studies · Testimonials · Pricing · Blog. Add a page section the first time that page needs an entry. Nothing goes outside these sections.
 
 **Each section has exactly two parts, in this order:**
 
@@ -499,6 +499,41 @@ Without adding to your team." with "website moving." marked Gradient (published 
 - **Mobile / tablet** — no mobile refs; built with DS tokens, `TODO: DS mobile`. (2026-09-29)
 - ~~**Hero and listing spacing**~~ — RESOLVED 2026-09-29: lead set 7.5rem (hero top, hero → filters) and 3rem (filters → list) in visual QA (see Decisions).
 - ~~**Hero type sizes**~~ — CLOSED 2026-09-29: the lead gives measurements in visual QA if needed (W-10).
+
+---
+
+## Case studies
+
+### Decisions
+| Date | Decision | Reason | Status |
+|---|---|---|---|
+| 2026-10-20 | Case studies index at `/case-studies`, detail pages at `/case-studies/<slug>`. Figma: index 3764:15808, template 3764:16012 (desktop only). `/work` stays the client listing; its rows get a "Read the case study" link when the client has a published case study | Figma breadcrumb "Home › Case studies › …"; the index is a different page from the approved Work listing | Lead |
+| 2026-10-20 | Case studies live in Sanity as a new `caseStudy` document (SCHEMAS v0.10), fields as proposed in the planning summary; index SEO lives in code like `/work` (no singleton). `case-studies` added to the reserved service slugs | Repeatable data lives in Sanity (SCHEMAS approach) | Lead |
+| 2026-10-20 | The JOOR brief (`docs/brief-next-pages.md` Part 2, `docs/content/work-joor.md`) is to be aligned with this Figma template: `/case-studies/joor`, Sanity `caseStudy` instead of a code data file, Figma section order. JOOR is the first client | Lead | Lead |
+| 2026-10-20 | Mobile and tablet: no designs; adapted from the site's existing responsive patterns (767 / 991 breakpoints). Every adaptation is listed in the handoff for the lead's review | Lead | Lead |
+| 2026-10-20 | Cards: same hover / focus and motion as the blog cards (`NpBlogResources`) on `dev` at build time. Index: every published case study, no pagination or filters for now. Dates in the blog format (`formatDate`, e.g. "October 20, 2026"). "03 / Solution" = the case study's services. Last section keeps the "Resources" eyebrow; its button is "Get in Touch". Share icons: X, as on the blog | Lead | Lead |
+| 2026-10-20 | All visible copy is placeholder marked `TODO: COPY`. Nothing is published in Sanity: case-study documents are created as drafts only | Lead | Lead |
+| 2026-10-20 | Template preview = placeholder content in code on a noindex `/dev/case-study` page (no Sanity read token) | Drafts never render: the site reads published documents only | Lead |
+| 2026-10-20 | `/case-studies` is noindex and out of the sitemap until the first case study is published | No empty index in search results | Lead |
+| 2026-10-20 | The `caseStudy` schema is built in code but not deployed to the live Studio; Sergio deploys it | Lead | Lead |
+
+### Open questions
+
+#### Content
+- **All case-study copy** — index title second line, index description, card titles, template intro, "Resources" heading, every case-study body, results, quotes and meta tags are placeholders (`TODO: COPY`). The Figma body (MagBak / Fospha) and quote (David Chevalier, SimpleTiger, next to a Surfe logo) are sample content and are not reused. (2026-10-20)
+- **JOOR facts** — the first case study keeps every open marker of `docs/content/work-joor.md` (quote, person, result, language list, JOOR's written OK) until JOOR approves. (2026-10-20)
+
+#### Design team
+- **Mobile / tablet** — no designs; adapted from existing patterns, every choice listed in the handoff. `TODO: DS mobile`. (2026-10-20)
+- **Empty and long states** — no design for an index with 0 published case studies, a card without a client logo, a case study without results or testimonial, or more than 6 cards. (2026-10-20)
+
+#### Lead / CEO
+- ~~**Previewing drafts**~~ — RESOLVED 2026-10-20: placeholder content on a noindex `/dev/case-study` page (see Decisions).
+- **Schema deploy (Sergio)** — the `caseStudy` schema is in code only; Sergio deploys it to the live Studio after the PR is reviewed. (2026-10-20)
+
+#### Engineering follow-ups
+- **Brief alignment** — `docs/brief-next-pages.md` Part 2 and `docs/content/work-joor.md` still describe `/work/joor`, a code data file and the Flow Ninja section order; update them to match the decisions above before `/seo-work-joor` runs. (2026-10-20)
+- **Card motion** — the animated card thumbnails are in open PRs #61 and #67, not on `dev`; when they merge, merge `dev` into this branch so the case-study cards match. (2026-10-20)
 
 ---
 
