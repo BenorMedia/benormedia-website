@@ -516,6 +516,7 @@ Without adding to your team." with "website moving." marked Gradient (published 
 | 2026-10-20 | Template preview = placeholder content in code on a noindex `/dev/case-study` page (no Sanity read token) | Drafts never render: the site reads published documents only | Lead |
 | 2026-10-20 | `/case-studies` is noindex and out of the sitemap until the first case study is published | No empty index in search results | Lead |
 | 2026-10-20 | The `caseStudy` schema is built in code but not deployed to the live Studio; Sergio deploys it | Lead | Lead |
+| 2026-10-20 | `caseStudy`: `body` optional for now; no character limits on title, intro, industry or challenge until real copy is in; `link.internalRef` and post-body internal links don't target case studies yet | Lead, after the schema handoff | Lead |
 
 ### Open questions
 
@@ -533,6 +534,8 @@ Without adding to your team." with "website moving." marked Gradient (published 
 
 #### Engineering follow-ups
 - **Brief alignment** — `docs/brief-next-pages.md` Part 2 and `docs/content/work-joor.md` still describe `/work/joor`, a code data file and the Flow Ninja section order; update them to match the decisions above before `/seo-work-joor` runs. (2026-10-20)
+- **Case-study character limits** — set max lengths for `title`, `intro`, `industry` and `challenge` once real copy shows what fits the design. (2026-10-20)
+- **Links to case studies** — allow `caseStudy` in `link.internalRef` and post-body internal links when someone needs it (SCHEMAS bump). (2026-10-20)
 - **Card motion** — the animated card thumbnails are in open PRs #61 and #67, not on `dev`; when they merge, merge `dev` into this branch so the case-study cards match. (2026-10-20)
 
 ---

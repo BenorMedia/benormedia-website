@@ -10,13 +10,23 @@ import { ACCENT_TITLE_MAX_MESSAGE } from '../objects/accentTitle';
  */
 
 // Top-level routes a service slug would collide with (docs/SITEMAP.md
-// "Reserved slugs").
-const RESERVED_SLUGS = ['work', 'pricing', 'testimonials', 'blog', 'studio', 'dev', '404'];
+// "Reserved slugs"). `case-studies` added in SCHEMAS.md v0.10.
+const RESERVED_SLUGS = [
+  'work',
+  'case-studies',
+  'pricing',
+  'testimonials',
+  'blog',
+  'studio',
+  'dev',
+  '404',
+];
 
-const KEBAB_CASE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+// Shared with caseStudy.ts (same slug rules).
+export const KEBAB_CASE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 /** "Custom Websites & Migrations" → "custom-websites-migrations". */
-const slugify = (input: string) =>
+export const slugify = (input: string) =>
   input
     .toLowerCase()
     .normalize('NFKD')
