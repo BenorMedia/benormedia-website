@@ -516,6 +516,7 @@ Without adding to your team." with "website moving." marked Gradient (published 
 | 2026-10-20 | Template preview = placeholder content in code on a noindex `/dev/case-study` page (no Sanity read token) | Drafts never render: the site reads published documents only | Lead |
 | 2026-10-20 | `/case-studies` is noindex and out of the sitemap until the first case study is published | No empty index in search results | Lead |
 | 2026-10-20 | The `caseStudy` schema is built in code but not deployed to the live Studio; Sergio deploys it | Lead | Lead |
+| 2026-10-20 | Case study quote: the case study's testimonial, else the client's; a "Lorem ipsum" placeholder quote is skipped (falls back to the client's). `/work` "Read the case study" links to the client's newest published case study | Lead, after the queries handoff | Lead |
 | 2026-10-20 | `caseStudy`: `body` optional for now; no character limits on title, intro, industry or challenge until real copy is in; `link.internalRef` and post-body internal links don't target case studies yet | Lead, after the schema handoff | Lead |
 
 ### Open questions

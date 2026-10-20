@@ -5,7 +5,7 @@ Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) 
 ### v0.10 changes vs v0.9 (2026-10-20)
 - **New `caseStudy` document**, routable at `/case-studies/<slug>` (see the table below). Index `/case-studies` lists every published case study, `order(publishedAt desc)`. Created as drafts only until the lead says otherwise.
 - **Reserved service slugs** gain `case-studies`.
-- **New queries:** `ALL_CASE_STUDIES` (cards: `_id`, `title`, `slug`, `publishedAt`, `client->{ name, logo }`), `CASE_STUDY_SLUGS`, `CASE_STUDY_BY_SLUG` (every field, `client->`, `services[]->{ name, slug }`, `coalesce(testimonial, client->testimonial)->`, `related[]->` card fields), `CASE_STUDY_SLUG_BY_CLIENT` (for the "Read the case study" link on `/work` rows).
+- **New queries:** `ALL_CASE_STUDIES` (cards: `_id`, `title`, `slug`, `publishedAt`, `client->{ name, logo }`), `CASE_STUDY_SLUGS`, `CASE_STUDY_BY_SLUG` (every field, `client->`, `services[]->{ name, slug }`, the case study's testimonial, else the client's (a "Lorem ipsum" placeholder is skipped), `related[]->` card fields, plus `latest`: the 3 newest other published case studies, card fields, the "Resources" fallback when `related` is empty), `CASE_STUDY_SLUG_BY_CLIENT` (for the "Read the case study" link on `/work` rows).
 - `client`, `testimonial` and `service` are unchanged.
 
 ### v0.9 changes vs v0.8 (2026-10-01)

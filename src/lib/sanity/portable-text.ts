@@ -79,3 +79,31 @@ export function linkRuns(blocks: PortableTextBlock[] | null | undefined): LinkRu
       return href ? { text: span.text ?? '', href } : { text: span.text ?? '' };
     });
 }
+
+/**
+ * Reading speed for "N min read". Mirrors the 230 words a minute that
+ * `src/lib/new-pages/loader.ts` uses for the new pages and blog (inlined there,
+ * in a Node-only module, so it can't be imported here).
+ */
+export const READ_WORDS_PER_MINUTE = 230;
+
+/** Words in every text block (all styles, list items included). */
+export function portableTextWordCount(blocks: PortableTextBlock[] | null | undefined): number {
+  return (blocks ?? [])
+    .filter((block) => block._type === 'block')
+    .reduce(
+      (total, block) =>
+        total +
+        (block.children ?? [])
+          .map((child) => child.text ?? '')
+          .join('')
+          .split(/\s+/)
+          .filter(Boolean).length,
+      0,
+    );
+}
+
+/** Minutes to read `blocks`, rounded, at least 1 (same formula as the new pages). */
+export function portableTextReadMinutes(blocks: PortableTextBlock[] | null | undefined): number {
+  return Math.max(1, Math.round(portableTextWordCount(blocks) / READ_WORDS_PER_MINUTE));
+}

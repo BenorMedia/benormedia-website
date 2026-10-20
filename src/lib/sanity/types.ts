@@ -376,3 +376,79 @@ export interface Service {
   faqSections?: ServiceFaqSection[] | null;
   seo?: Seo | null;
 }
+
+// ---------------------------------------------------------------------------
+// Case studies — results of `ALL_CASE_STUDIES` and `CASE_STUDY_BY_SLUG`
+// (SCHEMAS.md v0.10)
+// ---------------------------------------------------------------------------
+
+/** A `link` annotation in a case study body. `href` may be a relative path (`/pricing`). */
+export interface PortableTextLinkDef {
+  _key: string;
+  _type: 'link';
+  href?: string;
+  openInNewTab?: boolean;
+}
+
+/**
+ * One block of a case study body: paragraph, H2 (a section, feeds the table
+ * of contents) or H3 (a phase); bold / italic decorators as span `marks`;
+ * bullet or numbered list items via `listItem` + `level`.
+ */
+export interface CaseStudyBodyBlock extends PortableTextBlock {
+  _key: string;
+  _type: 'block';
+  style?: 'normal' | 'h2' | 'h3';
+  listItem?: 'bullet' | 'number';
+  level?: number;
+  children?: PortableTextSpan[];
+  markDefs?: PortableTextLinkDef[];
+}
+
+/** Index card and "Resources" card. */
+export interface CaseStudyCard {
+  _id: string;
+  _type: 'caseStudy';
+  title: string;
+  slug: string;
+  /** `YYYY-MM-DD` (a Sanity `date`, not a datetime like `post.publishedAt`). */
+  publishedAt: string;
+  /** `null` when the client reference is dangling. */
+  client: { _id: string; name?: string; logo?: SanityImage } | null;
+}
+
+export interface CaseStudyService {
+  _id: string;
+  name: string;
+  slug: string;
+}
+
+/** Testimonial as projected on a case study (no `client` back-reference). */
+export type CaseStudyTestimonial = Omit<Testimonial, 'client'>;
+
+export interface CaseStudy extends CaseStudyCard {
+  /** Minutes; empty = calculated from the body (`caseStudyReadMinutes`). */
+  readTime?: number | null;
+  intro?: string | null;
+  industry?: string | null;
+  challenge?: string | null;
+  client: {
+    _id: string;
+    _type: 'client';
+    name?: string;
+    logo?: SanityImage;
+    websiteUrl?: string;
+  } | null;
+  services?: CaseStudyService[] | null;
+  /** The case study's own testimonial, else the client's; `null` = no quote block. */
+  testimonial?: CaseStudyTestimonial | null;
+  /** Not required in the schema: may be missing. */
+  body?: CaseStudyBodyBlock[] | null;
+  /** Max 3. */
+  results?: (Kpi & { _key: string })[] | null;
+  /** Editor picks (max 3), unpublished / dangling references removed. */
+  related?: CaseStudyCard[] | null;
+  /** The 3 newest other published case studies (fallback for `related`). */
+  latest?: CaseStudyCard[] | null;
+  seo?: Seo | null;
+}
