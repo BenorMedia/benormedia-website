@@ -1,6 +1,8 @@
 # Handoff — astro — About page (/about)
 
-Date: 2026-10-21 · Author: astro agent · Branch: `feat/phase5-about` · Status: DONE (desktop), with one blocker on the full production-build proof (see "Production guard proof")
+Date: 2026-10-21 · Author: Emily · Branch: `feat/phase5-about` · Status: DONE
+
+Desktop build done (built by the astro agent, reviewed and committed by the orchestrator). The full production-build proof is partial because of a case-studies blocker that is not from this branch; see "Production guard proof" and "Next steps".
 
 ## What I did
 - Built `/about` from Figma 3790:37097 in desktop layout: hero (`PageHero`) + static photo strip, `LogoStrip`, core values (left-aligned heading, scoped exception), stats, office (divider + Barcelona stamp, 1 + 3 photos), team wall, and leadership (6 × Sergio from `AUTHORS`). The site's CTA banner and footer stay as they are.
@@ -102,3 +104,16 @@ The placeholders are instead read with `fs` by `src/pages/about/photos/[file].ts
 
 ## Open questions for the project lead
 - See DECISIONS → About (copy, photos, leaders, release checklist) and the new "About values with no token" line.
+
+## Next steps
+1. **Lead:** review `/about` on the PR's Vercel preview at 1440 and 1920 against Figma 3790:37097. Check the footer "About us" link is there on the preview.
+2. **Lead, then merge:** merge the PR into `dev` once approved. Nothing goes to `main`; on production the page and footer link are not built while the guard is in.
+3. **Case-studies workstream (blocks every production deploy from `dev`, not from this branch):** a case study is published in Sanity while the `/case-studies` copy is still placeholder. Replace `CASE_STUDY_COPY.indexHero.title`, `.accent` and `.description` in `src/components/case-studies/copy.ts` and `PAGE_META.caseStudies.description` in `src/lib/content/seo.ts`, or unpublish the case study. Then rerun `PUBLIC_SITE_ENV=production pnpm run build` and repeat the About leak test (no `dist/client/about`, 0 placeholder hashes in `dist/` and `.vercel/output`).
+4. **Content (Sergio / CEO):** final copy for the hero description, stats (heading, description, four values and texts), office heading and description, leadership heading and description, and confirm the values texts and the team block; real meta title and description; real names, roles, photos and LinkedIn URLs for the six leaders; BenorMedia photos for the strip, office and team wall.
+5. **Design team:** strip and team-wall animation specs (`TODO: ANIM`), mobile and tablet at 991 and 767 (`TODO: DS mobile`), the leadership line-art ring as its own asset, and tokens or OKs for the five `TODO: DS` values.
+6. **Release (remove the About guard), only after steps 3 and 4:**
+   1. Replace the files in `src/assets/about/_placeholder/` with the real photos, import them through `astro:assets`, then delete `src/pages/about/photos/[file].ts` and the `_placeholder/` folder.
+   2. Remove the guard: `getStaticPaths` in `src/pages/about/[...about].astro` (or turn it back into `src/pages/about.astro`), and `showAboutPage` in `src/components/layout/Footer.astro`.
+   3. Drop `noIndex` on the page; remove `about` from the sitemap filter in `astro.config.mjs` and from `NOINDEX_PAGES` in `scripts/check-seo.mjs`.
+   4. Add `/about` to `PAGES` in `scripts/check-seo.mjs` and to `LASTMOD` in `astro.config.mjs`; add the `public/llms.txt` line in the release commit.
+   5. Remove every `TODO: COPY` and `TODO: ASSET` on the page; run build, check, lint and `check-seo`; lead approves; lead releases to `main`.
