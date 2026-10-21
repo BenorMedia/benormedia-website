@@ -102,7 +102,8 @@
     "website-architecture-seo": "SEO",
     "saas-homepage-design": "Web Design",
     "webflow-salesforce-integration": "Webflow",
-    "core-web-vitals-optimization": "SEO"
+    "core-web-vitals-optimization": "SEO",
+    "webflow-security-php2shell": "Webflow"
   },
   "resources": {
     "eyebrow": "Resources",

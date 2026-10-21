@@ -53,6 +53,13 @@ export const TH_LOGO = {
 } as const;
 export type ThLogo = keyof typeof TH_LOGO;
 
+/** Logo cards cut from a lead-supplied thumbnail (logo on white, no border). */
+export const TH_CARD = {
+  php: { src: `${TH}/logos/php-card.webp`, w: 354, h: 211 },
+  webflow: { src: `${TH}/logos/webflow-card.webp`, w: 527, h: 126 },
+} as const satisfies Record<string, ThAsset>;
+export type ThCardName = keyof typeof TH_CARD;
+
 /** Large 3D objects (cut from the file's object sheet). */
 export const TH_OBJECT = {
   seoChart: { src: `${TH}/art/object-seo-chart.webp`, w: 241, h: 254 },

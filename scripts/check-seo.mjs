@@ -52,6 +52,7 @@ const PAGES = {
   '/blog/saas-homepage-design': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'saas homepage' },
   '/blog/webflow-salesforce-integration': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow salesforce integration' },
   '/blog/core-web-vitals-optimization': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'core web vitals' },
+  '/blog/webflow-security-php2shell': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow security' },
   '/blog/saas-technical-seo': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'saas technical seo' },
   '/blog/track-brand-mentions-in-chatgpt': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'brand mentions chatgpt' },
   '/blog/consent-mode-v2-webflow': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'consent mode v2' },

@@ -54,6 +54,7 @@
 - [SaaS Homepage Design: Sections in Order for B2B](https://www.benormedia.com/blog/saas-homepage-design): SaaS homepage design for B2B: the sections to include and their order, how to write the hero and CTA, six real homepages compared, and the technical checks.
 - [Webflow Salesforce Integration for B2B Forms](https://www.benormedia.com/blog/webflow-salesforce-integration): Webflow Salesforce integration for B2B: five ways to connect Webflow forms to Salesforce or HubSpot, the documented limits that drop leads, and a test list.
 - [Core Web Vitals Optimization: Webflow and Astro](https://www.benormedia.com/blog/core-web-vitals-optimization): Core Web Vitals optimization for Webflow and Astro: how third-party scripts hurt LCP, INP, and CLS, how to find them, and the rules that keep them in check.
+- [Webflow Security After PHP2Shell: What Changes](https://www.benormedia.com/blog/webflow-security-php2shell): What the October 2026 PHP2Shell flaws mean for WordPress and PHP sites, what Webflow security covers for you, and the work your team still owns.
 
 ## Company
 

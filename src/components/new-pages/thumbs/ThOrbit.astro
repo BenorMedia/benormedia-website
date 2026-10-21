@@ -4,16 +4,20 @@
  * blue glow, with eight white icon tiles around them. Motion: the tiles
  * orbit a full 360° around the rings' center and stay upright (full turn
  * instead of a sway, then slower and on the ring lines: lead 2026-10-19).
+ * Optional `cards`: logo cards over the rings that drift slowly (the
+ * webflow-security-php2shell thumbnail, lead 2026-10-21).
  */
 import "./th.css";
-import { TH_ICON, TH_SVG, type ThIcon } from "./assets";
+import { TH_CARD, TH_ICON, TH_SVG, type ThCardName, type ThIcon } from "./assets";
 
 interface Props {
   /** Eight icons, in the design's tile order. */
   icons: readonly ThIcon[];
+  /** Logo cards, placed in design px (x, y = top left; w, h = card size). */
+  cards?: readonly { logo: ThCardName; x: number; y: number; w: number; h: number }[];
 }
 
-const { icons } = Astro.props;
+const { icons, cards = [] } = Astro.props;
 // Tile centers, design px (Figma 3736:9454). In the design they sit near,
 // not on, the rings; each one moves to its nearest ring at the same angle, so
 // the tiles run along the lines as the layer turns.
@@ -41,6 +45,11 @@ const ON_RING = AT.map(([x, y]) => {
         </span>
       ))}
     </span>
+    {cards.map((c) => (
+      <span class="np-th__art np-th-orbit__card" style={`--x: ${c.x}; --y: ${c.y}; --w: ${c.w}; --h: ${c.h};`}>
+        <img src={TH_CARD[c.logo].src} width={TH_CARD[c.logo].w} height={TH_CARD[c.logo].h} alt="" loading="lazy" decoding="async" />
+      </span>
+    ))}
   </span>
 </span>
 
@@ -63,6 +72,28 @@ const ON_RING = AT.map(([x, y]) => {
   .np-th-orbit__tile > .np-th-tile {
     animation: np-th-orbit-back 120s linear infinite;
     will-change: transform;
+  }
+  .np-th-orbit__card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: calc(0.6 * var(--u)) solid var(--color-border);
+    border-radius: calc(4 * var(--u));
+    background: var(--color-white);
+    overflow: hidden;
+    animation: np-th-orbit-card 7s ease-in-out infinite alternate;
+  }
+  .np-th-orbit__card:nth-of-type(even) {
+    animation-direction: alternate-reverse;
+  }
+  .np-th-orbit__card img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  @keyframes np-th-orbit-card {
+    from { translate: calc(-6 * var(--u)) calc(4 * var(--u)); }
+    to { translate: calc(6 * var(--u)) calc(-4 * var(--u)); }
   }
   @keyframes np-th-orbit {
     from { transform: rotate(0deg); }

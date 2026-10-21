@@ -603,6 +603,14 @@ export const THUMBS: Record<string, ThumbEntry> = {
   "core-web-vitals-optimization": t(ThOrbit, {
     icons: ["speedGauge", "codeBlocks", "analytics", "devices3d", "chartSearch", "puzzle3d", "reporting", "shieldLock"],
   }),
+  // PHP and Webflow over the orbit, from the lead's thumbnail (2026-10-21).
+  "webflow-security-php2shell": t(ThOrbit, {
+    icons: ["geoPin", "palette", "shieldLock", "codeBlocks", "chartSearch", "pencilDoc", "funnelTarget", "designGrid"],
+    cards: [
+      { logo: "php", x: 93, y: 67, w: 184, h: 112.5 },
+      { logo: "webflow", x: 207, y: 209.5, w: 271, h: 70.5 },
+    ],
+  }),
   // Content from the CMS, rendered for every device.
   "headless-cms-seo": t(ThObject, { object: "deviceStack" }),
   // Launch week.
