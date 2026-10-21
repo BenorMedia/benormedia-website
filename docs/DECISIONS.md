@@ -603,6 +603,7 @@ Without adding to your team." with "website moving." marked Gradient (published 
 - **About animations** — no spec for the hero photo strip (Figma "Container:transform" track, likely a marquee) or the team wall (tiles with two stacked layers, likely a flip/swap). Built static. `TODO: ANIM`. (2026-10-21)
 - **About mobile / tablet** — no designs for 991px and 767px. `TODO: DS mobile`. (2026-10-21)
 - **About assets to export** — values globe line art, four 3D value icons and the "Barcelona, Spain" stamp come from Figma as given; any values with no token are `TODO: DS`. (2026-10-21)
+- **About values with no token** — built with the closest token, `TODO: DS`: value names #161616 (`--color-black-secondary`), team tile #F5F9FE (`--color-blue-light` 7% on white), office divider rgba(3,17,28,0.1) (`--color-border`), stamp shadow black 12% (`--color-heading` 12%), stamp label SF Pro 22.7px (body font, `--fs-p-l`); the leadership photo's line-art ring is baked into the Figma image, so the `AUTHORS` photo gets a 1px `--color-blue` circle until the ring is exported as its own file. (2026-10-21)
 
 #### Lead / CEO
 - **Release checklist for `/about`** — before it goes to `main`: replace the placeholder photos and copy, then remove the production guard (page + footer link), drop `noindex`, add it to the sitemap, `LASTMOD` and `check-seo.mjs` `PAGES`. (2026-10-21)

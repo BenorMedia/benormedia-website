@@ -173,7 +173,9 @@ export default defineConfig({
     // production domain is set. Dev pages, Studio and the 404 are left out,
     // and so are the noindex pages: /cookie-policy (placeholder) and
     // /testimonials while testimonials are off (lead 2026-09-30; drop them
-    // from this list when they go live). Privacy Policy + Terms are
+    // from this list when they go live), and /about while it has placeholder
+    // content (lead 2026-10-21; production builds don't emit it at all).
+    // Privacy Policy + Terms are
     // indexable since 2026-10-05, so they are listed. `/case-studies` while
     // no indexable case study is published (production builds don't emit it
     // at all then), and case studies set to noindex.
@@ -181,7 +183,7 @@ export default defineConfig({
       filter: (page) => {
         const path = new URL(page).pathname.replace(/\/$/, '');
         return (
-          !/\/(dev|studio)(\/|$)|\/404$|^\/(cookie-policy|testimonials)\/?$/.test(new URL(page).pathname) &&
+          !/\/(dev|studio)(\/|$)|\/404$|^\/(cookie-policy|testimonials|about)\/?$/.test(new URL(page).pathname) &&
           !NEW_PAGES.draftPaths.has(path) &&
           !(path === '/case-studies' && !CASE_STUDIES.hasPublished) &&
           !CASE_STUDIES.noIndexPaths.has(path)

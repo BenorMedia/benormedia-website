@@ -25,6 +25,7 @@
  */
 import type { SiteSettings } from "../../lib/sanity/types";
 import Eyebrow from "../ui/Eyebrow.astro";
+import { isProductionBuild } from "../../lib/sanity/case-study-release";
 
 interface Props {
   siteSettings?: SiteSettings | null | undefined;
@@ -64,7 +65,13 @@ const blogLinks = [
 ];
 // `hidden`: kept in the markup, not shown. Testimonials stays out of
 // production for now (lead 2026-09-30, same as the nav).
+// "About us" (/about, lead 2026-10-21): not rendered at all in production
+// builds while the page has placeholder photos and copy; the page itself is
+// not built there either (src/pages/about/[...about].astro). Remove the
+// condition when /about is released.
+const showAboutPage = !isProductionBuild();
 const aboutLinks: Array<{ label: string; href: string; openContact?: boolean; hidden?: boolean }> = [
+  ...(showAboutPage ? [{ label: "About us", href: "/about" }] : []),
   { label: "Our Work", href: "/work" },
   { label: "Pricing", href: "/pricing" },
   { label: "Contact", href: "#", openContact: true },
