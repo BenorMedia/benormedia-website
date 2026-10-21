@@ -1,0 +1,160 @@
+---
+/**
+ * AboutValues — c-about-values
+ * "Our core values" (Figma 3790:37122): heading + text on the left, a
+ * bordered list of four values with 3D icons on the right, the line-art
+ * globe (Figma 3794:41846) behind, clipped by the section.
+ *
+ * The heading is LEFT-aligned on purpose: a scoped exception to the
+ * "SectionHeader is always centered" rule (lead 2026-10-21), so this section
+ * has its own heading markup and `SectionHeader` stays unchanged.
+ *
+ * TODO: COPY — confirm the values texts (Figma text, unconfirmed).
+ */
+import Container from "../../ui/Container.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  items: readonly { name: string; icon: string; text: string }[];
+}
+
+const { title, description, items } = Astro.props;
+---
+
+<section class="c-about-values" aria-labelledby="c-about-values-title">
+  {/* Decorative line art, exported from Figma as it shows in the section. */}
+  <img
+    class="c-about-values__globe"
+    src="/images/about/values-globe.svg"
+    alt=""
+    aria-hidden="true"
+    width="1304"
+    height="1110"
+    loading="lazy"
+    decoding="async"
+  />
+  <Container class="c-about-values__inner">
+    <div class="c-about-values__intro">
+      <h2 id="c-about-values-title" class="c-about-values__title c-text_xl">{title}</h2>
+      <p class="c-about-values__description c-paragraph">{description}</p>
+    </div>
+    <ul class="c-about-values__list" role="list">
+      {items.map((item) => (
+        <li class="c-about-values__item">
+          <div class="c-about-values__body">
+            <img class="c-about-values__icon" src={item.icon} alt="" aria-hidden="true" width="64" height="64" loading="lazy" decoding="async" />
+            <h3 class="c-about-values__name">{item.name}</h3>
+            <p class="c-about-values__text c-paragraph_s">{item.text}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </Container>
+</section>
+
+<style>
+  .c-about-values {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-white);
+  }
+  /* Figma: the exported globe covers the section's top-left 1304 × 1110px. */
+  .c-about-values__globe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 93.143rem;
+    height: auto;
+    pointer-events: none;
+  }
+  .c-about-values :global(.c-about-values__inner) {
+    position: relative;
+    display: flex;
+    gap: 1px; /* Figma */
+    align-items: flex-start;
+    padding-top: 7.857rem; /* 110px */
+    padding-bottom: 7.857rem;
+  }
+  .c-about-values__intro {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: 1.714rem; /* 24px */
+    min-width: 0;
+  }
+  .c-about-values__title {
+    margin: 0;
+    color: var(--color-black-secondary); /* Figma Black 500 */
+    line-height: 1.4;
+  }
+  .c-about-values__description {
+    max-width: 38.357rem; /* 537px */
+    margin: 0;
+    color: var(--color-text);
+  }
+  .c-about-values__list {
+    flex: 1 1 0;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0.5px solid var(--color-gray);
+    border-radius: 8px;
+    list-style: none;
+  }
+  .c-about-values__item {
+    padding: 2.857rem 4rem; /* 40px 56px */
+    border-bottom: 0.5px solid var(--color-gray);
+    background: var(--color-surface-glass);
+    -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+  }
+  .c-about-values__item:last-child {
+    border-bottom: 0;
+  }
+  .c-about-values__body {
+    position: relative;
+    max-width: 38.104rem; /* 533.45px */
+    padding-left: 2.857rem; /* 40px */
+  }
+  .c-about-values__icon {
+    position: absolute;
+    top: 0.464rem; /* 6.5px */
+    left: 0;
+    width: 2.286rem; /* 32px */
+    height: 2.286rem;
+  }
+  /* Figma "Text M 600": 30px, line-height 1.5, #161616. */
+  .c-about-values__name {
+    margin: 0;
+    color: var(--color-black-secondary); /* TODO: DS — Figma #161616, no token */
+    font-size: var(--fs-text-m);
+    line-height: 1.5;
+  }
+  .c-about-values__text {
+    max-width: 35.286rem; /* 494px */
+    margin: 0;
+    padding-top: 0.643rem; /* 9px */
+    color: var(--color-text);
+  }
+
+  /* TODO: DS mobile (991px, 767px) — no design. Fallback: the two columns
+     stack. */
+  @media (max-width: 991px) {
+    .c-about-values :global(.c-about-values__inner) {
+      flex-direction: column;
+      gap: 3rem;
+    }
+    .c-about-values__intro,
+    .c-about-values__list {
+      flex: none;
+      width: 100%;
+    }
+  }
+  @media (max-width: 767px) {
+    .c-about-values__item {
+      padding: 2rem;
+    }
+  }
+</style>

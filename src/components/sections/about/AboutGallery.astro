@@ -1,0 +1,78 @@
+---
+/**
+ * AboutGallery — c-about-gallery
+ * The hero photo strip (Figma 3815:27357): six 420px cards in one row,
+ * centered on the viewport and wider than it (2600px at the Figma frame);
+ * the section clips the overflow, so the page never scrolls sideways. Each
+ * photo is bottom-aligned at its Figma height.
+ *
+ * TODO: ANIM — Figma names the track "Container:transform" (likely a
+ * marquee). Built static for now: no JS, no animation (lead 2026-10-21).
+ * TODO: ASSET (replace before release) — third-party placeholder photos.
+ */
+import { photoSrc, figmaRem, type AboutPhoto } from "./content";
+
+interface Props {
+  items: readonly { photo: AboutPhoto; height: number }[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="c-about-gallery">
+  <ul class="c-about-gallery__track" role="list">
+    {items.map(({ photo, height }) => (
+      <li class="c-about-gallery__card">
+        {/* TODO: ASSET (replace before release) */}
+        <img
+          class="c-about-gallery__img"
+          src={photoSrc(photo)}
+          alt={photo.alt}
+          width={photo.w}
+          height={photo.h}
+          style={`--c-about-gallery-h: ${figmaRem(height)}`}
+          loading="eager"
+          decoding="async"
+        />
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  /* Figma: 60px below the hero text, 110px below the strip. */
+  .c-about-gallery {
+    margin-top: 4.286rem;
+    padding-bottom: 7.857rem;
+    overflow: hidden;
+  }
+  /* Six 420px cards + five 16px gaps, centered on the viewport. */
+  .c-about-gallery__track {
+    display: flex;
+    gap: 1.143rem; /* 16px */
+    align-items: flex-end;
+    width: max-content;
+    height: 38.143rem; /* 534px */
+    margin: 0;
+    margin-left: 50%;
+    padding: 0;
+    list-style: none;
+    transform: translateX(-50%);
+  }
+  .c-about-gallery__card {
+    flex: 0 0 30rem; /* 420px */
+    display: flex;
+    align-items: flex-end;
+    height: 100%;
+  }
+  .c-about-gallery__img {
+    display: block;
+    width: 100%;
+    height: var(--c-about-gallery-h);
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  /* TODO: DS mobile (991px, 767px) — no design. The strip keeps its desktop
+     layout (scaled by the root size) and stays clipped by the section. */
+</style>

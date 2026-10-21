@@ -1,0 +1,162 @@
+---
+/**
+ * AboutOffice — c-about-office
+ * Office (Figma 3795:42069): a full-width divider line with the "Barcelona,
+ * Spain." stamp centered on it, the centered header, then one full-width
+ * photo and a row of three photos (full bleed, 20px gaps).
+ *
+ * The stamp image (Figma 3795:42102) has no text baked in: "Barcelona,
+ * Spain." is a live text layer on top of it, as in Figma.
+ *
+ * Photo heights follow the Figma frame as aspect ratios (1920 × 955 and
+ * 626.67 × 740.78), so they scale with the viewport like the widths do.
+ *
+ * TODO: COPY — heading and description are Figma lorem ipsum.
+ * TODO: ASSET (replace before release) — the four photos are third-party
+ * placeholders.
+ */
+import AboutSectionHeader from "./AboutSectionHeader.astro";
+import { photoSrc, type AboutPhoto } from "./content";
+
+interface Props {
+  stampLabel: string;
+  title: string;
+  description: string;
+  wide: AboutPhoto;
+  row: readonly AboutPhoto[];
+}
+
+const { stampLabel, title, description, wide, row } = Astro.props;
+---
+
+<section class="c-about-office">
+  <div class="c-about-office__rule">
+    <div class="c-about-office__stamp">
+      <img
+        class="c-about-office__stamp-img"
+        src="/images/about/barcelona-stamp.webp"
+        alt=""
+        aria-hidden="true"
+        width="400"
+        height="388"
+        loading="lazy"
+        decoding="async"
+      />
+      <p class="c-about-office__stamp-label">{stampLabel}</p>
+    </div>
+  </div>
+
+  <div class="c-about-office__header">
+    <AboutSectionHeader title={title} description={description} />
+  </div>
+
+  <div class="c-about-office__photos">
+    {/* TODO: ASSET (replace before release) */}
+    <img class="c-about-office__photo is-wide" src={photoSrc(wide)} alt={wide.alt} width={wide.w} height={wide.h} loading="lazy" decoding="async" />
+    <div class="c-about-office__row">
+      {row.map((photo) => (
+        /* TODO: ASSET (replace before release) */
+        <img class="c-about-office__photo" src={photoSrc(photo)} alt={photo.alt} width={photo.w} height={photo.h} loading="lazy" decoding="async" />
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .c-about-office {
+    display: flex;
+    flex-direction: column;
+    gap: 4.286rem; /* 60px */
+    padding: 7.857rem 0; /* 110px */
+    overflow: hidden;
+    background: var(--color-white);
+  }
+
+  /* Figma: 123.5px tall row, 1px line across the frame (5px inset each
+     side at 1920) through its middle. */
+  .c-about-office__rule {
+    position: relative;
+    height: 8.821rem;
+    margin-inline: 0.357rem;
+  }
+  .c-about-office__rule::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    border-top: 1px solid var(--color-border); /* TODO: DS — Figma rgba(3, 17, 28, 0.1), no token */
+  }
+  /* Stamp: 199.68 × 193.44px, rotated 8deg, centered on the line. */
+  .c-about-office__stamp {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 14.263rem;
+    height: 13.817rem;
+    transform: translate(-50%, -50%) rotate(8deg);
+  }
+  .c-about-office__stamp-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Figma: 0 6.24px 24.96px black at 12%, following the stamp's edge.
+       TODO: DS — no shadow token; heading color used for the tint. */
+    filter: drop-shadow(0 0.446rem 1.783rem color-mix(in srgb, var(--color-heading) 12%, transparent));
+  }
+  /* Figma text layer: left 30.95px, top 107.66px, 111px wide, rotated
+     -5.68deg, 22.714px white, line-height 1, tracking -0.306px.
+     TODO: DS — Figma font is SF Pro (not a site font): body font used; no
+     22.714px size token: closest --fs-p-l (1.67rem = 23.4px at 1440). */
+  .c-about-office__stamp-label {
+    position: absolute;
+    top: 7.69rem;
+    left: 2.211rem;
+    width: 7.932rem;
+    margin: 0;
+    color: var(--color-white);
+    font-family: var(--font-body);
+    font-size: var(--fs-p-l);
+    line-height: 1;
+    letter-spacing: -0.0135em;
+    transform: rotate(-5.68deg);
+    transform-origin: left top;
+  }
+
+  .c-about-office__header {
+    padding-inline: 3rem;
+  }
+
+  .c-about-office__photos {
+    display: flex;
+    flex-direction: column;
+    gap: 1.429rem; /* 20px */
+  }
+  .c-about-office__row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.429rem;
+  }
+  .c-about-office__photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 626.667 / 740.781;
+    object-fit: cover;
+  }
+  .c-about-office__photo.is-wide {
+    aspect-ratio: 1920 / 955;
+  }
+
+  /* TODO: DS mobile (991px, 767px) — no design. Fallback: the row of three
+     stacks on phones. */
+  @media (max-width: 767px) {
+    .c-about-office__row {
+      grid-template-columns: 1fr;
+    }
+    .c-about-office__header {
+      padding-inline: 2rem;
+    }
+  }
+</style>

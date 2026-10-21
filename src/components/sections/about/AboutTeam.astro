@@ -1,0 +1,191 @@
+---
+/**
+ * AboutTeam — c-about-team
+ * Team wall (Figma 3796:42115): nine staggered columns of 144px tiles
+ * (a photo or an empty light tile) around a centered block: H2, paragraph,
+ * the "What stays human" label and three eyebrow labels.
+ *
+ * TODO: ANIM — Figma tiles have two stacked layers (likely a flip/swap).
+ * Built static for now: no JS, no animation (lead 2026-10-21).
+ * TODO: COPY — confirm the block text (Figma text, unconfirmed).
+ * TODO: ASSET (replace before release) — the headshots are third-party
+ * placeholders.
+ */
+import Eyebrow from "../../ui/Eyebrow.astro";
+import { PHOTOS, photoSrc, figmaRem, type TeamTile } from "./content";
+
+interface Props {
+  title: string;
+  description: string;
+  label: string;
+  traits: readonly string[];
+  wall: readonly { offset: number; tiles: readonly TeamTile[] }[];
+}
+
+const { title, description, label, traits, wall } = Astro.props;
+---
+
+<section class="c-about-team" aria-labelledby="c-about-team-title">
+  <div class="c-about-team__content">
+    <h2 id="c-about-team-title" class="c-about-team__title c-text_xl">{title}</h2>
+    <p class="c-about-team__description c-paragraph">{description}</p>
+    <div class="c-about-team__human">
+      <p class="c-about-team__label">{label}</p>
+      <ul class="c-about-team__traits" role="list">
+        {traits.map((trait) => (
+          <li><Eyebrow>{trait}</Eyebrow></li>
+        ))}
+      </ul>
+    </div>
+  </div>
+
+  <div class="c-about-team__wall">
+    {wall.map((column) => (
+      <div class="c-about-team__column" style={`--c-about-team-offset: ${figmaRem(column.offset)}`}>
+        {column.tiles.map((tile) =>
+          tile ? (
+            <div class:list={["c-about-team__tile", { "is-plain": tile.plain }]}>
+              {/* TODO: ASSET (replace before release) */}
+              <img
+                class="c-about-team__photo"
+                src={photoSrc(PHOTOS[tile.photo])}
+                alt={PHOTOS[tile.photo].alt}
+                width={PHOTOS[tile.photo].w}
+                height={PHOTOS[tile.photo].h}
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          ) : (
+            <div class="c-about-team__tile is-empty" aria-hidden="true" />
+          ),
+        )}
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  /* Figma frame: 960px tall, the wall 1392px wide from 90.28px down, the
+     text block 493px wide from 487px down, both centered. */
+  .c-about-team {
+    position: relative;
+    height: 68.571rem;
+    overflow: hidden;
+    background: var(--color-white);
+  }
+
+  .c-about-team__wall {
+    position: absolute;
+    top: 6.449rem;
+    left: 50%;
+    display: grid;
+    grid-template-columns: repeat(9, 10.286rem); /* 144px */
+    gap: 0.857rem; /* 12px */
+    align-items: start;
+    transform: translateX(-50%);
+  }
+  .c-about-team__column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.857rem;
+    padding-top: var(--c-about-team-offset);
+  }
+  /* Tile: 144 × 153.3px, light tint, 0.5px gray border; photo 151px tall. */
+  .c-about-team__tile {
+    height: 10.951rem;
+    overflow: hidden;
+    border: 0.5px solid var(--color-gray);
+    /* TODO: DS — Figma #F5F9FE, no token: mixed from --color-blue-light. */
+    background: color-mix(in srgb, var(--color-blue-light) 7%, var(--color-white));
+  }
+  .c-about-team__tile.is-plain {
+    border-color: transparent;
+  }
+  .c-about-team__photo {
+    display: block;
+    width: 100%;
+    height: 10.786rem;
+    object-fit: cover;
+  }
+
+  .c-about-team__content {
+    position: absolute;
+    top: 34.79rem;
+    left: 50%;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.143rem; /* 16px */
+    align-items: center;
+    width: 35.214rem; /* 493px */
+    text-align: center;
+    transform: translateX(-50%);
+  }
+  .c-about-team__title {
+    margin: 0;
+    color: var(--color-black-secondary);
+    line-height: 1.4;
+  }
+  .c-about-team__description {
+    margin: 0;
+    color: var(--color-text);
+  }
+  .c-about-team__human {
+    display: flex;
+    flex-direction: column;
+    gap: 1.143rem;
+    align-items: center;
+    padding-top: 1.143rem;
+  }
+  /* Label: the Eyebrow type (DESIGN_SYSTEM §3.3) without the box. */
+  .c-about-team__label {
+    margin: 0;
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: normal;
+    letter-spacing: 0.064em;
+    text-transform: uppercase;
+  }
+  .c-about-team__traits {
+    display: flex;
+    gap: 2.286rem; /* 32px */
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* TODO: DS mobile (991px, 767px) — no design. Fallback: the text block
+     moves above the wall; the wall keeps its desktop layout, centered and
+     clipped by the section. */
+  @media (max-width: 991px) {
+    .c-about-team {
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+      height: auto;
+      padding: 5rem 0;
+    }
+    .c-about-team__content {
+      position: static;
+      width: auto;
+      max-width: 35.214rem;
+      margin-inline: auto;
+      padding-inline: 2rem;
+      transform: none;
+    }
+    .c-about-team__wall {
+      position: relative;
+      top: auto;
+      width: max-content;
+    }
+  }
+  @media (max-width: 767px) {
+    .c-about-team__traits {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+  }
+</style>

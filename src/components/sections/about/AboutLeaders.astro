@@ -1,0 +1,153 @@
+---
+/**
+ * AboutLeaders — c-about-leaders
+ * Leadership (Figma 3790:37176): centered header, then a 3 × 2 grid of
+ * cards: round photo, name (H3), role, LinkedIn icon link.
+ *
+ * People come from `AUTHORS` (src/lib/new-pages/authors.ts): name,
+ * jobTitle, photo, linkedin. TODO: COPY — the grid shows Sergio six times as
+ * in Figma, for Sergio's review; heading and description are lorem ipsum.
+ *
+ * The Figma photo has a line-art ring baked into the image; the AUTHORS
+ * photo has none, so the ring is a plain 1px circle for now.
+ * TODO: DS — line-art ring asset needed as a separate file.
+ */
+import Container from "../../ui/Container.astro";
+import AboutSectionHeader from "./AboutSectionHeader.astro";
+import { SHARE_LINKEDIN } from "../../new-pages/blog-icons";
+import type { Author } from "../../../lib/new-pages/authors";
+
+interface Props {
+  title: string;
+  description: string;
+  leaders: readonly Author[];
+}
+
+const { title, description, leaders } = Astro.props;
+---
+
+<section class="c-about-leaders">
+  <Container class="c-about-leaders__inner">
+    <AboutSectionHeader title={title} description={description} />
+    <ul class="c-about-leaders__grid" role="list">
+      {leaders.map((leader) => (
+        <li class="c-about-leaders__card">
+          <img
+            class="c-about-leaders__photo"
+            src={leader.photo.src}
+            alt=""
+            width={leader.photo.w}
+            height={leader.photo.h}
+            loading="lazy"
+            decoding="async"
+          />
+          <div class="c-about-leaders__text">
+            <h3 class="c-about-leaders__name c-text_l">{leader.name}</h3>
+            <p class="c-about-leaders__role c-paragraph_s">{leader.jobTitle}</p>
+          </div>
+          <a class="c-about-leaders__social" href={leader.linkedin} target="_blank" rel="noopener">
+            <Fragment set:html={SHARE_LINKEDIN} />
+            <span class="c-about-leaders__sr-only">{leader.name} on LinkedIn (opens in a new tab)</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </Container>
+</section>
+
+<style>
+  .c-about-leaders {
+    background: var(--color-white);
+  }
+  .c-about-leaders :global(.c-about-leaders__inner) {
+    display: flex;
+    flex-direction: column;
+    gap: 4.286rem; /* 60px */
+    padding-top: 7.857rem; /* 110px */
+    padding-bottom: 7.857rem;
+  }
+  .c-about-leaders__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.714rem; /* 24px */
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .c-about-leaders__card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.786rem; /* 25px */
+    align-items: center;
+    padding: 2.286rem 0; /* 32px */
+    text-align: center;
+  }
+  /* 108px round photo, 15px below the card top padding. */
+  .c-about-leaders__photo {
+    display: block;
+    width: 7.713rem;
+    height: 7.713rem;
+    margin-top: 1.071rem;
+    object-fit: cover;
+    border: 1px solid var(--color-blue); /* TODO: DS — Figma line-art ring baked into the photo */
+    border-radius: 50%;
+    background: var(--color-gray-light);
+  }
+  .c-about-leaders__text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.714rem; /* 10px */
+    align-items: center;
+  }
+  /* Figma "Text L" 38px, line-height normal, Black 500. */
+  .c-about-leaders__name {
+    margin: 0;
+    color: var(--color-black-secondary);
+    line-height: normal;
+  }
+  .c-about-leaders__role {
+    margin: 0;
+    color: var(--color-text);
+  }
+  .c-about-leaders__social {
+    display: inline-flex;
+    width: 2.286rem; /* 32px */
+    height: 2.286rem;
+    color: var(--color-black-secondary);
+    transition: color var(--duration-hover) var(--ease-smooth);
+  }
+  .c-about-leaders__social:hover {
+    color: var(--color-accent);
+  }
+  .c-about-leaders__social:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+  .c-about-leaders__social :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+  .c-about-leaders__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* TODO: DS mobile (991px, 767px) — no design. Fallback: 2 columns, then 1. */
+  @media (max-width: 991px) {
+    .c-about-leaders__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 767px) {
+    .c-about-leaders__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
