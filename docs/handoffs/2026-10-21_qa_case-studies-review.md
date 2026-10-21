@@ -39,3 +39,31 @@ Date: 2026-10-21 · Author: qa agent (written by the orchestrator from the qa re
 - Fix should-fix 1–3 and nits 5, 7–12; nit 6 only for noindex case studies → lead: yes; rerun qa after.
 
 Evidence: `scratchpad/qa-shots/` and `scratchpad/qa-tools/` in the session scratchpad.
+
+---
+
+# QA round 2 (2026-10-21, c50a888)
+
+Status: DONE — **PASS WITH NOTES** (0 blockers · 0 should-fix · 5 new nits). Written by the orchestrator from the qa report. Inline variables only (`PUBLIC_SANITY_PROJECT_ID`, `PUBLIC_SANITY_DATASET`, `PUBLIC_SITE_ENV`, `PUBLIC_SITE_URL`, lead OK); `.env` never read, copied or linked. Worktrees removed.
+
+## Round-1 items
+- Should-fix 1 (`/work` overlap): fixed. Simulated case study on all 61 rows: no overlap from the link at 375, 767, 800, 991, 992, 1200, 1440. At 800, Base Operations, Sublime Security and Notable Capital overlap name/first tag and 19 names are ellipsised — identical on `dev`, rows without links (pre-existing, logged follow-up).
+- Should-fix 2 (sitemap fails open): fixed. Network error, HTTP 500, bad JSON, missing `result` stop the build; `astro dev` warns. Full production build with a failing fetch stops.
+- Should-fix 3 (placeholder guard): fixed. Production stops on index copy and related heading; previews warn; nothing published → no `/case-studies` in production.
+- Nits 5, 7–12 fixed; nit 6 partly, by decision.
+
+## Regression vs `dev` (item 4)
+- Byte-identical: `/`, `/work`, `/pricing`, `/growth`, `/custom-websites-migrations`, `/blog`, `sitemap-0.xml`, the set of HTML files.
+- All 9 posts and 4 guides differ only by the 25 `.c-np-sidebar*` rules moving from the `NpArticlePage` CSS file into one inline `<style>` (≈3.4 KB per page). Markup identical without stylesheet tags; same rule set; computed sidebar styles identical at 1440 / 991 / 390.
+- Also different: `studio/index.html` and Studio JS hashes (new schema type), two unused CSS files.
+
+## Builds
+- Production-like: no `/case-studies`, no `/dev/case-study`, no fixture text/files/hashes, no case-study URL in the sitemap, `check-seo.mjs` passes.
+- Normal: `/case-studies` and `/dev/case-study` present, `noindex, nofollow`; no overflow, 0 console errors at 1440 / 991 / 767 / 390.
+
+## New nits
+- a. `failHard` also applies to `astro check`, `preview`, `sync` (`astro.config.mjs:18`, `:150`): offline `pnpm run check` exits 1 with "Build stopped". Suggest build-only or reword.
+- b. Sidebar CSS inline on every post/guide (≈3.4 KB each) instead of a cached shared file.
+- c. Two unused CSS files in production: `_astro/CaseStudyPage.*.css` (10.7 KB), `_astro/case-study-release.*.css` (5 KB); no fixture text.
+- d. "Read the case study" not aligned across rows at ≥992 (`WorkListing.astro:104`); cosmetic, no design.
+- e. The `data:` stylesheet needs `style-src data:` if a CSP is added (none today).

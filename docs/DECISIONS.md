@@ -563,6 +563,9 @@ Without adding to your team." with "website moving." marked Gradient (published 
 - **"Read the case study" on `/work` rows (Emily)** — placeholder placement next to the tags, no design; design it. (2026-10-21)
 - **`/work` tags overlap names at ~800px (all rows, pre-existing)** — on `dev` too, Sublime Security and Notable Capital names are covered by their tags and 19 names are cut at 800px (shared `ClientList` row CSS, Home/Pricing/services too). Not fixed in this branch. (2026-10-21)
 - **CSP and the `/work` case-study CSS** — if a Content-Security-Policy is added, it needs `style-src data:` or this CSS moves to a static file. (2026-10-21)
+- **`failHard` scope** — the "Sanity unreachable" stop also applies to `astro check`, `preview` and `sync` (`astro.config.mjs`), so an offline `pnpm run check` fails with "Build stopped". Consider limiting it to `astro build` or rewording. (QA round 2, 2026-10-21)
+- **Unused case-study CSS files** — `_astro/CaseStudyPage.*.css` (≈10.7 KB) and `_astro/case-study-release.*.css` (≈5 KB) ship in production with no page using them. (QA round 2, 2026-10-21)
+- **Sidebar CSS inline on posts and guides** — ≈3.4 KB per page instead of a cached shared file since the case-study sidebar reuse; rendering unchanged. (QA round 2, 2026-10-21)
 - **TOC side squares** — Figma shows small squares on the table-of-contents box's side borders; the shared blog sidebar has none. Decide later whether to add them to blog, guides and case studies together. (2026-10-20)
 - **Card motion** — the animated card thumbnails are in open PRs #61 and #67, not on `dev`; when they merge, merge `dev` into this branch so the case-study cards match. (2026-10-20)
 
