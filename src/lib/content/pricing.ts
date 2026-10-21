@@ -11,6 +11,12 @@ export interface PricingPlan {
   description: string;
   /** e.g. "€2,000". */
   price?: string;
+  /**
+   * The same plan in US dollars, e.g. "$2,250" (lead, 2026-10-19). Swapped in
+   * for `price` on /pricing when the visitor is in the US or Canada
+   * (`src/scripts/ui/currency.ts`); the static HTML always ships `price`.
+   */
+  priceUsd?: string;
   /** e.g. "/mo". Only rendered with `price`. */
   period?: string;
   /** Shown instead of a price, e.g. "Let's chat". */
@@ -24,6 +30,7 @@ export const PRICING_PLANS: readonly PricingPlan[] = [
     description:
       "Unlimited marketing design, web design, and web development support for growing B2B companies.",
     price: "€2,000",
+    priceUsd: "$2,250",
     period: "/mo",
     features: [
       "Unlimited development requests",
@@ -43,6 +50,7 @@ export const PRICING_PLANS: readonly PricingPlan[] = [
     description:
       "Technical AEO, AI search analytics, content creation, and ongoing optimization to improve your LLMs visibility and web conversion rate.",
     price: "€2,500",
+    priceUsd: "$2,800",
     period: "/mo",
     features: [
       "Content creation",

@@ -1,0 +1,83 @@
+/* ==========================================================================
+   Card thumbnails (lead 2026-10-18, Figma BenorMedia 3736:7123 "Blog
+   Images"): six layouts at 544 × 362 design px, filling the Resources
+   card's thumbnail box (which owns the border and the radius).
+
+   Units: `--u` is one design px (1/544 of the stage width), so the picture
+   scales with the card as one image. Motion is slow and decorative, and
+   off for prefers-reduced-motion.
+   ========================================================================== */
+.np-th {
+  --u: calc(100cqw / 544);
+  --np-th-glow: color-mix(in srgb, var(--color-accent) 50%, transparent);
+  position: absolute;
+  inset: 0;
+  container-type: inline-size;
+  overflow: hidden;
+  background: var(--color-white);
+  color: var(--color-grey-700);
+  font-family: var(--font-body);
+  line-height: 1.5;
+}
+.np-th__stage {
+  position: absolute;
+  inset: 0;
+}
+.np-th * {
+  box-sizing: border-box;
+}
+.np-th img {
+  display: block;
+  max-width: none;
+}
+
+/* Decorative art from the Figma file (glows, rings, grids), placed in
+   design px: --x / --y = top-left, --w / --h = size. */
+.np-th__art {
+  position: absolute;
+  left: calc(var(--x) * var(--u));
+  top: calc(var(--y) * var(--u));
+  width: calc(var(--w) * var(--u));
+  height: calc(var(--h) * var(--u));
+  pointer-events: none;
+}
+
+/* Icon tile: a grey square with a centered 3D icon (Figma "Item"). */
+.np-th-tile {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: calc(var(--t, 52.2) * var(--u));
+  height: calc(var(--t, 52.2) * var(--u));
+  border-radius: calc(4.8 * var(--u));
+  background: var(--color-gray-light);
+}
+.np-th-tile > img {
+  width: 68%;
+  height: 68%;
+  object-fit: contain;
+}
+.np-th-tile.is-white {
+  background: var(--color-white);
+}
+
+/* Chip: tile + label in a hairline card (Figma "Link"). */
+.np-th-chip {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: calc(19.4 * var(--u));
+  padding: calc(12.3 * var(--u)) calc(19.4 * var(--u));
+  border: calc(0.9 * var(--u)) solid var(--color-border);
+  border-radius: calc(7 * var(--u));
+  background: var(--color-white);
+  font-size: calc(17.6 * var(--u));
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .np-th,
+  .np-th * {
+    animation: none !important;
+  }
+}

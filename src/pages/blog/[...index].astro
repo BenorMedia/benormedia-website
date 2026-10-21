@@ -15,7 +15,7 @@ import NpBlogResources from "../../components/new-pages/NpBlogResources.astro";
 import JsonLd from "../../components/layout/JsonLd.astro";
 import { getPageSeo } from "../../lib/sanity/queries";
 import { PAGE_META } from "../../lib/content/seo";
-import { pagesOf, type NpPage } from "../../lib/new-pages/loader";
+import { cardOf, pagesOf, type NpPage } from "../../lib/new-pages/loader";
 import { clientShots } from "../../lib/new-pages/shots";
 import { blogIndexJsonLd } from "../../lib/new-pages/jsonld";
 import copy from "../../lib/new-pages/copy.json";
@@ -32,15 +32,8 @@ interface Props {
 const { posts } = Astro.props;
 const allDrafts = posts.every((p) => p.draft);
 const [blogPage, shots] = await Promise.all([getPageSeo("blogPage"), clientShots()]);
-// Each post's header illustration as its card thumbnail (as the author page).
-const cards = posts.map((p) => ({
-  slug: p.slug,
-  href: p.url,
-  title: p.h1,
-  description: p.description,
-  family: p.family,
-  data: p.draft ? { "data-draft-target": p.slug } : ({} as Record<string, string>),
-}));
+// Each post's card thumbnail, still on the index (lead 2026-10-18).
+const cards = posts.map(cardOf);
 ---
 
 <BaseLayout
@@ -52,5 +45,5 @@ const cards = posts.map((p) => ({
   {blogIndexJsonLd({ name: copy.blog.indexName, description: PAGE_META.blog.description }, posts).map((data) => <JsonLd data={data} />)}
   <PageHero eyebrow={copy.blog.indexName} title={"Articles on B2B websites,\nSEO and AI search."} accent="SEO and AI search." />
   {/* TODO: COPY — section heading (visually hidden; keeps the outline h1 → h2). */}
-  <NpBlogResources cards={cards} shots={shots} heading="All articles" limit={cards.length} headingHidden heroThumbs />
+  <NpBlogResources cards={cards} shots={shots} heading="All articles" limit={cards.length} headingHidden still />
 </BaseLayout>

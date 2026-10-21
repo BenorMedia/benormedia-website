@@ -2,8 +2,8 @@
  * Markdown → HTML for the pack bodies (brief 5.2). The body syntax is limited
  * by RULES.md section 8: `##` / `###` headings, paragraphs, `-` and `1.`
  * lists, `**bold**`, `[text](href)` links, GFM tables with a `Table: `
- * caption line, and fenced code blocks (blog posts: printed as is, escaped).
- * No raw HTML, images, inline code or quotes. Astro 7 does not ship a
+ * caption line, fenced code blocks and `inline code` (blog posts: printed as
+ * is, escaped). No raw HTML, images or quotes. Astro 7 does not ship a
  * Markdown processor this repo can import, so this small converter covers
  * exactly that subset, with no dependency.
  *
@@ -45,8 +45,20 @@ export interface RenderOptions {
 
 const LINK = /\[([^\]]+)\]\(([^)\s]+)\)/g;
 
-/** Inline Markdown → HTML: escape, then links and bold. */
+const CODE_SPAN = /(`[^`]+`)/;
+
+/** Inline Markdown → HTML: code spans as is (escaped), the rest through links
+ *  and bold. */
 export function inline(text: string, opts: RenderOptions): string {
+  const out = text
+    .split(CODE_SPAN)
+    .map((part) => (CODE_SPAN.test(part) && part.startsWith("`") ? `<code>${escapeHtml(part.slice(1, -1))}</code>` : linksAndBold(part, opts)))
+    .join("");
+  return opts.finish(out);
+}
+
+/** Escape, then links and bold (no code spans). */
+function linksAndBold(text: string, opts: RenderOptions): string {
   let out = "";
   let last = 0;
   for (const m of text.matchAll(LINK)) {
@@ -55,14 +67,14 @@ export function inline(text: string, opts: RenderOptions): string {
     last = (m.index ?? 0) + m[0].length;
   }
   out += emphasis(escapeHtml(text.slice(last)));
-  return opts.finish(out);
+  return out;
 }
 
 const emphasis = (html: string): string => html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
 
 /** Plain text of an inline string (link text kept, bold markers dropped). */
 export const plainInline = (text: string): string =>
-  text.replace(LINK, "$1").replace(/\*\*/g, "").replace(/\s+/g, " ").trim();
+  text.replace(/`([^`]+)`/g, "$1").replace(LINK, "$1").replace(/\*\*/g, "").replace(/\s+/g, " ").trim();
 
 const HEADING = /^(#{2,3})\s+(.*?)\s*$/;
 const CAPTION = /^Table:\s+(.*)$/;
