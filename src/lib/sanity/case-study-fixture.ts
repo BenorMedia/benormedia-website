@@ -108,6 +108,7 @@ export function createCaseStudyFixture(assets: { surfeLogo: FixtureAsset; author
   const caseStudy: CaseStudy = {
     _id: 'fixture-case-study-0',
     _type: 'caseStudy',
+    _updatedAt: '2023-01-04T00:00:00Z',
     title: 'Lorem ipsum dolor sit amet consectetur. Sed augue nisi.',
     slug: 'lorem-ipsum',
     // Figma "01/04/2023", shown in the blog date format (lead 2026-10-20).
@@ -119,7 +120,7 @@ export function createCaseStudyFixture(assets: { surfeLogo: FixtureAsset; author
     challenge:
       'A legacy SCA tool kept reporting a clean bill of health while secrets, supply chain and license risks hid across a multi-language codebase.',
     client: { _id: 'fixture-client-surfe', _type: 'client', name: 'Surfe', logo: SURFE_LOGO },
-    services: [{ _id: 'fixture-service', name: 'Benor Media', slug: 'benor-media' }],
+    services: [{ _id: 'fixture-service', name: 'BenorMedia', slug: 'benor-media' }],
     testimonial: {
       _id: 'fixture-testimonial',
       _type: 'testimonial',

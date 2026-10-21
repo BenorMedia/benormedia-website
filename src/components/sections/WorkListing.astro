@@ -63,8 +63,16 @@ const headingId = "work-listing-title";
 
 // "Read the case study" rows (ClientList `caseStudyLinks`, see its header;
 // no Figma). Their CSS ships only when a row has a link: not in ClientList,
-// so the shared list CSS (Home, Pricing, services) is unchanged, and inline
-// here, so `/work` is byte-identical while no case study is published.
+// so the shared list CSS (Home, Pricing, services) is unchanged, and not in
+// this file's `<style>`, so `/work` stays byte-identical while no case study
+// is published (Astro bundles a component's `<style>` whether or not the
+// markup renders).
+// Delivery (QA nit 9, 2026-10-21): a `<link rel="stylesheet">` with a
+// `data:` URL, right before the list. `stylesheet` is a body-ok keyword, so
+// the link is valid inside the `<div>`; a `<style>` is only valid in
+// `<head>`, wherever it sits in the body, and a component can't add to
+// `<head>`. The CSS is inline in the HTML (no extra request) and parsed
+// before the rows, so they never paint unstyled.
 const hasCaseStudyLinks = clients.some((client) => caseStudyLinks?.has(client._id) === true);
 const caseStudyCss = `
   .c-work-listing .c-client-list__link {
@@ -87,10 +95,19 @@ const caseStudyCss = `
     outline-offset: 2px;
   }
 
+  /* >=992: the link gets its own auto column, left of the tags, so it
+     never overlaps the name (QA should-fix 1). The tags column keeps its
+     18.75rem but may grow: wide tag pairs (funds + category) spill left of
+     it and would cover the link. Tags are right-aligned, so rows whose tags
+     fit look the same as the other rows. */
+  .c-work-listing .c-client-list__row.is-case-study {
+    grid-template-columns: minmax(0, 1fr) auto minmax(18.75rem, auto) 2.5rem;
+  }
+
   .c-work-listing .c-client-list__case-study {
     position: relative;
     z-index: 1;
-    flex: 0 0 auto;
+    justify-self: start;
     color: var(--color-accent);
     text-decoration: underline;
     text-underline-offset: 0.2em;
@@ -117,7 +134,38 @@ const caseStudyCss = `
   .c-work-listing .c-client-list__row:has(.c-client-list__link:focus-visible) + .c-client-list__preview.is-loaded {
     opacity: 1;
   }
+
+  /* <=991: the link drops to its own full-width line under the row
+     (QA should-fix 1: it overlapped the name at 768-991). */
+  @media (max-width: 991px) {
+    .c-work-listing .c-client-list__row.is-case-study {
+      grid-template-columns: minmax(0, 1fr) 18.75rem 2.5rem;
+      grid-template-rows: 3.5rem auto;
+    }
+
+    .c-work-listing .c-client-list__case-study {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+
+  /* <=767: the tags already take line 2 (ClientList), so the link goes
+     to line 3. TODO: DS mobile — no mobile design. */
+  @media (max-width: 767px) {
+    .c-work-listing .c-client-list__row.is-case-study {
+      grid-template-columns: minmax(0, 1fr) 2.5rem;
+      grid-template-rows: 3.5rem auto auto;
+    }
+
+    .c-work-listing .c-client-list__case-study {
+      grid-row: 3;
+    }
+  }
 `;
+// Comments stripped and whitespace collapsed to keep the URL short.
+const caseStudyCssHref = `data:text/css,${encodeURIComponent(
+  caseStudyCss.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\s+/g, " ").trim(),
+)}`;
 ---
 
 {clients.length > 0 && (
@@ -149,8 +197,8 @@ const caseStudyCss = `
       ></p>
 
       <div class="c-work-listing__list" data-anim="work-list">
+        {hasCaseStudyLinks && <link rel="stylesheet" href={caseStudyCssHref} />}
         <ClientList clients={clients} {...(caseStudyLinks ? { caseStudyLinks } : {})} />
-        {hasCaseStudyLinks && <style is:inline set:html={caseStudyCss} />}
       </div>
     </Container>
   </section>

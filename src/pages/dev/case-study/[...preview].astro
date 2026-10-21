@@ -6,10 +6,11 @@
  *
  * Not built in production: it shows Figma sample content (a real person's
  * name and photo next to a client logo, `createCaseStudyFixture`, TODO: COPY).
- * `getStaticPaths` returns no path when `resolveMode` says production
- * (VERCEL_ENV=production or PUBLIC_SITE_ENV=production, the new pages'
- * check); `astro dev`, Vercel previews and local builds get the page. A rest
- * route because a fixed `.astro` page can't be left out of a build.
+ * `getStaticPaths` returns no path when `isProductionBuild()` says
+ * production (VERCEL_ENV=production or PUBLIC_SITE_ENV=production, the new
+ * pages' `resolveMode` check, shared with `/case-studies`); `astro dev`,
+ * Vercel previews and local builds get the page. A rest route because a
+ * fixed `.astro` page can't be left out of a build.
  *
  * Page order as Figma 3764:16012: the shared template `CaseStudyPage` (hero
  * + facts panel → quote → sidebar + body (phase block) + results → related
@@ -26,13 +27,10 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { createCaseStudyFixture, type FixtureAsset } from "../../../lib/sanity/case-study-fixture";
 import { getSiteSettingsCached } from "../../../lib/sanity/site";
-import { resolveMode } from "../../../lib/new-pages/registry.mjs";
+import { isProductionBuild } from "../../../lib/sanity/case-study-release";
 
 export function getStaticPaths() {
-  const meta = import.meta.env as Record<string, unknown>;
-  const siteEnv = meta["PUBLIC_SITE_ENV"];
-  const env = { ...process.env, PUBLIC_SITE_ENV: typeof siteEnv === "string" ? siteEnv : process.env["PUBLIC_SITE_ENV"] };
-  return resolveMode(env, meta["DEV"] === true).production ? [] : [{ params: { preview: undefined } }];
+  return isProductionBuild() ? [] : [{ params: { preview: undefined } }];
 }
 
 // Figma sample images, read at render time (never emitted in production).
@@ -54,9 +52,9 @@ const siteSettings = await getSiteSettingsCached();
   <CaseStudyPage caseStudy={caseStudy} />
   <CtaBanner siteSettings={siteSettings} />
 
-  <section class="cs-preview__cards" aria-labelledby="cs-preview-cards">
+  <section class="c-cs-preview__cards" aria-labelledby="c-cs-preview-cards">
     <Container>
-      <p id="cs-preview-cards" class="cs-preview__label c-paragraph_s">Index card (preview only, not part of the template)</p>
+      <p id="c-cs-preview-cards" class="c-cs-preview__label c-paragraph_s">Index card (preview only, not part of the template)</p>
       <CaseStudyGrid cards={indexCards} variant="index" />
     </Container>
   </section>
@@ -64,15 +62,15 @@ const siteSettings = await getSiteSettingsCached();
 
 <style>
   /* Preview-only block, set apart from the template above. */
-  .cs-preview__cards {
+  .c-cs-preview__cards {
     border-top: 1px dashed var(--color-gray);
     background: var(--color-gray-light);
   }
-  .cs-preview__cards :global(.c-container) {
+  .c-cs-preview__cards :global(.c-container) {
     padding-top: 4rem;
     padding-bottom: 7.857rem;
   }
-  .cs-preview__label {
+  .c-cs-preview__label {
     margin: 0 0 2rem;
     color: var(--color-text);
   }

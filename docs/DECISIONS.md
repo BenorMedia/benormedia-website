@@ -528,6 +528,9 @@ Without adding to your team." with "website moving." marked Gradient (published 
 | 2026-10-21 | Design-system gaps keep the closest existing values; `tokens.css` and `DESIGN_SYSTEM.md` unchanged | Lead | Lead |
 | 2026-10-21 | Empty `/case-studies` (nothing published) shows the hero only, with the listing's padding above the CTA banner. `/work` rows with a published case study show "Read the case study" next to the tags (placeholder, two sibling links, no nesting). `/case-studies` emits the same CollectionPage + BreadcrumbList JSON-LD as `/blog` | Lead, step 5 review | Lead |
 | 2026-10-21 | `/dev/case-study` is not built in production (sample real-person quote and photo); it renders in dev and on Vercel previews | Lead, step 4 review | Lead |
+| 2026-10-21 | `/case-studies` is not built in production while no case study is published (rest route `[...index].astro`); previews and staging build it (noindex, hero only). Its robots tag follows the indexable case studies only, like the sitemap | Lead, QA round 1 | Lead |
+| 2026-10-21 | Builds stop on purpose (a) when a Sanity project id is set and the sitemap can't read the published case studies (every build except `astro dev`), and (b) in production when a case study is published while `/case-studies` copy is still "Lorem ipsum" / "TODO: COPY" (non-production builds warn). The live site keeps its previous deploy | Lead, QA should-fix 2 and 3 | Lead |
+| 2026-10-21 | QA round 1 fixes: `/work` case-study link in its own column ≥992 and its own line ≤991 (case-study rows only; their CSS ships as a body `<link rel="stylesheet" href="data:text/css,…">` only when a row has a link); Article JSON-LD `dateModified` + `image`; body links must start with `/`, `#` or `http(s)://`; new-tab note on body links; page-specific fallback meta description | Lead, QA nits | Lead |
 
 ### Open questions
 
@@ -558,6 +561,8 @@ Without adding to your team." with "website moving." marked Gradient (published 
 - **Figma related-section width (Sergio)** — Figma's related case studies row is 1680px wide with 120px side margins at 1920; built in the page container instead. Decide whether case-study sections (or the site) should follow Figma's width. (2026-10-21)
 - **Design-system gaps from the case-study template (Sergio)** — built with the closest existing values: related heading 60px / line height 1.4 in Figma (Text XL is 54.7px / 1.2); accent tag weight 400 and 8% tint in Figma (DS 600, 5% kept for contrast, 8% measures 4.48:1); heading color #001F3D and card glow #1355FF have no tokens. Add tokens or confirm the current values. (2026-10-21)
 - **"Read the case study" on `/work` rows (Emily)** — placeholder placement next to the tags, no design; design it. (2026-10-21)
+- **`/work` tags overlap names at ~800px (all rows, pre-existing)** — on `dev` too, Sublime Security and Notable Capital names are covered by their tags and 19 names are cut at 800px (shared `ClientList` row CSS, Home/Pricing/services too). Not fixed in this branch. (2026-10-21)
+- **CSP and the `/work` case-study CSS** — if a Content-Security-Policy is added, it needs `style-src data:` or this CSS moves to a static file. (2026-10-21)
 - **TOC side squares** — Figma shows small squares on the table-of-contents box's side borders; the shared blog sidebar has none. Decide later whether to add them to blog, guides and case studies together. (2026-10-20)
 - **Card motion** — the animated card thumbnails are in open PRs #61 and #67, not on `dev`; when they merge, merge `dev` into this branch so the case-study cards match. (2026-10-20)
 

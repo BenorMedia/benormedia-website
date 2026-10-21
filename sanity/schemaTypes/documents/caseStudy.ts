@@ -183,8 +183,22 @@ export const caseStudy = defineType({
                     title: 'URL',
                     description:
                       'Use a path such as /pricing for pages on this site, or a full address starting with https:// for other websites.',
+                    // The site renders only full addresses and paths that
+                    // start with "/" or "#" (`safeHref` in src/lib/sanity/case-study-body.ts);
+                    // anything else would be dropped silently (QA nit 7).
                     validation: (Rule) =>
-                      Rule.required().uri({ allowRelative: true, scheme: ['http', 'https'] }),
+                      Rule.required()
+                        .uri({ allowRelative: true, scheme: ['http', 'https'] })
+                        .custom((value: string | undefined) => {
+                          const href = value?.trim();
+                          if (!href) return true;
+                          if (/^https?:\/\//i.test(href)) return true;
+                          if (href.startsWith('//')) {
+                            return 'Start a link to another website with https:// (for example https://example.com).';
+                          }
+                          if (href.startsWith('/') || href.startsWith('#')) return true;
+                          return `Start a link to a page on this site with "/" (for example /${href.replace(/^\.?\/*/, '')}), or use a full address starting with https://.`;
+                        }),
                   },
                   {
                     name: 'openInNewTab',

@@ -415,6 +415,8 @@ export interface CaseStudyCard {
   publishedAt: string;
   /** `null` when the client reference is dangling. */
   client: { _id: string; name?: string; logo?: SanityImage } | null;
+  /** `seo.noIndex` is on. Only in `ALL_CASE_STUDIES` (the index's robots tag). */
+  noIndex?: boolean;
 }
 
 export interface CaseStudyService {
@@ -427,6 +429,8 @@ export interface CaseStudyService {
 export type CaseStudyTestimonial = Omit<Testimonial, 'client'>;
 
 export interface CaseStudy extends CaseStudyCard {
+  /** ISO datetime of the last edit (Sanity system field). */
+  _updatedAt: string;
   /** Minutes; empty = calculated from the body (`caseStudyReadMinutes`). */
   readTime?: number | null;
   intro?: string | null;

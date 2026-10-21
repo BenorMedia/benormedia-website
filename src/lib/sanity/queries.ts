@@ -417,7 +417,8 @@ const PUBLISHED_CASE_STUDY = /* groq */ `_type == "caseStudy" && defined(slug.cu
 /** Every published case study, newest first (`publishedAt` is a `YYYY-MM-DD` date). */
 export const ALL_CASE_STUDIES = /* groq */ `
 *[${PUBLISHED_CASE_STUDY}] | order(publishedAt desc, title asc){
-  ${CASE_STUDY_CARD_FIELDS}
+  ${CASE_STUDY_CARD_FIELDS},
+  "noIndex": seo.noIndex == true
 }
 `;
 
@@ -433,6 +434,8 @@ export const CASE_STUDY_SLUGS = /* groq */ `
  *     (lead 2026-10-20). Null when neither has a real quote.
  *   - `body`: Portable Text, `link` markDefs kept as stored
  *     (`{ _type: "link", href, openInNewTab? }`, `href` may be relative).
+ *   - `_updatedAt`: last edit of the published document (Article
+ *     `dateModified` in the JSON-LD).
  *   - `related`: the editor's picks, dangling / unpublished references
  *     filtered out. `latest`: the 3 newest other published case studies, the
  *     "Resources" fallback when `related` is empty (`caseStudyResources`).
@@ -441,6 +444,7 @@ export const CASE_STUDY_BY_SLUG = /* groq */ `
 *[${PUBLISHED_CASE_STUDY} && slug.current == $slug][0]{
   _id,
   _type,
+  _updatedAt,
   title,
   "slug": slug.current,
   publishedAt,

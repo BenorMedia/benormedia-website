@@ -30,9 +30,12 @@
  * study becomes a `div` holding two links, so links are never nested:
  *   - the client name links to the website (new tab) and stretches over the
  *     whole row (`::after`), so the row stays clickable as before;
- *   - "Read the case study" sits above that overlay, first in the tags
- *     column. Tab order: website, then case study. The row shows the focus
- *     ring (`:has()`) when the website link has keyboard focus.
+ *   - "Read the case study" sits above that overlay, as its own grid item
+ *     between the name and the tags (not inside the tags, so it can move to
+ *     its own line: at ≥992 an `auto` column next to the tags, at ≤991 a
+ *     full-width second line, at ≤767 a line under the tags; QA 2026-10-21).
+ *     Tab order: website, then case study. The row shows the focus ring
+ *     (`:has()`) when the website link has keyboard focus.
  *   Without a website the name is plain text and only the case study link
  *   is interactive. Without the prop every row renders as before. The
  *   styles for these rows live in `WorkListing` (the only page that passes
@@ -134,9 +137,10 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
             )}
           </span>
 
+          {/* TODO: COPY — case study link label (no Figma). */}
+          <a class="c-client-list__case-study c-paragraph_s" href={row.caseStudyHref}>Read the case study</a>
+
           <span class="c-client-list__tags">
-            {/* TODO: COPY — case study link label (no Figma). */}
-            <a class="c-client-list__case-study c-paragraph_s" href={row.caseStudyHref}>Read the case study</a>
             {row.fundsLabel && <Tag>{row.fundsLabel}</Tag>}
             {row.categoryLabel && <Tag variant="accent">{row.categoryLabel}</Tag>}
           </span>

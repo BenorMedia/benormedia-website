@@ -267,3 +267,31 @@ Screenshots in `/private/tmp/claude-501/-Users-emilygaitan-benormedia-website/1e
 - `TODO: COPY`:
   - `src/components/case-studies/copy.ts`: placeholder labels for real pages. No sample content there.
   - `src/lib/sanity/case-study-fixture.ts`: Figma sample content, dev page only, each block marked.
+
+---
+
+## QA fix round (2026-10-21)
+
+Source: `docs/handoffs/2026-10-21_qa_case-studies-review.md`, should-fix 1 and nit 9 (approved by the lead). Files changed: `src/components/ui/ClientList.astro` (case-study row markup + header comment only; its `<style>` is untouched) and `src/components/sections/WorkListing.astro`. No commit.
+
+### Should-fix 1: "Read the case study" overlapped the client name
+- The link is no longer inside `c-client-list__tags`. It is its own grid item in the row, between the name and the tags (DOM order: website link, case study link, tags, so the keyboard order stays website → case study).
+- **≥992:** row columns `minmax(0, 1fr) auto minmax(18.75rem, auto) 2.5rem`. The link has its own `auto` column left of the tags. The tags column keeps 18.75rem but may grow: on Surfe, Resourcify, Unit21, Sublime Security and Notable Capital the funds + category tags are wider than 18.75rem and spill left (same as today on rows without a link). With a fixed column they covered the link at every width 992–1440. Tags stay right-aligned, so rows whose tags fit look the same as the other rows. The link stays next to the tags at ≥992; long names do not collide or truncate there, so it does not need its own line above 991.
+- **768–991:** the link drops to its own full-width line under the row (`grid-row: 2`), same pattern as the mobile tags line.
+- **≤767:** the tags already take line 2 (ClientList), so the link goes to line 3. `TODO: DS mobile` (no mobile design).
+
+### Nit 9: `<style>` inside a `<div>`
+- Moving the `<style>` outside the `<div>` would not fix it: HTML only allows `<style>` in `<head>`, so a `<style>` anywhere in `<body>` is invalid. A component can't write to `<head>`, and a normal Astro `<style>` block is bundled whenever the component is imported, rendered or not, so `/work` would change.
+- So the CSS now ships as `<link rel="stylesheet" href="data:text/css,…">`, placed just before the list, and only when a row has a case study link. `stylesheet` is a body-ok link type, so a `<link>` inside the `<div>` is valid. The CSS is still inline in the HTML (no extra request; comments stripped, whitespace collapsed) and is parsed before the rows, so they never show unstyled. No CSP in the repo restricts `data:` stylesheets. If one is added later, it needs `style-src data:`; otherwise move this CSS to a static file.
+
+### Verification
+- Temporary in-memory map (every client → `/case-studies/test`) in `WorkListing.astro`, removed before finishing (no `TEMP` line left). Checked in headless Chrome on the running dev server for overlap between name text, link and each tag in all 61 rows:
+  - 375, 767, 991, 992, 1100, 1200, 1440: 0 overlaps, 0 truncated names, no horizontal overflow, 0 console errors.
+  - 800: Sublime Security and Notable Capital names overlap their **tags**, and 19 names truncate. This happens at HEAD too, without any case study link (measured on the HEAD build). It is not caused by the link, which sits on its own line there. Left alone (see below).
+  - Keyboard order in every row: name (website, new tab) → "Read the case study".
+- Screenshots in `/private/tmp/claude-501/-Users-emilygaitan-benormedia-website/1e965cb5-e4aa-4b8e-b467-4188705024b4/scratchpad/qa-fix-work/`: `m375-*.png`, `w800-*.png`, `w991-*.png`, `w1200-*.png`, `w1440-*.png` (`-surfe`, `-sublime`, `-notable` each), plus full pages `work-<width>.png`.
+- **Byte-identical with no published case study:** HEAD (8b4ca88) and HEAD + these two files were built in a scratch worktree with the public Sanity id and dataset passed inline (`.env` never read). `diff -rq` of the two `dist/` trees showed no differences: all 38 HTML pages (`/work`, Home, Pricing, service pages) and every asset are identical. The worktree was removed afterwards.
+- `pnpm run check`: 0 errors, 0 warnings, 0 hints. `pnpm run lint`: pass. `pnpm run build`: passes in the worktree (HEAD + fix). I did not run it in the main tree while another agent was editing there.
+
+### Noticed, left alone
+- Pre-existing in the shared `ClientList` row CSS (measured on `/work`; Home, Pricing and the service pages use the same CSS but were not measured), between 768 and about 900px: wide tag pairs spill out of the fixed 18.75rem column over long names (Sublime Security and Notable Capital at 800). Fixing it means changing the shared row CSS, which is out of scope for this round. Question for the lead: drop the tags to a second line at ≤991 for all rows?

@@ -1,8 +1,10 @@
 ---
 /**
  * CaseStudyInline — the spans of one body block (`parseCaseStudyBody`):
- * bold / italic, links (`openInNewTab` → new tab). Spans that share a link
- * render inside one `<a>`. A soft line break ("\n" in a span) is a `<br>`.
+ * bold / italic, links (`openInNewTab` → new tab, with a visually hidden
+ * "(opens in a new tab)" for screen readers, as on `ClientList`). Spans that
+ * share a link render inside one `<a>`. A soft line break ("\n" in a span)
+ * is a `<br>`.
  */
 import CaseStudySpan from "./CaseStudySpan.astro";
 import type { InlineRun } from "../../../lib/sanity/case-study-body";
@@ -12,12 +14,14 @@ interface Props {
 }
 
 const { runs } = Astro.props;
+// TODO: COPY: same text as ClientList / ClientCard (hardcoded there, not in copy.json).
+const NEW_TAB_NOTE = " (opens in a new tab)";
 ---
 
 {runs.map((run) =>
   run.href ? (
     run.newTab ? (
-      <a href={run.href} target="_blank" rel="noopener">{run.spans.map((s) => <CaseStudySpan span={s} />)}</a>
+      <a href={run.href} target="_blank" rel="noopener">{run.spans.map((s) => <CaseStudySpan span={s} />)}<span class="c-cs-inline__sr-only">{NEW_TAB_NOTE}</span></a>
     ) : (
       <a href={run.href}>{run.spans.map((s) => <CaseStudySpan span={s} />)}</a>
     )
@@ -25,3 +29,18 @@ const { runs } = Astro.props;
     run.spans.map((s) => <CaseStudySpan span={s} />)
   ),
 )}
+
+<style>
+  /* Visually hidden, read by screen readers (same rules as ClientList). */
+  .c-cs-inline__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

@@ -222,12 +222,15 @@ export function pageJsonLd(page: NpPage): Ld[] {
 
 /** A case study (`/case-studies/<slug>`, Sanity `caseStudy`): an Article by
  *  and published by the Organization, `about` the client, and the
- *  breadcrumb (`NpCrumbs` prints none). No offers. */
+ *  breadcrumb (`NpCrumbs` prints none). No offers. `dateModified` and
+ *  `image` (an absolute URL) are omitted when not given. */
 export function caseStudyJsonLd(cs: {
   url: string;
   headline: string;
   description?: string | undefined;
   datePublished: string;
+  dateModified?: string | undefined;
+  image?: string | undefined;
   client?: { name?: string | undefined; websiteUrl?: string | undefined } | null | undefined;
   crumbs: readonly { name: string; url: string }[];
 }): Ld[] {
@@ -245,6 +248,8 @@ export function caseStudyJsonLd(cs: {
       mainEntityOfPage: url,
       inLanguage: "en-US",
       datePublished: cs.datePublished,
+      ...(cs.dateModified ? { dateModified: cs.dateModified } : {}),
+      ...(cs.image ? { image: cs.image } : {}),
       author: { ...PROVIDER_LD },
       publisher: { ...PROVIDER_LD },
       ...(clientName

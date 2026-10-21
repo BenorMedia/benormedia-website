@@ -5,7 +5,7 @@ Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) 
 ### v0.10 changes vs v0.9 (2026-10-20)
 - **New `caseStudy` document**, routable at `/case-studies/<slug>` (see the table below). Index `/case-studies` lists every published case study, `order(publishedAt desc)`. Created as drafts only until the lead says otherwise.
 - **Reserved service slugs** gain `case-studies`.
-- **New queries:** `ALL_CASE_STUDIES` (cards: `_id`, `title`, `slug`, `publishedAt`, `client->{ name, logo }`), `CASE_STUDY_SLUGS`, `CASE_STUDY_BY_SLUG` (every field, `client->`, `services[]->{ name, slug }`, the case study's testimonial, else the client's (a "Lorem ipsum" placeholder is skipped), `related[]->` card fields, plus `latest`: the 3 newest other published case studies, card fields, the "Resources" fallback when `related` is empty), `CASE_STUDY_SLUG_BY_CLIENT` (for the "Read the case study" link on `/work` rows).
+- **New queries:** `ALL_CASE_STUDIES` (cards: `_id`, `title`, `slug`, `publishedAt`, `client->{ name, logo }`), `CASE_STUDY_SLUGS`, `CASE_STUDY_BY_SLUG` (every field plus `_updatedAt` (Article `dateModified`, added 2026-10-21), `client->`, `services[]->{ name, slug }`, the case study's testimonial, else the client's (a "Lorem ipsum" placeholder is skipped), `related[]->` card fields, plus `latest`: the 3 newest other published case studies, card fields, the "Resources" fallback when `related` is empty), `CASE_STUDY_SLUG_BY_CLIENT` (for the "Read the case study" link on `/work` rows).
 - `client`, `testimonial` and `service` are unchanged.
 
 ### v0.9 changes vs v0.8 (2026-10-01)
@@ -116,7 +116,7 @@ Fields are grouped in Studio tabs, in this order.
 | Hero | Services | `services` | array of references → `service` | optional, no duplicates. "03 / Solution" (service names) |
 | Hero | Challenge | `challenge` | text (3 rows) | optional. "04 / The challenge" |
 | Hero | Testimonial | `testimonial` | reference → `testimonial` | optional. Falls back to the client's testimonial; no quote block when both are empty |
-| Article | Body | `body` | Portable Text | H2 (a section; feeds the table of contents), H3 (a phase), normal, bold, italic, links, bullet + numbered lists. No images, embeds or tables. Content from an H3 to the next H2 renders indented with a left rule |
+| Article | Body | `body` | Portable Text | H2 (a section; feeds the table of contents), H3 (a phase), normal, bold, italic, links (`href` must be a full `http(s)://` address, a path starting with `/` or an `#anchor`: validated since 2026-10-21; `openInNewTab` optional), bullet + numbered lists. No images, embeds or tables. Content from an H3 to the next H2 renders indented with a left rule |
 | Results | Results | `results` | array of `kpi` | optional, max 3. Results row under the body |
 | Related | Related case studies | `related` | array of references → `caseStudy` | optional, max 3, no duplicates, not itself. Falls back to the latest published ones |
 | SEO | SEO | `seo` | `seo` object | optional, falls back to title / intro / siteSettings |

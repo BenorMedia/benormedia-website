@@ -136,11 +136,19 @@ const NEW_PAGES = sitemapInfo();
 
 const SANITY_API_VERSION = '2026-09-25';
 
-// Case studies (Sanity `caseStudy`, DECISIONS → Case studies 2026-10-20):
-// `/case-studies` is listed only once a case study is published; detail
-// pages (they exist only when published) take `lastmod` = `publishedAt`, the
-// index the newest one. Read from Sanity once per build/check.
-const CASE_STUDIES = await caseStudySitemapInfo({ projectId, dataset, apiVersion: SANITY_API_VERSION });
+// Case studies (Sanity `caseStudy`, DECISIONS → Case studies 2026-10-20 and
+// 2026-10-21): `/case-studies` is listed only once an indexable (not
+// noindex) case study is published; detail pages (they exist only when
+// published) take `lastmod` = `publishedAt`, the index the newest indexable
+// one. Read from Sanity once per build/check. If Sanity can't be read (with
+// a project id set) the build/check STOPS on purpose, so wrong sitemap data
+// never deploys; `astro dev` only warns.
+const CASE_STUDIES = await caseStudySitemapInfo({
+  projectId,
+  dataset,
+  apiVersion: SANITY_API_VERSION,
+  failHard: !isDevServer,
+});
 
 // https://astro.build/config
 export default defineConfig({
@@ -167,7 +175,8 @@ export default defineConfig({
     // /testimonials while testimonials are off (lead 2026-09-30; drop them
     // from this list when they go live). Privacy Policy + Terms are
     // indexable since 2026-10-05, so they are listed. `/case-studies` while
-    // no case study is published, and case studies set to noindex.
+    // no indexable case study is published (production builds don't emit it
+    // at all then), and case studies set to noindex.
     sitemap({
       filter: (page) => {
         const path = new URL(page).pathname.replace(/\/$/, '');

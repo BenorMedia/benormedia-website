@@ -124,3 +124,57 @@ Proof (throwaway worktree; the test map was never in this tree):
 - **Lead answers:** empty index (hero only) OK; "Read the case study" placement OK as a placeholder (design follow-up for Emily); `/dev/case-study` outside production approved.
 - **BLOCKER before the first publish:** `/case-studies` turns indexable and enters the sitemap automatically with the first published case study, but its title, intro, description and meta are still Lorem ipsum. Real copy must be ready first. Repeat in the PR description.
 - **Incident (`.env`):** while trying to re-verify the byte-identical comparison against `dev`, the orchestrator copied `.env` into a temporary scratchpad worktree, which CLAUDE.md forbids ("Never touch ... `.env` files"). The build failed, so that comparison is void. The worktree and the copy were deleted the same session and confirmed gone; nothing was committed, pushed or sent. Lead's rule from now on: never copy or link `.env` anywhere; ask the lead first if a check needs environment variables. The agent's own byte-identical comparison (before the `/work` patch was applied on the branch) stands; qa re-runs it with the patch in place.
+
+## QA fix round (2026-10-21, astro agent)
+
+Fixes from `docs/handoffs/2026-10-21_qa_case-studies-review.md`, approved by the lead. Nothing committed, pushed, published or deployed; the schema change is code only. `ClientList.astro` and `WorkListing.astro` were not touched (another agent is editing them).
+
+### In plain words: two new safety stops on the production build
+Since a Sanity publish rebuilds the live site without a pull request, the production build now checks two things itself and **stops on purpose** instead of putting something wrong online. When a build stops, Vercel keeps the previous deploy live, so visitors see no change.
+
+1. **Sanity can't be reached.** The build reads the published case studies to write the sitemap. If Sanity doesn't answer (network error, an error status, or an answer that isn't readable), the build stops with an error that starts with `[case-studies] Build stopped on purpose: could not read the published case studies from Sanity`. Before, it carried on as if nothing was published, which could leave live case studies out of the sitemap.
+   - **What to do:** check status.sanity.io and the two Sanity variables in Vercel (`PUBLIC_SANITY_PROJECT_ID`, `PUBLIC_SANITY_DATASET`), then redeploy. Usually a redeploy a few minutes later is enough.
+2. **Placeholder copy would go live.** Once a case study is published, the build stops if the `/case-studies` hero or meta tags, or the labels shown on a case study page (breadcrumb, the "related case studies" heading), still contain "Lorem ipsum" or a literal "TODO: COPY". The error lists each text and the exact file and key to change. Today this is the case: the index hero title, its gradient part, its description and the meta description are Lorem ipsum, and so is the related heading (shown only once two case studies are published).
+   - **What to do:** put the final copy in the files the message names (`src/components/case-studies/copy.ts`, `src/lib/content/seo.ts`), merge it, and rebuild. If the copy isn't ready, unpublish the case study in Sanity and the build passes again.
+   - It only checks for Lorem ipsum and "TODO: COPY". A placeholder that reads like real words (the meta title "Case Studies") can't be detected, so a person still has to confirm the copy.
+   - Dev and Vercel preview builds only print a warning, so previews keep working.
+
+### What changed
+- **A. `/case-studies` not built in production while nothing is published.** The page moved from `index.astro` to the rest route `src/pages/case-studies/[...index].astro` (a fixed page can't be left out of a build; same pattern as `/dev/case-study`). Production builds emit it only when `getAllCaseStudies()` has at least one case study; dev and previews always emit it (noindex while empty, hero only). Its `getStaticPaths` only returns `/case-studies` itself, so it can't collide with `[slug].astro`. The production check (`isProductionBuild()`, `VERCEL_ENV=production` or `PUBLIC_SITE_ENV=production`, the `resolveMode` rule) now lives in `src/lib/sanity/case-study-release.ts` and is shared with `/dev/case-study`.
+- **B. Placeholder guard** (`guardCaseStudyCopy` in `case-study-release.ts`), called from the `getStaticPaths` of the index and of `[slug].astro`. Detail pages check the breadcrumb labels always, and the related section heading only when that section renders.
+- **C. Sitemap fails closed** (`src/lib/sanity/case-study-sitemap.mjs`): with a project id set, a failed request stops `astro build` and `astro check`; `astro dev` only warns (offline work keeps running). No project id: no case studies, a warning, as before.
+- **D. noindex case studies** no longer count for `hasPublished` or the index's sitemap `lastmod`. Detail-page `lastmod` stays `publishedAt`.
+- **E. Article JSON-LD:** `dateModified` = the date part of `_updatedAt` (`YYYY-MM-DD`, like the blog), never before `publishedAt`; `image` = the SEO OG image (1200×630 crop, as in `Seo`), else the client logo URL, else omitted. `_updatedAt` added to `CASE_STUDY_BY_SLUG` and the `CaseStudy` type; `docs/SCHEMAS.md` v0.10 query line updated.
+- **F. Body links:** the `caseStudy` schema now rejects a link that isn't a full `http(s)://` address, a path starting with `/` or an `#anchor`, with a message that suggests the fix (e.g. `pricing` → "Start a link to a page on this site with "/" (for example /pricing)…"). The renderer still drops anything else. **Code only, not deployed** (Sergio deploys the schema).
+- **G.** Body links that open in a new tab get a visually hidden " (opens in a new tab)", same text and CSS as `ClientList` (`TODO: COPY`: hardcoded there too, not in copy.json).
+- **H.** `/dev/case-study` classes renamed `cs-preview__*` → `c-cs-preview__*`.
+- **I.** Dev fixture service name "Benor Media" → "BenorMedia".
+- **J.** No intro and no SEO description → a factual description from the data instead of the site default: "{title}. Case study: {client}. {challenge}", ≤160 characters (`TODO: COPY` on the template).
+
+### Checks
+- `pnpm run check` (207 files, 0 errors, 0 warnings, 0 hints), `pnpm run lint` clean, `pnpm run build` passes.
+- Normal build: `/case-studies` (noindex, hero only) and `/dev/case-study` present.
+- Production-like build (`PUBLIC_SITE_ENV=production PUBLIC_SITE_URL=https://www.benormedia.com`): passes; no `/case-studies`, no `/dev/case-study`; no `case-studies` URL in the sitemap; `node scripts/check-seo.mjs .vercel/output/static`: all checks passed.
+- Same production build with the sitemap's Sanity request forced to fail (a throwaway `fetch` mock preloaded with `NODE_OPTIONS=--import`, not committed): exit 1 with
+  ```
+  [case-studies] Build stopped on purpose: could not read the published case studies from Sanity for the sitemap (fetch failed).
+  Without them the sitemap could leave out live case studies or list the wrong ones, so this build is not deployed.
+  Check that Sanity is reachable (status.sanity.io) and that PUBLIC_SANITY_PROJECT_ID / PUBLIC_SANITY_DATASET are right, then redeploy. The live site keeps its previous deploy.
+  ```
+  The helper alone with mocked `fetch` also stops on HTTP 500, non-JSON and a missing `result` list; dev mode and no project id only warn; noindex rows are excluded as in D.
+- Guard with the real copy and one stub published case study (throwaway `tsx` script, production mode):
+  ```
+  [case-studies] Build stopped on purpose: a case study is published, so /case-studies would go live with placeholder copy (Lorem ipsum / TODO: COPY).
+  Replace these texts with the final copy, merge, and rebuild:
+    - /case-studies hero title: "Case Studies lorem ipsum" → replace in src/components/case-studies/copy.ts → CASE_STUDY_COPY.indexHero.title
+    - /case-studies hero title, gradient part: "lorem ipsum" → replace in src/components/case-studies/copy.ts → CASE_STUDY_COPY.indexHero.accent
+    - /case-studies hero description: "Lorem ipsum dolor sit amet consectetur. Senectus nec gravida" → replace in src/components/case-studies/copy.ts → CASE_STUDY_COPY.indexHero.description
+    - /case-studies meta description: "Lorem ipsum dolor sit amet consectetur. Senectus nec gravida" → replace in src/lib/content/seo.ts → PAGE_META.caseStudies.description
+  Until then, unpublish the case study in Sanity to let the production build pass again. The live site keeps its previous deploy.
+  ```
+  Non-production mode prints the same list as a warning; nothing published → no check (production emits no index).
+
+### Choices
+- The index's robots tag still follows "any published case study" (the cards query has no `noIndex`). If every published case study were noindex, `/case-studies` would be indexable but outside the sitemap. Harmless; say if it should follow the indexable ones instead (needs `seo.noIndex` in `ALL_CASE_STUDIES`).
+- `astro check` also fails closed when Sanity is unreachable (it loads the config); only `astro dev` warns.
+- Schema validation also accepts `#anchor` links, since the renderer does.
