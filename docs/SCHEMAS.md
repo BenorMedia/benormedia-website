@@ -1,6 +1,12 @@
-# Sanity ↔ Astro Data Contract (v0.8, approved)
+# Sanity ↔ Astro Data Contract (v0.10, approved)
 
-Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) approved 2026-09-29. v0.7 (`client.orderRank`) requested by the lead 2026-09-29. v0.8 (`client.websiteVideo`) requested by the lead 2026-09-30. v0.9 (`client.sector`) requested by the lead 2026-10-01.
+Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) approved 2026-09-29. v0.7 (`client.orderRank`) requested by the lead 2026-09-29. v0.8 (`client.websiteVideo`) requested by the lead 2026-09-30. v0.9 (`client.sector`) requested by the lead 2026-10-01. v0.10 (`caseStudy`) approved by the lead 2026-10-20.
+
+### v0.10 changes vs v0.9 (2026-10-20)
+- **New `caseStudy` document**, routable at `/case-studies/<slug>` (see the table below). Index `/case-studies` lists every published case study, `order(publishedAt desc)`. Created as drafts only until the lead says otherwise.
+- **Reserved service slugs** gain `case-studies`.
+- **New queries:** `ALL_CASE_STUDIES` (cards: `_id`, `title`, `slug`, `publishedAt`, `client->{ name, logo }`), `CASE_STUDY_SLUGS`, `CASE_STUDY_BY_SLUG` (every field plus `_updatedAt` (Article `dateModified`, added 2026-10-21), `client->`, `services[]->{ name, slug }`, the case study's testimonial, else the client's (a "Lorem ipsum" placeholder is skipped), `related[]->` card fields, plus `latest`: the 3 newest other published case studies, card fields, the "Resources" fallback when `related` is empty), `CASE_STUDY_SLUG_BY_CLIENT` (for the "Read the case study" link on `/work` rows).
+- `client`, `testimonial` and `service` are unchanged.
 
 ### v0.9 changes vs v0.8 (2026-10-01)
 - **`client.sector`** (optional `string`, dropdown, one value): `agency` (Agency), `professional-services` (Professional Services), `saas` (SaaS). Projected in `CLIENT_LIST_FIELDS` (so `CLIENTS_BY_IDS` + `ALL_CLIENTS`). The Work page filters by it (View All · SaaS · Professional Services; no Agency tab since 2026-10-05, `agency` clients show under View All); `category` no longer drives any filter. Values are filled in Studio / MCP by the lead.
@@ -94,6 +100,28 @@ Step list items show their number (01, 02…) next to the step preview (name · 
 - One decorator: `accent`, titled "Gradient". Text marked with it renders with the brand gradient (`.c-section-header__accent` in Astro).
 - Line breaks are `\n` characters inside span text (Shift+Enter in the editor). The renderer turns them into `<br />`.
 - Shape: `[{ _type: "block", _key, style: "normal", markDefs: [], children: [{ _type: "span", _key, text, marks: [] | ["accent"] }] }]`.
+
+### `caseStudy` — Case studies (routable at `/case-studies/<slug>`, v0.10)
+Fields are grouped in Studio tabs, in this order.
+
+| Tab | Field | Name | Type | Rules |
+|---|---|---|---|---|
+| Overview (default) | Title | `title` | string | required. H1, card title, last breadcrumb item |
+| Overview | Slug | `slug` | slug (from title) | required, unique among case studies, lowercase kebab-case |
+| Overview | Client | `client` | reference → `client` | required. Card and hero logo, "01 / Company" (client name) |
+| Overview | Published on | `publishedAt` | date | required, default today. Card and hero date (blog format), index order |
+| Overview | Time to read | `readTime` | number (minutes) | optional override. If empty, calculated from the body word count at build |
+| Hero | Intro | `intro` | text (3 rows) | optional. Hero paragraph; meta description fallback |
+| Hero | Industry | `industry` | string | optional. "02 / Industry" |
+| Hero | Services | `services` | array of references → `service` | optional, no duplicates. "03 / Solution" (service names) |
+| Hero | Challenge | `challenge` | text (3 rows) | optional. "04 / The challenge" |
+| Hero | Testimonial | `testimonial` | reference → `testimonial` | optional. Falls back to the client's testimonial; no quote block when both are empty |
+| Article | Body | `body` | Portable Text | H2 (a section; feeds the table of contents), H3 (a phase), normal, bold, italic, links (`href` must be a full `http(s)://` address, a path starting with `/` or an `#anchor`: validated since 2026-10-21; `openInNewTab` optional), bullet + numbered lists. No images, embeds or tables. Content from an H3 to the next H2 renders indented with a left rule |
+| Results | Results | `results` | array of `kpi` | optional, max 3. Results row under the body |
+| Related | Related case studies | `related` | array of references → `caseStudy` | optional, max 3, no duplicates, not itself. Falls back to the latest published ones |
+| SEO | SEO | `seo` | `seo` object | optional, falls back to title / intro / siteSettings |
+
+Preview: title · client name · client logo. Desk list ordered by `publishedAt` desc.
 
 ### `testimonial` — Testimonials
 | Field | Name | Type | Rules |
@@ -205,6 +233,7 @@ Routable documents use field groups:
 |---|---|
 | `post` | **Content** (all post fields, default) · **SEO** |
 | `service` | **Overview** (default) · **Hero** · **Problem** · **Process** · **FAQs** · **SEO** |
+| `caseStudy` | **Overview** (default) · **Hero** · **Article** · **Results** · **Related** · **SEO** |
 
 The **SEO** tab holds the `seo` object (metaTitle, metaDescription, ogImage, noIndex, canonicalUrl).
 
@@ -214,7 +243,7 @@ Meta resolution order: page/post/service `seo` field → generated from content 
 
 ## Rules
 - Every content image has alt text. Logos, icons and author photos auto-generate alt from the related name (editor can override).
-- Routable documents: `post` (`/blog/[slug]`) and `service` (`/<slug>`, from `src/pages/[service].astro`; reserved slugs blocked by validation). Page routes (`/`, `/work`, `/pricing`, `/testimonials`, `/blog`) are static Astro pages that read only their SEO singleton from Sanity.
+- Routable documents: `post` (`/blog/[slug]`), `service` (`/<slug>`, from `src/pages/[service].astro`; reserved slugs blocked by validation) and `caseStudy` (`/case-studies/[slug]`). Page routes (`/`, `/work`, `/pricing`, `/testimonials`, `/blog`) are static Astro pages that read only their SEO singleton from Sanity.
 - Deleting a `category`, `author` or `testimonial` that is referenced is blocked by Sanity by default. Keep it that way.
 - Astro queries only fields listed here. Any new field → update this file first.
 

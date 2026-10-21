@@ -1,0 +1,21 @@
+---
+/** CaseStudySpan — one span: text with `<strong>` / `<em>`, "\n" → `<br>`. */
+import type { InlineSpan } from "../../../lib/sanity/case-study-body";
+
+interface Props {
+  span: InlineSpan;
+}
+
+const { span } = Astro.props;
+const lines = span.text.split("\n");
+---
+
+{span.strong && span.em ? (
+  <strong><em>{lines.map((l, i) => (i > 0 ? <><br />{l}</> : l))}</em></strong>
+) : span.strong ? (
+  <strong>{lines.map((l, i) => (i > 0 ? <><br />{l}</> : l))}</strong>
+) : span.em ? (
+  <em>{lines.map((l, i) => (i > 0 ? <><br />{l}</> : l))}</em>
+) : (
+  lines.map((l, i) => (i > 0 ? <><br />{l}</> : l))
+)}

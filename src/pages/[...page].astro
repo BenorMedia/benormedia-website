@@ -17,6 +17,11 @@ export function getStaticPaths() {
     if (!page.url.startsWith("/") || page.url.endsWith("/") || page.url.split("/").pop() !== page.slug) {
       throw new Error(`[new-pages] ${page.slug}: url "${page.url}" does not match the commercial route /<slug>`);
     }
+    // `/case-studies` and `/case-studies/*` belong to the Sanity case studies
+    // (src/pages/case-studies/); a pack page there would be silently skipped.
+    if (page.url === "/case-studies" || page.url.startsWith("/case-studies/")) {
+      throw new Error(`[new-pages] ${page.slug}: url "${page.url}" is reserved for the case studies`);
+    }
     return { params: { page: page.url.slice(1) }, props: { page } };
   });
 }

@@ -25,6 +25,22 @@
  *     the name isn't read twice (QA 2026-09-30).
  *   - Hover preview only renders when `websiteScreenshot` is set.
  *
+ * Case study link (`/work` only, optional `caseStudyLinks`: client `_id` →
+ * `/case-studies/<slug>`; no Figma): a row whose client has a published case
+ * study becomes a `div` holding two links, so links are never nested:
+ *   - the client name links to the website (new tab) and stretches over the
+ *     whole row (`::after`), so the row stays clickable as before;
+ *   - "Read the case study" sits above that overlay, as its own grid item
+ *     between the name and the tags (not inside the tags, so it can move to
+ *     its own line: at ≥992 an `auto` column next to the tags, at ≤991 a
+ *     full-width second line, at ≤767 a line under the tags; QA 2026-10-21).
+ *     Tab order: website, then case study. The row shows the focus ring
+ *     (`:has()`) when the website link has keyboard focus.
+ *   Without a website the name is plain text and only the case study link
+ *   is interactive. Without the prop every row renders as before. The
+ *   styles for these rows live in `WorkListing` (the only page that passes
+ *   the prop), so this file's CSS, and every other page, stay unchanged.
+ *
  * Hover (lead, visual QA 2026-09-29):
  *   - The row lifts 0.4rem with a soft shadow (`transition: all 0.2s linear`).
  *     Lead-approved shadow exception 2026-09-29 — see docs/DECISIONS.md.
@@ -59,9 +75,11 @@ interface Props {
   clients: Client[];
   limit?: number;
   class?: string;
+  /** Client `_id` → case study URL (`/work`). Rows not in the map are unchanged. */
+  caseStudyLinks?: ReadonlyMap<string, string>;
 }
 
-const { clients, limit, class: className } = Astro.props;
+const { clients, limit, class: className, caseStudyLinks } = Astro.props;
 
 const rows = (limit === undefined ? clients : clients.slice(0, limit)).map(
   (client) => {
@@ -76,6 +94,7 @@ const rows = (limit === undefined ? clients : clients.slice(0, limit)).map(
       categoryLabel: client.category?.title,
       categorySlug: client.category?.slug?.current,
       sector: client.sector,
+      caseStudyHref: caseStudyLinks?.get(client._id),
       // Height only (≈249px preview at 2x density) — no width, so the
       // builder never crops; the full screenshot is always shown.
       previewUrl: client.websiteScreenshot?.asset
@@ -103,6 +122,44 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
       : {};
     return (
       <li class="c-client-list__item" data-category={row.categorySlug} data-sector={row.sector}>
+        {row.caseStudyHref ? (
+        <div class="c-client-list__row is-case-study">
+          <span class="c-client-list__client">
+            <ClientIcon client={row.client} />
+            {row.href ? (
+              <a class="c-client-list__name c-client-list__link c-text_m" {...linkAttrs}>
+                {row.name}
+                {/* TODO: COPY — screen-reader note on linked rows. */}
+                <span class="c-client-list__sr-only"> (opens in a new tab)</span>
+              </a>
+            ) : (
+              <span class="c-client-list__name c-text_m">{row.name}</span>
+            )}
+          </span>
+
+          {/* TODO: COPY — case study link label (no Figma). */}
+          <a class="c-client-list__case-study c-paragraph_s" href={row.caseStudyHref}>Read the case study</a>
+
+          <span class="c-client-list__tags">
+            {row.fundsLabel && <Tag>{row.fundsLabel}</Tag>}
+            {row.categoryLabel && <Tag variant="accent">{row.categoryLabel}</Tag>}
+          </span>
+
+          <svg
+            class="c-client-list__arrow"
+            aria-hidden="true"
+            width="15"
+            height="15"
+            viewBox="0 0 15 15"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M0.000296913 6.53389H11.6643C10.0983 5.20189 7.2543 2.51989 5.4903 0.917886L6.3543 -0.000113487L14.0583 7.16389V7.21789L6.3543 14.4719L5.4903 13.5359C7.2723 11.8979 10.0803 9.28789 11.6643 7.84789H0.000296913V6.53389Z"
+            />
+          </svg>
+        </div>
+        ) : (
         <RowTag class="c-client-list__row" {...linkAttrs}>
           <span class="c-client-list__client">
             <ClientIcon client={row.client} />
@@ -131,6 +188,7 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
           </svg>
 
         </RowTag>
+        )}
 
         {row.previewUrl && (
           <span class="c-client-list__preview" aria-hidden="true">

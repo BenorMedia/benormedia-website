@@ -1,0 +1,153 @@
+---
+/**
+ * CaseStudyFacts — c-cs-facts
+ * The hero's right column (Figma 3768:25937): client logo box, then
+ * numbered rows "01 / Company", "02 / Industry", "03 / Solution" (the case
+ * study's services, lead 2026-10-20), "04 / The challenge", with dividers.
+ * A row without a value is left out and the rest renumber. Background: a
+ * blurred brand-gradient glow and the CTA banner's globe line art at the
+ * bottom (`/images/cta-banner-vector.svg`, the same 1272 × 197 Figma
+ * vector), both decorative.
+ */
+import CaseStudyLogo from "./CaseStudyLogo.astro";
+import type { CaseStudy } from "../../lib/sanity/types";
+import { CASE_STUDY_COPY } from "./copy";
+import { hasImage } from "./image";
+
+interface Props {
+  caseStudy: Pick<CaseStudy, "client" | "industry" | "challenge" | "services">;
+}
+
+const { caseStudy } = Astro.props;
+const { client, industry, challenge, services } = caseStudy;
+const labels = CASE_STUDY_COPY.facts;
+const solution = (services ?? [])
+  .map((s) => s?.name?.trim())
+  .filter((n): n is string => Boolean(n))
+  .join(", ");
+const rows = [
+  { label: labels.company, value: client?.name?.trim() ?? "", long: false },
+  { label: labels.industry, value: industry?.trim() ?? "", long: false },
+  { label: labels.solution, value: solution, long: false },
+  { label: labels.challenge, value: challenge?.trim() ?? "", long: true },
+]
+  .filter((row) => row.value)
+  .map((row, i) => ({ ...row, num: String(i + 1).padStart(2, "0") }));
+const hasLogo = hasImage(client?.logo) || Boolean(client?.name?.trim());
+---
+
+{(rows.length > 0 || hasLogo) && (
+  <div class="c-cs-facts">
+    <span class="c-cs-facts__glow" aria-hidden="true"></span>
+    <img class="c-cs-facts__lines" src="/images/cta-banner-vector.svg" alt="" aria-hidden="true" width="1272" height="197" decoding="async" />
+    <div class="c-cs-facts__content">
+      {hasLogo && <CaseStudyLogo name={client?.name} logo={client?.logo} size="panel" eager />}
+      {rows.length > 0 && (
+        <dl class="c-cs-facts__list">
+          {rows.map((row) => (
+            <div class="c-cs-facts__row">
+              <dt class="c-cs-facts__label">{row.num} / {row.label}</dt>
+              <dd class={row.long ? "c-cs-facts__value is-long c-paragraph_m" : "c-cs-facts__value c-text_m"}>{row.value}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+    </div>
+  </div>
+)}
+
+<style>
+  /* Figma: 1px #E4E6EA border, 8px radius, 48px padding, white. */
+  .c-cs-facts {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding: 3.455rem;
+    border: var(--border-default);
+    border-radius: 8px;
+    background: var(--color-white);
+  }
+  /* Ellipse 15105: 687px circle, brand gradient, blurred, 20%. */
+  .c-cs-facts__glow {
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    left: 50%;
+    width: 94.9%;
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    opacity: 0.2;
+    filter: blur(135px);
+    pointer-events: none;
+  }
+  /* Globe line art: 1272px wide (175.6% of the panel), centred, on the
+     bottom edge. */
+  .c-cs-facts__lines {
+    position: absolute;
+    z-index: -1;
+    bottom: 0;
+    left: 50%;
+    width: 175.6%;
+    max-width: none;
+    height: auto;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+  .c-cs-facts__content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2.764rem; /* 38.7px */
+  }
+  .c-cs-facts__list {
+    display: flex;
+    flex-direction: column;
+    gap: 2.764rem;
+    width: 100%;
+    margin: 0;
+  }
+  .c-cs-facts__row {
+    display: flex;
+    flex-direction: column;
+    gap: 1.105rem; /* 15.5px */
+  }
+  /* Divider: 1.4px white at 50% between rows (Figma). */
+  .c-cs-facts__row + .c-cs-facts__row {
+    position: relative;
+  }
+  .c-cs-facts__row + .c-cs-facts__row::before {
+    content: "";
+    position: absolute;
+    top: -1.382rem;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--color-white);
+    opacity: 0.5;
+  }
+  /* Label: the Eyebrow's type (15px uppercase, 0.96px tracking), no box. */
+  .c-cs-facts__label {
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--fs-p);
+    line-height: normal;
+    letter-spacing: 0.064em;
+    text-transform: uppercase;
+  }
+  .c-cs-facts__value {
+    margin: 0;
+    color: var(--color-black-secondary);
+    line-height: normal;
+  }
+  /* The challenge: Figma Paragraph S 18px, line-height 1.5. */
+  .c-cs-facts__value.is-long {
+    line-height: 1.5;
+  }
+  @media (max-width: 767px) {
+    .c-cs-facts {
+      padding: 2.857rem 2.222rem;
+    }
+  }
+</style>

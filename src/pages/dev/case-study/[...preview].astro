@@ -1,0 +1,77 @@
+---
+/**
+ * /dev/case-study — the case study template preview (DECISIONS → Case
+ * studies 2026-10-20; SITEMAP "Not public"). noindex, outside the sitemap
+ * (`/dev/*` filter in astro.config.mjs).
+ *
+ * Not built in production: it shows Figma sample content (a real person's
+ * name and photo next to a client logo, `createCaseStudyFixture`, TODO: COPY).
+ * `getStaticPaths` returns no path when `isProductionBuild()` says
+ * production (VERCEL_ENV=production or PUBLIC_SITE_ENV=production, the new
+ * pages' `resolveMode` check, shared with `/case-studies`); `astro dev`,
+ * Vercel previews and local builds get the page. A rest route because a
+ * fixed `.astro` page can't be left out of a build.
+ *
+ * Page order as Figma 3764:16012: the shared template `CaseStudyPage` (hero
+ * + facts panel → quote → sidebar + body (phase block) + results → related
+ * case studies, the same component as `/case-studies/[slug]`) → CTA banner.
+ * Below, separated: an "Index card" block with a row of three
+ * `CaseStudyCard`s.
+ */
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Container from "../../../components/ui/Container.astro";
+import CtaBanner from "../../../components/layout/CtaBanner.astro";
+import CaseStudyPage from "../../../components/case-studies/CaseStudyPage.astro";
+import CaseStudyGrid from "../../../components/case-studies/CaseStudyGrid.astro";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { createCaseStudyFixture, type FixtureAsset } from "../../../lib/sanity/case-study-fixture";
+import { getSiteSettingsCached } from "../../../lib/sanity/site";
+import { isProductionBuild } from "../../../lib/sanity/case-study-release";
+
+export function getStaticPaths() {
+  return isProductionBuild() ? [] : [{ params: { preview: undefined } }];
+}
+
+// Figma sample images, read at render time (never emitted in production).
+const asset = (file: string, width: number, height: number): FixtureAsset => ({
+  src: `data:image/png;base64,${readFileSync(join(process.cwd(), "src/assets/dev/case-study", file)).toString("base64")}`,
+  width,
+  height,
+});
+const { caseStudy, cards } = createCaseStudyFixture({
+  surfeLogo: asset("surfe-logo.png", 321, 100),
+  authorPhoto: asset("david-chevalier.png", 207, 207),
+});
+// Own ids for the second row (the cards' SVG filter ids derive from `_id`).
+const indexCards = cards.map((card) => ({ ...card, _id: `${card._id}-index` }));
+const siteSettings = await getSiteSettingsCached();
+---
+
+<BaseLayout title="Case study preview" description="Preview of the case study template with placeholder content." noIndex showCtaBanner={false}>
+  <CaseStudyPage caseStudy={caseStudy} />
+  <CtaBanner siteSettings={siteSettings} />
+
+  <section class="c-cs-preview__cards" aria-labelledby="c-cs-preview-cards">
+    <Container>
+      <p id="c-cs-preview-cards" class="c-cs-preview__label c-paragraph_s">Index card (preview only, not part of the template)</p>
+      <CaseStudyGrid cards={indexCards} variant="index" />
+    </Container>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Preview-only block, set apart from the template above. */
+  .c-cs-preview__cards {
+    border-top: 1px dashed var(--color-gray);
+    background: var(--color-gray-light);
+  }
+  .c-cs-preview__cards :global(.c-container) {
+    padding-top: 4rem;
+    padding-bottom: 7.857rem;
+  }
+  .c-cs-preview__label {
+    margin: 0 0 2rem;
+    color: var(--color-text);
+  }
+</style>

@@ -1,0 +1,24 @@
+---
+/**
+ * CaseStudyList — a body list (bullet → `<ul>`, number → `<ol>`); nested
+ * levels render inside their parent item.
+ */
+import CaseStudyInline from "./CaseStudyInline.astro";
+import type { ListNode } from "../../../lib/sanity/case-study-body";
+
+interface Props {
+  list: ListNode;
+}
+
+const { list } = Astro.props;
+const Tag = list.ordered ? "ol" : "ul";
+---
+
+<Tag class="c-cs-body__list">
+  {list.items.map((item) => (
+    <li>
+      <CaseStudyInline runs={item.inline} />
+      {item.children && <Astro.self list={item.children} />}
+    </li>
+  ))}
+</Tag>

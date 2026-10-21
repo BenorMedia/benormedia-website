@@ -3,7 +3,7 @@ import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list';
 import { SINGLETON_TYPES } from './schemaTypes';
 
 /**
- * Desk structure per docs/SCHEMAS.md v0.6:
+ * Desk structure per docs/SCHEMAS.md v0.10:
  *
  *   Site Settings   (singleton — SEO-only page metadata + globals)
  *   Home Page       (singleton — SEO only)
@@ -15,13 +15,14 @@ import { SINGLETON_TYPES } from './schemaTypes';
  *   Services        (service pages, ordered by name)
  *   ── divider ──
  *   Clients         (drag-and-drop order → Work page listing, `orderRank`)
+ *   Case studies    (ordered by publishedAt, newest first)
  *   Testimonials
  *   Blog (posts)
  *   Authors
  *   Categories
  *
- * Singletons and `service` are filtered out of the generic document type list
- * below the dividers so they never appear twice.
+ * Singletons, `service`, `client` and `caseStudy` are filtered out of the
+ * generic document type list below the dividers so they never appear twice.
  */
 export const structure: StructureResolver = (S, context) => {
   const singleton = (typeName: string, title: string) =>
@@ -35,7 +36,12 @@ export const structure: StructureResolver = (S, context) => {
           .documentId(typeName),
       );
 
-  const collection = (typeName: string, title: string, orderBy: string) =>
+  const collection = (
+    typeName: string,
+    title: string,
+    orderBy: string,
+    direction: 'asc' | 'desc' = 'asc',
+  ) =>
     S.listItem()
       .title(title)
       .id(typeName)
@@ -43,11 +49,11 @@ export const structure: StructureResolver = (S, context) => {
       .child(
         S.documentTypeList(typeName)
           .title(title)
-          .defaultOrdering([{ field: orderBy, direction: 'asc' }]),
+          .defaultOrdering([{ field: orderBy, direction }]),
       );
 
   // Types with their own list item; excluded from the generic list.
-  const customListTypes = new Set<string>(['service', 'client']);
+  const customListTypes = new Set<string>(['service', 'client', 'caseStudy']);
 
   const collectionOrder = [
     'testimonial',
@@ -82,6 +88,7 @@ export const structure: StructureResolver = (S, context) => {
       collection('service', 'Services', 'name'),
       S.divider(),
       orderableDocumentListDeskItem({ type: 'client', title: 'Clients', S, context }),
+      collection('caseStudy', 'Case studies', 'publishedAt', 'desc'),
       ...documentTypeItems,
     ]);
 };

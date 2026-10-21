@@ -74,6 +74,11 @@ Page singletons stay SEO-only; page content is static in Astro (DECISIONS 2026-0
 
 > Risk: Day 6 is heavy and needs designs for 6 templates. If a page's design isn't ready, it moves to Day 7 morning.
 
+## Case studies (2026-10-20 → 21) — branch `feat/case-studies`, PR into `dev`
+Figma index 3764:15808 + template 3764:16012 (desktop only). Routes `/case-studies` and `/case-studies/[slug]` (Sanity `caseStudy`, SCHEMAS v0.10), `/dev/case-study` preview (not built in production), "Read the case study" link on `/work`. Steps 1–5 + QA (two rounds, PASS WITH NOTES) done; decisions in `DECISIONS.md` → Case studies; summary in `docs/handoffs/2026-10-21_orchestrator_case-studies.md`.
+Open before the first case study is published: real `/case-studies` copy (blocker), Sergio deploys the schema, JOOR brief aligned with the template.
+✅ Checkpoint: lead review on the PR preview; lead merges into `dev`. Nothing goes to `main`.
+
 ## Day 7 — Phase 7 Content + redirects + Phase 8 QA + launch prep
 - Final copy into Sanity, blog migration from Webflow
 - 301 map in `vercel.json`

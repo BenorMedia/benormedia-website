@@ -1,0 +1,62 @@
+---
+/**
+ * CaseStudyGrid — c-cs-grid
+ * Three `CaseStudyCard`s per row. Layout as the blog cards
+ * (`NpBlogResources`): flex rows, a short last row stays centred, one card
+ * per row at ≤991.
+ *
+ * Variants (Figma gaps as a share of the 1680 frame, so cards keep the
+ * frame's proportions in the 1230px container):
+ *   - `index`     (3764:15808): 24px gaps (1.429%), card titles are h2.
+ *   - `resources` (3764:16201): 40px columns, 40px below the section header,
+ *     card titles are h3.
+ * Renders nothing when `cards` is empty (no empty-state design yet).
+ */
+import CaseStudyCard from "./CaseStudyCard.astro";
+import type { CaseStudyCard as CaseStudyCardData } from "../../lib/sanity/types";
+
+interface Props {
+  cards: readonly CaseStudyCardData[];
+  variant?: "index" | "resources";
+  /** Max cards (Resources: 3). Default: all. */
+  limit?: number;
+}
+
+const { cards, variant = "index", limit } = Astro.props;
+const list = typeof limit === "number" ? cards.slice(0, limit) : cards;
+---
+
+{list.length > 0 && (
+  <ul class={`c-cs-grid is-${variant}`}>
+    {list.map((card) => <CaseStudyCard card={card} headingLevel={variant === "index" ? 2 : 3} />)}
+  </ul>
+)}
+
+<style>
+  .c-cs-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .c-cs-grid > :global(*) {
+    flex: 0 1 calc((100% - 2 * var(--c-cs-grid-col)) / 3);
+  }
+  .c-cs-grid.is-index {
+    --c-cs-grid-col: 1.429%;
+    gap: 1.714rem var(--c-cs-grid-col);
+  }
+  .c-cs-grid.is-resources {
+    --c-cs-grid-col: 2.857rem;
+    /* Rows: the blog cards' 60px (Figma shows one row). */
+    gap: 4.286rem var(--c-cs-grid-col);
+    margin-top: 2.857rem;
+  }
+  @media (max-width: 991px) {
+    .c-cs-grid > :global(*) {
+      flex-basis: 100%;
+    }
+  }
+</style>

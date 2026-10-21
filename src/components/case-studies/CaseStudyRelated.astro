@@ -1,0 +1,72 @@
+---
+/**
+ * CaseStudyRelated — c-cs-related
+ * The case study's last section (Figma 3764:16201): eyebrow "Case
+ * studies", the centred one-line heading, the contact button, then up to
+ * three `CaseStudyCard`s (`caseStudyResources`: the editor's picks, else the
+ * newest others). Figma spacing (lead 2026-10-21): 40px between cards,
+ * 110px above and below, 8 / 24 / 40px between eyebrow, heading, button and
+ * cards; the site container (round 4), not Figma's 1680px row. Renders
+ * nothing without cards.
+ */
+import Button from "../ui/Button.astro";
+import Container from "../ui/Container.astro";
+import Eyebrow from "../ui/Eyebrow.astro";
+import CaseStudyGrid from "./CaseStudyGrid.astro";
+import type { CaseStudyCard as CaseStudyCardData } from "../../lib/sanity/types";
+import { CASE_STUDY_COPY } from "./copy";
+
+interface Props {
+  cards: readonly CaseStudyCardData[];
+}
+
+const { cards } = Astro.props;
+const list = cards.slice(0, 3);
+---
+
+{list.length > 0 && (
+  <section class="c-cs-related" aria-labelledby="cs-related-title">
+    <Container>
+      <header class="c-cs-related__header">
+        <Eyebrow>{CASE_STUDY_COPY.related.eyebrow}</Eyebrow>
+        <h2 id="cs-related-title" class="c-cs-related__title c-text_xl">{CASE_STUDY_COPY.related.heading}</h2>
+        <Button variant="gradient" class="js-open-contact c-cs-related__button">{CASE_STUDY_COPY.relatedButton}</Button>
+      </header>
+      <CaseStudyGrid cards={list} variant="resources" />
+    </Container>
+  </section>
+)}
+
+<style>
+  /* Figma: 110px above and below. Same container as the hero and article
+     (lead 2026-10-21, round 4: not Figma's 1680px row). */
+  .c-cs-related :global(.c-container) {
+    padding-top: 7.857rem;
+    padding-bottom: 7.857rem;
+  }
+  /* Eyebrow → heading 8px, heading → button 24px (Figma). */
+  .c-cs-related__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  /* Figma Text XL (60px → `c-text_xl`), line-height 1.4 and a 1038.76px box
+     (Figma; `c-text_xl` is 1.2, TODO: DS). Colour Figma #001F3D "Deep Sea
+     900" has no token: closest is --color-heading (#12142B), TODO: DS. */
+  .c-cs-related__title {
+    max-width: 74.197rem;
+    margin: 0.571rem 0 0;
+    color: var(--color-heading);
+    line-height: 1.4;
+  }
+  .c-cs-related :global(.c-cs-related__button) {
+    margin-top: 1.714rem;
+  }
+  @media (max-width: 767px) {
+    .c-cs-related :global(.c-container) {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
+  }
+</style>

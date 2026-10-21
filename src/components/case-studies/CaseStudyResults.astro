@@ -1,0 +1,123 @@
+---
+/**
+ * CaseStudyResults — c-cs-results
+ * "The results" (Figma 3768:26292 / 3768:26295): the H2 (a table of
+ * contents entry, id `CASE_STUDY_RESULTS_ID`), then up to three KPI cells
+ * in one bordered row with short vertical dividers between cells and a
+ * small square on the left and right edges. Renders nothing when there are
+ * no results.
+ */
+import type { Kpi } from "../../lib/sanity/types";
+import { CASE_STUDY_RESULTS_ID } from "../../lib/sanity/case-study-body";
+import { CASE_STUDY_COPY } from "./copy";
+
+interface Props {
+  results: readonly (Kpi & { _key?: string })[] | null | undefined;
+}
+
+const { results } = Astro.props;
+const items = (results ?? []).filter((r) => r.value?.trim()).slice(0, 3);
+---
+
+{items.length > 0 && (
+  <section class="c-cs-results" aria-labelledby={CASE_STUDY_RESULTS_ID}>
+    <h2 id={CASE_STUDY_RESULTS_ID} class="c-cs-results__title">{CASE_STUDY_COPY.resultsHeading}</h2>
+    <ul class="c-cs-results__row">
+      {items.map((kpi) => (
+        <li class="c-cs-results__item">
+          <span class="c-cs-results__value c-text_xl">{kpi.value}</span>
+          {kpi.description && <span class="c-cs-results__desc c-paragraph">{kpi.description}</span>}
+        </li>
+      ))}
+    </ul>
+  </section>
+)}
+
+<style>
+  .c-cs-results {
+    display: flex;
+    flex-direction: column;
+    gap: 1.714rem; /* 24px */
+  }
+  /* Same as the body H2 (Figma Text L 38px). */
+  .c-cs-results__title {
+    margin: 0;
+    color: var(--color-black-secondary);
+    font-family: var(--font-heading);
+    font-size: var(--fs-text-l);
+    font-weight: 400;
+    line-height: 1.3;
+    scroll-margin-top: calc(var(--c-nav-height, 0px) + 2rem);
+  }
+  /* Figma: 1px #E4E6EA border, 8px radius, 32px between cells. */
+  .c-cs-results__row {
+    position: relative;
+    display: flex;
+    gap: 2.286rem;
+    margin: 0;
+    padding: 0;
+    border: var(--border-default);
+    border-radius: 8px;
+    list-style: none;
+  }
+  /* Edge squares: 15px, 0.75px gray border, centred on the side borders. */
+  .c-cs-results__row::before,
+  .c-cs-results__row::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 1.071rem;
+    height: 1.071rem;
+    transform: translateY(-50%);
+    border: 0.75px solid var(--color-gray);
+    border-radius: 2.25px;
+    background: var(--color-white);
+  }
+  .c-cs-results__row::before {
+    left: -0.536rem;
+  }
+  .c-cs-results__row::after {
+    right: -0.559rem;
+  }
+  .c-cs-results__item {
+    position: relative;
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: 1.714rem;
+    min-width: 0;
+    padding: 1.714rem;
+  }
+  /* Divider: 158px of the 276px row, centred in the 32px gap. */
+  .c-cs-results__item + .c-cs-results__item::before {
+    content: "";
+    position: absolute;
+    top: 21.35%;
+    bottom: 21.35%;
+    left: calc(-1.143rem - 0.5px);
+    width: 1px;
+    background: var(--color-border);
+  }
+  .c-cs-results__value {
+    color: var(--color-black-secondary);
+    line-height: 1.4;
+  }
+  .c-cs-results__desc {
+    color: var(--color-text);
+  }
+  /* Mobile: cells stack, horizontal dividers (the vertical ones turn 90°). */
+  @media (max-width: 767px) {
+    .c-cs-results__row {
+      flex-direction: column;
+      gap: 0;
+    }
+    .c-cs-results__item + .c-cs-results__item::before {
+      top: 0;
+      bottom: auto;
+      left: 1.714rem;
+      right: 1.714rem;
+      width: auto;
+      height: 1px;
+    }
+  }
+</style>

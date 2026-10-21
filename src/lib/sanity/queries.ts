@@ -17,6 +17,8 @@
  */
 import { sanityClient } from './client';
 import type {
+  CaseStudy,
+  CaseStudyCard,
   Client,
   HomePage,
   PageSeoDoc,
@@ -374,6 +376,134 @@ export const SERVICE_BY_SLUG = /* groq */ `
 `;
 
 // ---------------------------------------------------------------------------
+// Case studies (SCHEMAS.md v0.10) — `/case-studies` index, the
+// `/case-studies/[slug]` template and the "Read the case study" link on
+// `/work` rows. Only published documents with a slug are ever returned.
+// ---------------------------------------------------------------------------
+
+/**
+ * Card fields: the index cards and the "Resources" cards at the end of a case
+ * study. Shared by ALL_CASE_STUDIES and CASE_STUDY_BY_SLUG (`related`,
+ * `latest`) so the card projection is defined once.
+ */
+const CASE_STUDY_CARD_FIELDS = /* groq */ `
+  _id,
+  _type,
+  title,
+  "slug": slug.current,
+  publishedAt,
+  "client": client->{
+    _id,
+    name,
+    "logo": logo${IMAGE}
+  }
+`;
+
+/** Testimonial fields for the case study quote block. */
+const CASE_STUDY_TESTIMONIAL_FIELDS = /* groq */ `
+  _id,
+  _type,
+  quote,
+  authorName,
+  authorRole,
+  "authorPhoto": authorPhoto${IMAGE},
+  "companyLogo": companyLogo${IMAGE},
+  kpis[]{ value, description }
+`;
+
+/** Published case studies with a slug (shared filter). */
+const PUBLISHED_CASE_STUDY = /* groq */ `_type == "caseStudy" && defined(slug.current) && !(_id in path("drafts.**"))`;
+
+/** Every published case study, newest first (`publishedAt` is a `YYYY-MM-DD` date). */
+export const ALL_CASE_STUDIES = /* groq */ `
+*[${PUBLISHED_CASE_STUDY}] | order(publishedAt desc, title asc){
+  ${CASE_STUDY_CARD_FIELDS},
+  "noIndex": seo.noIndex == true
+}
+`;
+
+export const CASE_STUDY_SLUGS = /* groq */ `
+*[${PUBLISHED_CASE_STUDY}].slug.current
+`;
+
+/**
+ * One published case study.
+ *   - `testimonial`: the case study's own, else the client's; a placeholder
+ *     quote ("Lorem ipsum…", the CLIENTS_BY_IDS rule) is skipped, so a
+ *     placeholder on the case study falls back to the client's quote
+ *     (lead 2026-10-20). Null when neither has a real quote.
+ *   - `body`: Portable Text, `link` markDefs kept as stored
+ *     (`{ _type: "link", href, openInNewTab? }`, `href` may be relative).
+ *   - `_updatedAt`: last edit of the published document (Article
+ *     `dateModified` in the JSON-LD).
+ *   - `related`: the editor's picks, dangling / unpublished references
+ *     filtered out. `latest`: the 3 newest other published case studies, the
+ *     "Resources" fallback when `related` is empty (`caseStudyResources`).
+ */
+export const CASE_STUDY_BY_SLUG = /* groq */ `
+*[${PUBLISHED_CASE_STUDY} && slug.current == $slug][0]{
+  _id,
+  _type,
+  _updatedAt,
+  title,
+  "slug": slug.current,
+  publishedAt,
+  readTime,
+  intro,
+  industry,
+  challenge,
+  "client": client->{
+    _id,
+    _type,
+    name,
+    "logo": logo${IMAGE},
+    websiteUrl
+  },
+  "services": services[defined(@->_id)]->{
+    _id,
+    name,
+    "slug": slug.current
+  },
+  "testimonial": select(
+    defined(testimonial->quote) && !(testimonial->quote match "lorem ipsum*") => testimonial->{
+      ${CASE_STUDY_TESTIMONIAL_FIELDS}
+    },
+    defined(client->testimonial->quote) && !(client->testimonial->quote match "lorem ipsum*") => client->testimonial->{
+      ${CASE_STUDY_TESTIMONIAL_FIELDS}
+    }
+  ),
+  body[]{
+    _key,
+    _type,
+    style,
+    listItem,
+    level,
+    children[]{ _key, _type, text, marks },
+    markDefs[]{ _key, _type, href, openInNewTab }
+  },
+  results[]{ _key, value, description },
+  "related": related[defined(@->slug.current) && !(@->_id in path("drafts.**"))]->{
+    ${CASE_STUDY_CARD_FIELDS}
+  },
+  "latest": *[${PUBLISHED_CASE_STUDY} && _id != ^._id] | order(publishedAt desc, title asc)[0...3]{
+    ${CASE_STUDY_CARD_FIELDS}
+  },
+  "seo": seo${SEO}
+}
+`;
+
+/**
+ * Client id → case study slug, newest case study first (the fetcher keeps the
+ * newest one per client). Feeds the "Read the case study" link on `/work` rows.
+ */
+export const CASE_STUDY_SLUG_BY_CLIENT = /* groq */ `
+*[${PUBLISHED_CASE_STUDY} && defined(client._ref)] | order(publishedAt desc){
+  "clientId": client._ref,
+  "slug": slug.current
+}
+`;
+
+// ---------------------------------------------------------------------------
 // Fetchers
 // ---------------------------------------------------------------------------
 
@@ -510,4 +640,36 @@ export async function getPageSeo<T extends PageSingletonType>(
     type,
   });
   return result ?? null;
+}
+
+/** Every published case study, newest first (index cards). */
+export async function getAllCaseStudies(): Promise<CaseStudyCard[]> {
+  return await sanityClient.fetch<CaseStudyCard[]>(ALL_CASE_STUDIES);
+}
+
+/** Slugs of every published case study (the template's `getStaticPaths`). */
+export async function getCaseStudySlugs(): Promise<string[]> {
+  const result = await sanityClient.fetch<(string | null)[]>(CASE_STUDY_SLUGS);
+  return result.filter((slug): slug is string => typeof slug === 'string' && slug.length > 0);
+}
+
+/** One published case study by slug, or `null`. */
+export async function getCaseStudyBySlug(slug: string): Promise<CaseStudy | null> {
+  const result = await sanityClient.fetch<CaseStudy | null>(CASE_STUDY_BY_SLUG, { slug });
+  return result ?? null;
+}
+
+/**
+ * Client `_id` → slug of that client's newest published case study. Clients
+ * without one are absent from the map.
+ */
+export async function getCaseStudySlugsByClient(): Promise<Map<string, string>> {
+  const result = await sanityClient.fetch<{ clientId: string; slug: string }[]>(
+    CASE_STUDY_SLUG_BY_CLIENT,
+  );
+  const byClient = new Map<string, string>();
+  for (const { clientId, slug } of result) {
+    if (!byClient.has(clientId)) byClient.set(clientId, slug);
+  }
+  return byClient;
 }
