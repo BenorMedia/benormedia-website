@@ -1,0 +1,72 @@
+---
+/**
+ * Case study template — one static page per published Sanity `caseStudy`
+ * (`/case-studies/<slug>`, SCHEMAS.md v0.10, DECISIONS → Case studies).
+ * Drafts never build: the queries return published documents only.
+ *
+ * Body: the shared `CaseStudyPage` (also used by `/dev/case-study`); CTA
+ * banner + footer from BaseLayout.
+ *
+ * SEO: `caseStudy.seo` wins in `Seo` (metaTitle, metaDescription, ogImage,
+ * noIndex, canonicalUrl); fallbacks passed here are title = the case study
+ * title, description = the intro (≤160 characters). OG image falls back to
+ * the site default like every other page (a client logo would be cropped to
+ * 1200×630). Canonical = `/case-studies/<slug>` (Seo's default).
+ *
+ * JSON-LD: Article (author and publisher = the shared Organization, `about`
+ * = the client) + BreadcrumbList (Home › Case studies › title), emitted here
+ * because `NpCrumbs` prints none. No offers.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import JsonLd from "../../components/layout/JsonLd.astro";
+import CaseStudyPage from "../../components/case-studies/CaseStudyPage.astro";
+import { getCaseStudyBySlug, getCaseStudySlugs } from "../../lib/sanity/queries";
+import type { CaseStudy } from "../../lib/sanity/types";
+import { caseStudyJsonLd } from "../../lib/new-pages/jsonld";
+import { CASE_STUDIES_PATH, CASE_STUDY_COPY, caseStudyHref } from "../../components/case-studies/copy";
+
+export async function getStaticPaths() {
+  const slugs = await getCaseStudySlugs();
+  const caseStudies = await Promise.all(slugs.map((slug) => getCaseStudyBySlug(slug)));
+  return caseStudies
+    .filter((cs): cs is CaseStudy => cs !== null)
+    .map((caseStudy) => ({ params: { slug: caseStudy.slug }, props: { caseStudy } }));
+}
+
+interface Props {
+  caseStudy: CaseStudy;
+}
+
+const { caseStudy } = Astro.props;
+
+// Same clamp as the service template's description fallback.
+function clamp(text: string, max = 160): string {
+  const clean = text.replace(/\s+/g, " ").trim();
+  if (clean.length <= max) return clean;
+  const cut = clean.slice(0, max - 1);
+  return `${cut.slice(0, cut.lastIndexOf(" ")).replace(/[\s,;:.]+$/, "")}…`;
+}
+
+const intro = caseStudy.intro?.trim();
+const metaDescription = caseStudy.seo?.metaDescription?.trim() || (intro ? clamp(intro) : undefined);
+const layoutOptional = metaDescription ? { description: metaDescription } : {};
+
+const path = caseStudyHref(caseStudy.slug);
+const jsonLd = caseStudyJsonLd({
+  url: path,
+  headline: caseStudy.title,
+  description: metaDescription,
+  datePublished: caseStudy.publishedAt,
+  client: caseStudy.client,
+  crumbs: [
+    { name: CASE_STUDY_COPY.breadcrumb.home, url: "/" },
+    { name: CASE_STUDY_COPY.breadcrumb.index, url: CASE_STUDIES_PATH },
+    { name: caseStudy.title, url: path },
+  ],
+});
+---
+
+<BaseLayout pageSeo={caseStudy.seo ?? null} title={caseStudy.title} {...layoutOptional}>
+  {jsonLd.map((data) => <JsonLd data={data} />)}
+  <CaseStudyPage caseStudy={caseStudy} />
+</BaseLayout>

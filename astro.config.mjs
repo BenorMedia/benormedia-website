@@ -8,6 +8,7 @@ import react from '@astrojs/react';
 import sanity from '@sanity/astro';
 import sitemap from '@astrojs/sitemap';
 import { sitemapInfo } from './src/lib/new-pages/registry.mjs';
+import { caseStudySitemapInfo } from './src/lib/sanity/case-study-sitemap.mjs';
 
 /** @type {{ env: { NODE_ENV?: string }, cwd(): string, argv: string[] }} */
 const proc = /** @type {any} */ (globalThis).process;
@@ -133,6 +134,14 @@ const LASTMOD = {
 // `lastmod` from their front matter `updatedAt`, so nobody edits LASTMOD.
 const NEW_PAGES = sitemapInfo();
 
+const SANITY_API_VERSION = '2026-09-25';
+
+// Case studies (Sanity `caseStudy`, DECISIONS → Case studies 2026-10-20):
+// `/case-studies` is listed only once a case study is published; detail
+// pages (they exist only when published) take `lastmod` = `publishedAt`, the
+// index the newest one. Read from Sanity once per build/check.
+const CASE_STUDIES = await caseStudySitemapInfo({ projectId, dataset, apiVersion: SANITY_API_VERSION });
+
 // https://astro.build/config
 export default defineConfig({
   ...(siteUrl ? { site: siteUrl } : {}),
@@ -147,7 +156,7 @@ export default defineConfig({
     sanity({
       projectId,
       dataset,
-      apiVersion: '2026-09-25',
+      apiVersion: SANITY_API_VERSION,
       useCdn: false,
       studioBasePath: '/studio',
     }),
@@ -157,15 +166,21 @@ export default defineConfig({
     // and so are the noindex pages: /cookie-policy (placeholder) and
     // /testimonials while testimonials are off (lead 2026-09-30; drop them
     // from this list when they go live). Privacy Policy + Terms are
-    // indexable since 2026-10-05, so they are listed.
+    // indexable since 2026-10-05, so they are listed. `/case-studies` while
+    // no case study is published, and case studies set to noindex.
     sitemap({
-      filter: (page) =>
-        !/\/(dev|studio)(\/|$)|\/404$|^\/(cookie-policy|testimonials)\/?$/.test(
-          new URL(page).pathname,
-        ) && !NEW_PAGES.draftPaths.has(new URL(page).pathname.replace(/\/$/, '')),
+      filter: (page) => {
+        const path = new URL(page).pathname.replace(/\/$/, '');
+        return (
+          !/\/(dev|studio)(\/|$)|\/404$|^\/(cookie-policy|testimonials)\/?$/.test(new URL(page).pathname) &&
+          !NEW_PAGES.draftPaths.has(path) &&
+          !(path === '/case-studies' && !CASE_STUDIES.hasPublished) &&
+          !CASE_STUDIES.noIndexPaths.has(path)
+        );
+      },
       serialize(item) {
         const path = new URL(item.url).pathname.replace(/\/$/, '') || '/';
-        const lastmod = LASTMOD[path] ?? NEW_PAGES.lastmod[path];
+        const lastmod = LASTMOD[path] ?? NEW_PAGES.lastmod[path] ?? CASE_STUDIES.lastmod[path];
         if (lastmod) item.lastmod = lastmod;
         return item;
       },

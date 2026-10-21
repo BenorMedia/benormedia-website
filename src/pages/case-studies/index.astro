@@ -1,0 +1,64 @@
+---
+/**
+ * Case studies index — `/case-studies` (Figma 3764:15808, DECISIONS → Case
+ * studies). `PageHero` + every published case study (`CaseStudyListing`,
+ * newest first, no pagination or filters). CTA banner + footer from
+ * BaseLayout. SEO lives in code (`PAGE_META.caseStudies`, like `/work`).
+ *
+ * Lead 2026-10-20: noindex and out of the sitemap while no case study is
+ * published. Both follow the published list, so nobody flips a switch:
+ *   - robots: `noIndex` when `getAllCaseStudies()` is empty (this file);
+ *   - sitemap: `astro.config.mjs` reads the published case studies at build
+ *     time (`src/lib/sanity/case-study-sitemap.mjs`) and filters this path
+ *     out when there are none.
+ *
+ * JSON-LD: CollectionPage (ItemList of the case studies) + BreadcrumbList,
+ * as on /blog (`caseStudiesIndexJsonLd`, lead 2026-10-21).
+ *
+ * Empty state (no design): the hero only; `CaseStudyListing` renders nothing
+ * without cards, so there is no empty grid and no "no results" copy.
+ * `PageHero` has no bottom padding (the next section owns it), so the empty
+ * hero takes the listing's own top padding (7.857rem, 5rem ≤767) to keep
+ * the same gap above the CTA banner.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../../components/sections/PageHero.astro";
+import CaseStudyListing from "../../components/case-studies/CaseStudyListing.astro";
+import { getAllCaseStudies } from "../../lib/sanity/queries";
+import { PAGE_META } from "../../lib/content/seo";
+import { CASE_STUDY_COPY } from "../../components/case-studies/copy";
+import JsonLd from "../../components/layout/JsonLd.astro";
+import { caseStudiesIndexJsonLd } from "../../lib/new-pages/jsonld";
+
+const cards = await getAllCaseStudies();
+const hero = CASE_STUDY_COPY.indexHero;
+---
+
+<BaseLayout
+  title={PAGE_META.caseStudies.title}
+  description={PAGE_META.caseStudies.description}
+  noIndex={cards.length === 0}
+>
+  {/* Same CollectionPage + BreadcrumbList as /blog (lead 2026-10-21). */}
+  {caseStudiesIndexJsonLd({ name: CASE_STUDY_COPY.breadcrumb.index, description: PAGE_META.caseStudies.description }, cards).map((data) => <JsonLd data={data} />)}
+  <PageHero
+    eyebrow={hero.eyebrow}
+    title={hero.title}
+    accent={hero.accent}
+    description={hero.description}
+    {...(cards.length === 0 ? { class: "is-empty" } : {})}
+  />
+  <CaseStudyListing cards={cards} />
+</BaseLayout>
+
+<style>
+  /* Empty index: the listing's top padding (CaseStudyListing). TODO: DS (no empty-state design). */
+  :global(.c-page-hero.is-empty) {
+    padding-bottom: 7.857rem;
+  }
+  @media (max-width: 767px) {
+    :global(.c-page-hero.is-empty) {
+      padding-bottom: 5rem;
+    }
+  }
+</style>

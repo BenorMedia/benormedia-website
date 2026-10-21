@@ -39,6 +39,15 @@ export const PAGE_META = {
     description:
       "The BenorMedia blog for B2B SaaS marketing teams: Webflow, website redesigns, analytics, headless CMS SEO, and getting cited in ChatGPT and AI search.",
   },
+  // TODO: COPY: placeholders until the lead sends the index meta. Title =
+  // the Figma eyebrow; description = the Figma hero placeholder
+  // (`CASE_STUDY_COPY.indexHero.description`). The page is noindex only
+  // while no case study is published (src/pages/case-studies/index.astro).
+  caseStudies: {
+    title: "Case Studies",
+    description:
+      "Lorem ipsum dolor sit amet consectetur. Senectus nec gravida blandit et ultricies donec eu orci. Scelerisque lectus tristique iaculis duis.",
+  },
   notFound: {
     title: "Page Not Found",
     description:

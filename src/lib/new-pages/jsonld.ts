@@ -113,6 +113,50 @@ export function blogIndexJsonLd(meta: { name: string; description: string }, pos
   ];
 }
 
+/** `/case-studies`: the same CollectionPage + BreadcrumbList as `/blog`
+ *  (lead 2026-10-21), listing the published case studies. */
+export function caseStudiesIndexJsonLd(
+  meta: { name: string; description: string },
+  cards: readonly { title: string; slug: string; publishedAt: string }[],
+): Ld[] {
+  const url = abs("/case-studies");
+  const dates = cards.map((c) => c.publishedAt).filter(Boolean).sort();
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "@id": `${url}#webpage`,
+      url,
+      name: meta.name,
+      description: meta.description,
+      inLanguage: "en-US",
+      isPartOf: { "@id": WEBSITE_ID },
+      publisher: { ...PROVIDER_LD },
+      ...(dates.length > 0 ? { dateModified: dates[dates.length - 1] } : {}),
+      mainEntity: {
+        "@type": "ItemList",
+        numberOfItems: cards.length,
+        itemListElement: cards.map((c, i) => {
+          const itemUrl = abs(`/case-studies/${c.slug}`);
+          return {
+            "@type": "ListItem",
+            position: i + 1,
+            item: { "@type": "Article", "@id": `${itemUrl}#article`, headline: c.title, url: itemUrl, datePublished: c.publishedAt },
+          };
+        }),
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
+        { "@type": "ListItem", position: 2, name: meta.name, item: url },
+      ],
+    },
+  ];
+}
+
 export function pageJsonLd(page: NpPage): Ld[] {
   const url = abs(page.url);
   const out: Ld[] = [];
@@ -174,4 +218,48 @@ export function pageJsonLd(page: NpPage): Ld[] {
     });
   }
   return out;
+}
+
+/** A case study (`/case-studies/<slug>`, Sanity `caseStudy`): an Article by
+ *  and published by the Organization, `about` the client, and the
+ *  breadcrumb (`NpCrumbs` prints none). No offers. */
+export function caseStudyJsonLd(cs: {
+  url: string;
+  headline: string;
+  description?: string | undefined;
+  datePublished: string;
+  client?: { name?: string | undefined; websiteUrl?: string | undefined } | null | undefined;
+  crumbs: readonly { name: string; url: string }[];
+}): Ld[] {
+  const url = abs(cs.url);
+  const clientName = cs.client?.name?.trim();
+  const clientUrl = cs.client?.websiteUrl?.trim();
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "@id": `${url}#article`,
+      headline: cs.headline,
+      ...(cs.description ? { description: cs.description } : {}),
+      url,
+      mainEntityOfPage: url,
+      inLanguage: "en-US",
+      datePublished: cs.datePublished,
+      author: { ...PROVIDER_LD },
+      publisher: { ...PROVIDER_LD },
+      ...(clientName
+        ? { about: { "@type": "Organization", name: clientName, ...(clientUrl ? { url: clientUrl } : {}) } }
+        : {}),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: cs.crumbs.map((item, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: item.name,
+        item: abs(item.url),
+      })),
+    },
+  ];
 }

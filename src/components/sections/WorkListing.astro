@@ -40,9 +40,11 @@ import type { Client, ClientSector } from "../../lib/sanity/types";
 
 interface Props {
   clients: Client[];
+  /** Client `_id` → case study URL ("Read the case study" on the rows). */
+  caseStudyLinks?: ReadonlyMap<string, string>;
 }
 
-const { clients } = Astro.props;
+const { clients, caseStudyLinks } = Astro.props;
 
 interface Filter {
   label: string;
@@ -58,6 +60,64 @@ const filters: Filter[] = [
 ];
 
 const headingId = "work-listing-title";
+
+// "Read the case study" rows (ClientList `caseStudyLinks`, see its header;
+// no Figma). Their CSS ships only when a row has a link: not in ClientList,
+// so the shared list CSS (Home, Pricing, services) is unchanged, and inline
+// here, so `/work` is byte-identical while no case study is published.
+const hasCaseStudyLinks = clients.some((client) => caseStudyLinks?.has(client._id) === true);
+const caseStudyCss = `
+  .c-work-listing .c-client-list__link {
+    text-decoration: none;
+  }
+
+  .c-work-listing .c-client-list__link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+
+  .c-work-listing .c-client-list__link:focus-visible {
+    outline: none;
+  }
+
+  .c-work-listing .c-client-list__row:has(.c-client-list__link:focus-visible) {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .c-work-listing .c-client-list__case-study {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 auto;
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    white-space: nowrap;
+  }
+
+  .c-work-listing .c-client-list__case-study:hover {
+    text-decoration: none;
+  }
+
+  .c-work-listing .c-client-list__case-study:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .c-work-listing .c-client-list__row:has(.c-client-list__link:focus-visible) .c-client-list__arrow {
+    transform: rotate(-30.963deg);
+  }
+
+  .c-work-listing .c-client-list__row:has(.c-client-list__link:focus-visible) .c-client-list__arrow path {
+    fill: var(--color-accent);
+  }
+
+  .c-work-listing .c-client-list__row:has(.c-client-list__link:focus-visible) + .c-client-list__preview.is-loaded {
+    opacity: 1;
+  }
+`;
 ---
 
 {clients.length > 0 && (
@@ -89,7 +149,8 @@ const headingId = "work-listing-title";
       ></p>
 
       <div class="c-work-listing__list" data-anim="work-list">
-        <ClientList clients={clients} />
+        <ClientList clients={clients} {...(caseStudyLinks ? { caseStudyLinks } : {})} />
+        {hasCaseStudyLinks && <style is:inline set:html={caseStudyCss} />}
       </div>
     </Container>
   </section>

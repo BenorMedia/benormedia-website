@@ -11,26 +11,22 @@
  * check); `astro dev`, Vercel previews and local builds get the page. A rest
  * route because a fixed `.astro` page can't be left out of a build.
  *
- * Page order as Figma 3764:16012: hero + facts panel → quote → sidebar +
- * body (phase block) + results → related case studies → CTA banner. Below,
- * separated: an "Index card" block with a row of three `CaseStudyCard`s.
+ * Page order as Figma 3764:16012: the shared template `CaseStudyPage` (hero
+ * + facts panel → quote → sidebar + body (phase block) + results → related
+ * case studies, the same component as `/case-studies/[slug]`) → CTA banner.
+ * Below, separated: an "Index card" block with a row of three
+ * `CaseStudyCard`s.
  */
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import Container from "../../../components/ui/Container.astro";
 import CtaBanner from "../../../components/layout/CtaBanner.astro";
-import CaseStudyHero from "../../../components/case-studies/CaseStudyHero.astro";
-import CaseStudyQuote from "../../../components/case-studies/CaseStudyQuote.astro";
-import CaseStudyArticle from "../../../components/case-studies/CaseStudyArticle.astro";
-import CaseStudyRelated from "../../../components/case-studies/CaseStudyRelated.astro";
+import CaseStudyPage from "../../../components/case-studies/CaseStudyPage.astro";
 import CaseStudyGrid from "../../../components/case-studies/CaseStudyGrid.astro";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { createCaseStudyFixture, type FixtureAsset } from "../../../lib/sanity/case-study-fixture";
-import { caseStudyResources } from "../../../lib/sanity/case-studies";
 import { getSiteSettingsCached } from "../../../lib/sanity/site";
 import { resolveMode } from "../../../lib/new-pages/registry.mjs";
-import { SITE } from "../../../lib/content/entity";
-import { caseStudyHref } from "../../../components/case-studies/copy";
 
 export function getStaticPaths() {
   const meta = import.meta.env as Record<string, unknown>;
@@ -55,12 +51,7 @@ const siteSettings = await getSiteSettingsCached();
 ---
 
 <BaseLayout title="Case study preview" description="Preview of the case study template with placeholder content." noIndex showCtaBanner={false}>
-  <article class="cs-preview">
-    <CaseStudyHero caseStudy={caseStudy} />
-    <CaseStudyQuote testimonial={caseStudy.testimonial} client={caseStudy.client} />
-    <CaseStudyArticle caseStudy={caseStudy} url={`${SITE}${caseStudyHref(caseStudy.slug)}`} />
-  </article>
-  <CaseStudyRelated cards={caseStudyResources(caseStudy)} />
+  <CaseStudyPage caseStudy={caseStudy} />
   <CtaBanner siteSettings={siteSettings} />
 
   <section class="cs-preview__cards" aria-labelledby="cs-preview-cards">

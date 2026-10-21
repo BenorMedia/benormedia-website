@@ -1,0 +1,36 @@
+---
+/**
+ * CaseStudyPage — the case study template body (Figma 3764:16012), shared by
+ * the real route `/case-studies/[slug]` and the `/dev/case-study` preview so
+ * the two can't drift.
+ *
+ * Order: hero + facts panel → quote → sidebar + body + results (one
+ * `<article>`), then the related case studies (`caseStudyResources`: the
+ * editor's picks, else the newest others). The CTA banner is not part of it:
+ * real pages get BaseLayout's, the preview renders its own.
+ *
+ * No fetching. JSON-LD (Article + BreadcrumbList) is emitted by the route,
+ * since `NpCrumbs` prints none.
+ */
+import CaseStudyHero from "./CaseStudyHero.astro";
+import CaseStudyQuote from "./CaseStudyQuote.astro";
+import CaseStudyArticle from "./CaseStudyArticle.astro";
+import CaseStudyRelated from "./CaseStudyRelated.astro";
+import type { CaseStudy } from "../../lib/sanity/types";
+import { caseStudyResources } from "../../lib/sanity/case-studies";
+import { SITE } from "../../lib/content/entity";
+import { caseStudyHref } from "./copy";
+
+interface Props {
+  caseStudy: CaseStudy;
+}
+
+const { caseStudy } = Astro.props;
+---
+
+<article class="c-cs-page">
+  <CaseStudyHero caseStudy={caseStudy} />
+  <CaseStudyQuote testimonial={caseStudy.testimonial} client={caseStudy.client} />
+  <CaseStudyArticle caseStudy={caseStudy} url={`${SITE}${caseStudyHref(caseStudy.slug)}`} />
+</article>
+<CaseStudyRelated cards={caseStudyResources(caseStudy)} />

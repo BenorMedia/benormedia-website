@@ -3,22 +3,30 @@
  * Work page — Phase 5. Refs: `docs/refs/work/`.
  *
  * All page copy is static. Sanity supplies the clients and the testimonials.
+ * A client with a published case study gets a "Read the case study" link on
+ * its row (DECISIONS → Case studies 2026-10-20: the newest one).
  * SEO lives in code (lead, 2026-09-29: there will be no `workPage` document;
  * the `workPage` schema type still exists and is not read here).
  *
  * BaseLayout owns Nav, CtaBanner, Footer and ContactModal.
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { getAllClients, getTestimonials } from "../lib/sanity/queries";
+import { getAllClients, getCaseStudySlugsByClient, getTestimonials } from "../lib/sanity/queries";
 import { PAGE_META } from "../lib/content/seo";
 import PageHero from "../components/sections/PageHero.astro";
 import WorkListing from "../components/sections/WorkListing.astro";
 import Testimonials from "../components/sections/Testimonials.astro";
 
-const [clients, testimonials] = await Promise.all([
+const [clients, testimonials, caseStudySlugs] = await Promise.all([
   getAllClients(),
   getTestimonials(),
+  getCaseStudySlugsByClient(),
 ]);
+// `/case-studies/<slug>` = `caseStudyHref()` (components/case-studies/copy.ts),
+// written out: importing that module here reorders /work's inline CSS.
+const caseStudyLinks = new Map(
+  [...caseStudySlugs].map(([clientId, slug]): [string, string] => [clientId, `/case-studies/${slug}`]),
+);
 
 // Lead 2026-10-01.
 const heroDescription =
@@ -34,7 +42,7 @@ const heroDescription =
     description={heroDescription}
     class="c-work-hero"
   />
-  <WorkListing clients={clients} />
+  <WorkListing clients={clients} caseStudyLinks={caseStudyLinks} />
   <Testimonials testimonials={testimonials} />
 </BaseLayout>
 
