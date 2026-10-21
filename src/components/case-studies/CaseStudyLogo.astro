@@ -1,0 +1,117 @@
+---
+/**
+ * CaseStudyLogo — c-cs-logo
+ * The client logo in a thin bordered box with a small square on each side
+ * (Figma: card thumbnail 3767:25760, facts panel 3768:25991). No logo →
+ * the client name as text in the same box (empty state, no design yet).
+ *
+ * Variants: `is-card` (logo 48px tall) and `is-panel` (38px), Figma px at
+ * the 14px base (DESIGN_SYSTEM §1).
+ */
+import { clientImageAlt } from "../../lib/sanity/image";
+import { imageSize, resolveImage, type CaseStudyImageInput } from "./image";
+
+interface Props {
+  name?: string | null | undefined;
+  logo?: CaseStudyImageInput;
+  size?: "card" | "panel";
+  /** Above the fold (hero facts panel): load eagerly. */
+  eager?: boolean;
+  class?: string;
+}
+
+const { name, logo, size = "card", eager = false, class: className } = Astro.props;
+const LOGO_PX = size === "card" ? 48 : 38;
+const resolved = resolveImage(logo, LOGO_PX);
+const img = resolved ? { ...resolved, ...imageSize(resolved, LOGO_PX), alt: clientImageAlt(logo?.alt, name, "logo") } : null;
+const label = name?.trim() ?? "";
+const rootClass = ["c-cs-logo", `is-${size}`, className].filter(Boolean).join(" ");
+---
+
+{(img || label) && (
+  <span class={rootClass}>
+    {img ? (
+      <img class="c-cs-logo__img" src={img.src} width={img.width} height={img.height} alt={img.alt} loading={eager ? "eager" : "lazy"} decoding="async" />
+    ) : (
+      <span class="c-cs-logo__name c-text_m">{label}</span>
+    )}
+  </span>
+)}
+
+<style>
+  /* Figma: 0.6px #C9CEDA border (Eyebrow's 0.5px gray), 3.6px radius,
+     38.4px padding around a 48px logo; side squares 12px. No fill: the
+     thumbnail / panel glow shows through (Figma). */
+  .c-cs-logo {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2.743rem;
+    border: 0.5px solid var(--color-gray);
+    border-radius: 3.6px;
+  }
+  .c-cs-logo::before,
+  .c-cs-logo::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 0.857rem;
+    height: 0.857rem;
+    transform: translateY(-50%);
+    border: 0.5px solid var(--color-gray);
+    border-radius: 1.8px;
+    background: var(--color-white);
+  }
+  .c-cs-logo::before {
+    left: -0.471rem;
+  }
+  .c-cs-logo::after {
+    right: -0.514rem;
+  }
+  .c-cs-logo__img {
+    width: auto;
+    height: 3.429rem;
+    max-width: 18rem;
+    object-fit: contain;
+  }
+  /* Name fallback: one line, the logo's height. */
+  .c-cs-logo__name {
+    display: block;
+    max-width: 18rem;
+    overflow: hidden;
+    color: var(--color-black-secondary);
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Facts panel: 30.5px padding, 38px logo, 9.5px squares, 2.9px radius. */
+  .c-cs-logo.is-panel {
+    padding: 2.177rem;
+    border-radius: 2.9px;
+  }
+  .c-cs-logo.is-panel::before,
+  .c-cs-logo.is-panel::after {
+    width: 0.68rem;
+    height: 0.68rem;
+    border-radius: 1.4px;
+  }
+  .c-cs-logo.is-panel::before {
+    left: -0.374rem;
+  }
+  .c-cs-logo.is-panel::after {
+    right: -0.407rem;
+  }
+  .c-cs-logo.is-panel .c-cs-logo__img {
+    height: 2.721rem;
+    max-width: 14rem;
+  }
+
+  @media (max-width: 767px) {
+    .c-cs-logo__img,
+    .c-cs-logo__name {
+      max-width: 22rem;
+    }
+  }
+</style>

@@ -1,0 +1,88 @@
+---
+/**
+ * /dev/case-study — the case study template preview (DECISIONS → Case
+ * studies 2026-10-20; SITEMAP "Not public"). noindex, outside the sitemap
+ * (`/dev/*` filter in astro.config.mjs).
+ *
+ * Not built in production: it shows Figma sample content (a real person's
+ * name and photo next to a client logo, `createCaseStudyFixture`, TODO: COPY).
+ * `getStaticPaths` returns no path when `resolveMode` says production
+ * (VERCEL_ENV=production or PUBLIC_SITE_ENV=production, the new pages'
+ * check); `astro dev`, Vercel previews and local builds get the page. A rest
+ * route because a fixed `.astro` page can't be left out of a build.
+ *
+ * Page order as Figma 3764:16012: hero + facts panel → quote → sidebar +
+ * body (phase block) + results → related case studies → CTA banner. Below,
+ * separated: an "Index card" block with a row of three `CaseStudyCard`s.
+ */
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Container from "../../../components/ui/Container.astro";
+import CtaBanner from "../../../components/layout/CtaBanner.astro";
+import CaseStudyHero from "../../../components/case-studies/CaseStudyHero.astro";
+import CaseStudyQuote from "../../../components/case-studies/CaseStudyQuote.astro";
+import CaseStudyArticle from "../../../components/case-studies/CaseStudyArticle.astro";
+import CaseStudyRelated from "../../../components/case-studies/CaseStudyRelated.astro";
+import CaseStudyGrid from "../../../components/case-studies/CaseStudyGrid.astro";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { createCaseStudyFixture, type FixtureAsset } from "../../../lib/sanity/case-study-fixture";
+import { caseStudyResources } from "../../../lib/sanity/case-studies";
+import { getSiteSettingsCached } from "../../../lib/sanity/site";
+import { resolveMode } from "../../../lib/new-pages/registry.mjs";
+import { SITE } from "../../../lib/content/entity";
+import { caseStudyHref } from "../../../components/case-studies/copy";
+
+export function getStaticPaths() {
+  const meta = import.meta.env as Record<string, unknown>;
+  const siteEnv = meta["PUBLIC_SITE_ENV"];
+  const env = { ...process.env, PUBLIC_SITE_ENV: typeof siteEnv === "string" ? siteEnv : process.env["PUBLIC_SITE_ENV"] };
+  return resolveMode(env, meta["DEV"] === true).production ? [] : [{ params: { preview: undefined } }];
+}
+
+// Figma sample images, read at render time (never emitted in production).
+const asset = (file: string, width: number, height: number): FixtureAsset => ({
+  src: `data:image/png;base64,${readFileSync(join(process.cwd(), "src/assets/dev/case-study", file)).toString("base64")}`,
+  width,
+  height,
+});
+const { caseStudy, cards } = createCaseStudyFixture({
+  surfeLogo: asset("surfe-logo.png", 321, 100),
+  authorPhoto: asset("david-chevalier.png", 207, 207),
+});
+// Own ids for the second row (the cards' SVG filter ids derive from `_id`).
+const indexCards = cards.map((card) => ({ ...card, _id: `${card._id}-index` }));
+const siteSettings = await getSiteSettingsCached();
+---
+
+<BaseLayout title="Case study preview" description="Preview of the case study template with placeholder content." noIndex showCtaBanner={false}>
+  <article class="cs-preview">
+    <CaseStudyHero caseStudy={caseStudy} />
+    <CaseStudyQuote testimonial={caseStudy.testimonial} client={caseStudy.client} />
+    <CaseStudyArticle caseStudy={caseStudy} url={`${SITE}${caseStudyHref(caseStudy.slug)}`} />
+  </article>
+  <CaseStudyRelated cards={caseStudyResources(caseStudy)} />
+  <CtaBanner siteSettings={siteSettings} />
+
+  <section class="cs-preview__cards" aria-labelledby="cs-preview-cards">
+    <Container>
+      <p id="cs-preview-cards" class="cs-preview__label c-paragraph_s">Index card (preview only, not part of the template)</p>
+      <CaseStudyGrid cards={indexCards} variant="index" />
+    </Container>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Preview-only block, set apart from the template above. */
+  .cs-preview__cards {
+    border-top: 1px dashed var(--color-gray);
+    background: var(--color-gray-light);
+  }
+  .cs-preview__cards :global(.c-container) {
+    padding-top: 4rem;
+    padding-bottom: 7.857rem;
+  }
+  .cs-preview__label {
+    margin: 0 0 2rem;
+    color: var(--color-text);
+  }
+</style>

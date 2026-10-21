@@ -1,0 +1,161 @@
+---
+/**
+ * CaseStudyHero — c-cs-hero
+ * Case study header (Figma 3764:16029 + 3768:25937): left = breadcrumbs
+ * (Home › Case studies › title, the blog's chevron trail `NpCrumbs`), the
+ * "Case study" accent tag, date | read time, the H1 and the intro; right =
+ * `CaseStudyFacts`. A divider 100px under the row (the blog hero's rule).
+ * Spacing and the meta row follow `NpBlogHero`, which converts the same
+ * Figma styles.
+ *
+ * `NpCrumbs` prints no JSON-LD: the page emits the BreadcrumbList.
+ */
+import Container from "../ui/Container.astro";
+import Eyebrow from "../ui/Eyebrow.astro";
+import NpCrumbs from "../new-pages/NpCrumbs.astro";
+import CaseStudyFacts from "./CaseStudyFacts.astro";
+import type { CaseStudy } from "../../lib/sanity/types";
+import { caseStudyReadMinutes } from "../../lib/sanity/case-studies";
+import { fill, formatDate } from "../../lib/new-pages/html";
+import { CASE_STUDIES_PATH, CASE_STUDY_COPY } from "./copy";
+
+interface Props {
+  caseStudy: Pick<
+    CaseStudy,
+    "title" | "publishedAt" | "intro" | "readTime" | "body" | "client" | "industry" | "challenge" | "services"
+  >;
+}
+
+const { caseStudy } = Astro.props;
+const crumbs = [
+  { label: CASE_STUDY_COPY.breadcrumb.home, href: "/" },
+  { label: CASE_STUDY_COPY.breadcrumb.index, href: CASE_STUDIES_PATH },
+  { label: caseStudy.title },
+];
+const minutes = caseStudyReadMinutes(caseStudy);
+const intro = caseStudy.intro?.trim();
+---
+
+<header class="c-cs-hero">
+  <Container>
+    <div class="c-cs-hero__grid">
+      <div class="c-cs-hero__text">
+        <NpCrumbs items={crumbs} />
+        <div class="c-cs-hero__head">
+          <div class="c-cs-hero__meta">
+            <Eyebrow variant="accent">{CASE_STUDY_COPY.tag}</Eyebrow>
+            <p class="c-cs-hero__facts c-paragraph_s">
+              <time datetime={caseStudy.publishedAt}>{formatDate(caseStudy.publishedAt)}</time>
+              <span class="c-cs-hero__sep" aria-hidden="true"></span>
+              <span>{fill(CASE_STUDY_COPY.readTime, { n: String(minutes) })}</span>
+            </p>
+          </div>
+          <div class="c-cs-hero__titles">
+            <h1 class="c-cs-hero__title c-text_xl">{caseStudy.title}</h1>
+            {intro && <p class="c-cs-hero__intro c-paragraph_l">{intro}</p>}
+          </div>
+        </div>
+      </div>
+      <div class="c-cs-hero__side">
+        <CaseStudyFacts caseStudy={caseStudy} />
+      </div>
+    </div>
+    <hr class="c-cs-hero__rule" />
+  </Container>
+</header>
+
+<style>
+  /* Accent tag tint at 5% (the blog hero's contrast fix). */
+  .c-cs-hero__meta :global(.c-eyebrow.is-accent) {
+    background: color-mix(in srgb, var(--color-accent) 5%, var(--color-white));
+  }
+  /* Figma: 110px top, 906 | 724 columns with a 50px gap in the 1680
+     container, the rule 100px below, 110px below the rule. The site
+     container is 1230px at 1440 (Figma 1680), so the 724 : 906 ratio would
+     leave the H1 648px and wrap the Figma title to 3 lines; the panel is
+     36% of the row instead (443px at 1440, TODO: DS), so the text column
+     (737px) keeps it to 2 lines from 992px up (lead 2026-10-20 round 2). */
+  .c-cs-hero :global(.c-container) {
+    padding-top: 7.857rem;
+    padding-bottom: 7.857rem;
+  }
+  .c-cs-hero__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 36%);
+    align-items: center;
+    gap: 3.571rem;
+  }
+  .c-cs-hero__text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.786rem; /* 25px */
+    min-width: 0;
+  }
+  .c-cs-hero__head {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.714rem; /* 24px */
+  }
+  .c-cs-hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.071rem; /* 15px */
+  }
+  .c-cs-hero__facts {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.429rem; /* 20px */
+    margin: 0;
+    color: var(--color-text-secondary);
+  }
+  /* The Figma "|" separator, drawn (NpBlogHero). */
+  .c-cs-hero__sep {
+    width: 1px;
+    height: 1em;
+    background: currentColor;
+    opacity: 0.6;
+  }
+  .c-cs-hero__titles {
+    display: flex;
+    flex-direction: column;
+    gap: 0.714rem; /* 10px */
+  }
+  .c-cs-hero__title {
+    margin: 0;
+    color: var(--color-black-secondary);
+  }
+  .c-cs-hero__intro {
+    max-width: 46.3rem; /* 648px */
+    margin: 0;
+    color: var(--color-text);
+  }
+  .c-cs-hero__side {
+    min-width: 0;
+  }
+  .c-cs-hero__rule {
+    height: 1px;
+    margin: 7.143rem 0 0;
+    border: 0;
+    background: var(--color-border);
+  }
+  /* Tablet / mobile: one column, facts under the text (NpBlogHero). */
+  @media (max-width: 991px) {
+    .c-cs-hero__grid {
+      grid-template-columns: 1fr;
+      align-items: start;
+    }
+  }
+  @media (max-width: 767px) {
+    .c-cs-hero :global(.c-container) {
+      padding-top: 5rem;
+      padding-bottom: 4.444rem;
+    }
+    .c-cs-hero__rule {
+      margin-top: 4.444rem;
+    }
+  }
+</style>

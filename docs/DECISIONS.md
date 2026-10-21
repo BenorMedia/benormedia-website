@@ -518,6 +518,14 @@ Without adding to your team." with "website moving." marked Gradient (published 
 | 2026-10-20 | The `caseStudy` schema is built in code but not deployed to the live Studio; Sergio deploys it | Lead | Lead |
 | 2026-10-20 | Case study quote: the case study's testimonial, else the client's; a "Lorem ipsum" placeholder quote is skipped (falls back to the client's). `/work` "Read the case study" links to the client's newest published case study | Lead, after the queries handoff | Lead |
 | 2026-10-20 | `caseStudy`: `body` optional for now; no character limits on title, intro, industry or challenge until real copy is in; `link.internalRef` and post-body internal links don't target case studies yet | Lead, after the schema handoff | Lead |
+| 2026-10-20 | `/dev/case-study` matches the Figma template exactly, filled with the Figma sample content (body, Surfe facts, David Chevalier quote and photo, +40% / +30% / +12% results) as placeholder marked `TODO: COPY`: dev fixture only, never in Sanity or in real pages' defaults. Site Nav, CTA banner and Footer stay as they are (Figma's are ignored) | Lead review of the preview | Lead |
+| 2026-10-20 | `/dev/case-study` is built outside production only (same production check as `src/lib/new-pages/registry.mjs`): it shows a real person's name and photo next to a client logo with sample text, and `/dev/*` is otherwise public on production | Orchestrator safeguard for the lead's request; `/dev/styleguide` returns 200 on www | Proposed |
+| 2026-10-20 | Case-study cards: both tags on one line, short date in the Figma pattern (MM/DD/YY) on index and related cards (supersedes the blog date format for cards; hero date unchanged). Related section rebuilt to the Figma frame (card width, gaps, large logo on the gradient orbit) | Lead | Lead |
+| 2026-10-20 | Responsive: keep the guides' 1199px article step. TOC stays without the Figma side squares. Body font at semibold where Figma uses Poppins | Lead, after the components handoff | Lead |
+| 2026-10-21 | Related case studies section (Figma 3764:16201): eyebrow "Case studies" (shown uppercase), replacing "Resources" (supersedes the 2026-10-20 row); button stays "Get in Touch". Heading size, color and width, card container width, side margins, gaps, thumbnail logo box, smaller card tags and section spacing match Figma; heading one line at 1440 (placeholder copy) | Lead | Lead |
+| 2026-10-21 | Related case studies section uses the page's container (same width as the hero and article), not Figma's 1680px row; eyebrow and button keep the site's shared sizes; card tags 12.6px (84% of Figma at 1920) accepted | Lead, round 3 review | Lead |
+| 2026-10-21 | Hero date in the blog format; facts panel 36% of the hero row (H1 on 2 lines at 1440); phase text full width at ≤767; table-of-contents entries wrap to two lines on case studies only (blog sidebar unchanged) | Lead, round 2 review | Lead |
+| 2026-10-21 | Design-system gaps keep the closest existing values; `tokens.css` and `DESIGN_SYSTEM.md` unchanged | Lead | Lead |
 
 ### Open questions
 
@@ -528,15 +536,25 @@ Without adding to your team." with "website moving." marked Gradient (published 
 #### Design team
 - **Mobile / tablet** — no designs; adapted from existing patterns, every choice listed in the handoff. `TODO: DS mobile`. (2026-10-20)
 - **Empty and long states** — no design for an index with 0 published case studies, a card without a client logo, a case study without results or testimonial, or more than 6 cards. (2026-10-20)
+- **Case study values with no token (`TODO: DS`)** — card glow Figma #1355FF (Blue 500) → `--color-accent`; quote name and body bold in Poppins SemiBold → body font at 600; Figma 15px uppercase labels (facts rows) → `--fs-p`; radii 3.6px / 2.9px (logo box), 14px (quote), 2.25px (results squares) and the facts glow blur 135px used as given in Figma (no radius / blur scale in the DS). Full list in `docs/handoffs/2026-10-20_ui_case-study-components.md`. (2026-10-20)
+- **Case study card tags** — "Published on {date}" in the blog date format ("October 20, 2026") is longer than the Figma "01/01/01": at 1440 the two tags wrap to two lines in a card. Built with wrapping; a shorter date format or smaller tags needs a design call. (2026-10-20)
+- **Case study table of contents** — the Figma TOC box has small squares on its side borders; the shared blog sidebar (`NpBlogSidebar`) has none and was reused unchanged so blog pages stay identical. (2026-10-20)
 
 #### Lead / CEO
 - ~~**Previewing drafts**~~ — RESOLVED 2026-10-20: placeholder content on a noindex `/dev/case-study` page (see Decisions).
 - **Schema deploy (Sergio)** — the `caseStudy` schema is in code only; Sergio deploys it to the live Studio after the PR is reviewed. (2026-10-20)
 
+#### Needs lead OK
+- **`/dev/case-study` outside production** — the preview page is not emitted in production builds (sample real-person quote and photo). (2026-10-20)
+- ~~**Related section button**~~ — RESOLVED 2026-10-21: "Get in Touch" (see Decisions).
+
 #### Engineering follow-ups
 - **Brief alignment** — `docs/brief-next-pages.md` Part 2 and `docs/content/work-joor.md` still describe `/work/joor`, a code data file and the Flow Ninja section order; update them to match the decisions above before `/seo-work-joor` runs. (2026-10-20)
 - **Case-study character limits** — set max lengths for `title`, `intro`, `industry` and `challenge` once real copy shows what fits the design. (2026-10-20)
 - **Links to case studies** — allow `caseStudy` in `link.internalRef` and post-body internal links when someone needs it (SCHEMAS bump). (2026-10-20)
+- **Figma related-section width (Sergio)** — Figma's related case studies row is 1680px wide with 120px side margins at 1920; built in the page container instead. Decide whether case-study sections (or the site) should follow Figma's width. (2026-10-21)
+- **Design-system gaps from the case-study template (Sergio)** — built with the closest existing values: related heading 60px / line height 1.4 in Figma (Text XL is 54.7px / 1.2); accent tag weight 400 and 8% tint in Figma (DS 600, 5% kept for contrast, 8% measures 4.48:1); heading color #001F3D and card glow #1355FF have no tokens. Add tokens or confirm the current values. (2026-10-21)
+- **TOC side squares** — Figma shows small squares on the table-of-contents box's side borders; the shared blog sidebar has none. Decide later whether to add them to blog, guides and case studies together. (2026-10-20)
 - **Card motion** — the animated card thumbnails are in open PRs #61 and #67, not on `dev`; when they merge, merge `dev` into this branch so the case-study cards match. (2026-10-20)
 
 ---

@@ -1,0 +1,229 @@
+---
+/**
+ * CaseStudyCard — c-cs-card
+ * Index and related card (Figma 3767:25753 / 3768:26447): the client logo
+ * on the orbit thumbnail (concentric rings and a soft glow), the "Case
+ * study" accent tag and the "Published on 01/01/01" tag on one line (short
+ * date, lead 2026-10-20 round 2), the title, "Learn more →".
+ *
+ * Interaction = the blog cards (`NpBlogResources`, lead 2026-10-20): the
+ * whole card is the link's hit area (`::after`), hover / focus turn
+ * "Learn more" accent, focus ring on the link. No motion beyond that.
+ * Rendered as an `<li>`: place it in `CaseStudyGrid`.
+ */
+import Eyebrow from "../ui/Eyebrow.astro";
+import CaseStudyLogo from "./CaseStudyLogo.astro";
+import type { CaseStudyCard as CaseStudyCardData } from "../../lib/sanity/types";
+import { ARROW_RIGHT } from "../new-pages/blog-icons";
+import { CASE_STUDY_COPY, caseStudyHref, formatShortDate } from "./copy";
+
+interface Props {
+  card: CaseStudyCardData;
+  /** Heading level of the title (the index has no section heading: h2; Resources: h3). */
+  headingLevel?: 2 | 3;
+}
+
+const { card, headingLevel = 3 } = Astro.props;
+const Heading = `h${headingLevel}` as "h2" | "h3";
+const [pubBefore = "", pubAfter = ""] = CASE_STUDY_COPY.published.split("{date}");
+const href = caseStudyHref(card.slug);
+---
+
+<li class="c-cs-card">
+  <span class="c-cs-card__thumb">
+    <svg class="c-cs-card__orbit" viewBox="0 0 545 545" fill="none" aria-hidden="true" focusable="false">
+      <defs>
+        <filter id={`cs-glow-${card._id}`} x="0" y="0" width="545" height="545" filterUnits="userSpaceOnUse">
+          <feGaussianBlur stdDeviation="75" />
+        </filter>
+      </defs>
+      <circle class="c-cs-card__glow" cx="272.5" cy="272.5" r="98.3" filter={`url(#cs-glow-${card._id})`} />
+      <circle class="c-cs-card__ring is-mid" cx="272.5" cy="272.5" r="180.4" />
+      <circle class="c-cs-card__ring" cx="272.5" cy="272.5" r="97.9" />
+      <circle class="c-cs-card__ring" cx="272.5" cy="272.5" r="272.1" />
+    </svg>
+    <CaseStudyLogo name={card.client?.name} logo={card.client?.logo} size="card" class="c-cs-card__logo" />
+  </span>
+  <span class="c-cs-card__body">
+    <span class="c-cs-card__tags">
+      <Eyebrow variant="accent">{CASE_STUDY_COPY.tag}</Eyebrow>
+      <Eyebrow variant="default"><span>{pubBefore}<time datetime={card.publishedAt}>{formatShortDate(card.publishedAt)}</time>{pubAfter}</span></Eyebrow>
+    </span>
+    <Heading class="c-cs-card__title c-text_m">{card.title}</Heading>
+    <a class="c-cs-card__more c-paragraph" href={href}>
+      {CASE_STUDY_COPY.learnMore}<span class="c-cs-card__sr-only">: {card.title}</span>
+      <span class="c-cs-card__arrow" set:html={ARROW_RIGHT} />
+    </a>
+  </span>
+</li>
+
+<style>
+  /* Figma: 0.5px #E4E6EA border, 8px radius, white. */
+  .c-cs-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    border: 0.5px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-white);
+  }
+  /* 543 × 243 thumbnail, the divider line under it. */
+  .c-cs-card__thumb {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 532 / 243; /* related card thumbnail 3768:26448 */
+    overflow: hidden;
+    border-bottom: 0.5px solid var(--color-border);
+  }
+  /* Rings centred on the logo; the 545px frame overflows the thumbnail. */
+  .c-cs-card__orbit {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100.4%;
+    height: auto;
+    aspect-ratio: 1;
+    max-width: none;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  /* Glow: Figma #1355FF at 10% (no token; accent, TODO: DS). */
+  .c-cs-card__glow {
+    fill: var(--color-accent);
+    opacity: 0.1;
+  }
+  .c-cs-card__ring {
+    stroke: var(--color-border);
+    stroke-width: 0.675;
+    opacity: 0.3;
+  }
+  .c-cs-card__ring.is-mid {
+    stroke-width: 1.35;
+  }
+  /* Logo box at the Figma share of the thumbnail (3768:26454: 232px box,
+     38.4px padding, 154 × 48 logo in a 532px thumbnail), so it keeps the
+     frame's proportions at any card width. Percent padding resolves
+     against the thumbnail width. */
+  .c-cs-card :global(.c-cs-card__logo) {
+    position: relative;
+    width: 43.6%;
+    padding: 7.22%;
+  }
+  .c-cs-card :global(.c-cs-card__logo .c-cs-logo__img) {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: 3.429rem;
+  }
+  .c-cs-card :global(.c-cs-card__logo .c-cs-logo__name) {
+    max-width: 100%;
+    font-size: var(--fs-text);
+  }
+  .c-cs-card__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.714rem;
+  }
+  /* Tags as Figma 3768:26460, card only (shared Eyebrow untouched): the
+     Figma box in em (15px type: 10 / 16 / 8 / 16px padding, 0.96px
+     tracking, 0.5px border, 10px squares 5.5px out, 16px apart), Regular
+     weight, at --fs-p-s (12.6px; Figma 15px, smaller so both stay on one
+     line in a 1440 card, TODO: DS). */
+  .c-cs-card__tags {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.5em 1.067em;
+    font-size: var(--fs-p-s);
+  }
+  /* One line from 768px up, as Figma. Between 992 and 1439 the fluid root
+     makes the row up to ~12px wider than the card's text column; it runs
+     into the 24px padding instead of wrapping. Narrow single cards (≤767)
+     may wrap. */
+  @media (max-width: 767px) {
+    .c-cs-card__tags {
+      flex-wrap: wrap;
+    }
+  }
+  .c-cs-card__tags :global(.c-eyebrow) {
+    padding: 0.667em 1.067em 0.533em;
+    font-size: var(--fs-p-s);
+    letter-spacing: 0.064em;
+    white-space: nowrap;
+  }
+  .c-cs-card__tags :global(.c-eyebrow.is-default::before),
+  .c-cs-card__tags :global(.c-eyebrow.is-default::after) {
+    width: 0.667em;
+    height: 0.667em;
+  }
+  .c-cs-card__tags :global(.c-eyebrow.is-default::before) {
+    left: -0.367em;
+  }
+  .c-cs-card__tags :global(.c-eyebrow.is-default::after) {
+    right: -0.367em;
+  }
+  /* Accent: Figma Regular (400). Tint 5%, not Figma's 8%: the blog cards'
+     contrast fix (8% measures 4.48:1 with accent text). */
+  .c-cs-card__tags :global(.c-eyebrow.is-accent) {
+    background: color-mix(in srgb, var(--color-accent) 5%, var(--color-white));
+    font-weight: 400;
+  }
+  /* 40px above and below the title (Figma). */
+  .c-cs-card__title {
+    flex: 1;
+    margin: 0;
+    padding: 2.857rem 0;
+    color: var(--color-black-secondary);
+    font-family: var(--font-heading);
+    font-weight: 400;
+  }
+  /* "Learn more" = the blog cards' link (NpBlogResources). */
+  .c-cs-card__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.571rem;
+    padding: 0.571rem 0;
+    color: var(--color-black-secondary);
+    text-decoration: none;
+  }
+  /* The whole card is the link's hit area. */
+  .c-cs-card__more::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+  .c-cs-card__more:hover {
+    color: var(--color-accent);
+  }
+  .c-cs-card__more:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  .c-cs-card__arrow {
+    display: inline-flex;
+    width: 1.714rem;
+    height: 1.714rem;
+    align-items: center;
+    justify-content: center;
+  }
+  .c-cs-card__arrow :global(svg) {
+    width: 0.82rem;
+    height: 1.24rem;
+  }
+  .c-cs-card__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

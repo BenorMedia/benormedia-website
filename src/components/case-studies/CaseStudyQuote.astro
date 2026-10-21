@@ -1,0 +1,147 @@
+---
+/**
+ * CaseStudyQuote — c-cs-quote
+ * Full-width bordered quote under the hero (Figma 3768:26212): the quote,
+ * then the author photo, name and role on the left and the company logo on
+ * the right. Renders nothing when `testimonial` is null (lead 2026-10-20:
+ * the case study's testimonial, else the client's; the query resolves it).
+ *
+ * Logo: the client's logo, else the testimonial's `companyLogo`
+ * (`TestimonialCard` order). No photo → the author's initial in the circle
+ * (`TestimonialCard` fallback).
+ */
+import Container from "../ui/Container.astro";
+import type { CaseStudy, CaseStudyTestimonial } from "../../lib/sanity/types";
+import { clientImageAlt } from "../../lib/sanity/image";
+import { hasImage, imageSize, resolveImage, type CaseStudyImageInput } from "./image";
+
+interface Props {
+  testimonial: CaseStudyTestimonial | null | undefined;
+  client?: CaseStudy["client"] | undefined;
+}
+
+const { testimonial: t, client } = Astro.props;
+const quote = t?.quote?.trim();
+const photo = resolveImage(t?.authorPhoto as CaseStudyImageInput, 69, true);
+const initial = t?.authorName?.trim().charAt(0).toUpperCase() ?? "";
+const logoSource: CaseStudyImageInput = hasImage(client?.logo) ? client?.logo : hasImage(t?.companyLogo) ? t?.companyLogo : undefined;
+const logoImg = resolveImage(logoSource, 38);
+const logoDims = imageSize(logoImg, 38);
+const logoAlt = clientImageAlt(logoSource?.alt, client?.name, "logo");
+---
+
+{t && quote && (
+  <section class="c-cs-quote">
+    <Container>
+      <figure class="c-cs-quote__figure">
+        <blockquote class="c-cs-quote__text c-text_m">
+          <p>&ldquo;{quote}&rdquo;</p>
+        </blockquote>
+        <figcaption class="c-cs-quote__caption">
+          <span class="c-cs-quote__person">
+            {photo ? (
+              <img class="c-cs-quote__photo" src={photo.src} alt="" width="69" height="69" loading="lazy" decoding="async" />
+            ) : (
+              <span class="c-cs-quote__photo is-empty" aria-hidden="true">{initial}</span>
+            )}
+            <span class="c-cs-quote__meta">
+              <span class="c-cs-quote__name c-paragraph">{t.authorName}</span>
+              {t.authorRole && <span class="c-cs-quote__role c-paragraph">{t.authorRole}</span>}
+            </span>
+          </span>
+          {logoImg && <img class="c-cs-quote__logo" src={logoImg.src} alt={logoAlt} width={logoDims.width} height={logoDims.height} loading="lazy" decoding="async" />}
+        </figcaption>
+      </figure>
+    </Container>
+  </section>
+)}
+
+<style>
+  /* The hero owns the space above; 110px below (Figma). */
+  .c-cs-quote :global(.c-container) {
+    padding-top: 0;
+    padding-bottom: 7.857rem;
+  }
+  /* Figma: 1px #E4E6EA border, 14px radius, 38 / 34px padding, white 5%
+     glass with a 10px backdrop blur. */
+  .c-cs-quote__figure {
+    display: flex;
+    flex-direction: column;
+    gap: 1.714rem;
+    margin: 0;
+    padding: 2.714rem 2.429rem;
+    border: var(--border-default);
+    border-radius: 14px;
+    background: var(--color-surface-glass);
+    backdrop-filter: blur(10px);
+  }
+  .c-cs-quote__text {
+    margin: 0;
+    color: var(--color-text);
+    font-family: var(--font-heading);
+    line-height: 1.5;
+  }
+  .c-cs-quote__text p {
+    margin: 0;
+  }
+  /* The caption sits 41px lower than the 24px gap (Figma "Figcaption:align"). */
+  .c-cs-quote__caption {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem 2.857rem;
+    margin-top: 2.929rem;
+  }
+  .c-cs-quote__person {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem; /* 21px */
+  }
+  .c-cs-quote__photo {
+    flex: 0 0 auto;
+    width: 4.929rem; /* 69px */
+    height: 4.929rem;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .c-cs-quote__photo.is-empty {
+    display: grid;
+    place-items: center;
+    background: var(--color-gray-light);
+    color: var(--color-text);
+    font-family: var(--font-heading);
+    font-size: var(--fs-text-m);
+  }
+  .c-cs-quote__meta {
+    display: flex;
+    flex-direction: column;
+  }
+  /* Figma: Poppins SemiBold 20px #12142B (no Poppins in the DS: body font
+     at 600, TODO: DS). */
+  .c-cs-quote__name {
+    color: var(--color-heading);
+    font-weight: 600;
+  }
+  .c-cs-quote__role {
+    color: var(--color-text);
+  }
+  /* 38px tall logo. */
+  .c-cs-quote__logo {
+    width: auto;
+    height: 2.721rem;
+    max-width: 14rem;
+    object-fit: contain;
+  }
+  @media (max-width: 767px) {
+    .c-cs-quote :global(.c-container) {
+      padding-bottom: 4.444rem;
+    }
+    .c-cs-quote__figure {
+      padding: 2.857rem 2.222rem;
+    }
+    .c-cs-quote__caption {
+      margin-top: 1.111rem;
+    }
+  }
+</style>

@@ -1,0 +1,103 @@
+---
+/**
+ * CaseStudyArticle — c-cs-article
+ * The two columns under the quote (Figma 3768:26020): the sticky sidebar
+ * (`NpBlogSidebar`: table of contents, Get in Touch, Share) and the article
+ * (`CaseStudyBody`, then `CaseStudyResults`). 350 | 1220 columns with a
+ * 110px gap in the 1680 container; the grid collapses like the guides'
+ * article template (`NpArticlePage`).
+ *
+ * Table of contents: the body H2s and H3s (`caseStudyToc`, as Figma) + "The
+ * results" when there are results. No entries → the sidebar keeps Get in Touch and Share.
+ */
+import Container from "../ui/Container.astro";
+import NpBlogSidebar from "../new-pages/NpBlogSidebar.astro";
+import CaseStudyBody from "./CaseStudyBody.astro";
+import CaseStudyResults from "./CaseStudyResults.astro";
+import type { CaseStudy } from "../../lib/sanity/types";
+import { CASE_STUDY_RESULTS_ID, caseStudyToc } from "../../lib/sanity/case-study-body";
+import { escapeHtml } from "../../lib/new-pages/html";
+import { CASE_STUDY_COPY } from "./copy";
+
+interface Props {
+  caseStudy: Pick<CaseStudy, "body" | "results">;
+  /** Absolute URL of the page (Share links). */
+  url: string;
+}
+
+const { caseStudy, url } = Astro.props;
+const hasResults = (caseStudy.results ?? []).some((r) => r.value?.trim());
+const toc = [
+  ...caseStudyToc(caseStudy.body),
+  ...(hasResults ? [{ id: CASE_STUDY_RESULTS_ID, text: CASE_STUDY_COPY.resultsHeading }] : []),
+].map((item) => ({ id: item.id, html: escapeHtml(item.text) }));
+---
+
+<div class="c-cs-article">
+  <Container>
+    <div class="c-cs-article__grid">
+      <div class="c-cs-article__side">
+        <NpBlogSidebar items={toc} url={url} />
+      </div>
+      <div class="c-cs-article__main">
+        <CaseStudyBody body={caseStudy.body} />
+        <CaseStudyResults results={caseStudy.results} />
+      </div>
+    </div>
+  </Container>
+</div>
+
+<style>
+  /* The quote (or the hero) owns the space above; 110px below (Figma:
+     results → Resources section). */
+  .c-cs-article :global(.c-container) {
+    padding-top: 0;
+    padding-bottom: 7.857rem;
+  }
+  .c-cs-article__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 350fr) minmax(0, 1220fr);
+    align-items: start;
+    column-gap: 6.55%;
+  }
+  /* Stretch so the sidebar inside can stick (NpArticlePage). */
+  .c-cs-article__side {
+    align-self: stretch;
+    min-width: 0;
+  }
+  /* Case studies only (lead 2026-10-21, round 4): table of contents entries
+     wrap to a second line instead of the blog sidebar's ellipsis. Scoped
+     here so NpBlogSidebar's own output and styles stay as they are. */
+  .c-cs-article__side :global(.c-np-sidebar__label) {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+  /* 80px body → results (Figma section spacing). */
+  .c-cs-article__main {
+    display: flex;
+    flex-direction: column;
+    gap: 5.714rem;
+    min-width: 0;
+  }
+  /* Same steps as NpArticlePage. */
+  @media (max-width: 1199px) {
+    .c-cs-article__grid {
+      grid-template-columns: minmax(0, 300fr) minmax(0, 800fr);
+      row-gap: 3.571rem;
+    }
+  }
+  @media (max-width: 991px) {
+    .c-cs-article__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 767px) {
+    .c-cs-article :global(.c-container) {
+      padding-bottom: 4.444rem;
+    }
+    .c-cs-article__main {
+      gap: 4.444rem;
+    }
+  }
+</style>

@@ -1,0 +1,27 @@
+---
+/**
+ * CaseStudyInline — the spans of one body block (`parseCaseStudyBody`):
+ * bold / italic, links (`openInNewTab` → new tab). Spans that share a link
+ * render inside one `<a>`. A soft line break ("\n" in a span) is a `<br>`.
+ */
+import CaseStudySpan from "./CaseStudySpan.astro";
+import type { InlineRun } from "../../../lib/sanity/case-study-body";
+
+interface Props {
+  runs: readonly InlineRun[];
+}
+
+const { runs } = Astro.props;
+---
+
+{runs.map((run) =>
+  run.href ? (
+    run.newTab ? (
+      <a href={run.href} target="_blank" rel="noopener">{run.spans.map((s) => <CaseStudySpan span={s} />)}</a>
+    ) : (
+      <a href={run.href}>{run.spans.map((s) => <CaseStudySpan span={s} />)}</a>
+    )
+  ) : (
+    run.spans.map((s) => <CaseStudySpan span={s} />)
+  ),
+)}

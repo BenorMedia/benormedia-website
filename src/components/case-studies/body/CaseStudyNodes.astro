@@ -1,0 +1,32 @@
+---
+/**
+ * CaseStudyNodes — renders `parseCaseStudyBody` nodes: H2 (with its id),
+ * H3, paragraphs, lists, and the phase block (its children, recursively).
+ * Styles live in `CaseStudyBody.astro`.
+ */
+import CaseStudyInline from "./CaseStudyInline.astro";
+import CaseStudyList from "./CaseStudyList.astro";
+import type { BodyNode } from "../../../lib/sanity/case-study-body";
+
+interface Props {
+  nodes: readonly BodyNode[];
+}
+
+const { nodes } = Astro.props;
+---
+
+{nodes.map((node) =>
+  node.type === "h2" ? (
+    <h2 id={node.id} class="c-cs-body__h2"><CaseStudyInline runs={node.inline} /></h2>
+  ) : node.type === "h3" ? (
+    <h3 id={node.id} class="c-cs-body__h3"><CaseStudyInline runs={node.inline} /></h3>
+  ) : node.type === "list" ? (
+    <CaseStudyList list={node} />
+  ) : node.type === "phase" ? (
+    <div class="c-cs-body__phase">
+      <Astro.self nodes={node.children} />
+    </div>
+  ) : (
+    <p class="c-cs-body__p"><CaseStudyInline runs={node.inline} /></p>
+  ),
+)}
