@@ -1,30 +1,28 @@
 ---
 /**
  * AboutSectionHeader — c-about-header
- * The centered H2 + description used by the About stats, office and
- * leadership sections (Figma 3795:42049 / 3795:42105 / 3790:37177). Wraps the
- * shared `SectionHeader` (always centered, unchanged) and applies the Figma
- * values scoped to these sections: title Text XL in Black 500 with a 1.4
- * line height, description "Paragraph" (20px) 677px wide, 24px between them.
+ * The centered eyebrow + H2 + description used by the About stats and office
+ * sections (Figma 3795:42049 / 3795:42105). Wraps the shared `SectionHeader`
+ * (always centered, unchanged) and applies the Figma values scoped to these
+ * sections: title Text XL in Black 500 with a 1.4 line height, description
+ * `c-paragraph_m` (SectionHeader default, unchanged) 677px wide.
  */
 import SectionHeader from "../../ui/SectionHeader.astro";
 
 interface Props {
+  eyebrow: string;
   title: string;
   description: string;
 }
 
-const { title, description } = Astro.props;
+const { eyebrow, title, description } = Astro.props;
 ---
 
 <div class="c-about-header">
-  <SectionHeader title={title} description={description} />
+  <SectionHeader eyebrow={eyebrow} title={title} description={description} />
 </div>
 
 <style>
-  .c-about-header :global(.c-section-header__text) {
-    gap: 1.714rem; /* 24px */
-  }
   .c-about-header :global(.c-section-header__title) {
     max-width: 61.071rem; /* 855px */
     color: var(--color-black-secondary); /* Figma Black 500 */
@@ -32,7 +30,5 @@ const { title, description } = Astro.props;
   }
   .c-about-header :global(.c-section-header__description) {
     max-width: 48.39rem; /* 677.45px */
-    font-size: var(--fs-p); /* Figma "Paragraph" */
-    line-height: 1.5;
   }
 </style>

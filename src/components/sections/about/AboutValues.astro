@@ -1,7 +1,7 @@
 ---
 /**
  * AboutValues — c-about-values
- * "Our core values" (Figma 3790:37122): heading + text on the left, a
+ * "Our core values" (Figma 3790:37122): eyebrow, heading + text on the left, a
  * bordered list of four values with 3D icons on the right, the line-art
  * globe (Figma 3794:41846) behind, clipped by the section.
  *
@@ -12,14 +12,16 @@
  * TODO: COPY — confirm the values texts (Figma text, unconfirmed).
  */
 import Container from "../../ui/Container.astro";
+import Eyebrow from "../../ui/Eyebrow.astro";
 
 interface Props {
+  eyebrow: string;
   title: string;
   description: string;
   items: readonly { name: string; icon: string; text: string }[];
 }
 
-const { title, description, items } = Astro.props;
+const { eyebrow, title, description, items } = Astro.props;
 ---
 
 <section class="c-about-values" aria-labelledby="c-about-values-title">
@@ -36,8 +38,11 @@ const { title, description, items } = Astro.props;
   />
   <Container class="c-about-values__inner">
     <div class="c-about-values__intro">
-      <h2 id="c-about-values-title" class="c-about-values__title c-text_xl">{title}</h2>
-      <p class="c-about-values__description c-paragraph">{description}</p>
+      <Eyebrow>{eyebrow}</Eyebrow>
+      <div class="c-about-values__heading">
+        <h2 id="c-about-values-title" class="c-about-values__title c-text_xl">{title}</h2>
+        <p class="c-about-values__description c-paragraph_m">{description}</p>
+      </div>
     </div>
     <ul class="c-about-values__list" role="list">
       {items.map((item) => (
@@ -45,7 +50,7 @@ const { title, description, items } = Astro.props;
           <div class="c-about-values__body">
             <img class="c-about-values__icon" src={item.icon} alt="" aria-hidden="true" width="64" height="64" loading="lazy" decoding="async" />
             <h3 class="c-about-values__name">{item.name}</h3>
-            <p class="c-about-values__text c-paragraph_s">{item.text}</p>
+            <p class="c-about-values__text c-paragraph">{item.text}</p>
           </div>
         </li>
       ))}
@@ -76,12 +81,19 @@ const { title, description, items } = Astro.props;
     padding-top: 7.857rem; /* 110px */
     padding-bottom: 7.857rem;
   }
+  /* Eyebrow → heading: 1.5rem as SectionHeader (lead rule, every page). */
   .c-about-values__intro {
     display: flex;
     flex: 1 1 0;
     flex-direction: column;
-    gap: 1.714rem; /* 24px */
+    gap: 1.5rem;
+    align-items: flex-start;
     min-width: 0;
+  }
+  .c-about-values__heading {
+    display: flex;
+    flex-direction: column;
+    gap: 0.714rem; /* 10px */
   }
   .c-about-values__title {
     margin: 0;
@@ -125,11 +137,14 @@ const { title, description, items } = Astro.props;
     width: 2.286rem; /* 32px */
     height: 2.286rem;
   }
-  /* Figma "Text M 600": 30px, line-height 1.5, #161616. */
+  /* Figma "Text M" in Poppins Regular, 30px, #161616. No Poppins in the
+     DS: body font, as the case studies (DECISIONS 2026-10-20). */
   .c-about-values__name {
     margin: 0;
     color: var(--color-black-secondary); /* TODO: DS — Figma #161616, no token */
+    font-family: var(--font-body);
     font-size: var(--fs-text-m);
+    font-weight: 400;
     line-height: 1.5;
   }
   .c-about-values__text {

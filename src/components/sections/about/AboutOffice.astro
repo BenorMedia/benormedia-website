@@ -11,7 +11,7 @@
  * Photo heights follow the Figma frame as aspect ratios (1920 × 955 and
  * 626.67 × 740.78), so they scale with the viewport like the widths do.
  *
- * TODO: COPY — heading and description are Figma lorem ipsum.
+ * TODO: COPY — eyebrow, heading and description are Figma lorem ipsum.
  * TODO: ASSET (replace before release) — the four photos are third-party
  * placeholders.
  */
@@ -20,13 +20,14 @@ import { photoSrc, type AboutPhoto } from "./content";
 
 interface Props {
   stampLabel: string;
+  eyebrow: string;
   title: string;
   description: string;
   wide: AboutPhoto;
   row: readonly AboutPhoto[];
 }
 
-const { stampLabel, title, description, wide, row } = Astro.props;
+const { stampLabel, eyebrow, title, description, wide, row } = Astro.props;
 ---
 
 <section class="c-about-office">
@@ -47,7 +48,7 @@ const { stampLabel, title, description, wide, row } = Astro.props;
   </div>
 
   <div class="c-about-office__header">
-    <AboutSectionHeader title={title} description={description} />
+    <AboutSectionHeader eyebrow={eyebrow} title={title} description={description} />
   </div>
 
   <div class="c-about-office__photos">

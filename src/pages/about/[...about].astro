@@ -19,7 +19,8 @@
  * LASTMOD and `scripts/check-seo.mjs` PAGES.
  *
  * Order as Figma: hero + photo strip → logo strip → core values → stats →
- * office → team wall → leadership → site CTA banner + footer (BaseLayout).
+ * office → team wall → leadership (no heading, follows the wall) → site CTA
+ * banner + footer (BaseLayout).
  */
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHero from "../../components/sections/PageHero.astro";
@@ -68,12 +69,14 @@ const leaders = ABOUT_LEADERS.slugs
   <AboutStats {...ABOUT_STATS} />
   <AboutOffice {...ABOUT_OFFICE} />
   <AboutTeam {...ABOUT_TEAM} wall={ABOUT_TEAM_WALL} />
-  <AboutLeaders title={ABOUT_LEADERS.title} description={ABOUT_LEADERS.description} leaders={leaders} />
+  <AboutLeaders leaders={leaders} />
 </BaseLayout>
 
 <style>
-  /* Hero description: Figma 762.8px wide (SectionHeader default 42rem). */
+  /* Hero description: Figma 662.49px wide at 25px; scaled to the DS
+     Paragraph M size (18.2px) so it breaks into the same three lines and
+     stays close to the title width (lead 2026-10-22). */
   .c-about-hero :global(.c-section-header__description) {
-    max-width: 54.486rem;
+    max-width: 34.429rem; /* 482px */
   }
 </style>

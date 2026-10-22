@@ -63,7 +63,7 @@ export const ABOUT_HERO = {
   eyebrow: "About us",
   title: "About us",
   description:
-    "Lorem ipsum dolor sit amet consectetur. Libero non nisl dictum morbi sed eu condimentum. Sit eget amet ac sagittis nam in pharetra nec.",
+    "Lorem ipsum dolor sit amet consectetur. Senectus nec gravida blandit et ultricies donec eu orci. Scelerisque lectus tristique iaculis duis.",
 };
 
 /** Hero photo strip (Figma 3815:27358): six 420px cards, each photo
@@ -80,6 +80,7 @@ export const ABOUT_GALLERY: readonly { photo: AboutPhoto; height: number }[] = [
 // --- Core values -------------------------------------------------------------
 // TODO: COPY (confirm: Figma text, looks final but unconfirmed)
 export const ABOUT_VALUES = {
+  eyebrow: "Values",
   title: "Our core values",
   description:
     "Our values are essential to who we are. They reflect what we expect from each other and inform every decision we make.",
@@ -111,14 +112,15 @@ export const ABOUT_VALUES = {
 // TODO: COPY (Figma lorem ipsum and "+XXX%" placeholders; stats are claims
 // about BenorMedia a person must confirm)
 export const ABOUT_STATS = {
+  eyebrow: "KPIs",
   title: "Lorem ipsum dolot sit amet",
   description:
     "Lorem ipsum dolor sit amet consectetur. Maecenas blandit consequat maecenas vel malesuada. Id facilisis etiam urna fermentum quisque porttitor.",
   items: [
-    { value: "+XXX%", text: "Lorem ipsum dolor sit amet consectetur. At risus nulla in vel. Nisl duis cursus consectetur nisl etiam." },
-    { value: "+XX%", text: "Lorem ipsum dolor sit amet consectetur. At viverra nisi purus mauris. Ornare consequat magna urna." },
-    { value: "+XXX%", text: "Lorem ipsum dolor sit amet consectetur. At viverra nisi purus mauris. Ornare consequat magna urna." },
-    { value: "+X%", text: "Lorem ipsum dolor sit amet consectetur. Odio pellentesque semper tincidunt lacinia malesuada purus sed nisi in." },
+    { value: "+XXX%", text: "Lorem ipsum dolor sit amet consectetur." },
+    { value: "+XXX%", text: "Lorem ipsum dolor sit amet consectetur." },
+    { value: "+XXX%", text: "Lorem ipsum dolor sit amet consectetur." },
+    { value: "+XXX%", text: "Lorem ipsum dolor sit amet consectetur." },
   ],
 } as const;
 
@@ -126,6 +128,7 @@ export const ABOUT_STATS = {
 // TODO: COPY (Figma lorem ipsum)
 export const ABOUT_OFFICE = {
   stampLabel: "Barcelona, Spain.",
+  eyebrow: "Lorem ipsum",
   title: "Lorem ipsum dolot sit amet",
   description:
     "Lorem ipsum dolor sit amet consectetur. Maecenas blandit consequat maecenas vel malesuada. Id facilisis etiam urna fermentum quisque porttitor.",
@@ -137,7 +140,9 @@ export const ABOUT_OFFICE = {
 // --- Team wall ---------------------------------------------------------------
 // TODO: COPY (confirm: Figma text, looks final but unconfirmed)
 export const ABOUT_TEAM = {
-  title: "A team that builds with AI",
+  eyebrow: "Team",
+  /** `\n` = forced line break, as in Figma (lead 2026-10-22). */
+  title: "A team that\nbuilds with AI",
   description:
     "AI is part of everyday work here, from research to code and QA. We test new tools before being told to, and the final call still comes from people.",
   label: "What stays human",
@@ -163,12 +168,10 @@ export const ABOUT_TEAM_WALL: readonly { offset: number; tiles: readonly TeamTil
 ];
 
 // --- Leadership --------------------------------------------------------------
-// TODO: COPY (Figma lorem ipsum). The grid shows Sergio six times, as in
-// Figma, for Sergio's review (DECISIONS → About 2026-10-21).
+// TODO: COPY — the grid shows Sergio six times, as in Figma, for Sergio's
+// review (DECISIONS → About 2026-10-21). No heading since the Figma update
+// of 2026-10-22: the grid follows the team wall.
 export const ABOUT_LEADERS = {
-  title: "Lorem ipsum dolot sit amet",
-  description:
-    "Lorem ipsum dolor sit amet consectetur. Maecenas blandit consequat maecenas vel malesuada. Id facilisis etiam urna fermentum quisque porttitor.",
   /** Author slugs (`AUTHORS`, src/lib/new-pages/authors.ts), in grid order. */
   slugs: ["sergio-gancedo", "sergio-gancedo", "sergio-gancedo", "sergio-gancedo", "sergio-gancedo", "sergio-gancedo"],
 };

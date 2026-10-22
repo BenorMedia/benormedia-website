@@ -1,34 +1,32 @@
 ---
 /**
  * AboutLeaders — c-about-leaders
- * Leadership (Figma 3790:37176): centered header, then a 3 × 2 grid of
- * cards: round photo, name (H3), role, LinkedIn icon link.
+ * Leadership (Figma 3790:37180): a 3 × 2 grid of cards right below the
+ * team wall, no heading of its own (Figma update 2026-10-22): round photo,
+ * name (H3), role in an eyebrow box, LinkedIn icon link.
  *
  * People come from `AUTHORS` (src/lib/new-pages/authors.ts): name,
  * jobTitle, photo, linkedin. TODO: COPY — the grid shows Sergio six times as
- * in Figma, for Sergio's review; heading and description are lorem ipsum.
+ * in Figma, for Sergio's review.
  *
  * The Figma photo has a line-art ring baked into the image; the AUTHORS
  * photo has none, so the ring is a plain 1px circle for now.
  * TODO: DS — line-art ring asset needed as a separate file.
  */
 import Container from "../../ui/Container.astro";
-import AboutSectionHeader from "./AboutSectionHeader.astro";
+import Eyebrow from "../../ui/Eyebrow.astro";
 import { SHARE_LINKEDIN } from "../../new-pages/blog-icons";
 import type { Author } from "../../../lib/new-pages/authors";
 
 interface Props {
-  title: string;
-  description: string;
   leaders: readonly Author[];
 }
 
-const { title, description, leaders } = Astro.props;
+const { leaders } = Astro.props;
 ---
 
-<section class="c-about-leaders">
+<section class="c-about-leaders" aria-label="Leadership">
   <Container class="c-about-leaders__inner">
-    <AboutSectionHeader title={title} description={description} />
     <ul class="c-about-leaders__grid" role="list">
       {leaders.map((leader) => (
         <li class="c-about-leaders__card">
@@ -43,7 +41,7 @@ const { title, description, leaders } = Astro.props;
           />
           <div class="c-about-leaders__text">
             <h3 class="c-about-leaders__name c-text_l">{leader.name}</h3>
-            <p class="c-about-leaders__role c-paragraph_s">{leader.jobTitle}</p>
+            <p class="c-about-leaders__role"><Eyebrow>{leader.jobTitle}</Eyebrow></p>
           </div>
           <a class="c-about-leaders__social" href={leader.linkedin} target="_blank" rel="noopener">
             <Fragment set:html={SHARE_LINKEDIN} />
@@ -59,12 +57,10 @@ const { title, description, leaders } = Astro.props;
   .c-about-leaders {
     background: var(--color-white);
   }
+  /* Starts right below the team wall (AboutTeam owns the space above). */
   .c-about-leaders :global(.c-about-leaders__inner) {
-    display: flex;
-    flex-direction: column;
-    gap: 4.286rem; /* 60px */
-    padding-top: 7.857rem; /* 110px */
-    padding-bottom: 7.857rem;
+    padding-top: 0;
+    padding-bottom: 7.857rem; /* 110px */
   }
   .c-about-leaders__grid {
     display: grid;
@@ -77,17 +73,16 @@ const { title, description, leaders } = Astro.props;
   .c-about-leaders__card {
     display: flex;
     flex-direction: column;
-    gap: 1.786rem; /* 25px */
+    gap: 1.143rem; /* 16px */
     align-items: center;
     padding: 2.286rem 0; /* 32px */
     text-align: center;
   }
-  /* 108px round photo, 15px below the card top padding. */
+  /* 108px round photo. */
   .c-about-leaders__photo {
     display: block;
     width: 7.713rem;
     height: 7.713rem;
-    margin-top: 1.071rem;
     object-fit: cover;
     border: 1px solid var(--color-blue); /* TODO: DS — Figma line-art ring baked into the photo */
     border-radius: 50%;
@@ -96,7 +91,7 @@ const { title, description, leaders } = Astro.props;
   .c-about-leaders__text {
     display: flex;
     flex-direction: column;
-    gap: 0.714rem; /* 10px */
+    gap: 0.571rem; /* 8px */
     align-items: center;
   }
   /* Figma "Text L" 38px, line-height normal, Black 500. */
@@ -107,7 +102,6 @@ const { title, description, leaders } = Astro.props;
   }
   .c-about-leaders__role {
     margin: 0;
-    color: var(--color-text);
   }
   .c-about-leaders__social {
     display: inline-flex;

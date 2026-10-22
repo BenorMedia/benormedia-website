@@ -588,13 +588,14 @@ Without adding to your team." with "website moving." marked Gradient (published 
 | 2026-10-21 | Core values heading is left-aligned as in Figma: a scoped exception in the values section to the "SectionHeader is always centered" rule; `SectionHeader` itself is unchanged | Lead: left alignment is intentional | Lead |
 | 2026-10-21 | Sizes converted from the 1920 Figma frame to the 1440 container with the 14px base (1 Figma px = 1/14 rem, DESIGN_SYSTEM §1) | Lead | Lead |
 | 2026-10-21 | Photo strip and team wall ship static; animations come in a later round (`TODO: ANIM`) | Lead | Lead |
+| 2026-10-22 | Figma update applied (`docs/refs/about/About-us.png`): eyebrows on values, KPIs, office and team; new hero description; KPI cells centered with dividers between every cell; leadership grid has no heading and follows the team wall; role in an eyebrow box. The hero photo strip now loops slowly right → left (CSS, like `LogoStrip`; still under reduced motion). The team wall stays static | Lead | Lead |
 | 2026-10-21 | Desktop only for now; 991px and 767px are `TODO: DS mobile` | Lead | Lead |
 | 2026-10-21 | Production guard, like `/dev/case-study`: `isProductionBuild()` true → neither `/about` nor the footer "About us" link is built (no placeholder photo ships to production); `astro dev`, Vercel previews and local builds get both. `/about` is noindex and out of the sitemap meanwhile. The guard must be removed at release, once real photos and copy are in | Third-party placeholder photos must never reach production | Lead |
 
 ### Open questions
 
 #### Content
-- **About copy and stats** — hero description, stats (heading, description, four values and texts), office heading and description, leadership heading and description are Figma lorem ipsum / "+XXX%" (`TODO: COPY`). Stats are claims about BenorMedia that a person must confirm. The values texts and the "A team that builds with AI" block look final but are unconfirmed. (2026-10-21)
+- **About copy and stats** — hero description, stats (heading, description, four values and texts), office eyebrow, heading and description are Figma lorem ipsum / "+XXX%" (`TODO: COPY`). Stats are claims about BenorMedia that a person must confirm. The values texts and the "A team that builds with AI" block look final but are unconfirmed. (2026-10-21)
 - **About meta title and description** — placeholders (`TODO: COPY`). (2026-10-21)
 - **About photos** — hero strip, office and team-wall photos are third-party placeholders (DesignMe) in `src/assets/about/_placeholder/` (`TODO: ASSET`); BenorMedia photos needed before the page goes to `main`. (2026-10-21)
 - **Leadership people** — real names, roles, photos and LinkedIn URLs for the six cards; today all six are Sergio (from `AUTHORS`). (2026-10-21)
