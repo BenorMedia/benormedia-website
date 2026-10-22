@@ -1,9 +1,9 @@
 ---
 /**
  * CaseStudyQuote — c-cs-quote
- * Full-width bordered quote under the hero (Figma 3768:26212): the quote,
- * then the author photo, name and role on the left and the company logo on
- * the right. Renders nothing when `testimonial` is null (lead 2026-10-20:
+ * Full-width bordered quote under the facts row (Figma 3842:40140): the
+ * centred quote (no quote marks in Figma), then a centred caption: author
+ * photo, name and role, a 50px divider, the company logo. Renders nothing when `testimonial` is null (lead 2026-10-20:
  * the case study's testimonial, else the client's; the query resolves it).
  *
  * Logo: the client's logo, else the testimonial's `companyLogo`
@@ -35,7 +35,7 @@ const logoAlt = clientImageAlt(logoSource?.alt, client?.name, "logo");
     <Container>
       <figure class="c-cs-quote__figure">
         <blockquote class="c-cs-quote__text c-text_m">
-          <p>&ldquo;{quote}&rdquo;</p>
+          <p>{quote}</p>
         </blockquote>
         <figcaption class="c-cs-quote__caption">
           <span class="c-cs-quote__person">
@@ -49,6 +49,7 @@ const logoAlt = clientImageAlt(logoSource?.alt, client?.name, "logo");
               {t.authorRole && <span class="c-cs-quote__role c-paragraph">{t.authorRole}</span>}
             </span>
           </span>
+          {logoImg && <span class="c-cs-quote__divider" aria-hidden="true"></span>}
           {logoImg && <img class="c-cs-quote__logo" src={logoImg.src} alt={logoAlt} width={logoDims.width} height={logoDims.height} loading="lazy" decoding="async" />}
         </figcaption>
       </figure>
@@ -57,9 +58,9 @@ const logoAlt = clientImageAlt(logoSource?.alt, client?.name, "logo");
 )}
 
 <style>
-  /* The hero owns the space above; 110px below (Figma). */
+  /* Figma: 110px above and below. */
   .c-cs-quote :global(.c-container) {
-    padding-top: 0;
+    padding-top: 7.857rem;
     padding-bottom: 7.857rem;
   }
   /* Figma: 1px #E4E6EA border, 14px radius, 38 / 34px padding, white 5%
@@ -67,6 +68,7 @@ const logoAlt = clientImageAlt(logoSource?.alt, client?.name, "logo");
   .c-cs-quote__figure {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 1.714rem;
     margin: 0;
     padding: 2.714rem 2.429rem;
@@ -75,11 +77,15 @@ const logoAlt = clientImageAlt(logoSource?.alt, client?.name, "logo");
     background: var(--color-surface-glass);
     backdrop-filter: blur(10px);
   }
+  /* Figma Text M / 1.5, #212427, centred in a 1103px box (68.4% of the
+     figure's content width). */
   .c-cs-quote__text {
+    max-width: 68.4%;
     margin: 0;
-    color: var(--color-text);
+    color: var(--color-black-secondary);
     font-family: var(--font-heading);
     line-height: 1.5;
+    text-align: center;
   }
   .c-cs-quote__text p {
     margin: 0;
@@ -89,9 +95,15 @@ const logoAlt = clientImageAlt(logoSource?.alt, client?.name, "logo");
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem 2.857rem;
+    justify-content: center;
+    gap: 1.5rem 2.286rem; /* 32px */
     margin-top: 2.929rem;
+  }
+  /* Figma: 1px × 50px line between the person and the logo. */
+  .c-cs-quote__divider {
+    width: 1px;
+    height: 3.571rem;
+    background: var(--color-border);
   }
   .c-cs-quote__person {
     display: flex;
@@ -117,11 +129,10 @@ const logoAlt = clientImageAlt(logoSource?.alt, client?.name, "logo");
     display: flex;
     flex-direction: column;
   }
-  /* Figma: Poppins SemiBold 20px #12142B (no Poppins in the DS: body font
-     at 600, TODO: DS). */
+  /* Figma: Acumin Pro Medium 20px #12142B (3842:40149). */
   .c-cs-quote__name {
     color: var(--color-heading);
-    font-weight: 600;
+    font-weight: 500;
   }
   .c-cs-quote__role {
     color: var(--color-text);
@@ -133,9 +144,18 @@ const logoAlt = clientImageAlt(logoSource?.alt, client?.name, "logo");
     max-width: 14rem;
     object-fit: contain;
   }
+  @media (max-width: 991px) {
+    .c-cs-quote__text {
+      max-width: none;
+    }
+  }
   @media (max-width: 767px) {
     .c-cs-quote :global(.c-container) {
+      padding-top: 4.444rem;
       padding-bottom: 4.444rem;
+    }
+    .c-cs-quote__divider {
+      display: none;
     }
     .c-cs-quote__figure {
       padding: 2.857rem 2.222rem;

@@ -1,153 +1,110 @@
 ---
 /**
  * CaseStudyFacts — c-cs-facts
- * The hero's right column (Figma 3768:25937): client logo box, then
- * numbered rows "01 / Company", "02 / Industry", "03 / Solution" (the case
- * study's services, lead 2026-10-20), "04 / The challenge", with dividers.
- * A row without a value is left out and the rest renumber. Background: a
- * blurred brand-gradient glow and the CTA banner's globe line art at the
- * bottom (`/images/cta-banner-vector.svg`, the same 1272 × 197 Figma
- * vector), both decorative.
+ * The facts row under the hero (Figma 3842:40102): up to six items spread
+ * across the container, each a default `Eyebrow` label ("01 / Client",
+ * "02 / Industry", "03 / Services delivered", "04 / Solution",
+ * "05 / Timeline", "06 / Stack") over a centred `c-paragraph` value. Lists
+ * (services, stack) are joined with " / " as in Figma. An item without a
+ * value is left out and the rest renumber; nothing renders when all are
+ * empty.
  */
-import CaseStudyLogo from "./CaseStudyLogo.astro";
+import Container from "../ui/Container.astro";
+import Eyebrow from "../ui/Eyebrow.astro";
 import type { CaseStudy } from "../../lib/sanity/types";
 import { CASE_STUDY_COPY } from "./copy";
-import { hasImage } from "./image";
 
 interface Props {
-  caseStudy: Pick<CaseStudy, "client" | "industry" | "challenge" | "services">;
+  caseStudy: Pick<CaseStudy, "client" | "industry" | "services" | "solution" | "timeline" | "stack">;
 }
 
 const { caseStudy } = Astro.props;
-const { client, industry, challenge, services } = caseStudy;
 const labels = CASE_STUDY_COPY.facts;
-const solution = (services ?? [])
-  .map((s) => s?.name?.trim())
-  .filter((n): n is string => Boolean(n))
-  .join(", ");
+const join = (list: readonly (string | null | undefined)[] | null | undefined): string =>
+  (list ?? [])
+    .map((s) => s?.trim())
+    .filter((s): s is string => Boolean(s))
+    .join(" / ");
 const rows = [
-  { label: labels.company, value: client?.name?.trim() ?? "", long: false },
-  { label: labels.industry, value: industry?.trim() ?? "", long: false },
-  { label: labels.solution, value: solution, long: false },
-  { label: labels.challenge, value: challenge?.trim() ?? "", long: true },
+  { label: labels.client, value: caseStudy.client?.name?.trim() ?? "" },
+  { label: labels.industry, value: caseStudy.industry?.trim() ?? "" },
+  { label: labels.services, value: join((caseStudy.services ?? []).map((s) => s?.name)) },
+  { label: labels.solution, value: caseStudy.solution?.trim() ?? "" },
+  { label: labels.timeline, value: caseStudy.timeline?.trim() ?? "" },
+  { label: labels.stack, value: join(caseStudy.stack) },
 ]
   .filter((row) => row.value)
   .map((row, i) => ({ ...row, num: String(i + 1).padStart(2, "0") }));
-const hasLogo = hasImage(client?.logo) || Boolean(client?.name?.trim());
 ---
 
-{(rows.length > 0 || hasLogo) && (
-  <div class="c-cs-facts">
-    <span class="c-cs-facts__glow" aria-hidden="true"></span>
-    <img class="c-cs-facts__lines" src="/images/cta-banner-vector.svg" alt="" aria-hidden="true" width="1272" height="197" decoding="async" />
-    <div class="c-cs-facts__content">
-      {hasLogo && <CaseStudyLogo name={client?.name} logo={client?.logo} size="panel" eager />}
-      {rows.length > 0 && (
-        <dl class="c-cs-facts__list">
-          {rows.map((row) => (
-            <div class="c-cs-facts__row">
-              <dt class="c-cs-facts__label">{row.num} / {row.label}</dt>
-              <dd class={row.long ? "c-cs-facts__value is-long c-paragraph_m" : "c-cs-facts__value c-text_m"}>{row.value}</dd>
-            </div>
-          ))}
-        </dl>
-      )}
-    </div>
-  </div>
+{rows.length > 0 && (
+  <section class="c-cs-facts" aria-label={CASE_STUDY_COPY.factsLabel}>
+    <Container>
+      <dl class="c-cs-facts__list">
+        {rows.map((row) => (
+          <div class="c-cs-facts__item">
+            <dt><Eyebrow>{row.num} / {row.label}</Eyebrow></dt>
+            <dd class="c-cs-facts__value c-paragraph">{row.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </Container>
+  </section>
 )}
 
 <style>
-  /* Figma: 1px #E4E6EA border, 8px radius, 48px padding, white. */
-  .c-cs-facts {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    padding: 3.455rem;
-    border: var(--border-default);
-    border-radius: 8px;
-    background: var(--color-white);
-  }
-  /* Ellipse 15105: 687px circle, brand gradient, blurred, 20%. */
-  .c-cs-facts__glow {
-    position: absolute;
-    z-index: -1;
-    top: 50%;
-    left: 50%;
-    width: 94.9%;
-    aspect-ratio: 1;
-    transform: translate(-50%, -50%);
-    border-radius: 50%;
-    background: var(--gradient-primary);
-    opacity: 0.2;
-    filter: blur(135px);
-    pointer-events: none;
-  }
-  /* Globe line art: 1272px wide (175.6% of the panel), centred, on the
-     bottom edge. */
-  .c-cs-facts__lines {
-    position: absolute;
-    z-index: -1;
-    bottom: 0;
-    left: 50%;
-    width: 175.6%;
-    max-width: none;
-    height: auto;
-    transform: translateX(-50%);
-    pointer-events: none;
-  }
-  .c-cs-facts__content {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2.764rem; /* 38.7px */
+  /* Figma: 40px above and below, items spread edge to edge. */
+  .c-cs-facts :global(.c-container) {
+    padding-top: 2.857rem;
+    padding-bottom: 2.857rem;
   }
   .c-cs-facts__list {
     display: flex;
-    flex-direction: column;
-    gap: 2.764rem;
-    width: 100%;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2rem;
     margin: 0;
   }
-  .c-cs-facts__row {
+  /* Label → value 16px, both centred. */
+  .c-cs-facts__item {
     display: flex;
+    flex: 0 1 auto;
     flex-direction: column;
-    gap: 1.105rem; /* 15.5px */
+    align-items: center;
+    gap: 1.143rem;
+    min-width: 0;
   }
-  /* Divider: 1.4px white at 50% between rows (Figma). */
-  .c-cs-facts__row + .c-cs-facts__row {
-    position: relative;
+  .c-cs-facts__item dt {
+    display: flex;
+    justify-content: center;
+    white-space: nowrap;
   }
-  .c-cs-facts__row + .c-cs-facts__row::before {
-    content: "";
-    position: absolute;
-    top: -1.382rem;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: var(--color-white);
-    opacity: 0.5;
-  }
-  /* Label: the Eyebrow's type (15px uppercase, 0.96px tracking), no box. */
-  .c-cs-facts__label {
-    color: var(--color-text);
-    font-family: var(--font-body);
-    font-size: var(--fs-p);
-    line-height: normal;
-    letter-spacing: 0.064em;
-    text-transform: uppercase;
-  }
+  /* Values wrap (balanced) when the row runs out of room: one line each at
+     1440+, as Figma; the fluid root between 992 and 1439 makes the text
+     relatively wider than the container (QA round 1). */
   .c-cs-facts__value {
     margin: 0;
     color: var(--color-black-secondary);
-    line-height: normal;
+    text-align: center;
+    text-wrap: balance;
   }
-  /* The challenge: Figma Paragraph S 18px, line-height 1.5. */
-  .c-cs-facts__value.is-long {
-    line-height: 1.5;
+  /* No tablet / mobile design: three, then two items per row. */
+  @media (max-width: 991px) {
+    .c-cs-facts__list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      row-gap: 2.857rem;
+      column-gap: 2rem;
+    }
   }
   @media (max-width: 767px) {
-    .c-cs-facts {
-      padding: 2.857rem 2.222rem;
+    .c-cs-facts :global(.c-container) {
+      padding-top: 2.222rem;
+      padding-bottom: 2.222rem;
+    }
+    .c-cs-facts__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      row-gap: 2.222rem;
     }
   }
 </style>

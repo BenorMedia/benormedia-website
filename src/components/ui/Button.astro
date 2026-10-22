@@ -7,9 +7,12 @@ interface Props {
   href?: string;
   type?: ButtonType;
   class?: string;
+  /** Links only, e.g. `_blank` for an external site (pair with `rel`). */
+  target?: string;
+  rel?: string;
 }
 
-const { variant, href, type, class: className } = Astro.props;
+const { variant, href, type, class: className, target, rel } = Astro.props;
 
 const classList = ["c-button", `is-${variant}`, className].filter(Boolean).join(" ");
 // Optional trailing icon: `<svg slot="icon" …/>`. Decorative, hidden from AT.
@@ -18,7 +21,7 @@ const hasIcon = Astro.slots.has("icon");
 
 {
   href ? (
-    <a href={href} class={classList}>
+    <a href={href} class={classList} target={target} rel={rel}>
       <span class="c-button__text"><slot /></span>
       {hasIcon && <span class="c-button__icon" aria-hidden="true"><slot name="icon" /></span>}
     </a>

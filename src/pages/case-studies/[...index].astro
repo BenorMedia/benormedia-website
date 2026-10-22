@@ -1,7 +1,8 @@
 ---
 /**
- * Case studies index — `/case-studies` (Figma 3764:15808, DECISIONS → Case
- * studies). `PageHero` + every published case study (`CaseStudyListing`,
+ * Case studies index — `/case-studies` (Figma 3790:36365, DECISIONS → Case
+ * studies). `CaseStudiesIndexHero` (rings + client icon tiles from
+ * `getAllClientsWithIcon`, lead 2026-10-22) + every published case study (`CaseStudyListing`,
  * newest first, no pagination or filters). CTA banner + footer from
  * BaseLayout. SEO lives in code (`PAGE_META.caseStudies`, like `/work`).
  *
@@ -29,14 +30,13 @@
  *
  * Empty state (no design, non-production only): the hero only;
  * `CaseStudyListing` renders nothing without cards, so there is no empty
- * grid and no "no results" copy. `PageHero` has no bottom padding (the next
- * section owns it), so the empty hero takes the listing's own top padding
- * (7.857rem, 5rem ≤767) to keep the same gap above the CTA banner.
+ * grid and no "no results" copy. The empty hero (`empty`) adds the
+ * listing's own top padding to keep the same gap above the CTA banner.
  */
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import PageHero from "../../components/sections/PageHero.astro";
+import CaseStudiesIndexHero from "../../components/case-studies/CaseStudiesIndexHero.astro";
 import CaseStudyListing from "../../components/case-studies/CaseStudyListing.astro";
-import { getAllCaseStudies } from "../../lib/sanity/queries";
+import { getAllCaseStudies, getAllClientsWithIcon } from "../../lib/sanity/queries";
 import { PAGE_META } from "../../lib/content/seo";
 import { CASE_STUDY_COPY } from "../../components/case-studies/copy";
 import JsonLd from "../../components/layout/JsonLd.astro";
@@ -61,6 +61,8 @@ const hero = CASE_STUDY_COPY.indexHero;
 // Indexable only when at least one listed case study is indexable, so the
 // robots tag agrees with the sitemap (`case-study-sitemap.mjs`).
 const noIndex = !cards.some((card) => card.noIndex !== true);
+// Hero tiles: the first 11 clients with an icon, by name (the fetcher's order).
+const clients = await getAllClientsWithIcon();
 ---
 
 <BaseLayout
@@ -70,24 +72,14 @@ const noIndex = !cards.some((card) => card.noIndex !== true);
 >
   {/* Same CollectionPage + BreadcrumbList as /blog (lead 2026-10-21). */}
   {caseStudiesIndexJsonLd({ name: CASE_STUDY_COPY.breadcrumb.index, description: PAGE_META.caseStudies.description }, cards).map((data) => <JsonLd data={data} />)}
-  <PageHero
+  <CaseStudiesIndexHero
     eyebrow={hero.eyebrow}
     title={hero.title}
     accent={hero.accent}
     description={hero.description}
-    {...(cards.length === 0 ? { class: "is-empty" } : {})}
+    clients={clients}
+    empty={cards.length === 0}
   />
   <CaseStudyListing cards={cards} />
 </BaseLayout>
 
-<style>
-  /* Empty index: the listing's top padding (CaseStudyListing). TODO: DS (no empty-state design). */
-  :global(.c-page-hero.is-empty) {
-    padding-bottom: 7.857rem;
-  }
-  @media (max-width: 767px) {
-    :global(.c-page-hero.is-empty) {
-      padding-bottom: 5rem;
-    }
-  }
-</style>

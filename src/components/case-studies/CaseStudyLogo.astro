@@ -5,8 +5,14 @@
  * (Figma: card thumbnail 3767:25760, facts panel 3768:25991). No logo →
  * the client name as text in the same box (empty state, no design yet).
  *
- * Variants: `is-card` (logo 48px tall) and `is-panel` (38px), Figma px at
- * the 14px base (DESIGN_SYSTEM §1).
+ * Variant: `is-card` (logo 48px tall), Figma px at the 14px base
+ * (DESIGN_SYSTEM §1). The facts panel's `is-panel` variant went with the
+ * panel (template v3, 2026-10-22).
+ *
+ * `onDark` (the navy card thumbnail, Figma 3798:19211): white name text;
+ * `whiten` turns the logo image into a white silhouette with a CSS filter
+ * (the card's fallback when the client has no `logoOnDark`, SCHEMAS v0.11;
+ * right for one-colour logos only).
  */
 import { clientImageAlt } from "../../lib/sanity/image";
 import { imageSize, resolveImage, type CaseStudyImageInput } from "./image";
@@ -14,18 +20,22 @@ import { imageSize, resolveImage, type CaseStudyImageInput } from "./image";
 interface Props {
   name?: string | null | undefined;
   logo?: CaseStudyImageInput;
-  size?: "card" | "panel";
-  /** Above the fold (hero facts panel): load eagerly. */
+  size?: "card";
+  /** Above the fold: load eagerly. */
   eager?: boolean;
+  /** Dark background (white name text). */
+  onDark?: boolean;
+  /** White silhouette of the logo image (CSS filter). */
+  whiten?: boolean;
   class?: string;
 }
 
-const { name, logo, size = "card", eager = false, class: className } = Astro.props;
-const LOGO_PX = size === "card" ? 48 : 38;
+const { name, logo, size = "card", eager = false, onDark = false, whiten = false, class: className } = Astro.props;
+const LOGO_PX = 48;
 const resolved = resolveImage(logo, LOGO_PX);
 const img = resolved ? { ...resolved, ...imageSize(resolved, LOGO_PX), alt: clientImageAlt(logo?.alt, name, "logo") } : null;
 const label = name?.trim() ?? "";
-const rootClass = ["c-cs-logo", `is-${size}`, className].filter(Boolean).join(" ");
+const rootClass = ["c-cs-logo", `is-${size}`, onDark && "is-on-dark", whiten && "is-whiten", className].filter(Boolean).join(" ");
 ---
 
 {(img || label) && (
@@ -86,26 +96,12 @@ const rootClass = ["c-cs-logo", `is-${size}`, className].filter(Boolean).join(" 
     white-space: nowrap;
   }
 
-  /* Facts panel: 30.5px padding, 38px logo, 9.5px squares, 2.9px radius. */
-  .c-cs-logo.is-panel {
-    padding: 2.177rem;
-    border-radius: 2.9px;
+  /* Navy card thumbnail: white logo (Figma 3798:19212). */
+  .c-cs-logo.is-on-dark .c-cs-logo__name {
+    color: var(--color-white);
   }
-  .c-cs-logo.is-panel::before,
-  .c-cs-logo.is-panel::after {
-    width: 0.68rem;
-    height: 0.68rem;
-    border-radius: 1.4px;
-  }
-  .c-cs-logo.is-panel::before {
-    left: -0.374rem;
-  }
-  .c-cs-logo.is-panel::after {
-    right: -0.407rem;
-  }
-  .c-cs-logo.is-panel .c-cs-logo__img {
-    height: 2.721rem;
-    max-width: 14rem;
+  .c-cs-logo.is-whiten .c-cs-logo__img {
+    filter: brightness(0) invert(1);
   }
 
   @media (max-width: 767px) {

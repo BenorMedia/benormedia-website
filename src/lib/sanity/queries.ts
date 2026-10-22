@@ -384,7 +384,8 @@ export const SERVICE_BY_SLUG = /* groq */ `
 /**
  * Card fields: the index cards and the "Resources" cards at the end of a case
  * study. Shared by ALL_CASE_STUDIES and CASE_STUDY_BY_SLUG (`related`,
- * `latest`) so the card projection is defined once.
+ * `latest`) so the card projection is defined once. `cardStats` (max 2) and
+ * `client.logoOnDark` are optional (SCHEMAS v0.11).
  */
 const CASE_STUDY_CARD_FIELDS = /* groq */ `
   _id,
@@ -392,10 +393,12 @@ const CASE_STUDY_CARD_FIELDS = /* groq */ `
   title,
   "slug": slug.current,
   publishedAt,
+  cardStats[]{ _key, value, label },
   "client": client->{
     _id,
     name,
-    "logo": logo${IMAGE}
+    "logo": logo${IMAGE},
+    "logoOnDark": logoOnDark${IMAGE}
   }
 `;
 
@@ -452,11 +455,15 @@ export const CASE_STUDY_BY_SLUG = /* groq */ `
   intro,
   industry,
   challenge,
+  solution,
+  timeline,
+  stack,
   "client": client->{
     _id,
     _type,
     name,
     "logo": logo${IMAGE},
+    "websiteScreenshot": websiteScreenshot${IMAGE},
     websiteUrl
   },
   "services": services[defined(@->_id)]->{
@@ -479,9 +486,13 @@ export const CASE_STUDY_BY_SLUG = /* groq */ `
     listItem,
     level,
     children[]{ _key, _type, text, marks },
-    markDefs[]{ _key, _type, href, openInNewTab }
+    markDefs[]{ _key, _type, href, openInNewTab },
+    title,
+    items
   },
-  results[]{ _key, value, description },
+  resultsIntro,
+  results[]{ _key, value, label, description },
+  resultsSummary,
   "related": related[defined(@->slug.current) && !(@->_id in path("drafts.**"))]->{
     ${CASE_STUDY_CARD_FIELDS}
   },

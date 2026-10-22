@@ -39,11 +39,21 @@
   --color-blue: #6275F6;
   --color-blue-light: #6BB0F7;
   --gradient-primary: linear-gradient(106deg, #6275F6 2.88%, #6BB0F7 96.84%);
+  --color-navy: #001F3D; /* Figma "Deep Sea 900" — case-study card; pending Sergio's OK (DECISIONS 2026-10-22) */
+  --color-blue-500: #1355FF; /* Figma "Blue 500", card glow — case-study card; pending Sergio's OK (DECISIONS 2026-10-22) */
 
   /* Neutrals */
   --color-gray: #C9CEDA;
   --color-gray-light: #F0F0F0;
   --color-grey-700: #3B3B3B; /* Figma Grey-700 — Services diagram labels (lead 2026-10-01) */
+
+  /* Case studies (lead approved 2026-10-22) */
+  --color-browser-bg: #F4F5F7;     /* Figma 3842:40085 browser window fill — case-study hero; lead approved 2026-10-22 */
+  --color-browser-url: #8A909E;    /* Figma 3842:40092 URL bar text — case-study hero; lead approved 2026-10-22 */
+  --color-browser-red: #FF5B5F;    /* Figma 3842:40088 window dot 1 — case-study hero; lead approved 2026-10-22 */
+  --color-browser-yellow: #FAC800; /* Figma 3842:40089 window dot 2 — case-study hero; lead approved 2026-10-22 */
+  --color-browser-green: #34C759;  /* Figma 3842:40090 window dot 3 — case-study hero; lead approved 2026-10-22 */
+  --color-tile-sage: #95A78D;      /* Figma 3804:27327 tile fill — case-studies index hero; lead approved 2026-10-22 */
 
   /* Surfaces — glass (cards, FAQ rows over line art; lead 2026-09-29) */
   --color-surface-glass: rgba(255, 255, 255, 0.05);

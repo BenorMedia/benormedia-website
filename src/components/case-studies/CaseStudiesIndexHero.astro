@@ -1,0 +1,236 @@
+---
+/**
+ * CaseStudiesIndexHero — c-cs-index-hero
+ * The `/case-studies` hero (Figma 3790:36381 + background 3803:27030, lead
+ * 2026-10-22): eyebrow, two-line title (second line in the gradient) and
+ * description via the shared `SectionHeader`, over a decorative layer of
+ * three concentric rings, 11 client icon tiles and a white radial fade.
+ * Case-studies only: `PageHero` (Work, Blog, Pricing…) is untouched.
+ *
+ * Tiles: the clients' Sanity `icon`s (`getAllClientsWithIcon`, sorted by
+ * name), the first 11 by name, placed in Figma's layer order. Tile fills
+ * follow the Figma POSITION, not the client (lead 2026-10-22): tile 4 gets
+ * Figma's fill (#95A78D) whatever icon lands there; tiles 7, 8, 9 and 11
+ * stay white until the fixed client list exists (their fills hid the
+ * alphabetical icons); the other six are white as in Figma. Figma's two
+ * slight tile rotations are dropped (one is 179.55°, which would turn a real
+ * logo upside down).
+ *
+ * Geometry: the Figma frame is 1760 × 1727 in the 1920 page; it is drawn at
+ * 91.667% of the hero's width (1760px at 1920, capped at 125.714rem), its
+ * centre 336.56px (24.04rem) below the top of Figma's hero container. Tile
+ * centres are percentages of that frame, so the composition scales with the
+ * viewport while the text keeps its size. The hero clips the layer (no
+ * horizontal overflow). Static, decorative (`aria-hidden`, empty alts), no
+ * motion; fixed sizes, so no layout shift.
+ */
+import Container from "../ui/Container.astro";
+import SectionHeader from "../ui/SectionHeader.astro";
+import type { Client } from "../../lib/sanity/types";
+import { urlFor, type Source } from "../../lib/sanity/image";
+
+interface Props {
+  eyebrow: string;
+  /** `\n` = forced line break (SectionHeader). */
+  title: string;
+  accent?: string;
+  description?: string;
+  /** Clients with an icon, sorted by name (`getAllClientsWithIcon`). */
+  clients: readonly Pick<Client, "_id" | "name" | "icon">[];
+  /** No case study listed: keep the listing's gap above the CTA banner. */
+  empty?: boolean;
+}
+
+const { eyebrow, title, accent, description, clients, empty = false } = Astro.props;
+
+/** Tile centres (Figma 3803:27030 layer order) as % of the 1760 × 1727 frame. */
+const TILE_POSITIONS: readonly (readonly [number, number])[] = [
+  [12.756, 45.107], // 3803:27281
+  [15.341, 65.605], // 3804:27313
+  [26.023, 58.483], // 3803:27286
+  [75.795, 60.915], // 3804:27327
+  [88.58, 42.965], // 3804:27334
+  [98.197, 61.855], // 3804:27341
+  [72.424, 33.239], // 3804:27348
+  [28.944, 34.182], // 3803:27300
+  [5.241, 31.673], // 3803:27293
+  [2.401, 57.151], // 3804:27320
+  [50.097, 23.798], // 3803:27305
+];
+
+// 51px image at 2x. Width only, so wide icons aren't cropped (ClientIcon).
+const tiles = clients
+  .filter((client) => client.icon?.asset)
+  .slice(0, TILE_POSITIONS.length)
+  .map((client, i) => {
+    const [x, y] = TILE_POSITIONS[i] ?? [50, 50];
+    return {
+      key: client._id,
+      n: i + 1,
+      src: urlFor(client.icon as Source).width(102).fit("max").auto("format").url(),
+      style: `--x: ${x}%; --y: ${y}%`,
+    };
+  });
+
+const optional = {
+  ...(accent !== undefined && { accent }),
+  ...(description !== undefined && { description }),
+};
+---
+
+<section class:list={["c-cs-index-hero", { "is-empty": empty }]}>
+  <div class="c-cs-index-hero__art" aria-hidden="true">
+    <svg class="c-cs-index-hero__rings" viewBox="0 0 1760 1727" fill="none" focusable="false">
+      <circle class="c-cs-index-hero__ring" cx="896.62" cy="863.39" r="861.62" stroke-width="2.85" />
+      <circle class="c-cs-index-hero__ring" cx="896.62" cy="863.39" r="678.68" stroke-width="2.85" />
+      <circle class="c-cs-index-hero__ring" cx="896.62" cy="863.39" r="471.07" stroke-width="2" />
+    </svg>
+    {tiles.map((tile) => (
+      <span class={`c-cs-index-hero__tile is-${tile.n}`} style={tile.style}>
+        <img src={tile.src} alt="" width="51" height="51" loading="eager" fetchpriority="low" decoding="async" draggable="false" />
+      </span>
+    ))}
+    <span class="c-cs-index-hero__fade"></span>
+  </div>
+  <Container>
+    <SectionHeader
+      as="h1"
+      eyebrow={eyebrow}
+      title={title}
+      {...optional}
+      titleClass="c-text_xl c-cs-index-hero__title"
+      class="c-cs-index-hero__header"
+    />
+  </Container>
+</section>
+
+<style>
+  /* Figma: 110px from the nav to the hero container, 120px padding inside
+     it (top and bottom), 100px to the listing (which adds its own 110px). */
+  .c-cs-index-hero {
+    --c-cs-index-hero-top: 7.857rem; /* Figma 110px */
+    position: relative;
+    overflow: hidden;
+    overflow: clip;
+    background: var(--color-white);
+  }
+  .c-cs-index-hero :global(.c-container) {
+    position: relative;
+    z-index: 1;
+    padding-top: calc(var(--c-cs-index-hero-top) + 8.571rem); /* + 120px */
+    padding-bottom: calc(8.571rem + 7.143rem); /* 120px + 100px */
+  }
+  /* Empty index: the listing's top padding too (CaseStudyListing). TODO: DS
+     (no empty-state design). */
+  .c-cs-index-hero.is-empty :global(.c-container) {
+    padding-bottom: calc(8.571rem + 7.143rem + 7.857rem);
+  }
+
+  /* Title and description keep the site classes (lead 2026-10-22, round 2):
+     `c-text_xl` (54.7px / 1.2; Figma 60px / 1.4) and SectionHeader's 42rem
+     description (Figma 662px). */
+
+  /* Decorative frame (Figma 1760 × 1727), centred on the hero; its centre
+     sits 336.56px below the top of Figma's hero container. */
+  .c-cs-index-hero__art {
+    position: absolute;
+    top: calc(var(--c-cs-index-hero-top) + 24.04rem);
+    left: 50%;
+    width: min(91.667%, 125.714rem);
+    aspect-ratio: 1760 / 1727;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .c-cs-index-hero__rings {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  /* Figma #0C1627 at 8% (3803:27040): no token, closest --color-heading
+     (#12142B), TODO: DS. Stroke widths are Figma's inner strokes. */
+  .c-cs-index-hero__ring {
+    stroke: var(--color-heading);
+    opacity: 0.08;
+  }
+  /* Figma tile: 84px, 12px radius, 1.5px #E4E6EA border, 51px icon. */
+  .c-cs-index-hero__tile {
+    position: absolute;
+    top: var(--y);
+    left: var(--x);
+    display: flex;
+    width: 6rem;
+    height: 6rem;
+    align-items: center;
+    justify-content: center;
+    transform: translate(-50%, -50%);
+    border: 1.5px solid var(--color-border);
+    border-radius: 12px;
+    background: var(--c-cs-index-hero-tile-bg, var(--color-white));
+  }
+  /* Figma fill by tile position (3804:27327); Figma keeps the 1.5px border
+     on filled tiles. Tiles 7, 8, 9 and 11 stay white until the fixed client
+     list exists: their Figma fills (#EA515B, #E74724, #001F3C, #0065FF)
+     hide the alphabetical clients' icons (lead 2026-10-22). */
+  .c-cs-index-hero__tile.is-4 {
+    --c-cs-index-hero-tile-bg: var(--color-tile-sage);
+  }
+  .c-cs-index-hero__tile img {
+    display: block;
+    width: 3.643rem;
+    height: 3.643rem;
+    object-fit: contain;
+  }
+  /* White radial fade over the rings and tiles (Figma 3804:27352: a
+     1759.5 × 807.7 box, transparent to 50.6%, white from 81.6%). Below the
+     box: white, so the rings never show past it when the frame scales down
+     (in Figma the listing covers that area). */
+  .c-cs-index-hero__fade {
+    position: absolute;
+    top: 23.97%;
+    right: 0;
+    bottom: -100%;
+    left: 0;
+    background:
+      radial-gradient(79.14% 79.14% at 50% 50%, transparent 50.593%, var(--color-white) 81.596%) top / 100% 26.57% no-repeat,
+      linear-gradient(var(--color-white), var(--color-white)) bottom / 100% 73.43% no-repeat;
+  }
+
+  /* Tablet (no design, TODO: DS mobile): the frame keeps 91.667% of the
+     width; the four tiles nearest the text are hidden so none sits on it,
+     the other seven shrink to 64px. */
+  @media (max-width: 991px) {
+    .c-cs-index-hero__tile {
+      width: 5.333rem;
+      height: 5.333rem;
+      border-radius: 10px;
+    }
+    .c-cs-index-hero__tile img {
+      width: 3.238rem;
+      height: 3.238rem;
+    }
+    .c-cs-index-hero__tile:is(.is-3, .is-7, .is-8, .is-11) {
+      display: none;
+    }
+  }
+  /* Mobile: the site's mobile hero spacing (PageHero: 5rem above, the
+     listing's 5rem below); rings only, no tiles (the text spans the width). */
+  @media (max-width: 767px) {
+    .c-cs-index-hero {
+      --c-cs-index-hero-top: 5rem;
+    }
+    .c-cs-index-hero :global(.c-container) {
+      padding-top: var(--c-cs-index-hero-top);
+      padding-bottom: 0;
+    }
+    .c-cs-index-hero.is-empty :global(.c-container) {
+      padding-bottom: 5rem;
+    }
+    .c-cs-index-hero__art {
+      top: calc(var(--c-cs-index-hero-top) + 16rem);
+    }
+    .c-cs-index-hero__tile {
+      display: none;
+    }
+  }
+</style>

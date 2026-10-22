@@ -11,6 +11,9 @@ import { orderRankField, orderRankOrdering } from '@sanity/orderable-document-li
  * `sector` (SCHEMAS v0.9, lead 2026-10-01): one of a fixed list; drives the
  * Work page filters.
  *
+ * `logoOnDark` (SCHEMAS v0.11): optional logo for dark backgrounds (navy
+ * case-study card). Empty: the site whitens `logo` with CSS.
+ *
  * `orderRank` (hidden, @sanity/orderable-document-list): drag-and-drop order
  * of the Studio "Clients" list. Only the Work page listing sorts by it; Home,
  * Pricing and service pages keep their own order (SCHEMAS.md v0.7).
@@ -32,6 +35,23 @@ export const client = defineType({
       name: 'logo',
       title: 'Logo',
       description: 'The full logo. SVG strongly preferred so it stays sharp at any size.',
+      type: 'image',
+      options: { hotspot: true },
+      fields: [
+        defineField({
+          name: 'alt',
+          title: 'Alt text',
+          description:
+            'Describe the logo for screen readers. If left blank, the client name is used automatically.',
+          type: 'string',
+        }),
+      ],
+    }),
+    defineField({
+      name: 'logoOnDark',
+      title: 'Logo on dark',
+      description:
+        'Optional. A version of the logo made for dark backgrounds, such as the navy case study card. SVG strongly preferred. If left empty, the site turns the regular logo white, which only looks right for one-colour logos.',
       type: 'image',
       options: { hotspot: true },
       fields: [

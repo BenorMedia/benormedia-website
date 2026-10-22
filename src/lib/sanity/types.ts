@@ -136,6 +136,8 @@ export interface Stat {
 export interface Kpi {
   value: string;
   description: string;
+  /** Case study results only (SCHEMAS v0.12): the line above `description`. */
+  label?: string | null;
 }
 
 export interface Seo {
@@ -398,11 +400,38 @@ export interface PortableTextLinkDef {
 export interface CaseStudyBodyBlock extends PortableTextBlock {
   _key: string;
   _type: 'block';
-  style?: 'normal' | 'h2' | 'h3';
+  style?: 'normal' | 'h2' | 'h3' | 'blockquote';
   listItem?: 'bullet' | 'number';
   level?: number;
   children?: PortableTextSpan[];
   markDefs?: PortableTextLinkDef[];
+}
+
+/** A callout box in a case study body (`caseStudyCallout`, SCHEMAS v0.12). */
+export interface CaseStudyCalloutBlock {
+  _key: string;
+  _type: 'caseStudyCallout';
+  title?: string | null;
+  items?: (string | null)[] | null;
+}
+
+/** Any item of `caseStudy.body`. */
+export type CaseStudyBodyItem = CaseStudyBodyBlock | CaseStudyCalloutBlock;
+
+/** One item of the card's stats row (`caseStudy.cardStats`, SCHEMAS v0.11). */
+export interface CaseStudyCardStat {
+  _key?: string;
+  value: string;
+  label: string;
+}
+
+/** The client as projected on a case-study card. */
+export interface CaseStudyCardClient {
+  _id: string;
+  name?: string;
+  logo?: SanityImage;
+  /** Logo for dark backgrounds (v0.11). Empty: the card whitens `logo` with CSS. */
+  logoOnDark?: SanityImage;
 }
 
 /** Index card and "Resources" card. */
@@ -414,7 +443,9 @@ export interface CaseStudyCard {
   /** `YYYY-MM-DD` (a Sanity `date`, not a datetime like `post.publishedAt`). */
   publishedAt: string;
   /** `null` when the client reference is dangling. */
-  client: { _id: string; name?: string; logo?: SanityImage } | null;
+  client: CaseStudyCardClient | null;
+  /** Card stats row (max 2); `null` / missing / empty = the row is hidden. */
+  cardStats?: CaseStudyCardStat[] | null;
   /** `seo.noIndex` is on. Only in `ALL_CASE_STUDIES` (the index's robots tag). */
   noIndex?: boolean;
 }
@@ -435,19 +466,29 @@ export interface CaseStudy extends CaseStudyCard {
   readTime?: number | null;
   intro?: string | null;
   industry?: string | null;
+  /** Not shown on the page (v0.12); meta description fallback. */
   challenge?: string | null;
+  /** Hero facts "04 / Solution", "05 / Timeline", "06 / Stack" (v0.12). */
+  solution?: string | null;
+  timeline?: string | null;
+  stack?: (string | null)[] | null;
   client: {
     _id: string;
     _type: 'client';
     name?: string;
     logo?: SanityImage;
     websiteUrl?: string;
+    /** Hero browser frame (v0.12 wiring of the existing client field). */
+    websiteScreenshot?: SanityImage;
   } | null;
   services?: CaseStudyService[] | null;
   /** The case study's own testimonial, else the client's; `null` = no quote block. */
   testimonial?: CaseStudyTestimonial | null;
   /** Not required in the schema: may be missing. */
-  body?: CaseStudyBodyBlock[] | null;
+  body?: CaseStudyBodyItem[] | null;
+  /** Paragraphs around the results row (v0.12). */
+  resultsIntro?: string | null;
+  resultsSummary?: string | null;
   /** Max 3. */
   results?: (Kpi & { _key: string })[] | null;
   /** Editor picks (max 3), unpublished / dangling references removed. */

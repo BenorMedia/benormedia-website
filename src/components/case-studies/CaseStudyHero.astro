@@ -1,89 +1,108 @@
 ---
 /**
  * CaseStudyHero — c-cs-hero
- * Case study header (Figma 3764:16029 + 3768:25937): left = breadcrumbs
- * (Home › Case studies › title, the blog's chevron trail `NpCrumbs`), the
- * "Case study" accent tag, date | read time, the H1 and the intro; right =
- * `CaseStudyFacts`. A divider 100px under the row (the blog hero's rule).
- * Spacing and the meta row follow `NpBlogHero`, which converts the same
- * Figma styles.
+ * Case study header (Figma 3842:40061): left = breadcrumbs (Home › Case
+ * studies › title, the blog's chevron trail `NpCrumbs`), the client logo in
+ * a default `Eyebrow` box (its side squares) next to the accent "Case
+ * study" `Eyebrow`, the H1 and the intro; right = the website frame
+ * (`CaseStudyBrowser`), which runs past the container to the viewport's
+ * right edge and is clipped there, as in Figma. The facts row
+ * (`CaseStudyFacts`) follows as its own block.
  *
+ * Figma has no date or read time in this hero any more (3842:40046).
  * `NpCrumbs` prints no JSON-LD: the page emits the BreadcrumbList.
  */
 import Container from "../ui/Container.astro";
 import Eyebrow from "../ui/Eyebrow.astro";
 import NpCrumbs from "../new-pages/NpCrumbs.astro";
-import CaseStudyFacts from "./CaseStudyFacts.astro";
+import "../new-pages/new-pages.css";
+import CaseStudyBrowser from "./CaseStudyBrowser.astro";
 import type { CaseStudy } from "../../lib/sanity/types";
-import { caseStudyReadMinutes } from "../../lib/sanity/case-studies";
-import { fill, formatDate } from "../../lib/new-pages/html";
+import { clientImageAlt } from "../../lib/sanity/image";
 import { CASE_STUDIES_PATH, CASE_STUDY_COPY } from "./copy";
+import { hasImage, imageSize, resolveImage } from "./image";
 
 interface Props {
-  caseStudy: Pick<
-    CaseStudy,
-    "title" | "publishedAt" | "intro" | "readTime" | "body" | "client" | "industry" | "challenge" | "services"
-  >;
+  caseStudy: Pick<CaseStudy, "title" | "intro" | "client">;
 }
 
 const { caseStudy } = Astro.props;
+const { client } = caseStudy;
 const crumbs = [
   { label: CASE_STUDY_COPY.breadcrumb.home, href: "/" },
   { label: CASE_STUDY_COPY.breadcrumb.index, href: CASE_STUDIES_PATH },
   { label: caseStudy.title },
 ];
-const minutes = caseStudyReadMinutes(caseStudy);
 const intro = caseStudy.intro?.trim();
+// Logo 17.6px tall in Figma (3842:40075): fetched at 2x of the 18px line.
+const logo = hasImage(client?.logo) ? resolveImage(client?.logo, 18) : null;
+const logoDims = imageSize(logo, 18);
+const logoAlt = clientImageAlt(client?.logo?.alt, client?.name, "logo");
+const clientName = client?.name?.trim();
+const hasMedia = hasImage(client?.websiteScreenshot);
 ---
 
-<header class="c-cs-hero">
+<header class:list={["c-cs-hero", { "is-text-only": !hasMedia }]}>
   <Container>
     <div class="c-cs-hero__grid">
       <div class="c-cs-hero__text">
         <NpCrumbs items={crumbs} />
         <div class="c-cs-hero__head">
-          <div class="c-cs-hero__meta">
+          <div class="c-cs-hero__tags">
+            {(logo || clientName) && (
+              <Eyebrow class="c-cs-hero__logo">
+                {logo ? (
+                  <img src={logo.src} alt={logoAlt} width={logoDims.width} height={logoDims.height} loading="eager" decoding="async" />
+                ) : (
+                  clientName
+                )}
+              </Eyebrow>
+            )}
             <Eyebrow variant="accent">{CASE_STUDY_COPY.tag}</Eyebrow>
-            <p class="c-cs-hero__facts c-paragraph_s">
-              <time datetime={caseStudy.publishedAt}>{formatDate(caseStudy.publishedAt)}</time>
-              <span class="c-cs-hero__sep" aria-hidden="true"></span>
-              <span>{fill(CASE_STUDY_COPY.readTime, { n: String(minutes) })}</span>
-            </p>
           </div>
           <div class="c-cs-hero__titles">
             <h1 class="c-cs-hero__title c-text_xl">{caseStudy.title}</h1>
-            {intro && <p class="c-cs-hero__intro c-paragraph_l">{intro}</p>}
+            {intro && <p class="c-cs-hero__intro c-paragraph_m">{intro}</p>}
           </div>
         </div>
       </div>
-      <div class="c-cs-hero__side">
-        <CaseStudyFacts caseStudy={caseStudy} />
-      </div>
+      {hasMedia && (
+        <div class="c-cs-hero__media">
+          <CaseStudyBrowser client={client} />
+        </div>
+      )}
     </div>
-    <hr class="c-cs-hero__rule" />
   </Container>
 </header>
 
 <style>
-  /* Accent tag tint at 5% (the blog hero's contrast fix). */
-  .c-cs-hero__meta :global(.c-eyebrow.is-accent) {
-    background: color-mix(in srgb, var(--color-accent) 5%, var(--color-white));
+  /* Figma: 110px top, 80px bottom (the facts row follows). The website
+     frame runs off the right edge: clip it there. */
+  .c-cs-hero {
+    overflow: hidden;
+    overflow: clip;
   }
-  /* Figma: 110px top, 906 | 724 columns with a 50px gap in the 1680
-     container, the rule 100px below, 110px below the rule. The site
-     container is 1230px at 1440 (Figma 1680), so the 724 : 906 ratio would
-     leave the H1 648px and wrap the Figma title to 3 lines; the panel is
-     36% of the row instead (443px at 1440, TODO: DS), so the text column
-     (737px) keeps it to 2 lines from 992px up (lead 2026-10-20 round 2). */
   .c-cs-hero :global(.c-container) {
     padding-top: 7.857rem;
-    padding-bottom: 7.857rem;
+    padding-bottom: 5.714rem;
   }
+  /* Accent tag tint at 5% (the blog hero's contrast fix): new-pages.css's
+     --np-surface-tint. */
+  .c-cs-hero__tags :global(.c-eyebrow.is-accent) {
+    background: var(--np-surface-tint);
+  }
+  /* Figma: text 769 of the 1680 row (45.8%), 50px gap, then the frame.
+     `container-type` lets the frame measure the row (100cqw) to reach the
+     viewport edge. */
   .c-cs-hero__grid {
+    container-type: inline-size;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 36%);
+    grid-template-columns: minmax(0, 45.774%) minmax(0, 1fr);
     align-items: center;
     gap: 3.571rem;
+  }
+  .c-cs-hero.is-text-only .c-cs-hero__grid {
+    grid-template-columns: minmax(0, 1fr);
   }
   .c-cs-hero__text {
     display: flex;
@@ -98,26 +117,20 @@ const intro = caseStudy.intro?.trim();
     align-items: flex-start;
     gap: 1.714rem; /* 24px */
   }
-  .c-cs-hero__meta {
+  .c-cs-hero__tags {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 1.071rem; /* 15px */
+    gap: 1.143rem; /* 16px */
   }
-  .c-cs-hero__facts {
-    display: inline-flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 1.429rem; /* 20px */
-    margin: 0;
-    color: var(--color-text-secondary);
-  }
-  /* The Figma "|" separator, drawn (NpBlogHero). */
-  .c-cs-hero__sep {
-    width: 1px;
-    height: 1em;
-    background: currentColor;
-    opacity: 0.6;
+  /* Figma logo chip (3842:40074): the default Eyebrow box and squares
+     around the logo, one text line tall. */
+  .c-cs-hero__tags :global(.c-cs-hero__logo img) {
+    display: block;
+    width: auto;
+    height: 1lh;
+    max-width: 10rem;
+    object-fit: contain;
   }
   .c-cs-hero__titles {
     display: flex;
@@ -128,24 +141,22 @@ const intro = caseStudy.intro?.trim();
     margin: 0;
     color: var(--color-black-secondary);
   }
+  /* Figma Paragraph M (25px / 1.5), 648px wide. */
   .c-cs-hero__intro {
     max-width: 46.3rem; /* 648px */
     margin: 0;
     color: var(--color-text);
   }
-  .c-cs-hero__side {
+  /* The frame's box: from its column to the viewport's right edge. */
+  .c-cs-hero__media {
+    width: calc(100% + (100vw - 100cqw) / 2);
     min-width: 0;
   }
-  .c-cs-hero__rule {
-    height: 1px;
-    margin: 7.143rem 0 0;
-    border: 0;
-    background: var(--color-border);
-  }
-  /* Tablet / mobile: one column, facts under the text (NpBlogHero). */
+  /* Tablet / mobile: one column, the frame under the text, still running
+     off the right edge. */
   @media (max-width: 991px) {
     .c-cs-hero__grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       align-items: start;
     }
   }
@@ -153,9 +164,6 @@ const intro = caseStudy.intro?.trim();
     .c-cs-hero :global(.c-container) {
       padding-top: 5rem;
       padding-bottom: 4.444rem;
-    }
-    .c-cs-hero__rule {
-      margin-top: 4.444rem;
     }
   }
 </style>

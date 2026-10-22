@@ -1,12 +1,15 @@
 ---
 /**
  * CaseStudyNodes — renders `parseCaseStudyBody` nodes: H2 (with its id),
- * H3, paragraphs, lists, and the phase block (its children, recursively).
- * Styles live in `CaseStudyBody.astro`.
+ * H3, paragraphs, quotes, lists, callout boxes (`NpKeyTakeaways`, the blog's
+ * box with the callout's own label) and the phase block (its children,
+ * recursively). Styles live in `CaseStudyBody.astro`.
  */
 import CaseStudyInline from "./CaseStudyInline.astro";
 import CaseStudyList from "./CaseStudyList.astro";
+import NpKeyTakeaways from "../../new-pages/NpKeyTakeaways.astro";
 import type { BodyNode } from "../../../lib/sanity/case-study-body";
+import { escapeHtml } from "../../../lib/new-pages/html";
 
 interface Props {
   nodes: readonly BodyNode[];
@@ -22,6 +25,12 @@ const { nodes } = Astro.props;
     <h3 id={node.id} class="c-cs-body__h3"><CaseStudyInline runs={node.inline} /></h3>
   ) : node.type === "list" ? (
     <CaseStudyList list={node} />
+  ) : node.type === "quote" ? (
+    <blockquote class="c-cs-body__quote c-text_m"><p><CaseStudyInline runs={node.inline} /></p></blockquote>
+  ) : node.type === "callout" ? (
+    <div class="c-cs-body__callout">
+      <NpKeyTakeaways label={node.title} labelId={`cs-callout-${node.key}`} items={node.items.map(escapeHtml)} />
+    </div>
   ) : node.type === "phase" ? (
     <div class="c-cs-body__phase">
       <Astro.self nodes={node.children} />

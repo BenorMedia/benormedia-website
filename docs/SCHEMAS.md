@@ -1,6 +1,22 @@
-# Sanity ↔ Astro Data Contract (v0.10, approved)
+# Sanity ↔ Astro Data Contract (v0.12, v0.11 and v0.12 pending Sergio)
 
-Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) approved 2026-09-29. v0.7 (`client.orderRank`) requested by the lead 2026-09-29. v0.8 (`client.websiteVideo`) requested by the lead 2026-09-30. v0.9 (`client.sector`) requested by the lead 2026-10-01. v0.10 (`caseStudy`) approved by the lead 2026-10-20.
+Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) approved 2026-09-29. v0.7 (`client.orderRank`) requested by the lead 2026-09-29. v0.8 (`client.websiteVideo`) requested by the lead 2026-09-30. v0.9 (`client.sector`) requested by the lead 2026-10-01. v0.10 (`caseStudy`) approved by the lead 2026-10-20. v0.11 (`caseStudy.cardStats`, `client.logoOnDark`) requested by Emily 2026-10-22, code only, pending Sergio's OK. v0.12 (case study template Figma 3842:40046: hero facts, body quote and callout, results texts, `kpi.label`) added by the ui agent 2026-10-22, approved by the lead 2026-10-22 (deploy by the orchestrator).
+
+### v0.12 changes vs v0.11 (2026-10-22, approved by the lead 2026-10-22; deploy by the orchestrator, not deployed by the ui agent)
+Figma template 3842:40046 (case studies v3). All new fields optional; the page renders nothing for an empty one.
+- **`caseStudy.solution`** (string, Hero tab, `initialValue: "BenorMedia"`, lead 2026-10-22): "04 / Solution" in the facts row.
+- **`caseStudy.timeline`** (string, Hero tab): "05 / Timeline".
+- **`caseStudy.stack`** (array of strings, Hero tab): "06 / Stack", joined with " / ".
+- **`caseStudy.body`**: new block style **`blockquote`** (Studio "Quote": the highlighted quote with the gradient bar) and new array member **`caseStudyCallout`** (object: `title` string required, `items` array of strings, min 1): the boxed list ("Deliverables — Design Phase"). Bullet lists now render with check-circle icons (no schema change).
+- **`caseStudy.resultsIntro`** / **`caseStudy.resultsSummary`** (text, Results tab): paragraphs above and below the results row.
+- **`kpi.label`** (string, optional, shown in Studio only inside `caseStudy.results`): the line between the value and the description in a result cell. Testimonial KPIs unchanged.
+- **Wiring only, no schema change:** `CASE_STUDY_BY_SLUG` now also reads `client.websiteScreenshot` (the hero browser frame) next to `client.websiteUrl` (URL bar host and "Visit live site").
+- **Display changes:** `challenge` is no longer shown on the page (Figma removed it from the facts); it stays the meta description fallback. `services` moves to "03 / Services delivered"; the client name is "01 / Client". The hero no longer shows the date and read time (`publishedAt` stays on cards and in the JSON-LD; `readTime` is unused on the page).
+
+### v0.11 changes vs v0.10 (2026-10-22, code only, NOT deployed, pending Sergio's OK in the PR)
+- **`caseStudy.cardStats`** (optional, array of `cardStat`, max 2): the stats row on the case-study card (Figma 3798:19226). `cardStat` object: `value` (string, required, e.g. "+40%") · `label` (string, required, short). Hidden on the card when empty.
+- **`client.logoOnDark`** (optional image + `alt`, SVG preferred): the client logo for dark backgrounds (the navy card thumbnail). Empty → the card uses `logo` with a CSS whitening filter (works for one-colour logos only).
+- **Queries:** `cardStats[]{ _key, value, label }` in the case-study card fields (`ALL_CASE_STUDIES`, `related`, `latest`); `logoOnDark` next to `logo` in the card's `client->` projection. The index hero tiles reuse `ALL_CLIENTS_WITH_ICON` (client `icon`).
 
 ### v0.10 changes vs v0.9 (2026-10-20)
 - **New `caseStudy` document**, routable at `/case-studies/<slug>` (see the table below). Index `/case-studies` lists every published case study, `order(publishedAt desc)`. Created as drafts only until the lead says otherwise.
@@ -56,6 +72,7 @@ Approach: **repeatable data lives in Sanity documents; page copy is authored dir
 | Funds Raised | `fundsRaised` | string | optional. e.g. `$25.0M`. Template appends "Raised" |
 | Category | `category` | reference → `category` | optional |
 | Sector | `sector` | string, dropdown: `agency` · `professional-services` · `saas` | optional, one value. Work page filters (v0.9) |
+| Logo on dark | `logoOnDark` | image (SVG preferred) + alt | optional. Logo for dark backgrounds (navy case-study card). Empty → `logo` with a CSS whitening filter (v0.11) |
 | Website URL | `websiteUrl` | url | optional |
 | Order Rank | `orderRank` | string (LexoRank) | hidden, read-only. Set by the Studio drag-and-drop list (`@sanity/orderable-document-list`). Only the Work page listing sorts by it |
 
@@ -108,16 +125,22 @@ Fields are grouped in Studio tabs, in this order.
 |---|---|---|---|---|
 | Overview (default) | Title | `title` | string | required. H1, card title, last breadcrumb item |
 | Overview | Slug | `slug` | slug (from title) | required, unique among case studies, lowercase kebab-case |
-| Overview | Client | `client` | reference → `client` | required. Card and hero logo, "01 / Company" (client name) |
-| Overview | Published on | `publishedAt` | date | required, default today. Card and hero date (blog format), index order |
-| Overview | Time to read | `readTime` | number (minutes) | optional override. If empty, calculated from the body word count at build |
+| Overview | Client | `client` | reference → `client` | required. Card and hero logo, "01 / Client" (client name); the client's `websiteScreenshot` + `websiteUrl` fill the hero browser frame (v0.12) |
+| Overview | Published on | `publishedAt` | date | required, default today. Card date, index order (not shown in the hero since v0.12) |
+| Overview | Time to read | `readTime` | number (minutes) | optional override. Not shown on the page since v0.12 (Figma 3842:40046 has no read time) |
 | Hero | Intro | `intro` | text (3 rows) | optional. Hero paragraph; meta description fallback |
 | Hero | Industry | `industry` | string | optional. "02 / Industry" |
-| Hero | Services | `services` | array of references → `service` | optional, no duplicates. "03 / Solution" (service names) |
-| Hero | Challenge | `challenge` | text (3 rows) | optional. "04 / The challenge" |
+| Hero | Services | `services` | array of references → `service` | optional, no duplicates. "03 / Services delivered" (service names joined with " / ", v0.12) |
+| Hero | Solution | `solution` | string | optional, initial value "BenorMedia" (lead 2026-10-22). "04 / Solution" (v0.12) |
+| Hero | Timeline | `timeline` | string | optional. "05 / Timeline" (v0.12) |
+| Hero | Stack | `stack` | array of strings | optional. "06 / Stack", joined with " / " (v0.12) |
+| Hero | Challenge | `challenge` | text (3 rows) | optional. Not shown on the page since v0.12; meta description fallback |
 | Hero | Testimonial | `testimonial` | reference → `testimonial` | optional. Falls back to the client's testimonial; no quote block when both are empty |
-| Article | Body | `body` | Portable Text | H2 (a section; feeds the table of contents), H3 (a phase), normal, bold, italic, links (`href` must be a full `http(s)://` address, a path starting with `/` or an `#anchor`: validated since 2026-10-21; `openInNewTab` optional), bullet + numbered lists. No images, embeds or tables. Content from an H3 to the next H2 renders indented with a left rule |
-| Results | Results | `results` | array of `kpi` | optional, max 3. Results row under the body |
+| Article | Body | `body` | Portable Text | H2 (a section; feeds the table of contents), H3 (a phase), normal, bold, italic, links (`href` must be a full `http(s)://` address, a path starting with `/` or an `#anchor`: validated since 2026-10-21; `openInNewTab` optional), bullet (check-circle icons) + numbered lists, `blockquote` style (v0.12), `caseStudyCallout` boxes (v0.12). No images, embeds or tables. Content from an H3 to the next H2 renders in a narrower column (no rule since v0.12) |
+| Results | Results intro | `resultsIntro` | text (3 rows) | optional. Paragraph under "The results" (v0.12) |
+| Results | Results | `results` | array of `kpi` | optional, max 3. Results row under the body; `kpi.label` optional line above the description (v0.12) |
+| Results | Results summary | `resultsSummary` | text (3 rows) | optional. Paragraph under the results row (v0.12) |
+| Card | Card stats | `cardStats` | array of `cardStat` | optional, max 2. Stats row on the card (value + short label); hidden when empty (v0.11) |
 | Related | Related case studies | `related` | array of references → `caseStudy` | optional, max 3, no duplicates, not itself. Falls back to the latest published ones |
 | SEO | SEO | `seo` | `seo` object | optional, falls back to title / intro / siteSettings |
 
@@ -198,7 +221,8 @@ Seed: Fintech · SaaS · HR Tech · Cleantech · Venture Capital · E-Commerce �
 | `button` | link + variant (`gradient` / `gradient-outline` / `white` / `glass`) |
 | `sectionHeader` | eyebrow, title, description |
 | `stat` | value (string, e.g. "$700M+"), label |
-| `kpi` | value, description |
+| `kpi` | value, description, label (optional, case study results only, v0.12) |
+| `caseStudyCallout` | title (required), items[] (strings, min 1). `caseStudy.body` only (v0.12) |
 | `accentTitle` | one-block Portable Text title with the "Gradient" (`accent`) decorator (see `service`) |
 | `processStep` | name, description, note (optional link line), features[], image + alt (see `service`) |
 
@@ -233,7 +257,7 @@ Routable documents use field groups:
 |---|---|
 | `post` | **Content** (all post fields, default) · **SEO** |
 | `service` | **Overview** (default) · **Hero** · **Problem** · **Process** · **FAQs** · **SEO** |
-| `caseStudy` | **Overview** (default) · **Hero** · **Article** · **Results** · **Related** · **SEO** |
+| `caseStudy` | **Overview** (default) · **Hero** · **Article** · **Results** · **Card** · **Related** · **SEO** |
 
 The **SEO** tab holds the `seo` object (metaTitle, metaDescription, ogImage, noIndex, canonicalUrl).
 

@@ -12,9 +12,9 @@
  * Vercel previews and local builds get the page. A rest route because a
  * fixed `.astro` page can't be left out of a build.
  *
- * Page order as Figma 3764:16012: the shared template `CaseStudyPage` (hero
- * + facts panel → quote → sidebar + body (phase block) + results → related
- * case studies, the same component as `/case-studies/[slug]`) → CTA banner.
+ * Page order as Figma 3842:40046: the shared template `CaseStudyPage` (hero
+ * with the website frame → facts row → quote → sidebar + body + results →
+ * related case studies, the same component as `/case-studies/[slug]`) → CTA banner.
  * Below, separated: an "Index card" block with a row of three
  * `CaseStudyCard`s.
  */
@@ -34,14 +34,15 @@ export function getStaticPaths() {
 }
 
 // Figma sample images, read at render time (never emitted in production).
-const asset = (file: string, width: number, height: number): FixtureAsset => ({
-  src: `data:image/png;base64,${readFileSync(join(process.cwd(), "src/assets/dev/case-study", file)).toString("base64")}`,
+const asset = (file: string, width: number, height: number, type = "image/png"): FixtureAsset => ({
+  src: `data:${type};base64,${readFileSync(join(process.cwd(), "src/assets/dev/case-study", file)).toString("base64")}`,
   width,
   height,
 });
 const { caseStudy, cards } = createCaseStudyFixture({
   surfeLogo: asset("surfe-logo.png", 321, 100),
-  authorPhoto: asset("david-chevalier.png", 207, 207),
+  authorPhoto: asset("thibaut-davoult.png", 69, 69),
+  websiteScreenshot: asset("surfe-website.jpg", 965, 612, "image/jpeg"),
 });
 // Own ids for the second row (the cards' SVG filter ids derive from `_id`).
 const indexCards = cards.map((card) => ({ ...card, _id: `${card._id}-index` }));
