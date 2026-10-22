@@ -103,7 +103,9 @@
     "saas-homepage-design": "Web Design",
     "webflow-salesforce-integration": "Webflow",
     "core-web-vitals-optimization": "SEO",
-    "webflow-security-php2shell": "Webflow"
+    "webflow-security-php2shell": "Webflow",
+    "webflow-export-code": "Migration",
+    "ai-seo-myths": "AI Search"
   },
   "resources": {
     "eyebrow": "Resources",

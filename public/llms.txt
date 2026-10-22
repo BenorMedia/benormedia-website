@@ -55,6 +55,8 @@
 - [Webflow Salesforce Integration for B2B Forms](https://www.benormedia.com/blog/webflow-salesforce-integration): Webflow Salesforce integration for B2B: five ways to connect Webflow forms to Salesforce or HubSpot, the documented limits that drop leads, and a test list.
 - [Core Web Vitals Optimization: Webflow and Astro](https://www.benormedia.com/blog/core-web-vitals-optimization): Core Web Vitals optimization for Webflow and Astro: how third-party scripts hurt LCP, INP, and CLS, how to find them, and the rules that keep them in check.
 - [Webflow Security After PHP2Shell: What Changes](https://www.benormedia.com/blog/webflow-security-php2shell): What the October 2026 PHP2Shell flaws mean for WordPress and PHP sites, what Webflow security covers for you, and the work your team still owns.
+- [Webflow Code Export: What Breaks When You Leave](https://www.benormedia.com/blog/webflow-export-code): What Webflow's code export includes, what stops working when a site leaves Webflow, and how to replace forms, site search, and CMS content before launch.
+- [AI SEO Myths: What to Skip and What to Do](https://www.benormedia.com/blog/ai-seo-myths): Seven AI SEO myths B2B SaaS teams still act on, what Google's own documentation says about each one, and what to do with that time and budget instead.
 
 ## Company
 

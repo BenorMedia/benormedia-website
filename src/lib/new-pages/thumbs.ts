@@ -611,6 +611,41 @@ export const THUMBS: Record<string, ThumbEntry> = {
       { logo: "webflow", x: 207, y: 209.5, w: 271, h: 70.5 },
     ],
   }),
+  // Blog 2026-10-22 (lead). What the export holds, what stays behind, the exit.
+  "webflow-export-code": t(ThChips, {
+    rows: [
+      [
+        { icon: "codeBlocks", label: "HTML files" },
+        { icon: "palette", label: "CSS folder" },
+        { icon: "puzzle3d", label: "JS folder" },
+        { icon: "graphics", label: "Images folder" },
+        { icon: "doc", label: "Code export" },
+      ],
+      [
+        { icon: "cms", label: "CMS content" },
+        { icon: "crmCard", label: "Forms" },
+        { icon: "chartSearch", label: "Site search" },
+        { icon: "shieldLock", label: "Password protection" },
+        { icon: "person", label: "User accounts" },
+      ],
+      [
+        { icon: "contentStack", label: "CSV export" },
+        { icon: "api", label: "301 redirects" },
+        { icon: "docPencil", label: "Form submissions" },
+        { icon: "geoPin", label: "Localized pages" },
+        { icon: "designGrid", label: "Code components" },
+      ],
+      [
+        { icon: "devices3d", label: "New host" },
+        { icon: "plugs", label: "Form backend" },
+        { icon: "speedGauge", label: "Staging tests" },
+        { icon: "techSeo", label: "Search Console" },
+        { icon: "calendar", label: "Keep the project" },
+      ],
+    ],
+  }),
+  // The myths and what to do instead.
+  "ai-seo-myths": t(ThObject, { object: "lightbulb" }),
   // Content from the CMS, rendered for every device.
   "headless-cms-seo": t(ThObject, { object: "deviceStack" }),
   // Launch week.
