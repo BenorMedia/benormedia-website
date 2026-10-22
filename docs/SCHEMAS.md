@@ -1,6 +1,14 @@
-# Sanity ↔ Astro Data Contract (v0.12, v0.11 and v0.12 pending Sergio)
+# Sanity ↔ Astro Data Contract (v0.13, v0.11 to v0.13 not deployed)
 
-Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) approved 2026-09-29. v0.7 (`client.orderRank`) requested by the lead 2026-09-29. v0.8 (`client.websiteVideo`) requested by the lead 2026-09-30. v0.9 (`client.sector`) requested by the lead 2026-10-01. v0.10 (`caseStudy`) approved by the lead 2026-10-20. v0.11 (`caseStudy.cardStats`, `client.logoOnDark`) requested by Emily 2026-10-22, code only, pending Sergio's OK. v0.12 (case study template Figma 3842:40046: hero facts, body quote and callout, results texts, `kpi.label`) added by the ui agent 2026-10-22, approved by the lead 2026-10-22 (deploy by the orchestrator).
+Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) approved 2026-09-29. v0.7 (`client.orderRank`) requested by the lead 2026-09-29. v0.8 (`client.websiteVideo`) requested by the lead 2026-09-30. v0.9 (`client.sector`) requested by the lead 2026-10-01. v0.10 (`caseStudy`) approved by the lead 2026-10-20. v0.11 (`caseStudy.cardStats`, `client.logoOnDark`) requested by Emily 2026-10-22, code only, pending Sergio's OK. v0.12 (case study template Figma 3842:40046: hero facts, body quote and callout, results texts, `kpi.label`) added by the ui agent 2026-10-22, approved by the lead 2026-10-22 (deploy by the orchestrator). v0.13 (`client.brandColor`, `client.brandGlowColor`) requested by Emily 2026-10-22, code only, not deployed.
+
+### v0.13 changes vs v0.12 (2026-10-22, lead decision Emily; code only, NOT deployed, no documents written)
+The case-study card's navy thumbnail and blue glow are Surfe's brand colours, not site colours: each client gets its own.
+- **`client.brandColor`** (optional `string`, validated `^#[0-9a-fA-F]{6}$`, next to `logoOnDark`): the card thumbnail background. Empty → `--color-navy` (#001F3D, Surfe).
+- **`client.brandGlowColor`** (optional `string`, same validation): the card glow behind the logo. Empty → `--color-blue-500` (#1355FF, Surfe).
+- **Queries:** both projected in the card's `client->` (`CASE_STUDY_CARD_FIELDS`, so `ALL_CASE_STUDIES` and `CASE_STUDY_BY_SLUG` `related` / `latest`).
+- **Render:** the card sets them inline as `--c-cs-card-bg` / `--c-cs-card-glow` on the thumbnail, only when the value passes the same hex check in code (no other string reaches the style attribute). The logo stays white (`logoOnDark` or the whitened `logo`), so the brand colour must be dark enough for a white logo.
+- No new dependency (no colour-input plugin in the repo): plain strings.
 
 ### v0.12 changes vs v0.11 (2026-10-22, approved by the lead 2026-10-22; deploy by the orchestrator, not deployed by the ui agent)
 Figma template 3842:40046 (case studies v3). All new fields optional; the page renders nothing for an empty one.
@@ -73,6 +81,8 @@ Approach: **repeatable data lives in Sanity documents; page copy is authored dir
 | Category | `category` | reference → `category` | optional |
 | Sector | `sector` | string, dropdown: `agency` · `professional-services` · `saas` | optional, one value. Work page filters (v0.9) |
 | Logo on dark | `logoOnDark` | image (SVG preferred) + alt | optional. Logo for dark backgrounds (navy case-study card). Empty → `logo` with a CSS whitening filter (v0.11) |
+| Brand colour | `brandColor` | string, `#RRGGBB` | optional. Case-study card thumbnail background. Empty → `--color-navy` (v0.13) |
+| Brand glow colour | `brandGlowColor` | string, `#RRGGBB` | optional. Case-study card glow. Empty → `--color-blue-500` (v0.13) |
 | Website URL | `websiteUrl` | url | optional |
 | Order Rank | `orderRank` | string (LexoRank) | hidden, read-only. Set by the Studio drag-and-drop list (`@sanity/orderable-document-list`). Only the Work page listing sorts by it |
 

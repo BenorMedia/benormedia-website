@@ -153,3 +153,50 @@ Each is commented in `tokens.css` with its Figma source and "lead approved 2026-
 
 ### Screenshots (round 2)
 `/private/tmp/claude-501/-Users-emilygaitan-benormedia-website/40fe1ed7-f8f5-4e89-b21b-966e7ab38b50/scratchpad/v3/shots2/`: `template-{1920,1440,992,991,767,390}.png`, `detail-{…}.png`, `index-{…}.png`; crops `c-992-top.png`, `c-1440-body.png`, `c-index-1440.png`, `c-1440-cards.png`.
+
+---
+
+## Round 3 (2026-10-22): per-client card colours
+
+Status: DONE (not committed, not pushed, schema not deployed, no Sanity documents written).
+
+Lead decision (Emily, 2026-10-22): the card's navy thumbnail (`--color-navy` #001F3D) and glow (`--color-blue-500` #1355FF) are Surfe's brand colours, not site colours. Each client gets its own.
+
+### What changed
+| # | Item | Done |
+|---|---|---|
+| 1 | Schema (SCHEMAS v0.13) | `client.brandColor` (thumbnail background) and `client.brandGlowColor` (glow), optional plain `string`s right after `logoOnDark`, validated with `Rule.regex(/^#[0-9a-fA-F]{6}$/)`. No colour field type or plugin in the repo, none added. Studio descriptions say where they show, that empty = default navy / blue, and to pick a dark brand colour (white logo) |
+| 2 | Query / types / fixture | Both projected in `CASE_STUDY_CARD_FIELDS` `client->` (so `ALL_CASE_STUDIES` and `CASE_STUDY_BY_SLUG` `related` / `latest`); `CaseStudyCardClient.brandColor` / `brandGlowColor` (`string \| null`); fixture cards carry Surfe's #001F3D / #1355FF |
+| 3 | Card | `CaseStudyCard` sets `style="--c-cs-card-bg: …; --c-cs-card-glow: …"` on `.c-cs-card__thumb`, only for values that pass the same hex regex in code (trimmed); otherwise the attribute is left out. CSS: `background: var(--c-cs-card-bg, var(--color-navy))`, `fill: var(--c-cs-card-glow, var(--color-blue-500))` |
+| 4 | Tokens | Comments only on `--color-navy` / `--color-blue-500`: "default case-study card colours (Surfe), lead approved 2026-10-22; per-client values come from client.brandColor / brandGlowColor". Values unchanged. `--color-navy` also notes its second use (related heading in `CaseStudyRelated`) |
+| 5 | DECISIONS | Token row → `Lead` (no longer pending Sergio); new per-client row; "New tokens #001F3D and #1355FF (Sergio)" struck and resolved; new "v0.13 schema fields" (Needs lead OK, deploy) and "Client brand colours" (Content) items |
+
+### Logo legibility
+The logo stays white (`logoOnDark`, else the whitened `logo`, else the white name). A light `brandColor` (pastel, yellow, white) would make it hard or impossible to read. There is no automatic contrast check; the Studio description asks for a dark colour. If a client's brand is light, the options are a darker shade of it or leaving the field empty (navy).
+
+### Tests
+- Surfe values: all 12 thumbnails on `/dev/case-study` (1440 and 390) compute `rgb(0, 31, 61)` / glow `rgb(19, 85, 255)`.
+- `/case-studies` (live Sanity, fields not in the dataset yet): no `style` attribute, fallbacks render navy / blue at 1440 and 390, same as before.
+- Temporary fixture test (reverted, file byte-identical to before): card 2 `#5A1E3C` / `#FF8A00` rendered maroon with an orange glow; card 3 `red; background: url(x)` / `#12345` output no `style` at all and fell back to navy / blue.
+- No horizontal overflow (`scrollWidth == clientWidth`) at 1440 and 390 on both pages.
+
+### Files changed in round 3
+`sanity/schemaTypes/documents/client.ts`, `src/lib/sanity/queries.ts`, `src/lib/sanity/types.ts`, `src/lib/sanity/case-study-fixture.ts`, `src/components/case-studies/CaseStudyCard.astro`, `src/styles/tokens.css` (comments only), `docs/SCHEMAS.md` (v0.13), `docs/DECISIONS.md`, this handoff.
+
+### Checks (round 3)
+- [x] `pnpm run build` passes
+- [x] `pnpm run check`: 0 errors, 0 warnings, 0 hints
+- [x] `pnpm run lint` passes
+- [x] `sanity schema validate`: 0 errors, 0 warnings
+- [x] Checked at 1440 / 390 on `/dev/case-study` and `/case-studies`
+
+### Requests for other agents
+- @sanity / orchestrator: deploy v0.13 with v0.11 / v0.12 once approved; then Surfe can be left empty (defaults) or set to #001F3D / #1355FF.
+- @qa: confirm the card renders unchanged with empty fields and that invalid strings never reach the `style` attribute.
+
+### Open questions for the project lead
+1. `--color-navy` is also the related section heading colour (Figma #001F3D, `CaseStudyRelated`). Keep it as a site colour there, or move that heading to a site token?
+2. Should `--color-navy` / `--color-blue-500` go into `DESIGN_SYSTEM.md` as the card defaults?
+
+### Screenshots (round 3)
+`/private/tmp/claude-501/-Users-emilygaitan-benormedia-website/40fe1ed7-f8f5-4e89-b21b-966e7ab38b50/scratchpad/v3/shots3/`: `template-{1440,390}.png`, `index-{1440,390}.png`, override test `test-1440.png` (crop `c-test.png`).

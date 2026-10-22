@@ -39,8 +39,8 @@
   --color-blue: #6275F6;
   --color-blue-light: #6BB0F7;
   --gradient-primary: linear-gradient(106deg, #6275F6 2.88%, #6BB0F7 96.84%);
-  --color-navy: #001F3D; /* Figma "Deep Sea 900" — case-study card; pending Sergio's OK (DECISIONS 2026-10-22) */
-  --color-blue-500: #1355FF; /* Figma "Blue 500", card glow — case-study card; pending Sergio's OK (DECISIONS 2026-10-22) */
+  --color-navy: #001F3D; /* Figma "Deep Sea 900" — default case-study card colours (Surfe), lead approved 2026-10-22; per-client values come from client.brandColor / brandGlowColor. Also the related case studies heading (CaseStudyRelated) */
+  --color-blue-500: #1355FF; /* Figma "Blue 500", card glow — default case-study card colours (Surfe), lead approved 2026-10-22; per-client values come from client.brandColor / brandGlowColor */
 
   /* Neutrals */
   --color-gray: #C9CEDA;

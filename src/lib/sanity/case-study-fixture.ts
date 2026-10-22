@@ -126,7 +126,14 @@ export function createCaseStudyFixture(assets: {
     title: 'Lorem ipsum dolor sit amet consectetur.',
     slug: `lorem-ipsum-${i}`,
     publishedAt: '2001-01-01',
-    client: { _id: 'fixture-client-surfe', name: 'Surfe', logo: SURFE_LOGO },
+    // Surfe's card colours (Figma 3798:19208 / 3798:19209), lead 2026-10-22.
+    client: {
+      _id: 'fixture-client-surfe',
+      name: 'Surfe',
+      logo: SURFE_LOGO,
+      brandColor: '#001F3D',
+      brandGlowColor: '#1355FF',
+    },
     // TODO: COPY: Figma card stats placeholders (3798:19226).
     cardStats: [
       { value: 'XXX', label: 'Lorem ipsum' },

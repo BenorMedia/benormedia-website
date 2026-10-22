@@ -385,7 +385,8 @@ export const SERVICE_BY_SLUG = /* groq */ `
  * Card fields: the index cards and the "Resources" cards at the end of a case
  * study. Shared by ALL_CASE_STUDIES and CASE_STUDY_BY_SLUG (`related`,
  * `latest`) so the card projection is defined once. `cardStats` (max 2) and
- * `client.logoOnDark` are optional (SCHEMAS v0.11).
+ * `client.logoOnDark` are optional (SCHEMAS v0.11); so are
+ * `client.brandColor` / `brandGlowColor` (hex strings, SCHEMAS v0.13).
  */
 const CASE_STUDY_CARD_FIELDS = /* groq */ `
   _id,
@@ -398,7 +399,9 @@ const CASE_STUDY_CARD_FIELDS = /* groq */ `
     _id,
     name,
     "logo": logo${IMAGE},
-    "logoOnDark": logoOnDark${IMAGE}
+    "logoOnDark": logoOnDark${IMAGE},
+    brandColor,
+    brandGlowColor
   }
 `;
 
