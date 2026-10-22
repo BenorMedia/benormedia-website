@@ -1,0 +1,82 @@
+---
+/**
+ * /about — About page, Figma 3790:37097 (DECISIONS → About 2026-10-21).
+ * Desktop only for now (TODO: DS mobile, 991px and 767px).
+ *
+ * Production guard (like `/dev/case-study`): the page carries third-party
+ * placeholder photos (TODO: ASSET) and placeholder copy (TODO: COPY), so
+ * `getStaticPaths` returns no path when `isProductionBuild()` says
+ * production (VERCEL_ENV=production or PUBLIC_SITE_ENV=production).
+ * `astro dev`, Vercel previews and local builds get the page. A rest route
+ * because a fixed `.astro` page can't be left out of a build; the only path
+ * is `{ about: undefined }` → `/about`. The photos are served by
+ * `./photos/[file].ts` under the same guard. The footer "About us" link
+ * follows the same check (Footer.astro).
+ *
+ * noindex and out of the sitemap (astro.config.mjs) until release. Release
+ * checklist (DECISIONS → About, Lead / CEO): real photos and copy, remove
+ * this guard and the photos endpoint, drop noindex, add to the sitemap,
+ * LASTMOD and `scripts/check-seo.mjs` PAGES.
+ *
+ * Order as Figma: hero + photo strip → logo strip → core values → stats →
+ * office → team wall → leadership (no heading, follows the wall) → site CTA
+ * banner + footer (BaseLayout).
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../../components/sections/PageHero.astro";
+import LogoStrip from "../../components/sections/LogoStrip.astro";
+import AboutGallery from "../../components/sections/about/AboutGallery.astro";
+import AboutValues from "../../components/sections/about/AboutValues.astro";
+import AboutStats from "../../components/sections/about/AboutStats.astro";
+import AboutOffice from "../../components/sections/about/AboutOffice.astro";
+import AboutTeam from "../../components/sections/about/AboutTeam.astro";
+import AboutLeaders from "../../components/sections/about/AboutLeaders.astro";
+import {
+  ABOUT_GALLERY,
+  ABOUT_HERO,
+  ABOUT_LEADERS,
+  ABOUT_OFFICE,
+  ABOUT_STATS,
+  ABOUT_TEAM,
+  ABOUT_TEAM_WALL,
+  ABOUT_VALUES,
+} from "../../components/sections/about/content";
+import { getAllClientsWithLogo } from "../../lib/sanity/queries";
+import { PAGE_META } from "../../lib/content/seo";
+import { AUTHORS, type Author } from "../../lib/new-pages/authors";
+import { isProductionBuild } from "../../lib/sanity/case-study-release";
+
+export function getStaticPaths() {
+  return isProductionBuild() ? [] : [{ params: { about: undefined } }];
+}
+
+const logoClients = await getAllClientsWithLogo();
+
+// TODO: COPY — six copies of Sergio as in Figma (for Sergio's review).
+const leaders = ABOUT_LEADERS.slugs
+  .map((slug) => AUTHORS.find((a) => a.slug === slug))
+  .filter((a): a is Author => a !== undefined);
+---
+
+<BaseLayout title={PAGE_META.about.title} description={PAGE_META.about.description} noIndex>
+  <div class="c-about-hero">
+    {/* TODO: COPY — hero description is Figma lorem ipsum. */}
+    <PageHero eyebrow={ABOUT_HERO.eyebrow} title={ABOUT_HERO.title} description={ABOUT_HERO.description} />
+    <AboutGallery items={ABOUT_GALLERY} />
+  </div>
+  {logoClients.length > 0 && <LogoStrip clients={logoClients} />}
+  <AboutValues {...ABOUT_VALUES} />
+  <AboutStats {...ABOUT_STATS} />
+  <AboutOffice {...ABOUT_OFFICE} />
+  <AboutTeam {...ABOUT_TEAM} wall={ABOUT_TEAM_WALL} />
+  <AboutLeaders leaders={leaders} />
+</BaseLayout>
+
+<style>
+  /* Hero description: Figma 662.49px wide at 25px; scaled to the DS
+     Paragraph M size (18.2px) so it breaks into the same three lines and
+     stays close to the title width (lead 2026-10-22). */
+  .c-about-hero :global(.c-section-header__description) {
+    max-width: 34.429rem; /* 482px */
+  }
+</style>

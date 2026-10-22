@@ -48,6 +48,13 @@ export const PAGE_META = {
     description:
       "Lorem ipsum dolor sit amet consectetur. Senectus nec gravida blandit et ultricies donec eu orci. Scelerisque lectus tristique iaculis duis.",
   },
+  // TODO: COPY: placeholders (DECISIONS → About 2026-10-21). The page is
+  // noindex and not built in production until it is released.
+  about: {
+    title: "About BenorMedia",
+    description:
+      "Placeholder description for the BenorMedia About page. The final description will be written once the page copy and the team photos are confirmed.",
+  },
   notFound: {
     title: "Page Not Found",
     description:

@@ -1,0 +1,146 @@
+---
+/**
+ * AboutStats — c-about-stats
+ * Stats (Figma 3795:42048): centered header ("KPIs" eyebrow), then four
+ * centered cells in one bordered row, a short vertical divider between
+ * every two cells and a small square on the left and right edges. The look
+ * follows `CaseStudyResults` (not shared: that component is case-study only).
+ *
+ * TODO: COPY — eyebrow, heading, description, the four "+XXX%" values and
+ * their texts are Figma placeholders (stats are claims a person must confirm).
+ */
+import Container from "../../ui/Container.astro";
+import AboutSectionHeader from "./AboutSectionHeader.astro";
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  description: string;
+  items: readonly { value: string; text: string }[];
+}
+
+const { eyebrow, title, description, items } = Astro.props;
+---
+
+<section class="c-about-stats">
+  <Container class="c-about-stats__inner">
+    <AboutSectionHeader eyebrow={eyebrow} title={title} description={description} />
+    <ul class="c-about-stats__row" role="list">
+      {items.map((item) => (
+        <li class="c-about-stats__item">
+          <span class="c-about-stats__value c-text_xl">{item.value}</span>
+          <span class="c-about-stats__text c-paragraph">{item.text}</span>
+        </li>
+      ))}
+    </ul>
+  </Container>
+</section>
+
+<style>
+  .c-about-stats {
+    background: var(--color-white);
+  }
+  .c-about-stats :global(.c-about-stats__inner) {
+    display: flex;
+    flex-direction: column;
+    gap: 4.286rem; /* 60px */
+    padding-top: 7.857rem; /* 110px */
+    padding-bottom: 7.857rem;
+  }
+  /* Figma: 1px #E4E6EA border, 8px radius, 32px between cells. */
+  .c-about-stats__row {
+    position: relative;
+    display: flex;
+    gap: 2.286rem;
+    margin: 0;
+    padding: 0;
+    border: var(--border-default);
+    border-radius: 8px;
+    list-style: none;
+  }
+  /* Edge squares: 15px, 0.75px gray border, centred on the side borders. */
+  .c-about-stats__row::before,
+  .c-about-stats__row::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 1.071rem;
+    height: 1.071rem;
+    transform: translateY(-50%);
+    border: 0.75px solid var(--color-gray);
+    border-radius: 2.25px;
+    background: var(--color-white);
+  }
+  .c-about-stats__row::before {
+    left: -0.536rem;
+  }
+  .c-about-stats__row::after {
+    right: -0.559rem;
+  }
+  .c-about-stats__item {
+    position: relative;
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: 0.571rem; /* 8px */
+    align-items: center;
+    min-width: 0;
+    padding: 1.714rem;
+    text-align: center;
+  }
+  /* Divider before cells 2–4: 158px of the 200px row, centred in the 32px
+     gap (Figma "Line 4973" / "4975" / "4974"). */
+  .c-about-stats__item + .c-about-stats__item::before {
+    content: "";
+    position: absolute;
+    top: 10.46%;
+    bottom: 10.46%;
+    left: calc(-1.143rem - 0.5px);
+    width: 1px;
+    background: var(--color-border);
+  }
+  .c-about-stats__value {
+    color: var(--color-black-secondary);
+    line-height: 1.4;
+  }
+  .c-about-stats__text {
+    color: var(--color-text);
+  }
+
+  /* TODO: DS mobile (991px, 767px) — no design. Fallback: 2 × 2 at 991,
+     stacked with horizontal dividers at 767 (as CaseStudyResults). */
+  @media (max-width: 991px) {
+    .c-about-stats__row {
+      flex-wrap: wrap;
+      gap: 0;
+    }
+    .c-about-stats__item {
+      flex: 1 1 50%;
+    }
+    .c-about-stats__item + .c-about-stats__item::before {
+      left: 0;
+    }
+    .c-about-stats__item:nth-child(odd)::before {
+      content: none;
+    }
+  }
+  @media (max-width: 767px) {
+    .c-about-stats__row {
+      flex-direction: column;
+    }
+    .c-about-stats__item {
+      flex: none;
+    }
+    .c-about-stats__item + .c-about-stats__item::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: auto;
+      left: 1.714rem;
+      right: 1.714rem;
+      width: auto;
+      height: 1px;
+      background: var(--color-border);
+    }
+  }
+</style>

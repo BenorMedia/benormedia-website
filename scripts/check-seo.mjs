@@ -47,7 +47,7 @@ const PAGES = {
   // Author pages (src/lib/new-pages/authors.ts), 2026-10-08.
   '/authors/sergio-gancedo': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'sergio gancedo' },
 };
-const NOINDEX_PAGES = ['/testimonials', '/cookie-policy']; // must stay out of the sitemap
+const NOINDEX_PAGES = ['/testimonials', '/cookie-policy', '/about']; // must stay out of the sitemap
 
 let failures = 0;
 const ok = (m) => console.log(`  ok    ${m}`);

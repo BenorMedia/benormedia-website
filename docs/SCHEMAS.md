@@ -7,6 +7,7 @@ Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) 
 - **Reserved service slugs** gain `case-studies`.
 - **New queries:** `ALL_CASE_STUDIES` (cards: `_id`, `title`, `slug`, `publishedAt`, `client->{ name, logo }`), `CASE_STUDY_SLUGS`, `CASE_STUDY_BY_SLUG` (every field plus `_updatedAt` (Article `dateModified`, added 2026-10-21), `client->`, `services[]->{ name, slug }`, the case study's testimonial, else the client's (a "Lorem ipsum" placeholder is skipped), `related[]->` card fields, plus `latest`: the 3 newest other published case studies, card fields, the "Resources" fallback when `related` is empty), `CASE_STUDY_SLUG_BY_CLIENT` (for the "Read the case study" link on `/work` rows).
 - `client`, `testimonial` and `service` are unchanged.
+- **2026-10-21 (lead):** reserved service slugs gain `about` for the new `/about` page. Validation only, no new fields.
 
 ### v0.9 changes vs v0.8 (2026-10-01)
 - **`client.sector`** (optional `string`, dropdown, one value): `agency` (Agency), `professional-services` (Professional Services), `saas` (SaaS). Projected in `CLIENT_LIST_FIELDS` (so `CLIENTS_BY_IDS` + `ALL_CLIENTS`). The Work page filters by it (View All · SaaS · Professional Services; no Agency tab since 2026-10-05, `agency` clients show under View All); `category` no longer drives any filter. Values are filled in Studio / MCP by the lead.
@@ -70,7 +71,7 @@ Fields are grouped in Studio tabs, one per page section, in this order.
 | Tab | Field | Name | Type | Rules |
 |---|---|---|---|---|
 | Overview (default) | Service name | `name` | string | required. Studio title, hero breadcrumb, anywhere the service name appears |
-| Overview | Slug | `slug` | slug (from name) | required, unique among services, lowercase kebab-case (`a-z`, `0-9`, `-`). Can't be a reserved slug: `work`, `pricing`, `testimonials`, `blog`, `studio`, `dev`, `404` (SITEMAP) |
+| Overview | Slug | `slug` | slug (from name) | required, unique among services, lowercase kebab-case (`a-z`, `0-9`, `-`). Can't be a reserved slug: `work`, `case-studies`, `about`, `pricing`, `testimonials`, `blog`, `studio`, `dev`, `404` (SITEMAP) |
 | Overview | Related clients | `clients` | array of references → `client` | optional, no duplicates. How they render is decided in the Astro template |
 | Hero | Headline | `headline` | `accentTitle` | required, exactly one line of text (Shift+Enter for a line break) |
 | Hero | Subtitle | `subtitle` | text (3 rows) | optional |

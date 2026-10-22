@@ -2,7 +2,7 @@
 
 ## How this file works (read before writing)
 
-**Structure.** `## Global` first (stack, workflow, design system, layout shell, and any component reused on more than one page), then one `## <Page>` section per page in `SITEMAP.md` order: Home · Service pages · Work · Case studies · Testimonials · Pricing · Blog. Add a page section the first time that page needs an entry. Nothing goes outside these sections.
+**Structure.** `## Global` first (stack, workflow, design system, layout shell, and any component reused on more than one page), then one `## <Page>` section per page in `SITEMAP.md` order: Home · Service pages · Work · Case studies · About · Testimonials · Pricing · Blog. Add a page section the first time that page needs an entry. Nothing goes outside these sections.
 
 **Each section has exactly two parts, in this order:**
 
@@ -568,6 +568,47 @@ Without adding to your team." with "website moving." marked Gradient (published 
 - **Sidebar CSS inline on posts and guides** — ≈3.4 KB per page instead of a cached shared file since the case-study sidebar reuse; rendering unchanged. (QA round 2, 2026-10-21)
 - **TOC side squares** — Figma shows small squares on the table-of-contents box's side borders; the shared blog sidebar has none. Decide later whether to add them to blog, guides and case studies together. (2026-10-20)
 - **Card motion** — the animated card thumbnails are in open PRs #61 and #67, not on `dev`; when they merge, merge `dev` into this branch so the case-study cards match. (2026-10-20)
+
+---
+
+## About
+
+### Decisions
+| Date | Decision | Reason | Status |
+|---|---|---|---|
+| 2026-10-21 | About page at `/about`, static Astro page from Figma 3790:37097, built on `feat/phase5-about`. Section order as in Figma: hero + photo strip, logo strip, core values, stats, office, team wall, leadership, then the site's CTA banner and footer | Lead | Lead |
+| 2026-10-21 | No Sanity content: copy, meta and SEO live in code (like `/work` and `/case-studies`). `about` added to the reserved service slugs (`service.ts`, SCHEMAS); validation only, no new fields | Lead | Lead |
+| 2026-10-21 | Team data stays in code: the leadership grid reads `AUTHORS` from `src/lib/new-pages/authors.ts`. No `teamMember` document | Lead | Lead |
+| 2026-10-21 | Leadership grid keeps the Figma placeholders (six copies of Sergio Gancedo) for Sergio's review | Lead | Lead |
+| 2026-10-21 | About page uses third-party placeholder photos; must be replaced with BenorMedia photos before this page goes to main. Files live in `src/assets/about/_placeholder/` (not Sanity), every use is marked `TODO: ASSET (replace before release)`, alt text is generic ("Team photo", "Office photo", "City photo"), never the names in the Figma layers | Figma photos come from another agency's site (DesignMe) | Lead |
+| 2026-10-21 | All placeholder copy and numbers (hero description, stats heading, description, values and texts, office heading and description, leadership heading and description) are kept as in Figma, marked `TODO: COPY`. Nothing invented | Lead | Lead |
+| 2026-10-21 | Meta title and description are placeholders marked `TODO: COPY` | Lead | Lead |
+| 2026-10-21 | Footer ABOUT column gets an "About us" link to `/about`. Main nav unchanged | Lead | Lead |
+| 2026-10-21 | CTA banner unchanged (site's shared `CtaBanner`; Figma's banner copy ignored) | Lead | Lead |
+| 2026-10-21 | Core values heading is left-aligned as in Figma: a scoped exception in the values section to the "SectionHeader is always centered" rule; `SectionHeader` itself is unchanged | Lead: left alignment is intentional | Lead |
+| 2026-10-21 | Sizes converted from the 1920 Figma frame to the 1440 container with the 14px base (1 Figma px = 1/14 rem, DESIGN_SYSTEM §1) | Lead | Lead |
+| 2026-10-21 | Photo strip and team wall ship static; animations come in a later round (`TODO: ANIM`) | Lead | Lead |
+| 2026-10-22 | Figma update applied (`docs/refs/about/About-us.png`): eyebrows on values, KPIs, office and team; new hero description; KPI cells centered with dividers between every cell; leadership grid has no heading and follows the team wall; role in an eyebrow box. The hero photo strip now loops slowly right → left (CSS, like `LogoStrip`; still under reduced motion). The team wall stays static | Lead | Lead |
+| 2026-10-21 | Desktop only for now; 991px and 767px are `TODO: DS mobile` | Lead | Lead |
+| 2026-10-21 | Production guard, like `/dev/case-study`: `isProductionBuild()` true → neither `/about` nor the footer "About us" link is built (no placeholder photo ships to production); `astro dev`, Vercel previews and local builds get both. `/about` is noindex and out of the sitemap meanwhile. The guard must be removed at release, once real photos and copy are in | Third-party placeholder photos must never reach production | Lead |
+
+### Open questions
+
+#### Content
+- **About copy and stats** — hero description, stats (heading, description, four values and texts), office eyebrow, heading and description are Figma lorem ipsum / "+XXX%" (`TODO: COPY`). Stats are claims about BenorMedia that a person must confirm. The values texts and the "A team that builds with AI" block look final but are unconfirmed. (2026-10-21)
+- **About meta title and description** — placeholders (`TODO: COPY`). (2026-10-21)
+- **About photos** — hero strip, office and team-wall photos are third-party placeholders (DesignMe) in `src/assets/about/_placeholder/` (`TODO: ASSET`); BenorMedia photos needed before the page goes to `main`. (2026-10-21)
+- **Leadership people** — real names, roles, photos and LinkedIn URLs for the six cards; today all six are Sergio (from `AUTHORS`). (2026-10-21)
+
+#### Design team
+- **About animations** — no spec for the hero photo strip (Figma "Container:transform" track, likely a marquee) or the team wall (tiles with two stacked layers, likely a flip/swap). Built static. `TODO: ANIM`. (2026-10-21)
+- **About mobile / tablet** — no designs for 991px and 767px. `TODO: DS mobile`. (2026-10-21)
+- **About assets to export** — values globe line art, four 3D value icons and the "Barcelona, Spain" stamp come from Figma as given; any values with no token are `TODO: DS`. (2026-10-21)
+- **About values with no token** — built with the closest token, `TODO: DS`: value names #161616 (`--color-black-secondary`), team tile #F5F9FE (`--color-blue-light` 7% on white), office divider rgba(3,17,28,0.1) (`--color-border`), stamp shadow black 12% (`--color-heading` 12%), stamp label SF Pro 22.7px (body font, `--fs-p-l`); the leadership photo's line-art ring is baked into the Figma image, so the `AUTHORS` photo gets a 1px `--color-blue` circle until the ring is exported as its own file. (2026-10-21)
+
+#### Lead / CEO
+- **Release checklist for `/about`** — before it goes to `main`: replace the placeholder photos and copy, then remove the production guard (page + footer link), drop `noindex`, add it to the sitemap, `LASTMOD` and `check-seo.mjs` `PAGES`. (2026-10-21)
+- **Author data in two places (Sergio)** — a Sanity `author` document exists (SCHEMAS `author`) while blog, guides and now `/about` read people from `src/lib/new-pages/authors.ts`. Pick one source of truth. (2026-10-21)
 
 ---
 

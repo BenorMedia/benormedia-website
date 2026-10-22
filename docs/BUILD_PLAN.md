@@ -79,6 +79,11 @@ Figma index 3764:15808 + template 3764:16012 (desktop only). Routes `/case-studi
 Open before the first case study is published: real `/case-studies` copy (blocker), Sergio deploys the schema, JOOR brief aligned with the template.
 ✅ Checkpoint: lead review on the PR preview; lead merges into `dev`. Nothing goes to `main`.
 
+## About (2026-10-21) — branch `feat/phase5-about`, PR into `dev`
+Figma 3790:37097 (desktop only). Static page `/about` (copy in code, leaders from `AUTHORS`), reserved service slug `about`, footer "About us" link. Third-party placeholder photos and placeholder copy, so a production guard keeps the page, its photos and the footer link out of production builds; noindex and out of the sitemap meanwhile. Built by the astro agent, reviewed by the orchestrator; decisions in `DECISIONS.md` → About; handoff `docs/handoffs/2026-10-21_astro_about-page.md` (next steps and the guard-removal release checklist).
+Open: real copy and photos (Sergio / CEO), animation and mobile specs, `TODO: DS` values. Production deploys from `dev` are blocked by the case-studies copy check until the `/case-studies` placeholder copy is replaced (not from this branch).
+✅ Checkpoint: lead review on the PR preview; lead merges into `dev`. Nothing goes to `main`.
+
 ## Day 7 — Phase 7 Content + redirects + Phase 8 QA + launch prep
 - Final copy into Sanity, blog migration from Webflow
 - 301 map in `vercel.json`
