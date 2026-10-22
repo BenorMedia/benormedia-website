@@ -8,6 +8,8 @@ English only. No locale prefix.
 | Work | `/work` | Singleton + list | `workPage` (SEO) + `client[]` | Client listing, no client detail pages. Rows link to the client's case study when one is published |
 | Case studies | `/case-studies` | Static + list | `caseStudy[]` (SEO in code) | Every published case study, newest first, no pagination or filters. Noindex and out of the sitemap until the first case study is published (2026-10-20) |
 | Case study | `/case-studies/[slug]` | Dynamic | `caseStudy` | Figma template 3764:16012 |
+| Comparison | `/comparison` | Static + list | `comparison[]` (SEO in code) | Figma 3790:37967. Every published comparison. Noindex and out of the sitemap until the first comparison is published (2026-10-22) |
+| Comparison detail | `/comparison/[slug]` | Dynamic | `comparison` | Figma template 3790:37245, e.g. `/comparison/webflow-vs-wordpress` |
 | Pricing | `/pricing` | Singleton | `pricingPage` | |
 | Testimonials | `/testimonials` | Singleton + list | `testimonialsPage` + `testimonial[]` | |
 | Custom Websites & Migrations | `/custom-websites-migrations` | Service template | `service` | |
@@ -19,7 +21,7 @@ English only. No locale prefix.
 
 Global UI (not pages):
 - **Services**: header dropdown only. No services index page and no `/services/` prefix: each service lives at the root (`/<service-slug>`), built from `src/pages/[service].astro`.
-- **Reserved slugs**: a service slug can never be `work`, `case-studies`, `pricing`, `testimonials`, `blog`, `studio`, `dev`, `404` (enforced by Sanity validation).
+- **Reserved slugs**: a service slug can never be `work`, `case-studies`, `comparison`, `pricing`, `testimonials`, `blog`, `studio`, `dev`, `404` (enforced by Sanity validation).
 - **Contact**: popup (`c-contact-modal`), opened by every "Get in Touch" link. No `/contact` page.
 - **Legal**: no pages for now. Footer legal links hidden until they exist.
 

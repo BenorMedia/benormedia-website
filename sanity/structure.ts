@@ -3,7 +3,7 @@ import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list';
 import { SINGLETON_TYPES } from './schemaTypes';
 
 /**
- * Desk structure per docs/SCHEMAS.md v0.10:
+ * Desk structure per docs/SCHEMAS.md v0.13:
  *
  *   Site Settings   (singleton — SEO-only page metadata + globals)
  *   Home Page       (singleton — SEO only)
@@ -16,12 +16,13 @@ import { SINGLETON_TYPES } from './schemaTypes';
  *   ── divider ──
  *   Clients         (drag-and-drop order → Work page listing, `orderRank`)
  *   Case studies    (ordered by publishedAt, newest first)
+ *   Comparisons     (ordered by publishedAt, newest first)
  *   Testimonials
  *   Blog (posts)
  *   Authors
  *   Categories
  *
- * Singletons, `service`, `client` and `caseStudy` are filtered out of the
+ * Singletons, `service`, `client`, `caseStudy` and `comparison` are filtered out of the
  * generic document type list below the dividers so they never appear twice.
  */
 export const structure: StructureResolver = (S, context) => {
@@ -53,7 +54,7 @@ export const structure: StructureResolver = (S, context) => {
       );
 
   // Types with their own list item; excluded from the generic list.
-  const customListTypes = new Set<string>(['service', 'client', 'caseStudy']);
+  const customListTypes = new Set<string>(['service', 'client', 'caseStudy', 'comparison']);
 
   const collectionOrder = [
     'testimonial',
@@ -89,6 +90,7 @@ export const structure: StructureResolver = (S, context) => {
       S.divider(),
       orderableDocumentListDeskItem({ type: 'client', title: 'Clients', S, context }),
       collection('caseStudy', 'Case studies', 'publishedAt', 'desc'),
+      collection('comparison', 'Comparisons', 'publishedAt', 'desc'),
       ...documentTypeItems,
     ]);
 };

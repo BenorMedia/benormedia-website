@@ -603,6 +603,46 @@ Without adding to your team." with "website moving." marked Gradient (published 
 
 ---
 
+## Comparison
+
+### Decisions
+| Date | Decision | Reason | Status |
+|---|---|---|---|
+| 2026-10-22 | Routes `/comparison` (index) and `/comparison/[slug]` (detail) | Matches the "Comparison" eyebrow in Figma 3790:37967 | Lead |
+| 2026-10-22 | Content from a new Sanity document type `comparison`; drafts never build | New comparisons (Framer, Wix) without a developer, same pattern as case studies | Lead |
+| 2026-10-22 | Template mockups (Webflow Designer, WordPress admin, plugins panel, performance audit, CMS) exported from Figma as SVG with alt text | Pixel fidelity and weight; decorative UI illustrations | Lead |
+| 2026-10-22 | Index lists only published comparisons; no card links to a page that does not exist | Framer and Wix have no copy yet | Lead |
+| 2026-10-22 | Lorem copy in Figma (hero subtitles, index intro, card descriptions, case studies intro) and the template FAQ (pricing questions) ship as `TODO: COPY` | No final copy; FAQ in Figma is a pricing placeholder | Lead |
+| 2026-10-22 | Stats `+X%`, `X` and `[source]` labels are `[FACT NEEDED]` markers, never guessed | House rule: no invented figures | Lead |
+| 2026-10-22 | Preview with in-code fixture at `/dev/comparison`, not built in production | Same pattern as `/dev/case-study` | Lead |
+| 2026-10-22 | Comparison assets in `src/assets/comparison/`: the 4 "Why SaaS teams switch" mockups as SVG with their light blue panel (`#F5F9FE`, 8px radius) kept inside the SVG; the 2 "What to choose" images, the platform logos and the 4 step icons as raster (they are raster images in Figma); hero line art reuses `service-mid-hero-bg.webp`; index card glow reuses the `CaseStudyCard` orbit pattern plus 3 rings in `--color-border` | No token matches `#F5F9FE`; SVG of a raster fill would embed base64; the hero art and glow already exist in code | Proposed |
+| 2026-10-22 | `comparison` schema (SCHEMAS v0.13): one tab per section; section titles use a new `accentSectionHeader` (eyebrow + gradient title + paragraph) | `sectionHeader.title` is plain text and can't mark "side by side" in Gradient | Proposed |
+| 2026-10-22 | Hero buttons: only the labels are editable; the main button always opens the contact popup, the second always scrolls to the table | Actions are fixed by the design; the `link` object has no anchor type | Proposed |
+| 2026-10-22 | Webflow side fixed in code (pill logo, table header logo, "What to choose" illustration); competitor side editable, plus an optional white logo for the table header (empty → CSS whitening) | Same Webflow assets on every comparison; same pattern as `client.logoOnDark` | Proposed |
+| 2026-10-22 | Case studies section: up to 3 picked case studies; empty → the 3 newest published | Same fallback as case study "Related" | Proposed |
+| 2026-10-22 | Index order: `publishedAt` newest first | Same as `/case-studies` | Proposed |
+| 2026-10-22 | FAQ heading fixed in code; only `faqSections` editable | Same as service pages | Proposed |
+| 2026-10-22 | Reason stats reuse `stat` with optional `source` + `sourceUrl` (comparison only); `value` is free text for `[FACT NEEDED]` markers | Figures need a citable source; no new object | Proposed |
+| 2026-10-22 | Migration steps reuse `processStep` (name, description, image as icon), max 4; `note` and `features` hidden there | Existing object fits; design has 4 staggered cards | Proposed |
+
+### Open questions
+#### Content
+- **Comparison copy** — Final copy for every lorem block and the FAQ, plus the figures and sources for the reason stats. Built meanwhile with `TODO: COPY` and `[FACT NEEDED]`. (2026-10-22)
+- **Framer and Wix comparisons** — Only Webflow vs WordPress has copy in Figma. The index shows them once their documents are published. (2026-10-22)
+#### Design team
+- **Hero pill chevron** — Figma 3790:37260 shows a dropdown chevron next to the competitor logo in the "Webflow VS" pill. No spec for what it opens (a switcher between comparisons?). Schema needs no field either way; built meanwhile as a static pill. (2026-10-22)
+- **Stat source display** — Figma puts "[source]" inside the stat label. Schema has a separate optional `source` (+ link); confirm whether it shows inline after the label or as a footnote link. (2026-10-22)
+#### Needs lead OK
+- **Comparison schema field list** — SCHEMAS v0.13 `comparison` document and objects (code only, not deployed). (2026-10-22)
+- **Hero button actions fixed** — labels editable, actions in code. (2026-10-22)
+- **Webflow side fixed in code** — plus optional competitor white logo. (2026-10-22)
+- **Case studies fallback** — empty → 3 newest published. (2026-10-22)
+- **Index order** — newest first. (2026-10-22)
+- **FAQ heading in code** — as on service pages. (2026-10-22)
+- **Stat source fields** — optional `source` + `sourceUrl` on `stat`, comparison only. (2026-10-22)
+- **Migration steps via `processStep`** — max 4, note/features hidden. (2026-10-22)
+- **Comparison asset formats** — mockup panel `#F5F9FE` baked into the SVGs (no token), raster logos and step icons, hero line art and card glow reused. (2026-10-22)
+
 ## Testimonials
 
 ### Decisions
