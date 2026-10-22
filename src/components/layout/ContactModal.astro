@@ -2,6 +2,10 @@
 /**
  * ContactModal — c-contact-modal
  *
+ * NOT RENDERED on the site since 2026-10-22 (lead): every contact CTA links
+ * to the /contact page. Kept (and mounted on /dev/styleguide) in case the
+ * popup comes back; the submit logic is shared (src/scripts/ui/contact-form.ts).
+ *
  * Right-side slide-in panel built on a native <dialog>.
  * - Opened by any [data-open-contact] or .js-open-contact element site-wide.
  * - Backdrop: rgba(255,255,255,0.05) + backdrop-filter: blur(12px).
@@ -113,6 +117,8 @@ const testimonial = await getContactTestimonialCached();
 </dialog>
 
 <script>
+  import { initContactForm } from "../../scripts/ui/contact-form";
+
   const dialog = document.querySelector<HTMLDialogElement>("#contact-modal");
   const closeBtn = dialog?.querySelector<HTMLButtonElement>("[data-close-contact]");
   const form = dialog?.querySelector<HTMLFormElement>(".c-contact-modal__form");
@@ -172,48 +178,8 @@ const testimonial = await getContactTestimonialCached();
     closeModal();
   });
 
-  // --- Form submit → /api/contact (lead 2026-10-01) -----------------------
-  // TODO: COPY — status messages.
-  const MESSAGES = {
-    sending: "Sending…",
-    success: "Thanks! We'll be in touch within 24 hours.",
-    error: "Something went wrong. Please try again or email us at info@benor.media.",
-  };
-  const status = form?.querySelector<HTMLElement>("[data-contact-status]");
-  const submit = form?.querySelector<HTMLButtonElement>('button[type="submit"]');
-
-  const setStatus = (message: string, state: "sending" | "success" | "error"): void => {
-    if (!status) return;
-    status.textContent = message;
-    status.dataset["state"] = state;
-  };
-
-  form?.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    if (!form.checkValidity()) {
-      form.reportValidity();
-      return;
-    }
-    const data = Object.fromEntries(new FormData(form).entries());
-    if (submit) submit.disabled = true;
-    form.setAttribute("aria-busy", "true");
-    setStatus(MESSAGES.sending, "sending");
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      form.reset();
-      setStatus(MESSAGES.success, "success");
-    } catch {
-      setStatus(MESSAGES.error, "error");
-    } finally {
-      if (submit) submit.disabled = false;
-      form.removeAttribute("aria-busy");
-    }
-  });
+  // --- Form submit → /api/contact (shared with the /contact page) ---------
+  initContactForm(form);
 </script>
 
 <style>

@@ -9,6 +9,7 @@ import SegmentedControl from "../../components/ui/SegmentedControl.astro";
 import FaqAccordion from "../../components/ui/FaqAccordion.astro";
 import PricingCard from "../../components/ui/PricingCard.astro";
 import CtaBanner from "../../components/layout/CtaBanner.astro";
+import ContactModal from "../../components/layout/ContactModal.astro";
 import type { SiteSettings } from "../../lib/sanity/types";
 
 // Mock siteSettings shape used only to preview the CTA banner on the styleguide.
@@ -302,7 +303,7 @@ const plans = [
       <p class="c-paragraph_s sg-muted">
         <strong>Nav</strong> is rendered at the top of this page and <strong>Footer</strong>
         at the bottom (both from <code>BaseLayout</code>). Below: <strong>CTA banner</strong>
-        with mock content, and a trigger for the <strong>contact modal</strong>.
+        with mock content, and a trigger for the <strong>contact modal</strong> (not used on the site since 2026-10-22: every contact CTA links to <code>/contact</code>).
       </p>
 
       <h3 class="c-text_m sg-subhead">CTA banner (with mock content)</h3>
@@ -317,12 +318,13 @@ const plans = [
     <section class="sg-section">
       <h3 class="c-text_m sg-subhead">Contact modal</h3>
       <p class="c-paragraph_s sg-muted">
-        Modal is mounted once by <code>BaseLayout</code>. Any element with
+        Mounted only on this page (<code>BaseLayout</code> no longer renders it). Any element with
         <code>[data-open-contact]</code> or <code>.js-open-contact</code> opens it.
       </p>
       <div class="sg-inline-row">
         <Button variant="gradient" class="js-open-contact">Open contact modal</Button>
       </div>
+      <ContactModal />
     </section>
   </Container>
   <!-- ================================================================== -->
@@ -383,7 +385,7 @@ const plans = [
       <h3 class="c-text_m sg-subhead">PricingCard</h3>
       <p class="c-paragraph_s sg-muted">
         Subgrid card: place cards directly in a grid parent so prices and buttons align.
-        Buttons carry <code>.js-open-contact</code>.
+        Buttons link to <code>/contact</code>.
       </p>
       <div class="sg-pricing">
         {plans.map((plan) => <PricingCard {...plan} />)}

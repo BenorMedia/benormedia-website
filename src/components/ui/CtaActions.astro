@@ -27,13 +27,11 @@
  *     badge with a 1px brand-gradient border and gradient text.
  *     TODO: DS badge on-light spec (built from the ref).
  *
- * `buttons` are Sanity `button` objects: `contact` links render a
- * `<button class="js-open-contact">` (opens the ContactModal), the rest an
- * `<a class="c-button">` via `hrefFromLink`.
+ * `buttons` are Sanity `button` objects, each an `<a class="c-button">` via
+ * `hrefFromLink` (`contact` links → `/contact`, lead 2026-10-22).
  */
 import type { Button as ButtonType } from "../../lib/sanity/types";
 import { hrefFromLink } from "../../lib/sanity/links";
-import Button from "./Button.astro";
 
 interface Props {
   buttons: readonly ButtonType[];
@@ -68,11 +66,8 @@ const rootClass = ["c-cta__actions", tone === "light" && "is-light", className]
   <div class="c-cta__buttons">
     {buttons.map((b: ButtonType) => {
       const href = hrefFromLink(b.link);
-      const isContact = b.link?.type === "contact";
       const target = b.link?.openInNewTab ? "_blank" : undefined;
-      return isContact ? (
-        <Button variant={b.variant} class="js-open-contact">{b.link.label}</Button>
-      ) : (
+      return (
         <a
           href={href ?? "#"}
           class={`c-button is-${b.variant}`}

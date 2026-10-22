@@ -124,6 +124,7 @@ const LASTMOD = {
   '/ongoing-website-support': '2026-10-06',
   '/pricing': '2026-10-06',
   '/work': '2026-10-06',
+  '/contact': '2026-10-22',
   '/privacy-policy': '2026-10-05',
   '/terms-conditions': '2026-10-05',
   '/authors/sergio-gancedo': '2026-10-15',

@@ -1,5 +1,5 @@
 /**
- * POST /api/contact — contact modal submissions → email to the team
+ * POST /api/contact — contact form submissions (/contact page) → email to the team
  * (lead 2026-10-01: Vercel endpoint; lead 2026-10-05: sent with Resend,
  * replacing Google Workspace SMTP).
  *

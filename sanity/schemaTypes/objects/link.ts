@@ -24,13 +24,13 @@ export const link = defineType({
       name: 'type',
       title: 'Link type',
       description:
-        'Internal = another page on this site. External = any other website. Contact = opens the contact popup.',
+        'Internal = another page on this site. External = any other website. Contact = goes to the contact page (/contact).',
       type: 'string',
       options: {
         list: [
           { title: 'Internal page', value: 'internal' },
           { title: 'External URL', value: 'external' },
-          { title: 'Open contact popup', value: 'contact' },
+          { title: 'Contact page', value: 'contact' },
         ],
         layout: 'radio',
       },

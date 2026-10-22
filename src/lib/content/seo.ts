@@ -48,6 +48,13 @@ export const PAGE_META = {
     description:
       "Lorem ipsum dolor sit amet consectetur. Senectus nec gravida blandit et ultricies donec eu orci. Scelerisque lectus tristique iaculis duis.",
   },
+  // TODO: COPY: placeholder meta until the lead sends it. Description = the
+  // Figma subtitle (3790:36809), shortened.
+  contact: {
+    title: "Contact",
+    description:
+      "Fill out the form and one of our team members will be in touch within 24 hours. You can also reach out at info@benor.media.",
+  },
   notFound: {
     title: "Page Not Found",
     description:

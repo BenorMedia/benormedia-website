@@ -1,8 +1,8 @@
 ---
 /**
  * BaseLayout — global shell for every page.
- * Fetches siteSettings once via cache and threads it into Nav, Footer,
- * CtaBanner and ContactModal. Seo renders <head> meta with fallback chain
+ * Fetches siteSettings once via cache and threads it into Nav, Footer and
+ * CtaBanner. Seo renders <head> meta with fallback chain
  * pageSeo → props → siteSettings defaults.
  */
 import "../styles/tokens.css";
@@ -19,9 +19,10 @@ import Seo from "../components/layout/Seo.astro";
 import Nav from "../components/layout/Nav.astro";
 import Footer from "../components/layout/Footer.astro";
 import CtaBanner from "../components/layout/CtaBanner.astro";
-import ContactModal from "../components/layout/ContactModal.astro";
 // CookieConsent.astro (+ src/scripts/ui/cookie-consent.ts) is kept but not
 // rendered: banner hidden for now, lead 2026-10-01.
+// ContactModal.astro is kept but not rendered: every contact CTA links to
+// /contact (lead 2026-10-22). /dev/styleguide still mounts it.
 
 type OgImage = SanityImage | string;
 
@@ -225,7 +226,6 @@ if (siteSettings) {
     <main><slot /></main>
     {showCtaBanner && <CtaBanner siteSettings={siteSettings} />}
     <Footer siteSettings={siteSettings} />
-    <ContactModal siteSettings={siteSettings} />
     <script>
       // Animations — one file per animation in src/scripts/animations/.
       import { initNavMotion } from "../scripts/animations/nav-motion";

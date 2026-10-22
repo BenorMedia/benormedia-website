@@ -1,8 +1,7 @@
 ---
 /**
  * NpActions — the new pages' button row (section 8): "Get in Touch" does
- * exactly what the header button does (`js-open-contact` → ContactModal,
- * Nav.astro), the second button links to Pricing (service pages) or Work
+ * exactly what the header button does (links to /contact, Nav.astro), the second button links to Pricing (service pages) or Work
  * (industry and regional pages). Layout copied from `CtaActions`
  * (`.c-cta__buttons`: equal columns, stacked on phones), without its
  * "Trusted by" badge, whose text is not in the new pages' copy.
@@ -23,7 +22,7 @@ const rootClass = ["c-np-actions", second && "has-two", className].filter(Boolea
 ---
 
 <div class={rootClass}>
-  <Button variant={tone === "light" ? "gradient" : "white"} class="js-open-contact">{copy.buttons.contact}</Button>
+  <Button variant={tone === "light" ? "gradient" : "white"} href="/contact">{copy.buttons.contact}</Button>
   {second && <Button variant={tone === "light" ? "gradient-outline" : "glass"} href={second.href}>{second.label}</Button>}
 </div>
 

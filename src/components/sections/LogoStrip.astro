@@ -18,6 +18,11 @@
  * horizontal container padding via negative inline margins so the track
  * runs across the full viewport width. The section's `overflow-x: hidden`
  * clips whatever falls outside.
+ *
+ * `inline` (/contact, Figma 3790:36822): the strip sits inside a column
+ * instead of spanning the page: no borders or section padding, smaller
+ * logos (22.4px row, 48px apart) and both edges fade out (a mask, so no
+ * color is hardcoded).
  */
 import Eyebrow from "../ui/Eyebrow.astro";
 import type { Client } from "../../lib/sanity/types";
@@ -29,13 +34,15 @@ interface Props {
    *  still show it. Home only, lead 2026-09-30 / 2026-10-06; other pages
    *  keep the strip. */
   hidden?: boolean;
+  /** Column-width strip (/contact). Default false = full-bleed section. */
+  inline?: boolean;
 }
 
-const { clients, hidden = false } = Astro.props;
+const { clients, hidden = false, inline = false } = Astro.props;
 const track = [...clients, ...clients];
 ---
 
-<section class="c-logos" hidden={hidden}>
+<section class:list={["c-logos", inline && "is-inline"]} hidden={hidden}>
   <div class="c-logos__container">
     <div class="c-logos__title-wrap">
       <Eyebrow variant="default" class="c-logos__title">
@@ -176,6 +183,29 @@ const track = [...clients, ...clients];
     width: auto;
     max-width: 100%;
     object-fit: contain;
+  }
+
+  /* --- Inline (/contact, Figma 3790:36822) ------------------------------
+     px → rem at 1/14. */
+  .c-logos.is-inline {
+    border: 0;
+    background: transparent;
+  }
+  .c-logos.is-inline .c-logos__container {
+    padding: 2.286rem 0; /* 32px */
+  }
+  .c-logos.is-inline .c-logos__title-wrap {
+    margin-bottom: 2.286rem; /* 32px */
+  }
+  .c-logos.is-inline .c-logos__marquee {
+    margin-inline: 0;
+    /* Figma: 120px white → transparent gradients on both edges. */
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 8.571rem, #000 calc(100% - 8.571rem), transparent 100%);
+            mask-image: linear-gradient(90deg, transparent 0, #000 8.571rem, #000 calc(100% - 8.571rem), transparent 100%);
+  }
+  .c-logos.is-inline .c-logos__item {
+    height: 1.6rem; /* 22.4px */
+    margin-right: 3.429rem; /* 48px */
   }
 
   .c-logos__fallback {
