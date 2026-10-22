@@ -12,7 +12,7 @@ h1: "How to track ChatGPT traffic in GA4, plus Perplexity, Claude, and Copilot"
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
 publishedAt: 2026-10-17
-updatedAt: 2026-10-17
+updatedAt: 2026-10-22
 reviewEvery: none
 primaryKeyword: "how to track chatgpt traffic in ga4"
 secondaryKeywords: []
@@ -20,7 +20,7 @@ takeaways:
   - "GA4's default channel group now includes an AI Assistant channel for visits from sources such as ChatGPT, Gemini, Deepseek, Copilot, and Grok."
   - "ChatGPT tags its links with utm_source=chatgpt.com, which makes its visits the easiest to identify."
   - "Google doesn't publish the full list behind the channel, so check Referral for assistants such as Perplexity and Claude, and add them with a custom channel group."
-  - "Google's AI Overviews and AI Mode are excluded from the channel and count as Organic Search."
+  - "Google's AI Overviews and AI Mode are excluded from the channel and count as Organic Search; use Search Console's Generative AI performance report to see them."
   - "GA4 shows clicks, not mentions, so pair it with a regular check of what AI answers say about you."
 faqHeading: "Questions about tracking AI traffic in GA4"
 faq:
@@ -29,7 +29,7 @@ faq:
   - q: "Why does Perplexity or Claude traffic show up as Referral?"
     a: "Google doesn't publish the full list of assistants behind its AI Assistant channel, and its examples don't name Perplexity or Claude. If they appear under Referral, add them with a custom channel group."
   - q: "Are Google AI Overviews and AI Mode in the AI Assistant channel?"
-    a: "No. Google excludes them from the channel, so those clicks count as Organic Search. Search Console includes them in its Web search totals."
+    a: "No. Google excludes them from the channel, so those clicks count as Organic Search. Search Console includes them in its Web search totals. To see them separately, use the Generative AI performance report in Search Console."
   - q: "Can I see AI traffic for past months?"
     a: "Yes, with a custom channel group. GA4 applies custom channel groups to your reports retroactively, though not to audiences."
   - q: "Who can create a custom channel group in GA4?"
@@ -57,6 +57,9 @@ sources:
   - label: "Google Search Central: AI features and your website"
     url: https://developers.google.com/search/docs/appearance/ai-features
     accessed: 2026-10-15
+  - label: "Google Search Central: Optimizing your website for generative AI features on Google Search"
+    url: https://developers.google.com/search/docs/fundamentals/ai-optimization-guide
+    accessed: 2026-10-22
 volatile:
   - "The AI Assistant channel, its example sources (ChatGPT, Gemini, Deepseek, Copilot, Grok), the ai-assistant medium and campaign, and the exclusion of AI Overviews and AI Mode (source: Default channel group)"
   - "Custom channel group rules: Editor role, 2 groups in standard and 5 in 360 properties, Admin path, button names (Create new channel group, Add new channel, Reorder, Save group), first-match order, Google's AI assistants example placed above Referral, retroactive except audiences (source: Custom channel groups)"
@@ -64,7 +67,8 @@ volatile:
   - "The sources list has search, social, shopping, and video categories only (source: Analytics' list of sources and categories, checked 2026-10-15)"
   - "ChatGPT adds utm_source=chatgpt.com, and OAI-SearchBot must not be blocked (source: OpenAI Publishers and Developers FAQ)"
   - "AI Overviews and AI Mode traffic is included in Search Console's Web search totals (source: Google Search Central, updated 2025-12-10)"
-volatileChecked: 2026-10-15
+  - "Search Console Generative AI performance report (source: Google, AI optimization guide, last updated 2026-07-10)"
+volatileChecked: 2026-10-22
 inbound:
   - page: /aeo-agency
     anchor: "how to see AI traffic in GA4"
@@ -105,7 +109,7 @@ OpenAI also tells site owners not to block its OAI-SearchBot crawler if they wan
 Some AI traffic never reaches the AI Assistant channel, mainly from assistants that aren't on Google's list and from Google's own AI features.
 
 - **Assistants Google doesn't list.** Google doesn't publish the full list behind the AI Assistant channel. Its downloadable list of sources and categories, checked on October 15, 2026, has categories for search, social, shopping, and video only. If sources such as perplexity.ai or claude.ai appear under Referral, the default channel isn't catching them.
-- **AI Overviews and AI Mode.** Google excludes them from the AI Assistant channel, so their clicks count as Organic Search. Search Console includes them in its Web search totals.
+- **AI Overviews and AI Mode.** Google excludes them from the AI Assistant channel, so their clicks count as Organic Search. Search Console includes them in its Web search totals, and Google now points site owners to a separate Generative AI performance report for AI features on Search and Discover.
 
 Table: Where each AI source should show up in GA4
 
@@ -165,7 +169,7 @@ Pick a date range of at least a full month, and read the numbers over months rat
 
 Whether an assistant mentioned you without a click. Google Analytics only sees visits, so a buyer who reads your name in an AI answer and later finds you through a search engine or types your address shows up as organic traffic or direct traffic.
 
-For Google's own AI features, Search Console is the closer view: Google includes traffic from AI Overviews and AI Mode in the Performance report's Web search totals.
+For Google's own AI features, Search Console is the closer view: Google includes traffic from AI Overviews and AI Mode in the Performance report's Web search totals. Its July 2026 guide to generative AI features also tells site owners to use the Generative AI performance report in Search Console to see how content performs in AI features on Google Search and Discover. Check which view your property shows, and use it next to the AI Assistant channel in GA4. Our post on [AI SEO myths](/blog/ai-seo-myths) covers what else Google says about measuring AI search.
 
 To see the mentions themselves, check the answers: run a fixed set of buyer prompts on a schedule and record which assistants name you and which pages they cite. That is part of how [AEO and GEO](/aeo-agency) work is measured, alongside the referral traffic in GA4.
 
