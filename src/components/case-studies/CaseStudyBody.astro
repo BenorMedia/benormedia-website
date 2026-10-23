@@ -101,42 +101,72 @@ const nodes = parseCaseStudyBody(Astro.props.body);
     border-radius: 2px;
   }
 
-  /* Quote (Figma 3842:40194): 16px more space around it, the brand
-     gradient at 8% behind, a 5px gradient bar on the left, Text M / 1.5
-     #212427, 16 / 30px padding. */
+  /* Quote, variant B (lead feedback 2026-10-23, "improve the quotes"; the
+     Figma 3842:40194 panel with the gradient bar is variant A): editorial
+     pull quote between two 0.5px rules, each rule end marked with the
+     Eyebrow's square (the site's marker motif), a gradient quote mark,
+     centred Text M in the heading colour. TODO: DS (no Figma). */
   .c-cs-body :global(.c-cs-body__quote) {
     position: relative;
-    isolation: isolate;
-    padding: 1.143rem 2.143rem;
-    overflow: hidden;
-    color: var(--color-black-secondary);
-    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.714rem;
+    margin-inline: 0;
+    padding: 2.857rem 4.286rem;
+    border-block: 0.5px solid var(--color-gray);
+    color: var(--color-heading);
+    line-height: 1.4;
+    text-align: center;
   }
   .c-cs-body > :global(.c-cs-body__quote),
   .c-cs-body > :global(.c-cs-body__quote + *),
   .c-cs-body :global(.c-cs-body__phase > .c-cs-body__quote),
   .c-cs-body :global(.c-cs-body__phase > .c-cs-body__quote + *) {
-    margin-top: 2.857rem; /* 24 + 16px */
+    margin-top: 2.857rem;
+  }
+  /* Rule-end squares: the Eyebrow's (0.625rem, white, 0.5px gray, 1.5px
+     radius), two on the top rule (::before / ::after), two on the bottom
+     one (the paragraph's, placed against the blockquote). */
+  .c-cs-body :global(.c-cs-body__quote)::before,
+  .c-cs-body :global(.c-cs-body__quote)::after,
+  .c-cs-body :global(.c-cs-body__quote p)::before,
+  .c-cs-body :global(.c-cs-body__quote p)::after {
+    content: "";
+    position: absolute;
+    width: 0.625rem;
+    height: 0.625rem;
+    border: 0.5px solid var(--color-gray);
+    border-radius: 1.5px;
+    background: var(--color-white);
   }
   .c-cs-body :global(.c-cs-body__quote)::before,
   .c-cs-body :global(.c-cs-body__quote)::after {
-    content: "";
-    position: absolute;
     top: 0;
+    translate: 0 -50%;
+  }
+  .c-cs-body :global(.c-cs-body__quote p)::before,
+  .c-cs-body :global(.c-cs-body__quote p)::after {
     bottom: 0;
+    translate: 0 50%;
+  }
+  .c-cs-body :global(.c-cs-body__quote)::before,
+  .c-cs-body :global(.c-cs-body__quote p)::before {
     left: 0;
-    z-index: -1;
-    background: var(--gradient-primary);
   }
-  .c-cs-body :global(.c-cs-body__quote)::before {
+  .c-cs-body :global(.c-cs-body__quote)::after,
+  .c-cs-body :global(.c-cs-body__quote p)::after {
     right: 0;
-    opacity: 0.08;
   }
-  .c-cs-body :global(.c-cs-body__quote)::after {
-    width: 0.357rem; /* Figma 5px */
+  .c-cs-body :global(.c-cs-body__quote-mark) {
+    display: block;
+    width: 3.429rem;
+    height: auto;
   }
   .c-cs-body :global(.c-cs-body__quote p) {
+    max-width: 52rem;
     margin: 0;
+    text-wrap: balance;
   }
 
   /* Lists: Figma 3842:40198. Top-level bullet lists get the blog body's
@@ -166,13 +196,53 @@ const nodes = parseCaseStudyBody(Astro.props.body);
     line-height: 1.5;
   }
 
+  /* Framed image (lead 2026-10-23, "less flat"): the site's article figure
+     frame (`.c-np-article__figure .c-np-visual`: gray-light border; radius
+     8px like the rest of this page) filled with the blog thumbnails' 8% accent tint, the image
+     inset like a product shot with the cards' hover shadow. TODO: DS (no
+     Figma for this block). */
+  .c-cs-body :global(.c-cs-body__figure) {
+    margin: 0;
+  }
+  /* Same rhythm as the quote: 40px above and below. */
+  .c-cs-body > :global(.c-cs-body__figure),
+  .c-cs-body > :global(.c-cs-body__figure + *),
+  .c-cs-body :global(.c-cs-body__phase > .c-cs-body__figure),
+  .c-cs-body :global(.c-cs-body__phase > .c-cs-body__figure + *) {
+    margin-top: 2.857rem;
+  }
+  .c-cs-body :global(.c-cs-body__figure-frame) {
+    padding: 3.429rem 3.429rem 0;
+    overflow: hidden;
+    border: 1px solid var(--color-gray-light);
+    border-radius: 8px; /* the page's radius: browser window, cards (lead 2026-10-23) */
+    background: color-mix(in srgb, var(--color-accent) 8%, var(--color-white));
+  }
+  .c-cs-body :global(.c-cs-body__figure-frame img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: var(--border-default);
+    border-bottom: 0;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 0 20px color-mix(in srgb, var(--color-black-secondary) 20%, transparent);
+  }
+  .c-cs-body :global(.c-cs-body__figure-caption) {
+    margin-top: 1.143rem;
+    color: var(--color-text);
+    text-align: center;
+  }
+
   @media (max-width: 767px) {
+    .c-cs-body :global(.c-cs-body__figure-frame) {
+      padding: 2.222rem 2.222rem 0;
+    }
     /* Mobile: phase text full width (lead 2026-10-21, round 4). */
     .c-cs-body :global(.c-cs-body__phase > *) {
       max-width: none;
     }
     .c-cs-body :global(.c-cs-body__quote) {
-      padding: 1.333rem 2.222rem;
+      padding: 2.222rem 1.111rem; /* variant B: rules stay full width */
     }
   }
 </style>

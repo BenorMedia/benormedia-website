@@ -1,6 +1,14 @@
-# Sanity ↔ Astro Data Contract (v0.13, v0.11 to v0.13 not deployed)
+# Sanity ↔ Astro Data Contract (v0.14, v0.11 to v0.14 not deployed)
 
-Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) approved 2026-09-29. v0.7 (`client.orderRank`) requested by the lead 2026-09-29. v0.8 (`client.websiteVideo`) requested by the lead 2026-09-30. v0.9 (`client.sector`) requested by the lead 2026-10-01. v0.10 (`caseStudy`) approved by the lead 2026-10-20. v0.11 (`caseStudy.cardStats`, `client.logoOnDark`) requested by Emily 2026-10-22, code only, pending Sergio's OK. v0.12 (case study template Figma 3842:40046: hero facts, body quote and callout, results texts, `kpi.label`) added by the ui agent 2026-10-22, approved by the lead 2026-10-22 (deploy by the orchestrator). v0.13 (`client.brandColor`, `client.brandGlowColor`) requested by Emily 2026-10-22, code only, not deployed.
+Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) approved 2026-09-29. v0.7 (`client.orderRank`) requested by the lead 2026-09-29. v0.8 (`client.websiteVideo`) requested by the lead 2026-09-30. v0.9 (`client.sector`) requested by the lead 2026-10-01. v0.10 (`caseStudy`) approved by the lead 2026-10-20. v0.11 (`caseStudy.cardStats`, `client.logoOnDark`) requested by Emily 2026-10-22, code only, pending Sergio's OK. v0.12 (case study template Figma 3842:40046: hero facts, body quote and callout, results texts, `kpi.label`) added by the ui agent 2026-10-22, approved by the lead 2026-10-22 (deploy by the orchestrator). v0.13 (`client.brandColor`, `client.brandGlowColor`) requested by Emily 2026-10-22, code only, not deployed. v0.14 (`caseStudyFigure` in `caseStudy.body`) requested by Emily 2026-10-23, code only, not deployed.
+
+### v0.14 changes vs v0.13 (2026-10-23, lead feedback Emily; code only, NOT deployed)
+The case study article gets images, so it reads less flat.
+- **New object `caseStudyFigure`** ("Image"), allowed in `caseStudy.body` next to `caseStudyCallout`: `image` (required image, hotspot, required `alt` subfield) and `caption` (optional string). Rendered as a framed image (8px radius, 8% accent tint, the image inset); nothing renders without an asset.
+- **Queries:** `CASE_STUDY_BY_SLUG` body items also project `"image": image${IMAGE}` and `caption`.
+- **Hero browser frame:** the case study query now also reads the existing `client.websiteVideo` / `websiteVideoPoster` (v0.8 fields, the Home featured card video); when set, the video replaces the screenshot.
+- **Facts row:** `client` name and `solution` no longer render (lead 2026-10-23); the fields stay.
+- **Content (published 2026-10-23):** one placeholder figure (Surfe website screenshot) in `caseStudy-placeholder` after the Overview.
 
 ### v0.13 changes vs v0.12 (2026-10-22, lead decision Emily; code only, NOT deployed, no documents written)
 The case-study card's navy thumbnail and blue glow are Surfe's brand colours, not site colours: each client gets its own.

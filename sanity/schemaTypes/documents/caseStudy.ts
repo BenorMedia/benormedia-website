@@ -244,6 +244,7 @@ export const caseStudy = defineType({
           },
         }),
         defineArrayMember({ type: 'caseStudyCallout' }),
+        defineArrayMember({ type: 'caseStudyFigure' }),
       ],
     }),
 

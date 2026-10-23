@@ -9,6 +9,7 @@ import { stat } from './objects/stat';
 import { kpi } from './objects/kpi';
 import { cardStat } from './objects/cardStat';
 import { caseStudyCallout } from './objects/caseStudyCallout';
+import { caseStudyFigure } from './objects/caseStudyFigure';
 import { faq } from './objects/faq';
 import { faqSection } from './objects/faqSection';
 import { accentTitle } from './objects/accentTitle';
@@ -39,6 +40,7 @@ export const schemaTypes = [
   kpi,
   cardStat,
   caseStudyCallout,
+  caseStudyFigure,
   faq,
   faqSection,
   accentTitle,

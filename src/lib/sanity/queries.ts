@@ -484,6 +484,8 @@ export const CASE_STUDY_BY_SLUG = /* groq */ `
     name,
     "logo": logo${IMAGE},
     "websiteScreenshot": websiteScreenshot${IMAGE},
+    "websiteVideo": websiteVideo${VIDEO},
+    "websiteVideoPoster": websiteVideoPoster${IMAGE},
     websiteUrl
   },
   "services": services[defined(@->_id)]->{
@@ -508,7 +510,9 @@ export const CASE_STUDY_BY_SLUG = /* groq */ `
     children[]{ _key, _type, text, marks },
     markDefs[]{ _key, _type, href, openInNewTab },
     title,
-    items
+    items,
+    "image": image${IMAGE},
+    caption
   },
   resultsIntro,
   results[]{ _key, value, label, description },

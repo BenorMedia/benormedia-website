@@ -1,9 +1,10 @@
 ---
 /**
  * CaseStudyFacts — c-cs-facts
- * The facts row under the hero (Figma 3842:40102): up to six items, each a
- * default `Eyebrow` label ("Client", "Industry", "Services Delivered",
- * "Solution", "Timeline", "Stack"; no numbers since round 4) centred over a
+ * The facts row under the hero (Figma 3842:40102): up to four items, each a
+ * default `Eyebrow` label ("Industry", "Services Delivered", "Timeline",
+ * "Stack"; no numbers since round 4; Client and Solution removed, lead
+ * feedback 2026-10-23, the fields stay in Sanity) centred over a
  * one-line `c-paragraph` value. Lists (services, stack) are joined with
  * " / " as in Figma. An item without a value is left out; nothing renders
  * when all are empty.
@@ -20,7 +21,7 @@ import type { CaseStudy } from "../../lib/sanity/types";
 import { CASE_STUDY_COPY } from "./copy";
 
 interface Props {
-  caseStudy: Pick<CaseStudy, "client" | "industry" | "services" | "solution" | "timeline" | "stack">;
+  caseStudy: Pick<CaseStudy, "industry" | "services" | "timeline" | "stack">;
 }
 
 const { caseStudy } = Astro.props;
@@ -35,10 +36,8 @@ const join = (list: readonly (string | null | undefined)[] | null | undefined): 
 // width and the row spreads better; each line but the last ends on " /".
 const serviceLines = clean((caseStudy.services ?? []).map((s) => s?.name));
 const rows: { label: string; value: string; lines?: string[] }[] = [
-  { label: labels.client, value: caseStudy.client?.name?.trim() ?? "" },
   { label: labels.industry, value: caseStudy.industry?.trim() ?? "" },
   { label: labels.services, value: serviceLines.join("\u00A0/ "), lines: serviceLines },
-  { label: labels.solution, value: caseStudy.solution?.trim() ?? "" },
   { label: labels.timeline, value: caseStudy.timeline?.trim() ?? "" },
   { label: labels.stack, value: join(caseStudy.stack) },
 ]

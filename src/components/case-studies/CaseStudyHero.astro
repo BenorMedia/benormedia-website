@@ -76,15 +76,15 @@ const hasMedia = hasImage(client?.websiteScreenshot);
 </header>
 
 <style>
-  /* Figma: 110px top, 110px bottom (lead 2026-10-22; the facts row follows
-     with no padding of its own). The website frame runs off the right
-     edge: clip it there. */
+  /* Top: Figma's 110px halved to 55px (lead feedback 2026-10-23). Bottom:
+     110px (lead 2026-10-22; the facts row follows with no padding of its
+     own). The website frame runs off the right edge: clip it there. */
   .c-cs-hero {
     overflow: hidden;
     overflow: clip;
   }
   .c-cs-hero :global(.c-container) {
-    padding-top: 7.857rem;
+    padding-top: 3.929rem;
     padding-bottom: 7.857rem;
   }
   /* Accent tag tint at 5% (the blog hero's contrast fix): new-pages.css's
@@ -163,7 +163,7 @@ const hasMedia = hasImage(client?.websiteScreenshot);
   }
   @media (max-width: 767px) {
     .c-cs-hero :global(.c-container) {
-      padding-top: 5rem;
+      padding-top: 2.5rem; /* halved with desktop (lead 2026-10-23) */
       padding-bottom: 4.444rem;
     }
   }

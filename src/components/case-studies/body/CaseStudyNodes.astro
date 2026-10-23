@@ -2,7 +2,8 @@
 /**
  * CaseStudyNodes — renders `parseCaseStudyBody` nodes: H2 (with its id),
  * H3, paragraphs, quotes, lists, callout boxes (`NpKeyTakeaways`, the blog's
- * box with the callout's own label) and the phase block (its children,
+ * box with the callout's own label), framed images (`caseStudyFigure`) and
+ * the phase block (its children,
  * recursively). Styles live in `CaseStudyBody.astro`.
  */
 import CaseStudyInline from "./CaseStudyInline.astro";
@@ -10,6 +11,10 @@ import CaseStudyList from "./CaseStudyList.astro";
 import NpKeyTakeaways from "../../new-pages/NpKeyTakeaways.astro";
 import type { BodyNode } from "../../../lib/sanity/case-study-body";
 import { escapeHtml } from "../../../lib/new-pages/html";
+import { urlFor, type Source } from "../../../lib/sanity/image";
+
+// Figure images: 1220px wide at most in the article (Figma content column), fetched at 2x.
+const figureSrc = (image: Source): string => urlFor(image).width(2440).fit("max").auto("format").url();
 
 interface Props {
   nodes: readonly BodyNode[];
@@ -26,11 +31,29 @@ const { nodes } = Astro.props;
   ) : node.type === "list" ? (
     <CaseStudyList list={node} />
   ) : node.type === "quote" ? (
-    <blockquote class="c-cs-body__quote c-text_m"><p><CaseStudyInline runs={node.inline} /></p></blockquote>
+    <blockquote class="c-cs-body__quote c-text_m">
+      <svg class="c-cs-body__quote-mark" viewBox="0 0 48 36" width="48" height="36" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id={`cs-quote-${node.key}`} x1="0" y1="0" x2="1" y2="0.3">
+            <stop offset="0" style="stop-color: var(--color-blue)" />
+            <stop offset="1" style="stop-color: var(--color-blue-light)" />
+          </linearGradient>
+        </defs>
+        <path fill={`url(#cs-quote-${node.key})`} d="M0 36V21.6C0 9.6 6.4 2.4 18.4 0l2 4.4C13.6 6.4 10.4 10.4 10 16h9.2v20H0Zm27.2 0V21.6C27.2 9.6 33.6 2.4 45.6 0l2 4.4c-6.8 2-10 6-10.4 11.6h9.2v20H27.2Z" />
+      </svg>
+      <p><CaseStudyInline runs={node.inline} /></p>
+    </blockquote>
   ) : node.type === "callout" ? (
     <div class="c-cs-body__callout">
       <NpKeyTakeaways label={node.title} labelId={`cs-callout-${node.key}`} items={node.items.map(escapeHtml)} />
     </div>
+  ) : node.type === "figure" ? (
+    <figure class="c-cs-body__figure">
+      <div class="c-cs-body__figure-frame">
+        <img src={figureSrc(node.image as Source)} alt={node.alt} loading="lazy" decoding="async" />
+      </div>
+      {node.caption && <figcaption class="c-cs-body__figure-caption c-paragraph_s">{node.caption}</figcaption>}
+    </figure>
   ) : node.type === "phase" ? (
     <div class="c-cs-body__phase">
       <Astro.self nodes={node.children} />

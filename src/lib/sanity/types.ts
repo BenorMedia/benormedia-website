@@ -415,8 +415,16 @@ export interface CaseStudyCalloutBlock {
   items?: (string | null)[] | null;
 }
 
+/** An image in a case study body (`caseStudyFigure`, SCHEMAS v0.14). */
+export interface CaseStudyFigureBlock {
+  _key: string;
+  _type: 'caseStudyFigure';
+  image?: (SanityImage & { alt?: string | null }) | null;
+  caption?: string | null;
+}
+
 /** Any item of `caseStudy.body`. */
-export type CaseStudyBodyItem = CaseStudyBodyBlock | CaseStudyCalloutBlock;
+export type CaseStudyBodyItem = CaseStudyBodyBlock | CaseStudyCalloutBlock | CaseStudyFigureBlock;
 
 /** One item of the card's stats row (`caseStudy.cardStats`, SCHEMAS v0.11). */
 export interface CaseStudyCardStat {
@@ -484,6 +492,9 @@ export interface CaseStudy extends CaseStudyCard {
     websiteUrl?: string;
     /** Hero browser frame (v0.12 wiring of the existing client field). */
     websiteScreenshot?: SanityImage;
+    /** Hero browser frame video, the Home featured card's (lead 2026-10-23); replaces the screenshot when set. */
+    websiteVideo?: SanityVideo;
+    websiteVideoPoster?: SanityImage;
   } | null;
   services?: CaseStudyService[] | null;
   /** The case study's own testimonial, else the client's; `null` = no quote block. */

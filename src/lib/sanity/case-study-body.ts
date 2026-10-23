@@ -15,7 +15,14 @@
  *   allowed, `openInNewTab` → new tab). Unsafe hrefs drop the link, keep
  *   the text.
  */
-import type { CaseStudyBodyBlock, CaseStudyBodyItem, CaseStudyCalloutBlock, PortableTextLinkDef } from './types';
+import type {
+  CaseStudyBodyBlock,
+  CaseStudyBodyItem,
+  CaseStudyCalloutBlock,
+  CaseStudyFigureBlock,
+  PortableTextLinkDef,
+  SanityImage,
+} from './types';
 
 /** Results heading id (`CaseStudyResults`), reserved so a body H2 never takes it. */
 export const CASE_STUDY_RESULTS_ID = 'results';
@@ -53,8 +60,18 @@ export interface CalloutNode {
   items: string[];
 }
 
+/** A framed image (`caseStudyFigure`); rendered with the Sanity image URL builder. */
+export interface FigureNode {
+  type: 'figure';
+  key: string;
+  image: SanityImage;
+  alt: string;
+  caption: string;
+}
+
 export type FlowNode =
   | { type: 'p'; key: string; inline: InlineRun[] }
+  | FigureNode
   | { type: 'quote'; key: string; inline: InlineRun[] }
   | CalloutNode
   | { type: 'h3'; key: string; id: string; text: string; inline: InlineRun[] }
@@ -143,7 +160,8 @@ export function parseCaseStudyBody(
   reservedIds: readonly string[] = [CASE_STUDY_RESULTS_ID],
 ): BodyNode[] {
   const items = (body ?? []).filter(
-    (b): b is CaseStudyBodyBlock | CaseStudyCalloutBlock => b?._type === 'block' || b?._type === 'caseStudyCallout',
+    (b): b is CaseStudyBodyBlock | CaseStudyCalloutBlock | CaseStudyFigureBlock =>
+      b?._type === 'block' || b?._type === 'caseStudyCallout' || b?._type === 'caseStudyFigure',
   );
   const ids = headingIds(items, reservedIds);
   const top: BodyNode[] = [];
@@ -154,6 +172,20 @@ export function parseCaseStudyBody(
   const target = (): BodyNode[] => (phase ? phase.children : top);
 
   items.forEach((item, i) => {
+    if (item._type === 'caseStudyFigure') {
+      stack = [];
+      // No image asset → nothing (no empty frame).
+      if (item.image?.asset) {
+        target().push({
+          type: 'figure',
+          key: item._key || String(i),
+          image: item.image,
+          alt: item.image.alt?.trim() ?? '',
+          caption: item.caption?.trim() ?? '',
+        });
+      }
+      return;
+    }
     if (item._type === 'caseStudyCallout') {
       stack = [];
       const title = item.title?.trim() ?? '';

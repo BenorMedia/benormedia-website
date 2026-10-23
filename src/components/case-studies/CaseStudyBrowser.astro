@@ -9,7 +9,12 @@
  * it follows the pointer (`initCursorFollow`, src/scripts/ui/cursor-follow.ts).
  * Figma's hand cursor next to the button is a mock pointer and is left out.
  *
- * Renders nothing without a screenshot (no design for that state). The
+ * Video (lead 2026-10-23): when the client has `websiteVideo` (the same
+ * file the Home featured card plays), it replaces the screenshot: muted,
+ * looping, inline, played while on screen, never under reduced motion or
+ * Data Saver (the poster stays: `websiteVideoPoster`, else the screenshot).
+ *
+ * Renders nothing without a screenshot or a video (no design for that state). The
  * window is 112.4% as wide as its box (Figma 1103 of 981px) and the hero
  * clips it at the viewport edge, as in Figma.
  */
@@ -36,6 +41,12 @@ else if (shot?.asset) {
 }
 const alt = clientImageAlt(shot?.alt, client?.name, "website");
 
+const videoUrl = client?.websiteVideo?.asset?.url || undefined;
+const posterSource = client?.websiteVideoPoster?.asset ? client.websiteVideoPoster : undefined;
+const poster = posterSource
+  ? urlFor(posterSource as Source).width(2138).fit("max").auto("format").url()
+  : src;
+
 let host = "";
 if (url) {
   try {
@@ -46,14 +57,30 @@ if (url) {
 }
 ---
 
-{hasImage(shot) && src && (
+{(videoUrl || (hasImage(shot) && src)) && (
   <div class="c-cs-browser">
     <div class="c-cs-browser__window">
       <div class="c-cs-browser__bar" aria-hidden="true">
         <span class="c-cs-browser__dots"><span></span><span></span><span></span></span>
         <span class="c-cs-browser__url c-paragraph_s">{host}</span>
       </div>
-      <img class="c-cs-browser__shot" src={src} alt={alt} width="1069" height="611" loading="eager" decoding="async" />
+      {videoUrl ? (
+        <video
+          class="c-cs-browser__shot"
+          src={videoUrl}
+          poster={poster}
+          aria-label={alt}
+          width="1069"
+          height="611"
+          muted
+          loop
+          playsinline
+          preload="none"
+          data-cs-browser-video
+        />
+      ) : (
+        <img class="c-cs-browser__shot" src={src} alt={alt} width="1069" height="611" loading="eager" decoding="async" />
+      )}
       {url && (
         <Button variant="white" href={url} target="_blank" rel="noopener" class="c-cs-browser__cta">
           {CASE_STUDY_COPY.visitSite}<span class="c-cs-browser__sr-only">{CASE_STUDY_COPY.newTab}</span>
@@ -73,6 +100,24 @@ if (url) {
     const cta = area.querySelector<HTMLElement>(".c-cs-browser__cta");
     if (cta) initCursorFollow(area, cta);
   });
+
+  // Frame video: same rules as the Home featured card (ClientCard): plays
+  // while on screen, pauses when it leaves; never under reduced motion or
+  // Data Saver, where the poster stays.
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const saveData =
+    (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;
+  const videos = Array.from(document.querySelectorAll<HTMLVideoElement>("[data-cs-browser-video]"));
+  if (videos.length > 0 && !saveData) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const video = entry.target as HTMLVideoElement;
+        if (entry.isIntersecting && !reduced.matches) void video.play().catch(() => {});
+        else if (!entry.isIntersecting && !video.paused) video.pause();
+      });
+    });
+    videos.forEach((video) => observer.observe(video));
+  }
 </script>
 
 <style>
