@@ -381,6 +381,13 @@ const menuId = "cmp-pill-menu";
     }
   }
 
+  /* Hero: 30% smaller than Figma's 18px (lead comment on the preview,
+     2026-10-23): 1.286rem × 0.7. Every pill size is in em, so it all
+     scales; the dropdown panel is in rem and keeps the nav size. */
+  .c-cmp-pill.is-hero {
+    font-size: 0.9rem;
+  }
+
   /* Index card: the same pill at the card's scale (18px in a 543px card,
      Figma 3790:38001). The thumbnail is the size container. */
   .c-cmp-pill.is-card {
@@ -393,7 +400,7 @@ const menuId = "cmp-pill-menu";
      (no mobile design). */
   @media (max-width: 767px) {
     .c-cmp-pill.is-hero {
-      font-size: min(1.35rem, calc((100vw - 4rem) / 29));
+      font-size: min(0.9rem, calc((100vw - 4rem) / 29));
     }
   }
 </style>
