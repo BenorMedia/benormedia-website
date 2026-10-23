@@ -4,8 +4,8 @@
  * The `/comparison` card grid (Figma 3790:37991 "container case studies"):
  * three `ComparisonCard`s per row with 24px gaps (as a share of the 1680
  * frame, like `CaseStudyGrid is-index`), one per row at ≤991, a short last
- * row centred. 110px below the hero is the hero's own padding; 110px below
- * the grid. Renders nothing without cards (no empty-state design).
+ * row centred. 110px above the grid (the `/case-studies` listing gap, under
+ * the same hero, lead 2026-10-23) and 110px below it. Renders nothing without cards (no empty-state design).
  */
 import Container from "../ui/Container.astro";
 import ComparisonCard from "./ComparisonCard.astro";
@@ -38,9 +38,9 @@ const { cards, section = true } = Astro.props;
 )}
 
 <style>
-  /* Hero → grid 110px (Figma: hero py 110), grid → CTA banner 110px. */
+  /* Hero → grid and grid → CTA banner 110px, as `CaseStudyListing`. */
   .c-cmp-listing :global(.c-container) {
-    padding-top: 0;
+    padding-top: 7.857rem;
     padding-bottom: 7.857rem;
   }
   .c-cmp-grid {
@@ -63,6 +63,7 @@ const { cards, section = true } = Astro.props;
   }
   @media (max-width: 767px) {
     .c-cmp-listing :global(.c-container) {
+      padding-top: 5rem;
       padding-bottom: 5rem;
     }
   }

@@ -46,9 +46,11 @@ interface Props {
   clients: readonly Pick<Client, "_id" | "name" | "icon">[];
   /** No case study listed: keep the listing's gap above the CTA banner. */
   empty?: boolean;
+  /** `h2` where another hero holds the page's h1 (`/dev/comparison`). */
+  as?: "h1" | "h2";
 }
 
-const { eyebrow, title, accent, description, clients, empty = false } = Astro.props;
+const { eyebrow, title, accent, description, clients, empty = false, as = "h1" } = Astro.props;
 
 /** Figma 3803:27040 rings (frame units), outer → inner. Shared centre. */
 const RING_CENTRE = [896.62, 863.39] as const;
@@ -134,7 +136,7 @@ const optional = {
   </div>
   <Container>
     <SectionHeader
-      as="h1"
+      as={as}
       eyebrow={eyebrow}
       title={title}
       {...optional}
