@@ -176,10 +176,16 @@ const whiten = !darkLogo;
   }
   /* Logos: Webflow white 30px tall (×0.728); the competitor's height is
      relative to it (`--c-cmp-table-logo-h`, from the file). */
+  /* Logos (and the name fallback) centred in their column (lead comment on
+     the preview 2026-10-23); the rows below stay left aligned. */
+  .c-cmp-table__head-cell:not(.is-feature) {
+    text-align: center;
+  }
   .c-cmp-table__logo {
     display: block;
     width: auto;
     max-width: 100%;
+    margin-inline: auto;
     height: calc(1.56rem * var(--c-cmp-table-logo-h, 1));
   }
   .c-cmp-table__logo.is-webflow {
