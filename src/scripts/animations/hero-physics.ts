@@ -5,20 +5,18 @@
  * - When the hero is on screen, every tile drops from above the hero (random
  *   x, height and angle), falls through it and piles up on its bottom edge,
  *   in the space the hero leaves below its content (fixed hero height).
- * - Tiles are dragged and thrown with a pointer (mouse, touch, pen): a
- *   spring constraint pulls the grabbed point towards the pointer, so an
- *   off-center grab swings the tile and releasing keeps its momentum.
- * - Touch (lead 2026-09-30, Q1b): a swipe that starts on a tile scrolls the
- *   page as usual. The drag starts only after a press-and-hold (HOLD_MS
- *   without moving more than HOLD_SLOP); while a tile is held, page scroll
- *   is blocked (non-passive `touchmove`). Mouse and pen grab at once.
+ * - Tiles avoid the cursor (lead 2026-10-23, replaces drag + throw): every
+ *   tile within AVOID_RADIUS of a mouse or pen pointer is pushed straight
+ *   away from it, gently (strongest at the pointer, fading to nothing at
+ *   the radius), and resettles under gravity once the pointer moves on.
+ *   Touch has no hover, so it doesn't push: a swipe scrolls the page.
  * - Bounds = the whole `.c-hero` card (ground + side walls; no ceiling, a
  *   tile thrown up falls back in). Walls and tile size follow resizes (tiles
  *   are rem-sized, so they scale with the fluid root).
  * - Tiles are DOM elements (the shared ClientIcon tile), positioned by
  *   transform after each engine update; no canvas.
  * - Paused while the hero is off screen. Settled tiles sleep, and no frame is
- *   drawn while every tile sleeps and none is held.
+ *   drawn while every tile sleeps.
  * - Matter.js is loaded on demand (dynamic import), only on pages with the
  *   hero pile.
  *
@@ -45,11 +43,10 @@ const TILE_OPTIONS: MatterTypes.IChamferableBodyDefinition = {
   friction: 0.35,
   frictionAir: 0.012,
 };
-const DRAG_STIFFNESS = 0.2;
-const DRAG_DAMPING = 0.1;
-/* Touch press-and-hold before a drag starts. TODO: DS — tuned by eye. */
-const HOLD_MS = 250;
-const HOLD_SLOP = 10; // px of finger movement that turns the press into a scroll
+/* Cursor avoidance. TODO: DS — tuned by eye. Radius in tile sizes; strength
+   is the push at the pointer, as a multiple of the tile's weight. */
+const AVOID_RADIUS = 2;
+const AVOID_STRENGTH = 5;
 
 type Tile = { el: HTMLElement; body: MatterTypes.Body };
 
@@ -88,7 +85,7 @@ async function start(root: HTMLElement): Promise<void> {
     document.documentElement.classList.remove("is-hero-pending");
     return;
   }
-  const { Engine, Runner, Bodies, Body, Composite, Constraint, Events, Sleeping, Vector } = Matter;
+  const { Engine, Runner, Bodies, Body, Composite, Events, Sleeping } = Matter;
 
   // --- Tiles ---------------------------------------------------------------
   let els = shuffle(Array.from(root.querySelectorAll<HTMLElement>("[data-hero-physics-item]")));
@@ -163,109 +160,49 @@ async function start(root: HTMLElement): Promise<void> {
     });
   };
 
-  // --- Drag + throw -----------------------------------------------------------
-  let drag: { constraint: MatterTypes.Constraint; pointerId: number; el: HTMLElement } | null = null;
-  // Touch press waiting for HOLD_MS before it becomes a drag.
-  let pending: { pointerId: number; timer: number; startX: number; startY: number } | null = null;
+  // --- Cursor avoidance ------------------------------------------------------
+  // Last mouse/pen position in viewport coordinates; read every step, so the
+  // push follows the hero when the page scrolls under a still pointer.
+  let pointer: { clientX: number; clientY: number } | null = null;
 
-  const toLocal = (event: { clientX: number; clientY: number }): MatterTypes.Vector => {
-    const rect = root.getBoundingClientRect();
-    return {
-      x: clamp(event.clientX - rect.left, 0, width),
-      y: clamp(event.clientY - rect.top, 0, height),
-    };
-  };
-
-  const cancelPending = (): void => {
-    if (!pending) return;
-    window.clearTimeout(pending.timer);
-    pending = null;
-  };
-
-  const beginDrag = (el: HTMLElement, body: MatterTypes.Body, pointerId: number, at: MatterTypes.Vector): void => {
-    Sleeping.set(body, false);
-    const constraint = Constraint.create({
-      pointA: at,
-      bodyB: body,
-      // World-space offset at the current angle; Matter rotates it with
-      // the body, so the grabbed spot stays under the pointer.
-      pointB: Vector.sub(at, body.position),
-      length: 0,
-      stiffness: DRAG_STIFFNESS,
-      damping: DRAG_DAMPING,
-    });
-    Composite.add(world, constraint);
-    try {
-      el.setPointerCapture(pointerId);
-    } catch {
-      // Pointer already gone (released during the hold): no capture needed.
-    }
-    el.classList.add("is-dragging");
-    drag = { constraint, pointerId, el };
-  };
-
-  const endDrag = (event: PointerEvent): void => {
-    if (pending?.pointerId === event.pointerId) cancelPending();
-    if (!drag || drag.pointerId !== event.pointerId) return;
-    Composite.remove(world, drag.constraint);
-    drag.el.classList.remove("is-dragging");
-    drag = null;
-  };
-
-  tiles.forEach(({ el, body }) => {
-    el.addEventListener("pointerdown", (event) => {
-      if (drag || pending || event.button !== 0) return;
-      if (event.pointerType === "touch") {
-        // No preventDefault: the browser may still turn this into a scroll
-        // (it then fires pointercancel, which drops the pending press).
-        const { pointerId, clientX, clientY } = event;
-        pending = {
-          pointerId,
-          startX: clientX,
-          startY: clientY,
-          timer: window.setTimeout(() => {
-            if (!pending || drag) return;
-            const at = toLocal({ clientX: pending.startX, clientY: pending.startY });
-            pending = null;
-            beginDrag(el, body, pointerId, at);
-          }, HOLD_MS),
-        };
-        return;
-      }
-      event.preventDefault();
-      beginDrag(el, body, event.pointerId, toLocal(event));
-    });
-    el.addEventListener("pointermove", (event) => {
-      if (pending && pending.pointerId === event.pointerId) {
-        const moved = Math.hypot(event.clientX - pending.startX, event.clientY - pending.startY);
-        if (moved > HOLD_SLOP) cancelPending();
-        return;
-      }
-      if (drag && drag.pointerId === event.pointerId) drag.constraint.pointA = toLocal(event);
-    });
-    el.addEventListener("pointerup", endDrag);
-    el.addEventListener("pointercancel", endDrag);
-    el.addEventListener("lostpointercapture", endDrag);
-    // While a tile is held by touch, the finger moves the tile, not the page.
-    el.addEventListener(
-      "touchmove",
-      (event) => {
-        if (drag?.el === el && event.cancelable) event.preventDefault();
-      },
-      { passive: false },
-    );
-    // Long-press menu / image callout would interrupt the hold.
-    el.addEventListener("contextmenu", (event) => event.preventDefault());
+  window.addEventListener(
+    "pointermove",
+    (event) => {
+      pointer = event.pointerType === "touch" ? null : { clientX: event.clientX, clientY: event.clientY };
+    },
+    { passive: true },
+  );
+  // Pointer left the window.
+  document.addEventListener("pointerout", (event) => {
+    if (!event.relatedTarget) pointer = null;
   });
+
+  const avoidPointer = (): void => {
+    if (!pointer) return;
+    const rect = root.getBoundingClientRect();
+    const px = pointer.clientX - rect.left;
+    const py = pointer.clientY - rect.top;
+    if (px < 0 || px > width || py < 0 || py > height) return;
+
+    const reach = size * AVOID_RADIUS;
+    tiles.forEach(({ body }) => {
+      const dx = body.position.x - px;
+      const dy = body.position.y - py;
+      const distance = Math.hypot(dx, dy);
+      if (distance >= reach) return;
+      // Pointer right on the tile's center: push it up.
+      const [nx, ny] = distance > 0.001 ? [dx / distance, dy / distance] : [0, -1];
+      const push = body.mass * engine.gravity.scale * AVOID_STRENGTH * (1 - distance / reach);
+      Sleeping.set(body, false);
+      Body.applyForce(body, body.position, { x: nx * push, y: ny * push });
+    });
+  };
 
   // --- Loop ---------------------------------------------------------------------
-  Events.on(engine, "beforeUpdate", () => {
-    // A held tile never falls asleep.
-    if (drag?.constraint.bodyB) Sleeping.set(drag.constraint.bodyB, false);
-  });
+  Events.on(engine, "beforeUpdate", avoidPointer);
   Events.on(engine, "afterUpdate", () => {
-    // Settled pile, nothing held: the DOM is already up to date.
-    if (!drag && tiles.every(({ body }) => body.isSleeping)) return;
+    // Settled pile: the DOM is already up to date.
+    if (tiles.every(({ body }) => body.isSleeping)) return;
     rescueStrays();
     render();
   });
