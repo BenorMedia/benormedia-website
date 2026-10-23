@@ -671,6 +671,7 @@ Without adding to your team." with "website moving." marked Gradient (published 
 | Date | Decision | Reason | Status |
 |---|---|---|---|
 | 2026-10-22 | `/contact` = `ContactSection` (two columns, grid areas intro / form / proof so ≤991 stacks title → form → testimonial + logos), no CTA banner. Copy = Figma word for word; testimonial = `getContactTestimonialCached()` (Surfe's Sanity testimonial, same as the modal); logos = `LogoStrip inline` (new prop: no borders, 22.4px logos 48px apart, edge fade by mask). Form fields, names, budget values and honeypot = the modal's, so `/api/contact` is unchanged. Form-card line art = Figma asset as exported (`public/images/contact/form-bg.svg`) | Figma 3790:36790 | Proposed |
+| 2026-10-23 | `/contact` visual QA (desktop): section top padding −50% (110 → 55px; bottom and ≤767 unchanged); testimonial quote → author space −50% (≈65 → 32.5px); author photo −50% (69 → 34.5px); Surfe logo −25% (38 → ≈28.6px tall); form card keeps the Figma 123px under Submit (`padding-bottom`) so the line art stays below the button now that the left column is shorter | Lead visual QA (Vercel comments) | Lead |
 
 ### Open questions
 
