@@ -615,33 +615,50 @@ Without adding to your team." with "website moving." marked Gradient (published 
 | 2026-10-22 | Lorem copy in Figma (hero subtitles, index intro, card descriptions, case studies intro) and the template FAQ (pricing questions) ship as `TODO: COPY` | No final copy; FAQ in Figma is a pricing placeholder | Lead |
 | 2026-10-22 | Stats `+X%`, `X` and `[source]` labels are `[FACT NEEDED]` markers, never guessed | House rule: no invented figures | Lead |
 | 2026-10-22 | Preview with in-code fixture at `/dev/comparison`, not built in production | Same pattern as `/dev/case-study` | Lead |
-| 2026-10-22 | Comparison assets in `src/assets/comparison/`: the 4 "Why SaaS teams switch" mockups as SVG with their light blue panel (`#F5F9FE`, 8px radius) kept inside the SVG; the 2 "What to choose" images, the platform logos and the 4 step icons as raster (they are raster images in Figma); hero line art reuses `service-mid-hero-bg.webp`; index card glow reuses the `CaseStudyCard` orbit pattern plus 3 rings in `--color-border` | No token matches `#F5F9FE`; SVG of a raster fill would embed base64; the hero art and glow already exist in code | Proposed |
-| 2026-10-22 | `comparison` schema (SCHEMAS v0.13): one tab per section; section titles use a new `accentSectionHeader` (eyebrow + gradient title + paragraph) | `sectionHeader.title` is plain text and can't mark "side by side" in Gradient | Proposed |
+| 2026-10-22 | Comparison assets in `src/assets/comparison/`: the 4 "Why SaaS teams switch" mockups as SVG with their light blue panel (`#F5F9FE`, 8px radius) kept inside the SVG; the 2 "What to choose" images, the platform logos and the 4 step icons as raster (they are raster images in Figma); hero line art reuses `service-mid-hero-bg.webp`; index card glow reuses the `CaseStudyCard` orbit pattern plus 3 rings in `--color-border` | No token matches `#F5F9FE`; SVG of a raster fill would embed base64; the hero art and glow already exist in code | Lead |
+| 2026-10-22 | `comparison` schema (SCHEMAS v0.13): one tab per section; section titles use a new `accentSectionHeader` (eyebrow + gradient title + paragraph) | `sectionHeader.title` is plain text and can't mark "side by side" in Gradient | Lead |
 | 2026-10-22 | Hero buttons: only the labels are editable; the main button always opens the contact popup, the second always scrolls to the table | Actions are fixed by the design; the `link` object has no anchor type | Proposed |
 | 2026-10-22 | Webflow side fixed in code (pill logo, table header logo, "What to choose" illustration); competitor side editable, plus an optional white logo for the table header (empty → CSS whitening) | Same Webflow assets on every comparison; same pattern as `client.logoOnDark` | Proposed |
 | 2026-10-22 | Case studies section: up to 3 picked case studies; empty → the 3 newest published | Same fallback as case study "Related" | Proposed |
 | 2026-10-22 | Index order: `publishedAt` newest first | Same as `/case-studies` | Proposed |
 | 2026-10-22 | FAQ heading fixed in code; only `faqSections` editable | Same as service pages | Proposed |
-| 2026-10-22 | Reason stats reuse `stat` with optional `source` + `sourceUrl` (comparison only); `value` is free text for `[FACT NEEDED]` markers | Figures need a citable source; no new object | Proposed |
-| 2026-10-22 | Migration steps reuse `processStep` (name, description, image as icon), max 4; `note` and `features` hidden there | Existing object fits; design has 4 staggered cards | Proposed |
+| 2026-10-22 | Reason stats reuse `stat` with optional `source` + `sourceUrl` (comparison only); `value` is free text for `[FACT NEEDED]` markers | Figures need a citable source; no new object | Lead |
+| 2026-10-22 | Migration steps reuse `processStep` (name, description, image as icon), max 4; `note` and `features` hidden there | Existing object fits; design has 4 staggered cards | Lead |
+| 2026-10-22 | Stat source shows as plain text after the label, no link; "What to choose" WordPress image kept at the Figma resolution; Webflow logo export kept as is | Lead answers 2026-10-22 | Lead |
 
+| 2026-10-22 | Competitor logo size comes from the file: SVG at its own size, raster as a 2x export (half its pixel size), height clamped to the Figma range (pill 26–37.43px, table header 26–40px) | No size field in the schema; Figma shows each logo at its own size (WordPress 37.4px tall, Framer and Wix 26px) | Proposed |
+| 2026-10-22 | The production build also stops when a published comparison still holds Lorem ipsum, `TODO: COPY` or an open marker (`[FACT NEEDED: …]` etc.) in Sanity, not only in code copy; other builds warn | A Sanity publish rebuilds production without review; markers must never go live (CLAUDE.md) | Proposed |
+| 2026-10-22 | Migration steps built as a new `ComparisonSteps` (4 staggered cards), not `ServiceProcess` | `ServiceProcess` is a tab set with one large image per step; the design shows every step at once | Proposed |
+| 2026-10-22 | `ALL_COMPARISONS` also returns `"noIndex": seo.noIndex == true` (derived from the existing `seo` field) | Keeps the `/comparison` robots tag in line with the sitemap, as `ALL_CASE_STUDIES` does | Proposed |
 ### Open questions
 #### Content
 - **Comparison copy** — Final copy for every lorem block and the FAQ, plus the figures and sources for the reason stats. Built meanwhile with `TODO: COPY` and `[FACT NEEDED]`. (2026-10-22)
+- **Hero headline spelling** — Figma 3790:37360 reads "Wordpress wasn't built for SaaS." (lowercase p); the rest of the page writes "WordPress". The fixture keeps Figma word for word; confirm the spelling for Sanity. (2026-10-22)
+- **Table section eyebrow** — Figma 3834:38132 repeats "What to choose" above "Webflow vs WordPress, side by side" (same eyebrow as the section before). Kept word for word in the fixture; confirm or send the right label. (2026-10-22)
+- **Logo uploads** — Upload competitor logos as SVG at display size or as raster at 2x (e.g. 324 × 75 px for a 162 × 37.5 logo); the page sizes them from the file (see Decisions). (2026-10-22)
 - **Framer and Wix comparisons** — Only Webflow vs WordPress has copy in Figma. The index shows them once their documents are published. (2026-10-22)
 #### Design team
 - **Hero pill chevron** — Figma 3790:37260 shows a dropdown chevron next to the competitor logo in the "Webflow VS" pill. No spec for what it opens (a switcher between comparisons?). Schema needs no field either way; built meanwhile as a static pill. (2026-10-22)
-- **Stat source display** — Figma puts "[source]" inside the stat label. Schema has a separate optional `source` (+ link); confirm whether it shows inline after the label or as a footnote link. (2026-10-22)
+- **Comparison mobile and tablet** — No mobile or tablet frames. Built meanwhile: hero buttons stacked full width, "What to choose" cards and reason rows stacked (picture first), steps 2 per row at ≤991 and 1 per row at ≤767 without the stagger, the table keeps its 3 columns and scrolls inside its frame at ≤767. (2026-10-22)
+- **Comparison values without a token** — Card border `#EDEDED` (Grey 500) → `--color-border`; table group row `#FAFAFA` (Grey 400) → `--color-gray-light`; table feature names Acumin Medium 500 (kit has 400 / 700); step number 24px → `c-text`; table group label 18px → `c-paragraph_s`; pill "VS" 18px → 1.286rem. All marked `TODO: DS`. (2026-10-22)
+- **"What to choose" card spacing** — Figma uses 40px picture → text on the Webflow card and 48px on the WordPress card; built with 40px on both. (2026-10-22)
+- ~~**Stat source display**~~ — RESOLVED 2026-10-22: plain text inline after the label, as in Figma; no link for now (lead).
 #### Needs lead OK
-- **Comparison schema field list** — SCHEMAS v0.13 `comparison` document and objects (code only, not deployed). (2026-10-22)
+- ~~**Comparison schema field list**~~ — RESOLVED 2026-10-22: approved by the lead.
 - **Hero button actions fixed** — labels editable, actions in code. (2026-10-22)
 - **Webflow side fixed in code** — plus optional competitor white logo. (2026-10-22)
 - **Case studies fallback** — empty → 3 newest published. (2026-10-22)
 - **Index order** — newest first. (2026-10-22)
 - **FAQ heading in code** — as on service pages. (2026-10-22)
-- **Stat source fields** — optional `source` + `sourceUrl` on `stat`, comparison only. (2026-10-22)
-- **Migration steps via `processStep`** — max 4, note/features hidden. (2026-10-22)
-- **Comparison asset formats** — mockup panel `#F5F9FE` baked into the SVGs (no token), raster logos and step icons, hero line art and card glow reused. (2026-10-22)
+- ~~**Stat source fields**~~ — RESOLVED 2026-10-22: approved by the lead.
+- ~~**Migration steps via `processStep`**~~ — RESOLVED 2026-10-22: approved by the lead.
+- ~~**Comparison asset formats**~~ — RESOLVED 2026-10-22: approved by the lead.
+- **Competitor logo size from the file** — SVG at its own size, raster at 2x, clamped to the Figma range. (2026-10-22)
+- **Sanity content guard** — production build stops on placeholders or open markers in a published comparison. (2026-10-22)
+- **Migration steps as a new component** — `ComparisonSteps`, not `ServiceProcess`. (2026-10-22)
+- **`noIndex` in `ALL_COMPARISONS`** — derived projection, needs a line in SCHEMAS "GROQ: comparison" (sanity agent). (2026-10-22)
+#### Engineering follow-ups
+- **Testimonials on comparison pages** — The template renders the shared Testimonials section, which is hidden site-wide (lead 2026-09-30); it shows up here when it comes back everywhere. (2026-10-22)
 
 ## Testimonials
 

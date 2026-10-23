@@ -79,14 +79,28 @@ export function detailCopyFields(hasRelatedSection: boolean): CopyField[] {
 
 const warned = new Set<string>();
 
+/** Who is checking, for the messages (case studies, comparisons). */
+export interface GuardScope {
+  /** Log prefix, e.g. "case-studies". */
+  tag: string;
+  /** What was published, e.g. "a case study". */
+  item: string;
+}
+
 /**
  * Stops a production build (or warns elsewhere) when any field is still a
- * placeholder. Call it only when at least one case study is published.
- *
- * @param page the page being built, for the message (e.g. "/case-studies")
+ * placeholder (`pattern`, default "Lorem ipsum" / "TODO: COPY"). Shared by
+ * `guardCaseStudyCopy` and the comparison guard (`comparison-release.ts`).
  */
-export function guardCaseStudyCopy(page: string, fields: readonly CopyField[], production: boolean): void {
-  const bad = fields.filter((f) => PLACEHOLDER.test(f.value));
+export function guardPlaceholderCopy(
+  scope: GuardScope,
+  page: string,
+  fields: readonly CopyField[],
+  production: boolean,
+  pattern: RegExp = PLACEHOLDER,
+  what = 'placeholder copy (Lorem ipsum / TODO: COPY)',
+): void {
+  const bad = fields.filter((f) => pattern.test(f.value));
   // One entry per source (the breadcrumb label can appear in both lists).
   const unique = [...new Map(bad.map((f) => [f.source, f])).values()];
   if (unique.length === 0) return;
@@ -95,20 +109,30 @@ export function guardCaseStudyCopy(page: string, fields: readonly CopyField[], p
   if (production) {
     throw new Error(
       [
-        `[case-studies] Build stopped on purpose: a case study is published, so ${page} would go live with placeholder copy (Lorem ipsum / TODO: COPY).`,
+        `[${scope.tag}] Build stopped on purpose: ${scope.item} is published, so ${page} would go live with ${what}.`,
         'Replace these texts with the final copy, merge, and rebuild:',
         ...lines,
-        'Until then, unpublish the case study in Sanity to let the production build pass again. The live site keeps its previous deploy.',
+        `Until then, unpublish ${scope.item.replace(/^an? /, 'the ')} in Sanity to let the production build pass again. The live site keeps its previous deploy.`,
       ].join('\n'),
     );
   }
-  const key = `${page}|${unique.map((f) => f.source).join('|')}`;
+  const key = `${scope.tag}|${page}|${unique.map((f) => f.source).join('|')}`;
   if (warned.has(key)) return;
   warned.add(key);
   console.warn(
     [
-      `[case-studies] ${page} uses placeholder copy while a case study is published. A production build would stop here:`,
+      `[${scope.tag}] ${page} uses ${what} while ${scope.item} is published. A production build would stop here:`,
       ...lines,
     ].join('\n'),
   );
+}
+
+/**
+ * Stops a production build (or warns elsewhere) when any field is still a
+ * placeholder. Call it only when at least one case study is published.
+ *
+ * @param page the page being built, for the message (e.g. "/case-studies")
+ */
+export function guardCaseStudyCopy(page: string, fields: readonly CopyField[], production: boolean): void {
+  guardPlaceholderCopy({ tag: 'case-studies', item: 'a case study' }, page, fields, production);
 }

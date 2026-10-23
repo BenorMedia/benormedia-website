@@ -1,0 +1,47 @@
+---
+/**
+ * ComparisonIndexHero — `/comparison` hero (Figma 3790:37982): eyebrow
+ * "Comparison", H1, intro paragraph, on the shared `PageHero` (centered
+ * `SectionHeader`). Copy from `COMPARISON_COPY.indexHero` (intro is
+ * TODO: COPY). Figma 110px below; with no cards (`empty`, previews only)
+ * the same 110px stays above the CTA banner.
+ */
+import PageHero from "../sections/PageHero.astro";
+import { COMPARISON_COPY } from "./copy";
+
+interface Props {
+  empty?: boolean;
+  /** `h2` on `/dev/comparison`, where the template hero holds the page's h1. */
+  as?: "h1" | "h2";
+}
+
+const { empty = false, as = "h1" } = Astro.props;
+const hero = COMPARISON_COPY.indexHero;
+---
+
+<PageHero
+  eyebrow={hero.eyebrow}
+  title={hero.title}
+  description={hero.description}
+  as={as}
+  class={["c-cmp-index-hero", empty && "is-empty"].filter(Boolean).join(" ")}
+/>
+
+<style>
+  /* Hero → cards 110px (Figma). */
+  :global(section.c-page-hero.c-cmp-index-hero .c-container) {
+    padding-bottom: 7.857rem;
+  }
+  /* Figma 662.49px paragraph box at 25px → at `c-paragraph_m` (18.2px). TODO: DS */
+  :global(section.c-page-hero.c-cmp-index-hero .c-section-header__description) {
+    max-width: 34.4rem;
+  }
+  @media (max-width: 767px) {
+    :global(section.c-page-hero.c-cmp-index-hero .c-container) {
+      padding-bottom: 5rem;
+    }
+    :global(section.c-page-hero.c-cmp-index-hero .c-section-header__description) {
+      max-width: 100%;
+    }
+  }
+</style>

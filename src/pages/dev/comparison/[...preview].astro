@@ -1,0 +1,108 @@
+---
+/**
+ * /dev/comparison — the comparison template preview (DECISIONS →
+ * Comparison 2026-10-22; SITEMAP "Not public"). noindex, outside the
+ * sitemap (`/dev/*` filter in astro.config.mjs).
+ *
+ * Not built in production (same rule as `/dev/case-study`): the fixture
+ * holds Figma placeholder copy and `[FACT NEEDED]` markers.
+ * `getStaticPaths` returns no path when `isProductionBuild()`; `astro dev`,
+ * Vercel previews and local builds get the page.
+ *
+ * Page order as Figma 3790:37245: the shared `ComparisonPage` (the same
+ * component as `/comparison/[slug]`) → CTA banner. Below, separated: an
+ * "Index" block with the `/comparison` hero and card grid (Figma
+ * 3790:37967) for the three fixture comparisons (WordPress, Framer, Wix).
+ *
+ * Data: `createComparisonFixture` (Figma copy, competitor-side images read
+ * from `src/assets/comparison/` as data URIs at render time); case study
+ * cards from the case study fixture; logo strip and testimonials from
+ * Sanity, as on the real page.
+ */
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import Container from "../../../components/ui/Container.astro";
+import CtaBanner from "../../../components/layout/CtaBanner.astro";
+import ComparisonPage from "../../../components/comparison/ComparisonPage.astro";
+import ComparisonIndexHero from "../../../components/comparison/ComparisonIndexHero.astro";
+import ComparisonGrid from "../../../components/comparison/ComparisonGrid.astro";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { createComparisonFixture } from "../../../lib/sanity/comparison-fixture";
+import { createCaseStudyFixture, type FixtureAsset } from "../../../lib/sanity/case-study-fixture";
+import { PRICING_FAQ_GROUPS } from "../../../lib/content/faqs";
+import { getAllClientsWithLogo, getTestimonials } from "../../../lib/sanity/queries";
+import { getSiteSettingsCached } from "../../../lib/sanity/site";
+import { isProductionBuild } from "../../../lib/sanity/comparison-release";
+
+export function getStaticPaths() {
+  return isProductionBuild() ? [] : [{ params: { preview: undefined } }];
+}
+
+// Figma exports, read at render time (never emitted in production).
+const TYPES: Record<string, string> = { png: "image/png", jpg: "image/jpeg", svg: "image/svg+xml" };
+const asset = (dir: string, file: string, width: number, height: number): FixtureAsset => ({
+  src: `data:${TYPES[file.split(".").pop() ?? ""] ?? "image/png"};base64,${readFileSync(join(process.cwd(), dir, file)).toString("base64")}`,
+  width,
+  height,
+});
+const cmp = (file: string, width: number, height: number) => asset("src/assets/comparison", file, width, height);
+
+const { cards: caseStudyCards } = createCaseStudyFixture({
+  surfeLogo: asset("src/assets/dev/case-study", "surfe-logo.png", 321, 100),
+  authorPhoto: asset("src/assets/dev/case-study", "thibaut-davoult.png", 69, 69),
+  websiteScreenshot: asset("src/assets/dev/case-study", "surfe-website.jpg", 965, 612),
+});
+
+const { comparison, cards } = createComparisonFixture(
+  {
+    wordpressLogo: cmp("logos/wordpress.png", 324, 75),
+    wordpressLogoWhite: cmp("logos/wordpress-white.png", 352, 80),
+    framerLogo: cmp("logos/framer.png", 190, 52),
+    wixLogo: cmp("logos/wix.png", 92, 52),
+    chooseWordpress: cmp("mockups/choose-wordpress.jpg", 1532, 858),
+    reasonWebflowDesigner: cmp("mockups/reason-webflow-designer.svg", 936, 582),
+    reasonPluginsVsUpdates: cmp("mockups/reason-plugins-vs-updates.svg", 936, 582),
+    reasonPerformanceAi: cmp("mockups/reason-performance-ai.svg", 934, 582),
+    reasonCmsLocalization: cmp("mockups/reason-cms-localization.svg", 936, 582),
+    stepAudit: cmp("icons/step-audit.png", 96, 96),
+    stepDesignBuild: cmp("icons/step-design-build.png", 96, 96),
+    stepCmsSeo: cmp("icons/step-cms-seo.png", 96, 96),
+    stepLaunch: cmp("icons/step-launch.png", 96, 96),
+  },
+  { caseStudies: caseStudyCards, faqGroups: PRICING_FAQ_GROUPS },
+);
+
+const [logoClients, testimonials, siteSettings] = await Promise.all([
+  getAllClientsWithLogo(),
+  getTestimonials(),
+  getSiteSettingsCached(),
+]);
+---
+
+<BaseLayout title="Comparison preview" description="Preview of the comparison template with placeholder content." noIndex showCtaBanner={false}>
+  <ComparisonPage comparison={comparison} logoClients={logoClients} testimonials={testimonials} />
+  <CtaBanner siteSettings={siteSettings} />
+
+  <section class="c-cmp-preview" aria-labelledby="c-cmp-preview-index">
+    <Container>
+      <p id="c-cmp-preview-index" class="c-cmp-preview__label c-paragraph_s">Index page /comparison (preview only, not part of the template)</p>
+    </Container>
+    <ComparisonIndexHero as="h2" />
+    <ComparisonGrid cards={cards} />
+  </section>
+</BaseLayout>
+
+<style>
+  /* Preview-only block, set apart from the template above. */
+  .c-cmp-preview {
+    border-top: 1px dashed var(--color-gray);
+  }
+  .c-cmp-preview > :global(.c-container) {
+    padding-top: 4rem;
+    padding-bottom: 0;
+  }
+  .c-cmp-preview__label {
+    margin: 0;
+    color: var(--color-text);
+  }
+</style>

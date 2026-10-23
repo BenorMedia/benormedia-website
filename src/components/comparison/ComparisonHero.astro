@@ -1,0 +1,103 @@
+---
+/**
+ * ComparisonHero — template hero (Figma 3790:37260), on the shared
+ * `PageHero`:
+ *   - top slot: the "Webflow VS <competitor>" pill with the chevron
+ *     (static, DECISIONS → Comparison);
+ *   - h1: Sanity `headline` (`accentTitle`, "Webflow was." in Gradient);
+ *   - description: `subtitle`;
+ *   - buttons (SCHEMAS v0.13: labels from Sanity, actions fixed in code):
+ *     gradient → opens the contact popup (`js-open-contact`, like every
+ *     "Get in Touch"); white → anchors to the table section.
+ * No trusted badge (Figma). The line art behind the hero bottom and the
+ * logo strip is painted by `ComparisonPage` (`.c-cmp-intro`).
+ */
+import PageHero from "../sections/PageHero.astro";
+import Button from "../ui/Button.astro";
+import ComparisonPill from "./ComparisonPill.astro";
+import type { TitleSegment } from "../../lib/sanity/portable-text";
+import type { ComparisonImageInput } from "./image";
+import { COMPARISON_TABLE_ID } from "./copy";
+
+interface Props {
+  /** Plain h1 text. */
+  title: string;
+  titleSegments?: readonly TitleSegment[];
+  subtitle?: string | null | undefined;
+  competitorName: string;
+  competitorLogo?: ComparisonImageInput;
+  primaryLabel?: string | null | undefined;
+  secondaryLabel?: string | null | undefined;
+}
+
+const { title, titleSegments, subtitle, competitorName, competitorLogo, primaryLabel, secondaryLabel } = Astro.props;
+const primary = primaryLabel?.trim();
+const secondary = secondaryLabel?.trim();
+const heroOptional = {
+  ...(titleSegments && titleSegments.length > 0 ? { titleSegments } : {}),
+  ...(subtitle?.trim() ? { description: subtitle.trim() } : {}),
+};
+---
+
+<PageHero title={title} {...heroOptional} class="c-cmp-hero">
+  <div slot="top" class="c-cmp-hero__pill">
+    <ComparisonPill competitorName={competitorName} competitorLogo={competitorLogo} variant="hero" eager />
+  </div>
+  {(primary || secondary) && (
+    <div class="c-cmp-hero__actions">
+      {primary && <Button variant="gradient" class="js-open-contact">{primary}</Button>}
+      {secondary && <Button variant="white" href={`#${COMPARISON_TABLE_ID}`}>{secondary}</Button>}
+    </div>
+  )}
+</PageHero>
+
+<style>
+  :global(section.c-page-hero.c-cmp-hero) {
+    background: transparent; /* the page wrapper paints white + line art */
+  }
+  /* Figma: 110px below the buttons, to the logo strip. */
+  :global(section.c-page-hero.c-cmp-hero .c-container) {
+    padding-bottom: 7.857rem;
+  }
+  /* Figma H1 box 1043.53px at 90px → at `c-text_xxl` (77px), so it breaks
+     after "built". TODO: DS */
+  :global(section.c-page-hero.c-cmp-hero .c-section-header__title) {
+    max-width: 63.8rem;
+  }
+  /* Figma 762.8px paragraph box (two lines at 25px): two lines at
+     `c-paragraph_m` need the SectionHeader default (42rem). TODO: DS */
+  :global(section.c-page-hero.c-cmp-hero .c-section-header__description) {
+    max-width: 42rem;
+  }
+
+  .c-cmp-hero__pill {
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Subtitle → buttons 24px (8px padding + 16px gap), buttons 16px apart. */
+  .c-cmp-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.143rem;
+    margin-top: 1.714rem;
+  }
+
+  /* TODO: DS mobile (no mobile design): stacked full-width buttons, as
+     every CTA on phones (CtaActions). */
+  @media (max-width: 767px) {
+    :global(section.c-page-hero.c-cmp-hero .c-container) {
+      padding-bottom: 5rem;
+    }
+    :global(section.c-page-hero.c-cmp-hero .c-section-header__title),
+    :global(section.c-page-hero.c-cmp-hero .c-section-header__description) {
+      max-width: 100%;
+    }
+    .c-cmp-hero__actions {
+      flex-direction: column;
+      align-items: stretch;
+      margin-top: 2rem;
+    }
+  }
+</style>

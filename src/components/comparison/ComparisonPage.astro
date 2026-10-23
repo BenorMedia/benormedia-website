@@ -1,0 +1,103 @@
+---
+/**
+ * ComparisonPage — the comparison template body (Figma 3790:37245), shared
+ * by `/comparison/[slug]` and the `/dev/comparison` preview. Section
+ * components get typed props; the page fetches.
+ *
+ *   1. ComparisonHero      — pill, h1, subtitle, two buttons
+ *   2. LogoStrip           — same as Home / service pages
+ *      (1 + 2 share `.c-cmp-intro`, which paints the service template's
+ *      line art `service-mid-hero-bg` across the hero bottom and the strip,
+ *      ui handoff 2026-10-22: same art, same placement)
+ *   3. ComparisonChoose    — "What to choose"
+ *   4. ComparisonTable     — side by side (`id` = hero anchor)
+ *   5. ComparisonReasons   — "Why SaaS teams switch"
+ *   6. ComparisonSteps     — migration steps
+ *   7. ComparisonCaseStudies — picks, else the 3 newest
+ *   8. Testimonials        — the shared section (hidden site-wide for now,
+ *                            lead 2026-09-30; it comes back with the others)
+ *   9. FaqSection          — `faqSections`, heading in code, FAQPage JSON-LD
+ *  10. CTA banner + footer — BaseLayout
+ */
+import LogoStrip from "../sections/LogoStrip.astro";
+import Testimonials from "../sections/Testimonials.astro";
+import FaqSection from "../sections/FaqSection.astro";
+import ComparisonHero from "./ComparisonHero.astro";
+import ComparisonChoose from "./ComparisonChoose.astro";
+import ComparisonTable from "./ComparisonTable.astro";
+import ComparisonReasons from "./ComparisonReasons.astro";
+import ComparisonSteps from "./ComparisonSteps.astro";
+import ComparisonCaseStudies from "./ComparisonCaseStudies.astro";
+import type { Client, Comparison, Testimonial } from "../../lib/sanity/types";
+import { accentTitleSegments, accentTitleText } from "../../lib/sanity/portable-text";
+import { faqGroupsFromSections } from "../../lib/sanity/faq-groups";
+import { COMPARISON_COPY } from "./copy";
+
+interface Props {
+  comparison: Comparison;
+  logoClients: Client[];
+  testimonials: Testimonial[];
+}
+
+const { comparison: c, logoClients, testimonials } = Astro.props;
+
+const headlineSegments = accentTitleSegments(c.headline);
+const headlineText = accentTitleText(c.headline) || c.title;
+const picks = c.caseStudies ?? [];
+const caseStudies = picks.length > 0 ? picks : (c.latestCaseStudies ?? []);
+const faqGroups = faqGroupsFromSections(c.faqSections);
+---
+
+<div class="c-cmp-intro">
+  <ComparisonHero
+    title={headlineText}
+    titleSegments={headlineSegments}
+    subtitle={c.subtitle}
+    competitorName={c.competitorName}
+    competitorLogo={c.competitorLogo}
+    primaryLabel={c.primaryButtonLabel}
+    secondaryLabel={c.secondaryButtonLabel}
+  />
+  {logoClients.length > 0 && <LogoStrip clients={logoClients} />}
+</div>
+
+<ComparisonChoose
+  header={c.chooseHeader}
+  webflow={c.webflowChoice}
+  competitor={c.competitorChoice}
+  competitorName={c.competitorName}
+/>
+<ComparisonTable
+  header={c.tableHeader}
+  groups={c.tableGroups}
+  competitorName={c.competitorName}
+  competitorLogo={c.competitorLogo}
+  competitorLogoOnDark={c.competitorLogoOnDark}
+/>
+<ComparisonReasons header={c.reasonsHeader} reasons={c.reasons} />
+<ComparisonSteps header={c.migrationHeader} steps={c.migrationSteps} />
+<ComparisonCaseStudies header={c.caseStudiesHeader} cards={caseStudies} />
+<Testimonials testimonials={testimonials} />
+<FaqSection title={COMPARISON_COPY.faqHeading} groups={faqGroups} tabsLabel={COMPARISON_COPY.faqTabsLabel} />
+
+<style>
+  /* Same line art and placement as the service template (`[service].astro`,
+     `.c-service-intro`): `service-mid-hero-bg` (1920 × 747) anchored to the
+     wrapper bottom at the 1920 frame width. Figma 3790:37261 = the same art
+     (ui handoff 2026-10-22). TODO: DS */
+  .c-cmp-intro {
+    background-color: var(--color-white);
+    background-image: url("/images/services/service-mid-hero-bg.webp");
+    background-image: image-set(
+      url("/images/services/service-mid-hero-bg.webp") 1x,
+      url("/images/services/service-mid-hero-bg@2x.webp") 2x
+    );
+    background-repeat: no-repeat;
+    background-position: center calc(100% + 4.643rem);
+    background-size: 137.143rem auto;
+  }
+  /* Let the line art show through the reused logo strip. */
+  .c-cmp-intro :global(.c-logos) {
+    background: transparent;
+  }
+</style>

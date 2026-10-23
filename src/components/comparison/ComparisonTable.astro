@@ -1,0 +1,272 @@
+---
+/**
+ * ComparisonTable — side-by-side table (Figma 3790:37411): section header
+ * (`tableHeader`) and a real `<table>`:
+ *   - `<caption>`: the section title as plain text (visually hidden, the
+ *     visible heading says the same);
+ *   - `<thead>`: the gradient bar with the white logos, `<th scope="col">`
+ *     per column (the first column's header is visually hidden);
+ *   - one `<tbody>` per group: a gray label row (`<th scope="rowgroup"
+ *     colspan="3">`), then one row per feature: `<th scope="row">` + the
+ *     Webflow cell (check) + the competitor cell (dash).
+ * The section's `id` is the target of the hero's second button.
+ *
+ * Logos: Webflow white fixed in code; competitor `competitorLogoOnDark`,
+ * else `competitorLogo` whitened with a CSS filter (SCHEMAS v0.13, the
+ * `CaseStudyLogo` approach), else the name in white.
+ *
+ * ≤767: the table keeps its three columns and scrolls inside its wrapper
+ * (focusable, labelled region); the page never scrolls sideways.
+ */
+import { Image } from "astro:assets";
+import Container from "../ui/Container.astro";
+import ComparisonSectionHeader from "./ComparisonSectionHeader.astro";
+import ComparisonMark from "./ComparisonMark.astro";
+import webflowWhite from "../../assets/comparison/logos/webflow-white.png";
+import type { AccentSectionHeader, ComparisonTableGroup } from "../../lib/sanity/types";
+import { accentTitleText } from "../../lib/sanity/portable-text";
+import { altOr, logoBox, type ComparisonImageInput } from "./image";
+import { COMPARISON_COPY, COMPARISON_TABLE_ID, WEBFLOW_NAME } from "./copy";
+
+interface Props {
+  header?: AccentSectionHeader | null | undefined;
+  groups?: readonly ComparisonTableGroup[] | null | undefined;
+  competitorName: string;
+  competitorLogo?: ComparisonImageInput;
+  competitorLogoOnDark?: ComparisonImageInput;
+}
+
+const { header, groups, competitorName, competitorLogo, competitorLogoOnDark } = Astro.props;
+
+const items = (groups ?? [])
+  .map((group) => ({
+    key: group._key,
+    label: group.label?.trim() ?? "",
+    rows: (group.rows ?? []).filter((row) => row.feature?.trim()),
+  }))
+  .filter((group) => group.rows.length > 0);
+
+const title = accentTitleText(header?.title);
+const caption = title.replace(/\s+/g, " ") || `${WEBFLOW_NAME} vs ${competitorName}`;
+// Figma: Webflow white 167.24 × 30; WordPress white fits a 160.8 × 40 box.
+const darkLogo = competitorLogoOnDark && (competitorLogoOnDark.previewSrc || competitorLogoOnDark.asset) ? competitorLogoOnDark : null;
+const logoSource = darkLogo ?? competitorLogo;
+const logo = logoBox(logoSource, altOr(logoSource, competitorName), { minHeight: 26, maxHeight: 40 });
+const whiten = !darkLogo;
+---
+
+{(title || items.length > 0) && (
+  <section class="c-cmp-table" id={COMPARISON_TABLE_ID}>
+    <Container>
+      <ComparisonSectionHeader header={header} titleWidth="43.3rem" descriptionWidth="35.2rem" />
+      {items.length > 0 && (
+        <div class="c-cmp-table__scroll" role="region" aria-label={caption} tabindex="0">
+          <table class="c-cmp-table__table">
+            <caption class="c-cmp-table__sr-only">{caption}</caption>
+            <colgroup>
+              <col class="c-cmp-table__col" />
+              <col class="c-cmp-table__col" />
+              <col class="c-cmp-table__col" />
+            </colgroup>
+            <thead>
+              <tr class="c-cmp-table__head">
+                <th scope="col" class="c-cmp-table__head-cell"><span class="c-cmp-table__sr-only">{COMPARISON_COPY.tableFeature}</span></th>
+                <th scope="col" class="c-cmp-table__head-cell">
+                  <Image class="c-cmp-table__logo is-webflow" src={webflowWhite} alt={WEBFLOW_NAME} width={167} height={30} densities={[1, 2]} loading="lazy" />
+                </th>
+                <th scope="col" class="c-cmp-table__head-cell">
+                  {logo ? (
+                    <img
+                      class={["c-cmp-table__logo", whiten && "is-whiten"].filter(Boolean).join(" ")}
+                      src={logo.src}
+                      width={Math.round(logo.width)}
+                      height={Math.round(logo.height)}
+                      alt={logo.alt}
+                      style={`height: ${Math.round((logo.height / 14) * 1000) / 1000}rem;`}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <span class="c-cmp-table__logo-name c-paragraph_m">{competitorName}</span>
+                  )}
+                </th>
+              </tr>
+            </thead>
+            {items.map((group) => (
+              <tbody class="c-cmp-table__group">
+                {group.label && (
+                  <tr>
+                    <th scope="rowgroup" colspan="3" class="c-cmp-table__group-label c-paragraph_s">{group.label}</th>
+                  </tr>
+                )}
+                {group.rows.map((row) => (
+                  <tr class="c-cmp-table__row">
+                    <th scope="row" class="c-cmp-table__feature c-paragraph">{row.feature}</th>
+                    <td class="c-cmp-table__cell c-paragraph">
+                      <span class="c-cmp-table__value"><ComparisonMark kind="check" />{row.webflow}</span>
+                    </td>
+                    <td class="c-cmp-table__cell c-paragraph">
+                      <span class="c-cmp-table__value"><ComparisonMark kind="dash" />{row.competitor}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            ))}
+          </table>
+        </div>
+      )}
+    </Container>
+  </section>
+)}
+
+<style>
+  .c-cmp-table {
+    background: var(--color-white);
+    /* Hero "View comparison" anchor: clear the sticky nav. TODO: DS */
+    scroll-margin-top: 6.571rem;
+  }
+  /* Figma: 110px above and below. */
+  .c-cmp-table :global(.c-container) {
+    padding-top: 7.857rem;
+    padding-bottom: 7.857rem;
+  }
+  /* Header → table 60px. */
+  .c-cmp-table__scroll {
+    margin-top: 4.286rem;
+    overflow-x: auto;
+  }
+  .c-cmp-table__scroll:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+  }
+  /* Rows 12px apart (Figma), three equal columns; 24px row padding and
+     48px between columns = 24px cell padding on each side. */
+  .c-cmp-table__table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0 0.857rem;
+    margin-top: -0.857rem;
+    margin-bottom: -0.857rem;
+  }
+  .c-cmp-table__col {
+    width: 33.333%;
+  }
+
+  /* Gradient bar, 70px tall, 8px radius (Figma 3790:37421). */
+  .c-cmp-table__head-cell {
+    height: 5rem;
+    padding: 0.857rem 1.714rem;
+    background: var(--gradient-primary);
+    background-attachment: scroll;
+    text-align: left;
+    vertical-align: middle;
+  }
+  /* One gradient across the whole bar: each cell shows its third of it. */
+  .c-cmp-table__head-cell:nth-child(1) {
+    border-radius: 8px 0 0 8px;
+    background-size: 300% 100%;
+    background-position: 0 0;
+  }
+  .c-cmp-table__head-cell:nth-child(2) {
+    background-size: 300% 100%;
+    background-position: 50% 0;
+  }
+  .c-cmp-table__head-cell:nth-child(3) {
+    border-radius: 0 8px 8px 0;
+    background-size: 300% 100%;
+    background-position: 100% 0;
+  }
+  .c-cmp-table__logo {
+    display: block;
+    width: auto;
+    max-width: 11.486rem; /* Figma logo box 160.8px wide */
+  }
+  .c-cmp-table__logo.is-webflow {
+    height: 2.143rem; /* 30px */
+    max-width: none;
+  }
+  .c-cmp-table__logo.is-whiten {
+    filter: brightness(0) invert(1);
+  }
+  .c-cmp-table__logo-name {
+    color: var(--color-white);
+  }
+
+  /* Group label row (Figma 3790:37425): #FAFAFA (Grey 400: no token,
+     closest `--color-gray-light`, TODO: DS), 8px radius, 24px padding;
+     Acumin Semibold 18px, 1.152px tracking, uppercase, Black 800; 18px
+     next to the 20px rows → `c-paragraph_s` (TODO: DS). */
+  .c-cmp-table__group-label {
+    padding: 1.714rem;
+    border-radius: 8px;
+    background: var(--color-gray-light);
+    color: var(--color-text);
+    font-weight: 600;
+    line-height: normal;
+    letter-spacing: 0.064em;
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  /* Feature rows: white, 24px padding. */
+  .c-cmp-table__feature,
+  .c-cmp-table__cell {
+    padding: 1.714rem;
+    vertical-align: middle;
+    text-align: left;
+  }
+  /* Figma Text 600: Acumin Medium 20px, Black 500. */
+  .c-cmp-table__feature {
+    color: var(--color-black-secondary);
+    font-weight: 500; /* Figma Medium; TODO: DS (Acumin kit weights 400 / 700) */
+    line-height: normal;
+  }
+  /* Figma Paragraph, Black 500 at 65%, 8px icon → text. */
+  .c-cmp-table__value {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.571rem;
+    color: color-mix(in srgb, var(--color-black-secondary) 65%, transparent);
+  }
+  .c-cmp-table__value :global(.c-cmp-mark) {
+    margin-top: calc((1.5em - 1.714rem) / 2);
+  }
+
+  .c-cmp-table__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* ≤991: tighter cells. ≤767: the table keeps a readable width and scrolls
+     inside its wrapper. TODO: DS mobile (no mobile design). */
+  @media (max-width: 991px) {
+    .c-cmp-table__feature,
+    .c-cmp-table__cell,
+    .c-cmp-table__group-label {
+      padding: 1.286rem;
+    }
+    .c-cmp-table__head-cell {
+      padding: 0.857rem 1.286rem;
+    }
+  }
+  @media (max-width: 767px) {
+    .c-cmp-table :global(.c-container) {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
+    .c-cmp-table__scroll {
+      margin-top: 3rem;
+    }
+    .c-cmp-table__table {
+      min-width: 60rem;
+    }
+  }
+</style>

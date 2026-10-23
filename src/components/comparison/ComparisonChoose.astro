@@ -1,0 +1,202 @@
+---
+/**
+ * ComparisonChoose — "What to choose" (Figma 3790:37367): section header
+ * (`chooseHeader`) and two cards side by side: the picture, the card title
+ * (`accentTitle`, "Webflow" in Gradient) and the reasons, with a check on
+ * the Webflow card and a dash on the competitor card.
+ *
+ * Webflow picture fixed in code (`choose-webflow.jpg`, DECISIONS →
+ * Comparison); competitor picture from Sanity (`competitorChoice.image`).
+ * A card with no title and no reasons is not rendered; the section is
+ * skipped when it has no header and no card (SCHEMAS v0.13).
+ */
+import { Image } from "astro:assets";
+import Container from "../ui/Container.astro";
+import ComparisonSectionHeader from "./ComparisonSectionHeader.astro";
+import ComparisonMark from "./ComparisonMark.astro";
+import chooseWebflow from "../../assets/comparison/mockups/choose-webflow.jpg";
+import type { AccentSectionHeader, ComparisonChoice } from "../../lib/sanity/types";
+import { accentTitleSegments, accentTitleText } from "../../lib/sanity/portable-text";
+import { altOr, imageAtWidth, type ComparisonImageInput } from "./image";
+
+interface Props {
+  header?: AccentSectionHeader | null | undefined;
+  webflow?: ComparisonChoice | null | undefined;
+  competitor?: (ComparisonChoice & { image?: ComparisonImageInput }) | null | undefined;
+  competitorName: string;
+}
+
+const { header, webflow, competitor, competitorName } = Astro.props;
+
+// Figma card picture: 766 × 429 (8px radius).
+const IMG_W = 766;
+const IMG_H = 429;
+const WEBFLOW_ALT = "Webflow Designer interface with the Webflow logo, style selectors and layout panels";
+
+const card = (choice: ComparisonChoice | null | undefined) => {
+  const segments = accentTitleSegments(choice?.title);
+  const reasons = (choice?.reasons ?? []).map((r) => r?.trim() ?? "").filter(Boolean);
+  return segments.length > 0 || reasons.length > 0 ? { segments, title: accentTitleText(choice?.title), reasons } : null;
+};
+const webflowCard = card(webflow);
+const competitorCard = card(competitor);
+const competitorImg = imageAtWidth(competitor?.image, IMG_W, altOr(competitor?.image, `${competitorName} screenshot`));
+const hasHeader = accentTitleText(header?.title).length > 0;
+---
+
+{(hasHeader || webflowCard || competitorCard) && (
+  <section class="c-cmp-choose">
+    <Container>
+      <ComparisonSectionHeader header={header} titleWidth="34.5rem" descriptionWidth="30.3rem" />
+      {(webflowCard || competitorCard) && (
+        <div class="c-cmp-choose__cards">
+          {webflowCard && (
+            <article class="c-cmp-choose__card">
+              <div class="c-cmp-choose__media">
+                <Image class="c-cmp-choose__img" src={chooseWebflow} alt={WEBFLOW_ALT} width={IMG_W} height={IMG_H} densities={[1, 2]} loading="lazy" />
+              </div>
+              <div class="c-cmp-choose__content">
+                {webflowCard.segments.length > 0 && (
+                  <h3 class="c-cmp-choose__title c-text_l">
+                    {webflowCard.segments.map((s) => (s.accent ? <span class="c-section-header__accent">{s.text}</span> : s.text))}
+                  </h3>
+                )}
+                {webflowCard.reasons.length > 0 && (
+                  <ul class="c-cmp-choose__list">
+                    {webflowCard.reasons.map((reason) => (
+                      <li class="c-cmp-choose__item c-paragraph"><ComparisonMark kind="check" />{reason}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </article>
+          )}
+          {competitorCard && (
+            <article class="c-cmp-choose__card">
+              {competitorImg && (
+                <div class="c-cmp-choose__media">
+                  <img
+                    class="c-cmp-choose__img"
+                    src={competitorImg.src}
+                    srcset={competitorImg.srcset}
+                    width={competitorImg.width}
+                    height={competitorImg.height}
+                    alt={competitorImg.alt}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+              )}
+              <div class="c-cmp-choose__content">
+                {competitorCard.segments.length > 0 && (
+                  <h3 class="c-cmp-choose__title c-text_l">
+                    {competitorCard.segments.map((s) => (s.accent ? <span class="c-section-header__accent">{s.text}</span> : s.text))}
+                  </h3>
+                )}
+                {competitorCard.reasons.length > 0 && (
+                  <ul class="c-cmp-choose__list">
+                    {competitorCard.reasons.map((reason) => (
+                      <li class="c-cmp-choose__item c-paragraph"><ComparisonMark kind="dash" />{reason}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </article>
+          )}
+        </div>
+      )}
+    </Container>
+  </section>
+)}
+
+<style>
+  .c-cmp-choose {
+    background: var(--color-white);
+  }
+  /* Figma: 110px above and below. */
+  .c-cmp-choose :global(.c-container) {
+    padding-top: 7.857rem;
+    padding-bottom: 7.857rem;
+  }
+  /* Header → cards 60px; cards 20px apart. */
+  .c-cmp-choose__cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.429rem;
+    margin-top: 4.286rem;
+  }
+  /* Figma: 1px #EDEDED border (Grey 500: no token, closest `--color-border`,
+     TODO: DS), 8px radius, 32px padding, 40px picture → text (the
+     competitor card has 48px in Figma; both use 40). */
+  .c-cmp-choose__card {
+    display: flex;
+    flex-direction: column;
+    gap: 2.857rem;
+    padding: 2.286rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-white);
+    min-width: 0;
+  }
+  .c-cmp-choose__media {
+    overflow: hidden;
+    border-radius: 8px;
+    aspect-ratio: 766 / 429;
+  }
+  .c-cmp-choose__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  /* Title → list and between items: 15px. */
+  .c-cmp-choose__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.071rem;
+  }
+  /* Figma Text L (38px, line-height normal) Black 500. */
+  .c-cmp-choose__title {
+    margin: 0;
+    color: var(--color-black-secondary);
+    line-height: 1.2;
+  }
+  .c-cmp-choose__list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.071rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  /* Figma Paragraph, Black 500 at 65%, 8px icon → text. */
+  .c-cmp-choose__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.571rem;
+    color: color-mix(in srgb, var(--color-black-secondary) 65%, transparent);
+  }
+  /* Centre the 24px icon on the first line (20px × 1.5 = 30px). */
+  .c-cmp-choose__item :global(.c-cmp-mark) {
+    margin-top: calc((1.5em - 1.714rem) / 2);
+  }
+
+  @media (max-width: 991px) {
+    .c-cmp-choose__cards {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 767px) {
+    .c-cmp-choose :global(.c-container) {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
+    .c-cmp-choose__cards {
+      margin-top: 3rem;
+    }
+    .c-cmp-choose__card {
+      padding: 2rem;
+      gap: 2rem;
+    }
+  }
+</style>

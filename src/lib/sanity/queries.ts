@@ -20,6 +20,8 @@ import type {
   CaseStudy,
   CaseStudyCard,
   Client,
+  Comparison,
+  ComparisonCard,
   HomePage,
   PageSeoDoc,
   PageSingletonType,
@@ -515,6 +517,84 @@ export const CASE_STUDY_SLUG_BY_CLIENT = /* groq */ `
 `;
 
 // ---------------------------------------------------------------------------
+// Comparisons (SCHEMAS.md v0.13 "GROQ: comparison") — `/comparison` index and
+// the `/comparison/[slug]` template. Only published documents with a slug.
+// ---------------------------------------------------------------------------
+
+/** Published comparisons with a slug (shared filter; keep in sync with `comparison-sitemap.mjs`). */
+const PUBLISHED_COMPARISON = /* groq */ `_type == "comparison" && defined(slug.current) && !(_id in path("drafts.**"))`;
+
+/** `accentSectionHeader`: eyebrow + gradient title + paragraph. */
+const ACCENT_SECTION_HEADER = /* groq */ `{ eyebrow, "title": title${ACCENT_TITLE}, description }`;
+
+/**
+ * Every published comparison, newest first. `noIndex` (not in the SCHEMAS
+ * projection, derived from the existing `seo` field) keeps the index's
+ * robots tag in line with the sitemap, as `ALL_CASE_STUDIES` does.
+ */
+export const ALL_COMPARISONS = /* groq */ `
+*[${PUBLISHED_COMPARISON}] | order(publishedAt desc, title asc){
+  _id,
+  _type,
+  title,
+  "slug": slug.current,
+  publishedAt,
+  competitorName,
+  "competitorLogo": competitorLogo${IMAGE},
+  cardTitle,
+  cardDescription,
+  "noIndex": seo.noIndex == true
+}
+`;
+
+export const COMPARISON_SLUGS = /* groq */ `
+*[${PUBLISHED_COMPARISON}].slug.current
+`;
+
+/** One published comparison (`$slug`). */
+export const COMPARISON_BY_SLUG = /* groq */ `
+*[${PUBLISHED_COMPARISON} && slug.current == $slug][0]{
+  _id,
+  _type,
+  _updatedAt,
+  title,
+  "slug": slug.current,
+  publishedAt,
+  competitorName,
+  "competitorLogo": competitorLogo${IMAGE},
+  "competitorLogoOnDark": competitorLogoOnDark${IMAGE},
+  "headline": headline${ACCENT_TITLE},
+  subtitle,
+  primaryButtonLabel,
+  secondaryButtonLabel,
+  "chooseHeader": chooseHeader${ACCENT_SECTION_HEADER},
+  "webflowChoice": webflowChoice{ "title": title${ACCENT_TITLE}, reasons },
+  "competitorChoice": competitorChoice{ "image": image${IMAGE}, "title": title${ACCENT_TITLE}, reasons },
+  "tableHeader": tableHeader${ACCENT_SECTION_HEADER},
+  tableGroups[]{ _key, label, rows[]{ _key, feature, webflow, competitor } },
+  "reasonsHeader": reasonsHeader${ACCENT_SECTION_HEADER},
+  reasons[]{
+    _key,
+    "image": image${IMAGE},
+    title,
+    text,
+    stats[]{ _key, value, label, source, sourceUrl }
+  },
+  "migrationHeader": migrationHeader${ACCENT_SECTION_HEADER},
+  migrationSteps[]{ _key, name, description, "image": image${IMAGE} },
+  "caseStudiesHeader": caseStudiesHeader${ACCENT_SECTION_HEADER},
+  "caseStudies": caseStudies[defined(@->slug.current) && !(@->_id in path("drafts.**"))]->{
+    ${CASE_STUDY_CARD_FIELDS}
+  },
+  "latestCaseStudies": *[${PUBLISHED_CASE_STUDY}] | order(publishedAt desc, title asc)[0...3]{
+    ${CASE_STUDY_CARD_FIELDS}
+  },
+  faqSections[]{ _key, title, faqs[]{ _key, question, answer } },
+  "seo": seo${SEO}
+}
+`;
+
+// ---------------------------------------------------------------------------
 // Fetchers
 // ---------------------------------------------------------------------------
 
@@ -683,4 +763,21 @@ export async function getCaseStudySlugsByClient(): Promise<Map<string, string>> 
     if (!byClient.has(clientId)) byClient.set(clientId, slug);
   }
   return byClient;
+}
+
+/** Every published comparison, newest first (index cards). */
+export async function getAllComparisons(): Promise<ComparisonCard[]> {
+  return await sanityClient.fetch<ComparisonCard[]>(ALL_COMPARISONS);
+}
+
+/** Slugs of every published comparison (the template's `getStaticPaths`). */
+export async function getComparisonSlugs(): Promise<string[]> {
+  const result = await sanityClient.fetch<(string | null)[]>(COMPARISON_SLUGS);
+  return result.filter((slug): slug is string => typeof slug === 'string' && slug.length > 0);
+}
+
+/** One published comparison by slug, or `null`. */
+export async function getComparisonBySlug(slug: string): Promise<Comparison | null> {
+  const result = await sanityClient.fetch<Comparison | null>(COMPARISON_BY_SLUG, { slug });
+  return result ?? null;
 }

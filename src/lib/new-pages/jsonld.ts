@@ -113,14 +113,16 @@ export function blogIndexJsonLd(meta: { name: string; description: string }, pos
   ];
 }
 
-/** `/case-studies`: the same CollectionPage + BreadcrumbList as `/blog`
- *  (lead 2026-10-21), listing the published case studies. */
-export function caseStudiesIndexJsonLd(
+/** A Sanity collection index (`/case-studies`, `/comparison`): the same
+ *  CollectionPage + BreadcrumbList as `/blog` (lead 2026-10-21), listing the
+ *  published documents as Articles at `<basePath>/<slug>`. */
+function collectionIndexJsonLd(
+  basePath: string,
   meta: { name: string; description: string },
-  cards: readonly { title: string; slug: string; publishedAt: string }[],
+  items: readonly { title: string; slug: string; publishedAt: string }[],
 ): Ld[] {
-  const url = abs("/case-studies");
-  const dates = cards.map((c) => c.publishedAt).filter(Boolean).sort();
+  const url = abs(basePath);
+  const dates = items.map((c) => c.publishedAt).filter(Boolean).sort();
   return [
     {
       "@context": "https://schema.org",
@@ -135,9 +137,9 @@ export function caseStudiesIndexJsonLd(
       ...(dates.length > 0 ? { dateModified: dates[dates.length - 1] } : {}),
       mainEntity: {
         "@type": "ItemList",
-        numberOfItems: cards.length,
-        itemListElement: cards.map((c, i) => {
-          const itemUrl = abs(`/case-studies/${c.slug}`);
+        numberOfItems: items.length,
+        itemListElement: items.map((c, i) => {
+          const itemUrl = abs(`${basePath}/${c.slug}`);
           return {
             "@type": "ListItem",
             position: i + 1,
@@ -155,6 +157,22 @@ export function caseStudiesIndexJsonLd(
       ],
     },
   ];
+}
+
+/** `/case-studies`: the published case studies (lead 2026-10-21). */
+export function caseStudiesIndexJsonLd(
+  meta: { name: string; description: string },
+  cards: readonly { title: string; slug: string; publishedAt: string }[],
+): Ld[] {
+  return collectionIndexJsonLd("/case-studies", meta, cards);
+}
+
+/** `/comparison`: the published comparisons, same shape as `/case-studies`. */
+export function comparisonIndexJsonLd(
+  meta: { name: string; description: string },
+  cards: readonly { title: string; slug: string; publishedAt: string }[],
+): Ld[] {
+  return collectionIndexJsonLd("/comparison", meta, cards);
 }
 
 export function pageJsonLd(page: NpPage): Ld[] {
@@ -260,6 +278,48 @@ export function caseStudyJsonLd(cs: {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       itemListElement: cs.crumbs.map((item, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        name: item.name,
+        item: abs(item.url),
+      })),
+    },
+  ];
+}
+
+/** A comparison (`/comparison/<slug>`, Sanity `comparison`): an Article by
+ *  and published by the Organization, and the breadcrumb (the page prints
+ *  none). The FAQPage comes from `FaqSection`. No offers. */
+export function comparisonJsonLd(c: {
+  url: string;
+  headline: string;
+  description?: string | undefined;
+  datePublished: string;
+  dateModified?: string | undefined;
+  image?: string | undefined;
+  crumbs: readonly { name: string; url: string }[];
+}): Ld[] {
+  const url = abs(c.url);
+  return [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "@id": `${url}#article`,
+      headline: c.headline,
+      ...(c.description ? { description: c.description } : {}),
+      url,
+      mainEntityOfPage: url,
+      inLanguage: "en-US",
+      datePublished: c.datePublished,
+      ...(c.dateModified ? { dateModified: c.dateModified } : {}),
+      ...(c.image ? { image: c.image } : {}),
+      author: { ...PROVIDER_LD },
+      publisher: { ...PROVIDER_LD },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: c.crumbs.map((item, i) => ({
         "@type": "ListItem",
         position: i + 1,
         name: item.name,
