@@ -21,8 +21,12 @@ export { isProductionBuild } from './case-study-release';
 const SCOPE: GuardScope = { tag: 'comparison', item: 'a comparison' };
 const COPY_FILE = 'src/components/comparison/copy.ts';
 
-/** Lorem ipsum, TODO: COPY, or an open content marker. */
-const PLACEHOLDER_OR_MARKER = /lorem\s+ipsum|TODO\s*:?\s*COPY|\[(FACT NEEDED|VERIFY|PERSON|QUOTE|RESULT NEEDED)\s*:/i;
+/**
+ * Lorem ipsum, TODO: COPY, an open content marker, or Figma's stat
+ * placeholders (a whole value of "X" / "+X%", or "[source]").
+ */
+const PLACEHOLDER_OR_MARKER =
+  /lorem\s+ipsum|TODO\s*:?\s*COPY|\[(FACT NEEDED|VERIFY|PERSON|QUOTE|RESULT NEEDED)\s*:|\[source\]|^\s*[+-]?X\s*%?\s*$/i;
 
 /** Copy on `/comparison` (hero, meta tags, JSON-LD name). */
 export function comparisonIndexCopyFields(): CopyField[] {
@@ -84,6 +88,6 @@ export function guardComparisonContent(page: string, comparison: Comparison, pro
     comparisonSanityFields(comparison),
     production,
     PLACEHOLDER_OR_MARKER,
-    'placeholder copy or an open marker ([FACT NEEDED: …], TODO: COPY, Lorem ipsum)',
+    'placeholder copy or an open marker ([FACT NEEDED: …], TODO: COPY, Lorem ipsum, "+X%", [source])',
   );
 }

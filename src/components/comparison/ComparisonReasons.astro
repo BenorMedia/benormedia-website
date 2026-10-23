@@ -79,7 +79,7 @@ const hasHeader = accentTitleText(header?.title).length > 0;
                     {item.stats.map((stat) => (
                       <li class="c-cmp-reasons__stat">
                         <span class="c-cmp-reasons__stat-value c-text_l">{stat.value}</span>
-                        <Tag class="c-cmp-reasons__stat-label">
+                        <Tag class:list={["c-cmp-reasons__stat-label", { "is-sourced": stat.source }]}>
                           {stat.label}{stat.source && <> <span class="c-cmp-reasons__stat-source">{stat.source}</span></>}
                         </Tag>
                       </li>
@@ -186,6 +186,13 @@ const hasHeader = accentTitleText(header?.title).length > 0;
     font-size: var(--fs-text-xs);
     line-height: 1.5;
     white-space: normal;
+    text-wrap: balance;
+  }
+  /* With "[source]" Figma widens the text box (3792:41704 112.5px,
+     3792:41710 132.8px) so the label still wraps on two lines; wider here
+     because the fallback font is wider than Acumin (QA 2026-10-22). */
+  .c-cmp-reasons :global(.c-cmp-reasons__stat-label.is-sourced) {
+    max-width: 16em;
   }
 
   /* ≤991: picture above the text. TODO: DS mobile (no mobile design). */

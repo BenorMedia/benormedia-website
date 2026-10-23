@@ -9,8 +9,8 @@
  * paragraph, case studies paragraph, index card titles and descriptions)
  * stay visible as they are in Figma, and the FAQ is the Pricing FAQ
  * (`PRICING_FAQ_GROUPS`, the questions Figma shows; lead: placeholder).
- * Stats: Figma "+X%", "0", "X" and "[source]" are `[FACT NEEDED: …]`
- * markers, never numbers (house rule). Never use this file on a real page,
+ * Stats: Figma's own placeholders "+X%", "0", "X" and "[source]", shown as
+ * in the design (lead 2026-10-22), never real-looking numbers (house rule). Never use this file on a real page,
  * in `copy.ts` or in Sanity. The page that imports it is not built in
  * production (`src/pages/dev/comparison/[...preview].astro`).
  *
@@ -203,8 +203,8 @@ export function createComparisonFixture(
         text: 'Launch landing pages, update pricing or publish a case study the same day. Anyone on your team can update, maintain and scale the site.',
         // Figma 3790:39797: "+X%" twice, same label.
         stats: [
-          { _key: key(), value: '[FACT NEEDED: faster page launches figure, Figma "+X%"]', label: 'faster page launches' },
-          { _key: key(), value: '[FACT NEEDED: second figure, Figma "+X%"]', label: 'faster page launches' },
+          { _key: key(), value: '+X%', label: 'faster page launches' },
+          { _key: key(), value: '+X%', label: 'faster page launches' },
         ],
       },
       {
@@ -215,7 +215,7 @@ export function createComparisonFixture(
         ),
         title: 'Zero plugins to patch, fewer risks',
         text: 'No core, theme or plugin updates breaking your site on a Friday. Hosting, security and backups are handled by the platform.',
-        stats: [{ _key: key(), value: '[FACT NEEDED: plugins to maintain, Figma "0"]', label: 'plugins to maintain' }],
+        stats: [{ _key: key(), value: '0', label: 'plugins to maintain' }],
       },
       {
         _key: key(),
@@ -225,9 +225,9 @@ export function createComparisonFixture(
         stats: [
           {
             _key: key(),
-            value: '[FACT NEEDED: organic traffic lift, Figma "+X%"]',
+            value: '+X%',
             label: 'organic traffic lift',
-            source: '[FACT NEEDED: source]',
+            source: '[source]',
           },
         ],
       },
@@ -239,9 +239,9 @@ export function createComparisonFixture(
         stats: [
           {
             _key: key(),
-            value: '[FACT NEEDED: pages managed by one team, Figma "X"]',
+            value: 'X',
             label: 'pages managed by one team',
-            source: '[FACT NEEDED: source]',
+            source: '[source]',
           },
         ],
       },
