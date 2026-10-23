@@ -4,7 +4,9 @@
  * The hero's website frame (Figma 3842:40085): a browser window (three
  * window dots, the URL pill with the site's host) around the client's
  * `websiteScreenshot`, and the "Visit live site" button (`Button`
- * `is-white`) over the screenshot when the client has a `websiteUrl`.
+ * `is-white`) over the screenshot when the client has a `websiteUrl`,
+ * shown on hover / keyboard focus (always on touch screens). With a mouse
+ * it follows the pointer (`initCursorFollow`, src/scripts/ui/cursor-follow.ts).
  * Figma's hand cursor next to the button is a mock pointer and is left out.
  *
  * Renders nothing without a screenshot (no design for that state). The
@@ -64,6 +66,15 @@ if (url) {
   </div>
 )}
 
+<script>
+  import { initCursorFollow } from "../../scripts/ui/cursor-follow";
+
+  document.querySelectorAll<HTMLElement>(".c-cs-browser__window").forEach((area) => {
+    const cta = area.querySelector<HTMLElement>(".c-cs-browser__cta");
+    if (cta) initCursorFollow(area, cta);
+  });
+</script>
+
 <style>
   /* The box the hero gives it; the window is wider and is clipped by the
      hero (Figma frame 3842:40084, 981px, overflow clip). */
@@ -82,15 +93,16 @@ if (url) {
     border-radius: 8px;
     background: var(--color-browser-bg);
   }
-  /* 63.7px bar: three 16.8px dots from 30px, 14.4px apart; the URL pill
-     (287.7 × 28.8px, white, 1px border) centred. */
+  /* 46px bar (Figma 3842:40086, round 4; was 63.7px): three 16.8px dots
+     from 30px, 14.4px apart, centred vertically (y 14.6); the URL pill
+     (287.7 × 28.8px at y 8.6, white, 1px border) centred. */
   .c-cs-browser__bar {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 4.549rem;
+    height: 3.286rem;
   }
   .c-cs-browser__dots {
     position: absolute;
@@ -140,14 +152,32 @@ if (url) {
     border-radius: 8px 8px 0 0;
     background: var(--color-white);
   }
-  /* Button centre: 134px right of and 21.5px above the window's centre
-     (Figma 3842:40094), as shares of the 1103 × 675 window. */
+  /* Default button position (no mouse, touch, no JS): Figma 3842:40094 at
+     x 590, y 277.9, 193 × 60, so its centre (686.5, 307.9) as shares of the
+     1103 × 657.1 window (round 4). */
   .c-cs-browser :global(.c-cs-browser__cta) {
     position: absolute;
-    top: 46.82%;
-    left: 62.15%;
+    top: 46.86%;
+    left: 62.24%;
     white-space: nowrap;
     translate: -50% -50%;
+  }
+  /* Lead 2026-10-22: the button appears on hover over the window. Keyboard
+     focus shows it too; touch screens (no hover) always show it. */
+  @media (hover: hover) {
+    .c-cs-browser :global(.c-cs-browser__cta) {
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .c-cs-browser__window:hover :global(.c-cs-browser__cta),
+    .c-cs-browser__window:focus-within :global(.c-cs-browser__cta) {
+      opacity: 1;
+    }
+  }
+  @media (hover: hover) and (prefers-reduced-motion: reduce) {
+    .c-cs-browser :global(.c-cs-browser__cta) {
+      transition: none;
+    }
   }
   .c-cs-browser__icon {
     display: block;

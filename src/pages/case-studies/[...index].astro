@@ -2,7 +2,7 @@
 /**
  * Case studies index — `/case-studies` (Figma 3790:36365, DECISIONS → Case
  * studies). `CaseStudiesIndexHero` (rings + client icon tiles from
- * `getAllClientsWithIcon`, lead 2026-10-22) + every published case study (`CaseStudyListing`,
+ * `getClientsWithIconByRank`, lead 2026-10-22) + every published case study (`CaseStudyListing`,
  * newest first, no pagination or filters). CTA banner + footer from
  * BaseLayout. SEO lives in code (`PAGE_META.caseStudies`, like `/work`).
  *
@@ -36,7 +36,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import CaseStudiesIndexHero from "../../components/case-studies/CaseStudiesIndexHero.astro";
 import CaseStudyListing from "../../components/case-studies/CaseStudyListing.astro";
-import { getAllCaseStudies, getAllClientsWithIcon } from "../../lib/sanity/queries";
+import { getAllCaseStudies, getClientsWithIconByRank } from "../../lib/sanity/queries";
 import { PAGE_META } from "../../lib/content/seo";
 import { CASE_STUDY_COPY } from "../../components/case-studies/copy";
 import JsonLd from "../../components/layout/JsonLd.astro";
@@ -61,8 +61,9 @@ const hero = CASE_STUDY_COPY.indexHero;
 // Indexable only when at least one listed case study is indexable, so the
 // robots tag agrees with the sitemap (`case-study-sitemap.mjs`).
 const noIndex = !cards.some((card) => card.noIndex !== true);
-// Hero tiles: the first 11 clients with an icon, by name (the fetcher's order).
-const clients = await getAllClientsWithIcon();
+// Hero tiles: clients with an icon in the Studio order (`orderRank`); the hero
+// shows the first 21, orbiting the rings.
+const clients = await getClientsWithIconByRank();
 ---
 
 <BaseLayout
