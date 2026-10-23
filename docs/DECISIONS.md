@@ -656,7 +656,7 @@ Without adding to your team." with "website moving." marked Gradient (published 
 #### Design team
 - ~~**Hero pill chevron**~~ — RESOLVED 2026-10-22: a dropdown to pick the other comparisons, designed to match the nav Services panel (lead; see Decisions).
 - **Comparison mobile and tablet** — No mobile or tablet frames. Built meanwhile: hero buttons stacked full width, "What to choose" cards and reason rows stacked (picture first), steps 2 per row at ≤991 and 1 per row at ≤767 without the stagger, the table restacks its rows at ≤767 (see Decisions, 2026-10-22 round 2). (2026-10-22)
-- **Comparison values without a token** — Card border `#EDEDED` (Grey 500) → `--color-border`; table group row `#FAFAFA` (Grey 400) → `--color-gray-light`; table feature names Acumin Medium 500 → 400 and group labels Semibold 600 → 700 (kit has 400 / 700); step number 24px → `c-text`; table group label 18px → `c-paragraph_s`; pill "VS" 18px → 1.286rem. All marked `TODO: DS`. (2026-10-22)
+- **Comparison values without a token** — Card border `#EDEDED` (Grey 500) → `--color-border`; table group row `#FAFAFA` (Grey 400) → 33% `--color-gray-light` on `--color-white` (= #FAFAFA, lead 2026-10-23); table feature names Acumin Medium 500 → 400 and group labels Semibold 600 → 700 (kit has 400 / 700); step number 24px → `c-text`; table group label 18px → `c-paragraph_s`; pill "VS" 18px → 1.286rem. All marked `TODO: DS`. (2026-10-22)
 - **"What to choose" card spacing** — Figma uses 40px picture → text on the Webflow card and 48px on the WordPress card; built with 40px on both. (2026-10-22)
 - ~~**Stat source display**~~ — RESOLVED 2026-10-22: plain text inline after the label, as in Figma; no link for now (lead).
 #### Needs lead OK

@@ -216,7 +216,9 @@ const whiten = !darkLogo;
     display: block;
     padding: var(--c-cmp-table-pad);
     border-radius: 8px;
-    background: var(--color-gray-light); /* TODO: DS Figma #FAFAFA */
+    /* Figma #FAFAFA (Grey 400), no token: 33% `--color-gray-light` on white
+       = #FAFAFA exactly (lead comment 2026-10-23: lighter, subtler). TODO: DS */
+    background: color-mix(in srgb, var(--color-gray-light) 33%, var(--color-white));
     color: var(--color-text);
     font-weight: 700; /* Figma Semibold 600, not in the kit. TODO: DS */
     line-height: normal;
