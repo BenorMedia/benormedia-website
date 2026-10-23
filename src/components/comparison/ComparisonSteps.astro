@@ -14,6 +14,10 @@
  * Data: Sanity `migrationSteps` (max 4, number = array order). Icons:
  * `image` (decorative, `alt=""`: the step name is next to it).
  * ≤991: two per row, ≤767: one per row, no stagger. TODO: DS mobile.
+ *
+ * Motion (lead comment 2026-10-23): ≥992px, odd cards drift up and even
+ * cards down with the scroll (`src/scripts/animations/steps-parallax.ts`,
+ * `data-steps-parallax`). No JS / reduced motion: static.
  */
 import Container from "../ui/Container.astro";
 import ComparisonSectionHeader from "./ComparisonSectionHeader.astro";
@@ -47,7 +51,7 @@ const hasHeader = accentTitleText(header?.title).length > 0;
     <Container>
       <ComparisonSectionHeader header={header} titleWidth="46.5rem" />
       {items.length > 0 && (
-        <ol class="c-cmp-steps__list" style={`--c-cmp-steps: ${items.length};`}>
+        <ol class="c-cmp-steps__list" style={`--c-cmp-steps: ${items.length};`} data-steps-parallax>
           {items.map((item) => (
             <li class="c-cmp-steps__item">
               <div class="c-cmp-steps__card">
