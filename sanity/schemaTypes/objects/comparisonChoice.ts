@@ -4,7 +4,7 @@ import { ACCENT_TITLE_HELP } from './accentSectionHeader';
 import { altField } from './imageAlt';
 
 /**
- * One card of a comparison's "What to choose" section (SCHEMAS.md v0.13,
+ * One card of a comparison's "What to choose" section (SCHEMAS.md v0.14,
  * Figma 3790:37367): illustration, "Choose X if…" title and a short list of
  * reasons. Used twice on `comparison`: `webflowChoice` (the illustration is
  * fixed in code, so the image field is hidden there; list items show a

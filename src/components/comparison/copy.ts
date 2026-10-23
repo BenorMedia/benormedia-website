@@ -1,6 +1,6 @@
 /**
  * Comparison index and template labels that live in code (DECISIONS →
- * Comparison, SCHEMAS v0.13: the index hero, the index SEO and the FAQ
+ * Comparison, SCHEMAS v0.14: the index hero, the index SEO and the FAQ
  * heading are not stored in Sanity). Strings that already exist in
  * `src/lib/new-pages/copy.json` are reused from there. Figma placeholders
  * (index 3790:37967) are `TODO: COPY` and are checked by the production
@@ -13,7 +13,7 @@ export const COMPARISON_PATH = '/comparison';
 
 export const comparisonHref = (slug: string): string => `${COMPARISON_PATH}/${slug}`;
 
-/** `id` of the table section: the hero's second button scrolls to it (SCHEMAS v0.13). */
+/** `id` of the table section: the hero's second button scrolls to it (SCHEMAS v0.14). */
 export const COMPARISON_TABLE_ID = 'comparison-table';
 
 /** Webflow side, fixed in code (DECISIONS → Comparison). */
@@ -25,7 +25,7 @@ export const COMPARISON_COPY = {
   vs: 'vs',
   // Visually hidden in place of "VS" for screen readers ("Webflow versus WordPress").
   versus: 'versus',
-  // Same heading as the service pages (FAQ heading fixed in code, SCHEMAS v0.13).
+  // Same heading as the service pages (FAQ heading fixed in code, SCHEMAS v0.14).
   faqHeading: 'Frequently asked questions.',
   // Accessible name of the FAQ tabs.
   faqTabsLabel: 'FAQ topics',

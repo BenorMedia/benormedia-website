@@ -2,7 +2,7 @@ import { defineType, defineField } from 'sanity';
 import { ACCENT_TITLE_MAX_MESSAGE } from './accentTitle';
 
 /**
- * Section header whose title can carry gradient words (SCHEMAS.md v0.13):
+ * Section header whose title can carry gradient words (SCHEMAS.md v0.14):
  * eyebrow pill + `accentTitle` + paragraph. `sectionHeader` has a plain
  * string title, so it can't render "side by side" in the brand gradient.
  * First used by `comparison` (5 sections).

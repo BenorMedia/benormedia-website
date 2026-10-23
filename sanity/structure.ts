@@ -3,7 +3,7 @@ import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list';
 import { SINGLETON_TYPES } from './schemaTypes';
 
 /**
- * Desk structure per docs/SCHEMAS.md v0.13:
+ * Desk structure per docs/SCHEMAS.md v0.14:
  *
  *   Site Settings   (singleton — SEO-only page metadata + globals)
  *   Home Page       (singleton — SEO only)

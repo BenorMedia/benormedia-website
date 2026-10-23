@@ -2,7 +2,7 @@ import { defineType, defineField, defineArrayMember } from 'sanity';
 import { altField } from './imageAlt';
 
 /**
- * One row of a comparison's "Why teams switch" section (SCHEMAS.md v0.13,
+ * One row of a comparison's "Why teams switch" section (SCHEMAS.md v0.14,
  * Figma 3790:39738): illustration, title, paragraph and 1 or 2 stats. Rows
  * alternate image left / image right in code.
  */

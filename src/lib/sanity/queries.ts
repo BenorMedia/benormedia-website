@@ -268,6 +268,23 @@ export const ALL_CLIENTS_WITH_ICON = /* groq */ `
 `;
 
 // ---------------------------------------------------------------------------
+// CLIENTS_WITH_ICON_BY_RANK — the `/case-studies` hero orbit: the same
+// clients and fields as ALL_CLIENTS_WITH_ICON, in the Studio drag-and-drop
+// order (`orderRank`, the Work page order), then name, so the hero shows the
+// first clients editors rank (lead 2026-10-22, round 5). Home keeps its own.
+// ---------------------------------------------------------------------------
+
+export const CLIENTS_WITH_ICON_BY_RANK = /* groq */ `
+*[_type == "client" && defined(icon.asset) && !(_id in path("drafts.**"))]
+  | order(orderRank asc, name asc){
+  _id,
+  _type,
+  name,
+  "icon": icon${IMAGE}
+}
+`;
+
+// ---------------------------------------------------------------------------
 // TESTIMONIALS — every published testimonial, oldest first, with the client
 // that references it (`client.testimonial`) so cards can show that client's
 // logo. Used by the shared TestimonialMarquee (Home + other pages).
@@ -387,7 +404,8 @@ export const SERVICE_BY_SLUG = /* groq */ `
  * Card fields: the index cards and the "Resources" cards at the end of a case
  * study. Shared by ALL_CASE_STUDIES and CASE_STUDY_BY_SLUG (`related`,
  * `latest`) so the card projection is defined once. `cardStats` (max 2) and
- * `client.logoOnDark` are optional (SCHEMAS v0.11).
+ * `client.logoOnDark` are optional (SCHEMAS v0.11); so are
+ * `client.brandColor` / `brandGlowColor` (hex strings, SCHEMAS v0.13).
  */
 const CASE_STUDY_CARD_FIELDS = /* groq */ `
   _id,
@@ -400,7 +418,9 @@ const CASE_STUDY_CARD_FIELDS = /* groq */ `
     _id,
     name,
     "logo": logo${IMAGE},
-    "logoOnDark": logoOnDark${IMAGE}
+    "logoOnDark": logoOnDark${IMAGE},
+    brandColor,
+    brandGlowColor
   }
 `;
 
@@ -517,7 +537,7 @@ export const CASE_STUDY_SLUG_BY_CLIENT = /* groq */ `
 `;
 
 // ---------------------------------------------------------------------------
-// Comparisons (SCHEMAS.md v0.13 "GROQ: comparison") — `/comparison` index and
+// Comparisons (SCHEMAS.md v0.14 "GROQ: comparison") — `/comparison` index and
 // the `/comparison/[slug]` template. Only published documents with a slug.
 // ---------------------------------------------------------------------------
 
@@ -698,6 +718,14 @@ export async function getAllClientsWithLogo(): Promise<Client[]> {
  */
 export async function getAllClientsWithIcon(): Promise<Client[]> {
   return await sanityClient.fetch<Client[]>(ALL_CLIENTS_WITH_ICON);
+}
+
+/**
+ * Fetch every published client that has an icon asset, in the Studio order
+ * (`orderRank`), then name. Consumed by the `/case-studies` hero orbit.
+ */
+export async function getClientsWithIconByRank(): Promise<Client[]> {
+  return await sanityClient.fetch<Client[]>(CLIENTS_WITH_ICON_BY_RANK);
 }
 
 /**

@@ -29,11 +29,11 @@ export const CASE_STUDY_COPY = {
     // TODO: COPY: Figma breadcrumb level 2.
     index: 'Case studies',
   },
-  // TODO: COPY: Figma facts row labels (3842:40102, "01 / Client" … "06 / Stack"), numbered in code.
+  // TODO: COPY: Figma facts row labels (3842:40102, round 4: no numbers), uppercase via Eyebrow.
   facts: {
     client: 'Client',
     industry: 'Industry',
-    services: 'Services delivered',
+    services: 'Services Delivered',
     solution: 'Solution',
     timeline: 'Timeline',
     stack: 'Stack',

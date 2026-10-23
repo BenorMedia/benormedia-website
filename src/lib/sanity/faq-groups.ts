@@ -1,7 +1,7 @@
 /**
  * Sanity `faqSection[]` → `FaqSection` groups (tab label, stable value,
  * plain-text answers). Shared by the service template and the comparison
- * template (same object and rendering, SCHEMAS v0.13). Sections without a
+ * template (same object and rendering, SCHEMAS v0.14). Sections without a
  * title and questions without text are dropped; duplicate tab values get
  * the section's position appended.
  */

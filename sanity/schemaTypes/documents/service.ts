@@ -11,7 +11,7 @@ import { ACCENT_TITLE_MAX_MESSAGE } from '../objects/accentTitle';
 
 // Top-level routes a service slug would collide with (docs/SITEMAP.md
 // "Reserved slugs"). `case-studies` added in SCHEMAS.md v0.10, `comparison`
-// in v0.13.
+// in v0.14.
 const RESERVED_SLUGS = [
   'work',
   'case-studies',

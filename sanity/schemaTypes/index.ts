@@ -1,5 +1,5 @@
 // Sanity schema types registry — flat list of every document, object and singleton.
-// See docs/SCHEMAS.md v0.13 for the contract.
+// See docs/SCHEMAS.md v0.14 for the contract.
 
 import { seo } from './objects/seo';
 import { link } from './objects/link';

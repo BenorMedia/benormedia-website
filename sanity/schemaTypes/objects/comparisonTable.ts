@@ -1,7 +1,7 @@
 import { defineType, defineField, defineArrayMember } from 'sanity';
 
 /**
- * Side-by-side table of a comparison (SCHEMAS.md v0.13, Figma 3790:37411).
+ * Side-by-side table of a comparison (SCHEMAS.md v0.14, Figma 3790:37411).
  * The table is a list of groups ("Performance", "SEO & AEO"…), each with
  * rows: feature, Webflow cell, competitor cell. The header row (Webflow logo,
  * competitor logo), the check icon on Webflow cells and the dash on

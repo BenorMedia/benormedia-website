@@ -2,7 +2,7 @@ import { defineType, defineField } from 'sanity';
 
 /**
  * A single stat (value + label). Used in the Home hero social proof and
- * similar callouts. In `comparison.reasons[].stats` (SCHEMAS v0.13) it also
+ * similar callouts. In `comparison.reasons[].stats` (SCHEMAS v0.14) it also
  * shows an optional `source` and `sourceUrl`; they are hidden elsewhere.
  * `value` is free text so a `[FACT NEEDED: …]` marker fits.
  */
@@ -25,7 +25,7 @@ export const stat = defineType({
       type: 'string',
       validation: (Rule) => Rule.required(),
     }),
-    // SCHEMAS v0.13: comparison reasons only (`comparison.reasons[].stats`).
+    // SCHEMAS v0.14: comparison reasons only (`comparison.reasons[].stats`).
     defineField({
       name: 'source',
       title: 'Source',

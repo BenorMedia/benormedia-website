@@ -1,6 +1,9 @@
 import { defineType, defineField } from 'sanity';
 import { orderRankField, orderRankOrdering } from '@sanity/orderable-document-list';
 
+/** Six-digit hex colour, e.g. `#001F3D` (`brandColor`, `brandGlowColor`). */
+const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
+
 /**
  * Client — a customer showcased across the site.
  *
@@ -13,6 +16,10 @@ import { orderRankField, orderRankOrdering } from '@sanity/orderable-document-li
  *
  * `logoOnDark` (SCHEMAS v0.11): optional logo for dark backgrounds (navy
  * case-study card). Empty: the site whitens `logo` with CSS.
+ *
+ * `brandColor` / `brandGlowColor` (SCHEMAS v0.13, lead 2026-10-22): optional
+ * hex strings for the case-study card thumbnail background and glow. Empty:
+ * the card uses `--color-navy` / `--color-blue-500` (Surfe's colours).
  *
  * `orderRank` (hidden, @sanity/orderable-document-list): drag-and-drop order
  * of the Studio "Clients" list. Only the Work page listing sorts by it; Home,
@@ -63,6 +70,28 @@ export const client = defineType({
           type: 'string',
         }),
       ],
+    }),
+    defineField({
+      name: 'brandColor',
+      title: 'Brand colour',
+      description:
+        'Optional. The background of the client logo area on the case study cards (Case studies page and the "Resources" cards under each case study). Six-digit hex code, e.g. #001F3D. Pick a dark colour: the logo is shown in white on top. If left empty, the default navy is used.',
+      type: 'string',
+      validation: (Rule) =>
+        Rule.regex(HEX_COLOR, { name: 'hex colour' }).error(
+          'Use a six-digit hex code with the #, e.g. #001F3D.',
+        ),
+    }),
+    defineField({
+      name: 'brandGlowColor',
+      title: 'Brand glow colour',
+      description:
+        'Optional. The soft glow behind the logo on the case study cards (same cards as Brand colour). Six-digit hex code, e.g. #1355FF. If left empty, the default blue is used.',
+      type: 'string',
+      validation: (Rule) =>
+        Rule.regex(HEX_COLOR, { name: 'hex colour' }).error(
+          'Use a six-digit hex code with the #, e.g. #1355FF.',
+        ),
     }),
     defineField({
       name: 'icon',

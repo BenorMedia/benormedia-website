@@ -1,8 +1,8 @@
-# Sanity ↔ Astro Data Contract (v0.13, v0.11 pending Sergio, v0.13 pending the lead)
+# Sanity ↔ Astro Data Contract (v0.14, v0.11 to v0.14 not deployed)
 
-Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) approved 2026-09-29. v0.7 (`client.orderRank`) requested by the lead 2026-09-29. v0.8 (`client.websiteVideo`) requested by the lead 2026-09-30. v0.9 (`client.sector`) requested by the lead 2026-10-01. v0.10 (`caseStudy`) approved by the lead 2026-10-20. v0.11 (`caseStudy.cardStats`, `client.logoOnDark`) requested by Emily 2026-10-22, code only, pending Sergio's OK. v0.12 (case study template Figma 3842:40046: hero facts, body quote and callout, results texts, `kpi.label`) added by the ui agent 2026-10-22, approved by the lead 2026-10-22 (deploy by the orchestrator). v0.13 (`comparison` document, Figma 3790:37245 / 3790:37967) added by the sanity agent 2026-10-22 from the lead's Comparison decisions (DECISIONS → Comparison), code only, not deployed, pending the lead's OK on the field list.
+Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) approved 2026-09-29. v0.7 (`client.orderRank`) requested by the lead 2026-09-29. v0.8 (`client.websiteVideo`) requested by the lead 2026-09-30. v0.9 (`client.sector`) requested by the lead 2026-10-01. v0.10 (`caseStudy`) approved by the lead 2026-10-20. v0.11 (`caseStudy.cardStats`, `client.logoOnDark`) requested by Emily 2026-10-22, code only, pending Sergio's OK. v0.12 (case study template Figma 3842:40046: hero facts, body quote and callout, results texts, `kpi.label`) added by the ui agent 2026-10-22, approved by the lead 2026-10-22 (deploy by the orchestrator). v0.13 (`client.brandColor`, `client.brandGlowColor`) requested by Emily 2026-10-22, code only, not deployed. v0.14 (`comparison` document, Figma 3790:37245 / 3790:37967) added by the sanity agent 2026-10-22 from the lead's Comparison decisions (DECISIONS → Comparison), field list approved by the lead 2026-10-22, code only, not deployed.
 
-### v0.13 changes vs v0.12 (2026-10-22, code only, NOT deployed, pending the lead's OK)
+### v0.14 changes vs v0.13 (2026-10-22, field list approved by the lead; code only, NOT deployed)
 Figma template 3790:37245 and index 3790:37967. Routes `/comparison` and `/comparison/[slug]` (SITEMAP, DECISIONS → Comparison).
 - **New `comparison` document**, routable at `/comparison/<slug>` (see the table below). Index `/comparison` lists every published comparison, `order(publishedAt desc, title asc)`. Drafts never build.
 - **New objects:** `accentSectionHeader` (eyebrow + `accentTitle` + description: `sectionHeader` has a plain string title, so it can't render gradient words such as "side by side"), `comparisonChoice`, `comparisonTableGroup`, `comparisonTableRow`, `comparisonReason`.
@@ -11,6 +11,14 @@ Figma template 3790:37245 and index 3790:37967. Routes `/comparison` and `/compa
 - **Reserved service slugs** gain `comparison`.
 - **New queries:** `ALL_COMPARISONS`, `COMPARISON_SLUGS`, `COMPARISON_BY_SLUG` (see "GROQ: comparison" below).
 - Unchanged and not stored on `comparison`: the logo strip and testimonials (global data, as on service pages), the FAQ heading (fixed in code, as on service pages), the CTA banner (`siteSettings`), the index hero copy and index SEO (code, as `/case-studies`), and every Webflow-side asset (pill logo, table header logo, "What to choose" illustration).
+
+### v0.13 changes vs v0.12 (2026-10-22, lead decision Emily; code only, NOT deployed, no documents written)
+The case-study card's navy thumbnail and blue glow are Surfe's brand colours, not site colours: each client gets its own.
+- **`client.brandColor`** (optional `string`, validated `^#[0-9a-fA-F]{6}$`, next to `logoOnDark`): the card thumbnail background. Empty → `--color-navy` (#001F3D, Surfe).
+- **`client.brandGlowColor`** (optional `string`, same validation): the card glow behind the logo. Empty → `--color-blue-500` (#1355FF, Surfe).
+- **Queries:** both projected in the card's `client->` (`CASE_STUDY_CARD_FIELDS`, so `ALL_CASE_STUDIES` and `CASE_STUDY_BY_SLUG` `related` / `latest`).
+- **Render:** the card sets them inline as `--c-cs-card-bg` / `--c-cs-card-glow` on the thumbnail, only when the value passes the same hex check in code (no other string reaches the style attribute). The logo stays white (`logoOnDark` or the whitened `logo`), so the brand colour must be dark enough for a white logo.
+- No new dependency (no colour-input plugin in the repo): plain strings.
 
 ### v0.12 changes vs v0.11 (2026-10-22, approved by the lead 2026-10-22; deploy by the orchestrator, not deployed by the ui agent)
 Figma template 3842:40046 (case studies v3). All new fields optional; the page renders nothing for an empty one.
@@ -83,6 +91,8 @@ Approach: **repeatable data lives in Sanity documents; page copy is authored dir
 | Category | `category` | reference → `category` | optional |
 | Sector | `sector` | string, dropdown: `agency` · `professional-services` · `saas` | optional, one value. Work page filters (v0.9) |
 | Logo on dark | `logoOnDark` | image (SVG preferred) + alt | optional. Logo for dark backgrounds (navy case-study card). Empty → `logo` with a CSS whitening filter (v0.11) |
+| Brand colour | `brandColor` | string, `#RRGGBB` | optional. Case-study card thumbnail background. Empty → `--color-navy` (v0.13) |
+| Brand glow colour | `brandGlowColor` | string, `#RRGGBB` | optional. Case-study card glow. Empty → `--color-blue-500` (v0.13) |
 | Website URL | `websiteUrl` | url | optional |
 | Order Rank | `orderRank` | string (LexoRank) | hidden, read-only. Set by the Studio drag-and-drop list (`@sanity/orderable-document-list`). Only the Work page listing sorts by it |
 
@@ -156,7 +166,7 @@ Fields are grouped in Studio tabs, in this order.
 
 Preview: title · client name · client logo. Desk list ordered by `publishedAt` desc.
 
-### `comparison` — Comparison pages (routable at `/comparison/<slug>`, v0.13)
+### `comparison` — Comparison pages (routable at `/comparison/<slug>`, v0.14)
 Figma template 3790:37245, index card 3790:37967. Fields are grouped in Studio tabs, one per page section in page order, then Card and SEO. "Required" blocks publishing only: drafts always save.
 
 | Tab | Field | Name | Type | Rules |
@@ -342,13 +352,13 @@ Seed: Fintech · SaaS · HR Tech · Cleantech · Venture Capital · E-Commerce �
 | `link` | label, type (`internal` / `external` / `contact`), internalRef (page singleton, post or service), externalUrl, openInNewTab. `contact` opens the contact popup |
 | `button` | link + variant (`gradient` / `gradient-outline` / `white` / `glass`) |
 | `sectionHeader` | eyebrow, title, description |
-| `stat` | value (string, e.g. "$700M+"), label, source + sourceUrl (optional, `comparison.reasons[].stats` only, v0.13) |
+| `stat` | value (string, e.g. "$700M+"), label, source + sourceUrl (optional, `comparison.reasons[].stats` only, v0.14) |
 | `kpi` | value, description, label (optional, case study results only, v0.12) |
 | `caseStudyCallout` | title (required), items[] (strings, min 1). `caseStudy.body` only (v0.12) |
 | `accentTitle` | one-block Portable Text title with the "Gradient" (`accent`) decorator (see `service`) |
-| `processStep` | name, description, note (optional link line), features[], image + alt (see `service`). In `comparison.migrationSteps` only name, description, image (v0.13) |
-| `accentSectionHeader` | eyebrow, title (`accentTitle`), description (v0.13, see `comparison`) |
-| `comparisonChoice` / `comparisonTableGroup` / `comparisonTableRow` / `comparisonReason` | `comparison` only (v0.13) |
+| `processStep` | name, description, note (optional link line), features[], image + alt (see `service`). In `comparison.migrationSteps` only name, description, image (v0.14) |
+| `accentSectionHeader` | eyebrow, title (`accentTitle`), description (v0.14, see `comparison`) |
+| `comparisonChoice` / `comparisonTableGroup` / `comparisonTableRow` / `comparisonReason` | `comparison` only (v0.14) |
 
 ---
 

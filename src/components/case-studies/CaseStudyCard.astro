@@ -10,6 +10,12 @@
  * Logo: `client.logoOnDark` when set, else `client.logo` whitened with a CSS
  * filter, else the client name in white (SCHEMAS v0.11).
  *
+ * Colours (lead 2026-10-22): thumbnail background `client.brandColor`, glow
+ * `client.brandGlowColor` (SCHEMAS v0.13), set inline as `--c-cs-card-bg` /
+ * `--c-cs-card-glow` on the thumbnail. Only a `#RRGGBB` value is output, so
+ * no other CSS can reach the style attribute. Empty or invalid: the defaults
+ * `--color-navy` / `--color-blue-500` (Surfe's colours).
+ *
  * Interaction = the blog cards (`NpBlogResources`, lead 2026-10-20): the
  * whole card is the link's hit area (`::after`), hover / focus turn
  * "Learn more" accent, focus ring on the link. No motion beyond that.
@@ -36,11 +42,21 @@ const href = caseStudyHref(card.slug);
 // Sanity returns missing fields as `null`.
 const darkLogo = card.client?.logoOnDark?.asset ? card.client.logoOnDark : null;
 const logo = darkLogo ?? card.client?.logo ?? null;
+// Only a six-digit hex reaches the inline style (the Studio rule can be bypassed by API writes).
+const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
+const hexOrNull = (value: unknown): string | null =>
+  typeof value === "string" && HEX_COLOR.test(value.trim()) ? value.trim() : null;
+const brandColor = hexOrNull(card.client?.brandColor);
+const brandGlowColor = hexOrNull(card.client?.brandGlowColor);
+const thumbStyle =
+  [brandColor && `--c-cs-card-bg: ${brandColor}`, brandGlowColor && `--c-cs-card-glow: ${brandGlowColor}`]
+    .filter(Boolean)
+    .join("; ") || undefined;
 const stats = (card.cardStats ?? []).filter((stat) => stat?.value?.trim() && stat?.label?.trim()).slice(0, 2);
 ---
 
 <li class="c-cs-card">
-  <div class="c-cs-card__thumb">
+  <div class="c-cs-card__thumb" style={thumbStyle}>
     <svg class="c-cs-card__orbit" viewBox="0 0 545 545" fill="none" aria-hidden="true" focusable="false">
       <defs>
         <filter id={`cs-glow-${card._id}`} x="0" y="0" width="545" height="545" filterUnits="userSpaceOnUse">
@@ -88,10 +104,11 @@ const stats = (card.cardStats ?? []).filter((stat) => stat?.value?.trim() && sta
     border-radius: 8px;
     background: var(--color-white);
   }
-  /* 543 × 243 navy thumbnail (Figma 3798:19208), the divider line under it. */
+  /* 543 × 243 thumbnail (Figma 3798:19208) in the client's brand colour
+     (default navy), the divider line under it. */
   .c-cs-card__thumb {
     position: relative;
-    background: var(--color-navy);
+    background: var(--c-cs-card-bg, var(--color-navy));
     display: grid;
     place-items: center;
     aspect-ratio: 532 / 243; /* related card thumbnail 3768:26448 */
@@ -110,9 +127,10 @@ const stats = (card.cardStats ?? []).filter((stat) => stat?.value?.trim() && sta
     transform: translate(-50%, -50%);
     pointer-events: none;
   }
-  /* Glow: Figma Blue 500 at 40%, blur 75.36 (3798:19209). */
+  /* Glow: the client's glow colour (default Figma Blue 500) at 40%, blur
+     75.36 (3798:19209). */
   .c-cs-card__glow {
-    fill: var(--color-blue-500);
+    fill: var(--c-cs-card-glow, var(--color-blue-500));
     opacity: 0.4;
   }
   /* Logo box at the Figma share of the thumbnail (3768:26454: 232px box,

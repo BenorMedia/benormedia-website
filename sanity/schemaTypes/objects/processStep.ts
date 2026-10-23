@@ -87,7 +87,7 @@ export const processStep = defineType({
         }),
       ],
       validation: (Rule) => Rule.max(1).error('Keep the note to one paragraph.'),
-      // Not part of the comparison migration steps (SCHEMAS v0.13).
+      // Not part of the comparison migration steps (SCHEMAS v0.14).
       hidden: ({ path }) => path[0] === 'migrationSteps',
     }),
     defineField({
@@ -99,7 +99,7 @@ export const processStep = defineType({
       of: [defineArrayMember({ type: 'string' })],
       options: { layout: 'tags' },
       validation: (Rule) => Rule.unique(),
-      // Not part of the comparison migration steps (SCHEMAS v0.13).
+      // Not part of the comparison migration steps (SCHEMAS v0.14).
       hidden: ({ path }) => path[0] === 'migrationSteps',
     }),
     defineField({

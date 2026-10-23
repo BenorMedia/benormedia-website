@@ -6,7 +6,7 @@ import { altField } from '../objects/imageAlt';
 
 /**
  * Comparison — "Webflow vs <competitor>", routable at /comparison/<slug>
- * (SCHEMAS.md v0.13; DECISIONS → Comparison, lead 2026-10-22). Figma template
+ * (SCHEMAS.md v0.14; DECISIONS → Comparison, lead 2026-10-22). Figma template
  * 3790:37245, index card 3790:37967.
  *
  * One Studio tab per page section, in page order, plus Card and SEO. Layout

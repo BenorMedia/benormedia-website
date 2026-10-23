@@ -153,3 +153,177 @@ Each is commented in `tokens.css` with its Figma source and "lead approved 2026-
 
 ### Screenshots (round 2)
 `/private/tmp/claude-501/-Users-emilygaitan-benormedia-website/40fe1ed7-f8f5-4e89-b21b-966e7ab38b50/scratchpad/v3/shots2/`: `template-{1920,1440,992,991,767,390}.png`, `detail-{…}.png`, `index-{…}.png`; crops `c-992-top.png`, `c-1440-body.png`, `c-index-1440.png`, `c-1440-cards.png`.
+
+---
+
+## Round 3 (2026-10-22): per-client card colours
+
+Status: DONE (not committed, not pushed, schema not deployed, no Sanity documents written).
+
+Lead decision (Emily, 2026-10-22): the card's navy thumbnail (`--color-navy` #001F3D) and glow (`--color-blue-500` #1355FF) are Surfe's brand colours, not site colours. Each client gets its own.
+
+### What changed
+| # | Item | Done |
+|---|---|---|
+| 1 | Schema (SCHEMAS v0.13) | `client.brandColor` (thumbnail background) and `client.brandGlowColor` (glow), optional plain `string`s right after `logoOnDark`, validated with `Rule.regex(/^#[0-9a-fA-F]{6}$/)`. No colour field type or plugin in the repo, none added. Studio descriptions say where they show, that empty = default navy / blue, and to pick a dark brand colour (white logo) |
+| 2 | Query / types / fixture | Both projected in `CASE_STUDY_CARD_FIELDS` `client->` (so `ALL_CASE_STUDIES` and `CASE_STUDY_BY_SLUG` `related` / `latest`); `CaseStudyCardClient.brandColor` / `brandGlowColor` (`string \| null`); fixture cards carry Surfe's #001F3D / #1355FF |
+| 3 | Card | `CaseStudyCard` sets `style="--c-cs-card-bg: …; --c-cs-card-glow: …"` on `.c-cs-card__thumb`, only for values that pass the same hex regex in code (trimmed); otherwise the attribute is left out. CSS: `background: var(--c-cs-card-bg, var(--color-navy))`, `fill: var(--c-cs-card-glow, var(--color-blue-500))` |
+| 4 | Tokens | Comments only on `--color-navy` / `--color-blue-500`: "default case-study card colours (Surfe), lead approved 2026-10-22; per-client values come from client.brandColor / brandGlowColor". Values unchanged. `--color-navy` also notes its second use (related heading in `CaseStudyRelated`) |
+| 5 | DECISIONS | Token row → `Lead` (no longer pending Sergio); new per-client row; "New tokens #001F3D and #1355FF (Sergio)" struck and resolved; new "v0.13 schema fields" (Needs lead OK, deploy) and "Client brand colours" (Content) items |
+
+### Logo legibility
+The logo stays white (`logoOnDark`, else the whitened `logo`, else the white name). A light `brandColor` (pastel, yellow, white) would make it hard or impossible to read. There is no automatic contrast check; the Studio description asks for a dark colour. If a client's brand is light, the options are a darker shade of it or leaving the field empty (navy).
+
+### Tests
+- Surfe values: all 12 thumbnails on `/dev/case-study` (1440 and 390) compute `rgb(0, 31, 61)` / glow `rgb(19, 85, 255)`.
+- `/case-studies` (live Sanity, fields not in the dataset yet): no `style` attribute, fallbacks render navy / blue at 1440 and 390, same as before.
+- Temporary fixture test (reverted, file byte-identical to before): card 2 `#5A1E3C` / `#FF8A00` rendered maroon with an orange glow; card 3 `red; background: url(x)` / `#12345` output no `style` at all and fell back to navy / blue.
+- No horizontal overflow (`scrollWidth == clientWidth`) at 1440 and 390 on both pages.
+
+### Files changed in round 3
+`sanity/schemaTypes/documents/client.ts`, `src/lib/sanity/queries.ts`, `src/lib/sanity/types.ts`, `src/lib/sanity/case-study-fixture.ts`, `src/components/case-studies/CaseStudyCard.astro`, `src/styles/tokens.css` (comments only), `docs/SCHEMAS.md` (v0.13), `docs/DECISIONS.md`, this handoff.
+
+### Checks (round 3)
+- [x] `pnpm run build` passes
+- [x] `pnpm run check`: 0 errors, 0 warnings, 0 hints
+- [x] `pnpm run lint` passes
+- [x] `sanity schema validate`: 0 errors, 0 warnings
+- [x] Checked at 1440 / 390 on `/dev/case-study` and `/case-studies`
+
+### Requests for other agents
+- @sanity / orchestrator: deploy v0.13 with v0.11 / v0.12 once approved; then Surfe can be left empty (defaults) or set to #001F3D / #1355FF.
+- @qa: confirm the card renders unchanged with empty fields and that invalid strings never reach the `style` attribute.
+
+### Open questions for the project lead
+1. `--color-navy` is also the related section heading colour (Figma #001F3D, `CaseStudyRelated`). Keep it as a site colour there, or move that heading to a site token?
+2. Should `--color-navy` / `--color-blue-500` go into `DESIGN_SYSTEM.md` as the card defaults?
+
+### Screenshots (round 3)
+`/private/tmp/claude-501/-Users-emilygaitan-benormedia-website/40fe1ed7-f8f5-4e89-b21b-966e7ab38b50/scratchpad/v3/shots3/`: `template-{1440,390}.png`, `index-{1440,390}.png`, override test `test-1440.png` (crop `c-test.png`).
+
+---
+
+## Round 4 (2026-10-22): browser height, facts row
+
+Status: DONE (not committed, not pushed). Emily's Figma update, template 3842:40046; confirmed with get_metadata on 3842:40085 and 3842:40102. The orchestrator's uncommitted hover / cursor-follow work in `CaseStudyBrowser.astro` and `src/scripts/ui/cursor-follow.ts` is kept as is.
+
+### What changed
+| # | Item (Figma) | Done |
+|---|---|---|
+| 1 | Browser bar 3842:40086: 46px (was 63.7) | `.c-cs-browser__bar` height 4.549rem → 3.286rem. Dots (x 30 / 61 / 92, 16.8px) and the URL pill (287.7 × 28.8, y 8.6) were already centred vertically, so only the height changed. Measured: bar 46px at 1440 / 1920 |
+| 2 | Button default position 3842:40094 (x 590, y 277.9, 193 × 60) in the 1103 × 657.1 window | `top: 46.86%; left: 62.24%` (button centre 686.5 / 307.9). Used without a mouse, on touch and without JS; measured centre (686.5, 307.9) in Figma units at every width ≥992. The ≤767 override (centre of the visible part) is unchanged |
+| 3 | Facts labels without numbers | Numbering removed from `CaseStudyFacts.astro`; `copy.ts` label "Services delivered" → "Services Delivered" (Figma), still `TODO: COPY`, uppercase via `Eyebrow` |
+| 4 | Facts layout ≥992 | Items `flex: none` (natural width), values `white-space: nowrap`, `justify-content: space-between`: every gap equal on one line. `flex-wrap: wrap` with a 2rem minimum gap; when whole items wrap, `initRowWrap` (new `src/scripts/ui/row-wrap.ts`, ResizeObserver, offsetTop reads only) sets `is-wrapped` and the rows are centred with the same 2rem gaps, 2.857rem (40px) apart. Without JS the wrapped rows stay space-between (no overflow either way) |
+| 5 | Facts ≤991 / ≤767 | Same 3 / 2-column grids; values may wrap inside their cell there (balanced). Services / Stack lists are now joined with a no-break space before "/", so a wrapped line ends on "/" and never starts with it (`Webflow /` · `Finsweet / HubSpot` at 390) |
+
+### Facts row measurements (live `placeholder-surfe`: Surfe · Pipeline Generation / SaaS · Custom Websites & Migrations / Growth (SEO/GEO + CRO) · BenorMedia · 10 weeks · Webflow / Finsweet / HubSpot)
+| Width | Content | Items' natural width | Rows | Gaps |
+|---|---|---|---|---|
+| 1920 | 1230px | 1044px | 1 | 37px ×5 |
+| 1440 | 1230px | 1044px | 1 | 37px ×5 |
+| ~1341–1439 | 85rem | | 1 | ≥2rem |
+| 1280 | 1088px | 966px | **2** (5 + Stack centred) | 25.6px |
+| 992 | 843px | 772px | **2** (5 + Stack centred) | 19.8px |
+| 991 / 767 / 390 | grid | | 2 / 3 / 3 | grid |
+
+So with the live data the row is on **one line from about 1341px up** and **wraps to two rows from 992 to about 1340px** (1340 wraps, 1342 does not; the boundary moves a few px with font rendering). Between 992 and 1439 the root is 1vw and the content is 85rem, so the row scales almost linearly and sits just past the limit (needs ~85.5rem). `/dev/case-study` (Figma sample values, shorter "Web Design / Web Development / Technical SEO") is one line at every width ≥992 (gaps 51px at 1440+, 24px at 992). Every value is one line ≥992 on both pages; labels centred over values (checked per item).
+
+### No overflow
+`scrollWidth - clientWidth = 0` at 1920, 1440, 1280, 992, 991, 767, 390 on both pages, plus a scan at 320, 500, 700, 850, 1050, 1100, 1200, 1220–1360 (every 20px), 1366, 1439, 1600 on `placeholder-surfe`. Limit: a single value wider than the whole container (≥992) would spill, because values never wrap there by design; no current value is near that (the longest is 391px of 1230).
+
+### Files changed in round 4
+- `src/components/case-studies/CaseStudyBrowser.astro` (bar height, default button position, comments)
+- `src/components/case-studies/CaseStudyFacts.astro` (labels, layout, row-wrap script, joiner)
+- `src/components/case-studies/copy.ts` ("Services Delivered", comment)
+- New: `src/scripts/ui/row-wrap.ts`
+- `docs/DECISIONS.md` (Decisions row `Proposed`, Design team "Facts row minimum gap", Needs lead OK line), this handoff
+
+### TODO markers
+- `TODO: DS` — facts minimum gap 2rem (Figma only shows the space-between result).
+- `TODO: COPY` — facts labels (unchanged).
+
+### Checks (round 4)
+- [x] `pnpm run check`: 0 errors, 0 warnings, 0 hints
+- [x] `pnpm run lint` passes
+- [x] `pnpm run build` passes (only the existing content style / release warnings)
+- [x] No horizontal overflow at 1920 / 1440 / 1280 / 992 / 991 / 767 / 390 on `/case-studies/placeholder-surfe` and `/dev/case-study`
+
+### Note for the orchestrator
+The running dev server served the old `CaseStudyFacts` style module after the edit (HTML updated, CSS stale) until the file was touched again. If a screenshot looks unchanged, touch the component or reload.
+
+### Requests for other agents
+- @astro: `src/lib/sanity/types.ts` still comments the facts as "04 / Solution", "05 / Timeline", "06 / Stack" (comment only).
+- @qa: facts row at 992–1440 (2 rows with live data, centred), and with JS off (rows space-between).
+
+### Open questions for the project lead
+1. With the live Surfe values the facts row is two rows (5 + Stack alone, centred) from 992 to about 1340px. Keep, or allow a smaller minimum gap / value size there to stay on one line?
+2. Figma's 84.6px gaps come from its shorter sample values; with the live values the gaps are 37px at 1440+. OK?
+
+### Screenshots (round 4)
+`/private/tmp/claude-501/-Users-emilygaitan-benormedia-website/40fe1ed7-f8f5-4e89-b21b-966e7ab38b50/scratchpad/v4/shots/`: hero + facts `surfe-{1920,1440,1280,992,991,767,390}.png` and `dev-{…}.png`; facts crops `facts-surfe-{…}.png`, `facts-dev-{…}.png`. Figma: `/private/tmp/claude-501/-Users-emilygaitan-benormedia-website/40fe1ed7-f8f5-4e89-b21b-966e7ab38b50/scratchpad/v4/ref/figma-hero-3842-40061.png`, `/private/tmp/claude-501/-Users-emilygaitan-benormedia-website/40fe1ed7-f8f5-4e89-b21b-966e7ab38b50/scratchpad/v4/ref/figma-facts-3842-40102.png`.
+
+---
+
+## Round 5: index hero fade, tile fill, orbit
+
+Status: DONE (not committed, not pushed). Lead review of `/case-studies` on localhost (2026-10-22) plus two coordinator follow-ups (density, Figma start layout). Component `src/components/case-studies/CaseStudiesIndexHero.astro`; Figma `ipKvlka3lQ7tSWAtq3wSGa` 3803:27030 (get_metadata + get_design_context on the fade 3804:27352).
+
+### What changed
+| # | Item | Done |
+|---|---|---|
+| 1 | Fade: no hard cut | Figma's fade layer has changed since v2: box 1925.9 × 814.4 (was 1759.5 × 807.7), radii 1524.1 × 644.5, transparent to 38.372%, white from 78.655% (was 50.6% / 81.6%). The radial is now drawn on an element 140% of the frame (`inset: -20%`, percentages converted), so past the ellipse everything is white instead of ending at the box edge. The hero also fades to white at its edges (`.c-cs-index-hero::after`): top over the 110px band above Figma's container (`--c-cs-index-hero-top`), bottom over the space under the text (120 + 100px, new `--c-cs-index-hero-bottom`; 5rem at ≤767). Figma itself ends in a hard cut (its frame is clipped by the container), so the edge fades are `TODO: DS`. Order: rings → orbits → radial fade → edge fade → text |
+| 2 | Bambi tile fill | Removed. Every tile is white with the 1.5px `--color-border`. `--color-tile-sage` stays in `tokens.css`, **now unused** (DECISIONS → Engineering follow-ups) |
+| 3 | Orbit | CSS only. One square `.c-cs-index-hero__orbit` per ring (centre = rings' centre, size = ring diameter as % of the frame) animated on `rotate`; each tile has the opposite `rotate` on the same duration, and is placed with `translate: -50% -50%` (not `transform`) so it turns about its own centre and stays upright. Paused off screen (`is-paused` from an IntersectionObserver in the component script); without JS it keeps running; hidden tabs are throttled by the browser. `prefers-reduced-motion: reduce`: `animation: none` (base.css's 0.01ms override would otherwise spin it), tiles sit at the start layout |
+| 4 | Data | New hero-only query `CLIENTS_WITH_ICON_BY_RANK` + `getClientsWithIconByRank()` in `src/lib/sanity/queries.ts` (same fields as `ALL_CLIENTS_WITH_ICON`, `order(orderRank asc, name asc)`); `src/pages/case-studies/[...index].astro` uses it. Home's `getAllClientsWithIcon` is unchanged |
+
+### Tiles: count and selection rule
+- **13 tiles**: the first 13 clients with an icon in the Studio order (`orderRank`, the Work page order). Live today: Surfe, Puzzle, HireArt, SimpleTiger, Sprii, Garaje de Ideas, Garaje Central, Resourcify, Unit21, DarwinCX, Poplin, Arrows, Base Operations.
+- **Start layout = Figma.** Tiles 1–11 take Figma 3803:27030's 11 positions in layer order, as ring + angle around the rings' centre (896.62, 863.39). Each Figma tile centre is within 9px of a ring (the top one 18px), so it is snapped onto it. Figma's split is irregular and kept: outer 3 (13.8°, 171.8°, 201.5°), middle 3 (156.7°, 187.2°, 349.6°), inner 5 (23.3°, 161.5°, 215.2°, 268.1°, 322.6°).
+- **2 extra outer tiles** (allowed: 1–3, outer only): at 92.8° and 287.7°, the middles of the outer ring's two 158° / 172° gaps. Both sit past the hero's bottom / top at the start, so the first frame still equals Figma; they keep the outer ring from showing an empty half as it turns. Total 13 (inside the 11–14 range).
+- The first (and the only, under reduced motion) frame next to Figma: `/private/tmp/claude-501/-Users-emilygaitan-benormedia-website/40fe1ed7-f8f5-4e89-b21b-966e7ab38b50/scratchpad/v5/shots/sbs-figma-vs-first-1440.png` and `/private/tmp/claude-501/-Users-emilygaitan-benormedia-website/40fe1ed7-f8f5-4e89-b21b-966e7ab38b50/scratchpad/v5/shots/sbs-figma-vs-first-1920.png` (Figma left).
+
+### Speeds (`TODO: DS`, lead asked for 120–200s per turn)
+| Ring | Turn | Direction | Speed along the ring at 1920 |
+|---|---|---|---|
+| Outer (r 861.6) | 200s | clockwise | 27px/s |
+| Middle (r 678.7) | 160s | anticlockwise | 26.7px/s |
+| Inner (r 471.1) | 120s | clockwise | 24.7px/s |
+Angular speeds differ so every ring moves at about the same visible speed; the middle ring turning the other way gives depth.
+
+### Responsive
+- ≥992: 13 tiles at 84px (6rem). Around 6–9 are clearly visible at any moment; the rest pass behind the nav band, below the hero or under the fade.
+- ≤991: the inner ring's 5 tiles are hidden (at this width the inner ring runs beside and under the text column); 8 tiles (outer + middle) orbit at 64px.
+- ≤767: rings only, no tiles, no animation (orbits `display: none`; the images are `loading="lazy"`, so hidden ones are never fetched). The text spans the width and most of the rings sit off screen.
+- No horizontal overflow (`scrollWidth - clientWidth = 0`) at 1920, 1440, 991, 767, 390 and a scan at 320, 500, 1100, 1280, 2560.
+
+### Performance
+Only `rotate` animates (compositor), 3 orbits + 13 tiles; no JS per frame, no layout reads. Tile images 102px wide, `auto("format")`, lazy, async decode. Fixed sizes: no layout shift.
+
+### Files changed in round 5
+- `src/components/case-studies/CaseStudiesIndexHero.astro` (fade, white tiles, orbit, start layout, pause script, comments)
+- `src/lib/sanity/queries.ts` (new `CLIENTS_WITH_ICON_BY_RANK`, `getClientsWithIconByRank`; astro's file, hero-only addition at the coordinator's request)
+- `src/pages/case-studies/[...index].astro` (uses the new fetcher; comments)
+- `docs/DECISIONS.md` (Case studies: rows "tiles all white" and "orbit" `Lead`, "fade" `Proposed`; tile colours and fixed list questions resolved; Needs lead OK line; follow-up: unused `--color-tile-sage`), this handoff
+
+### TODO markers
+- `TODO: DS` — orbit speeds / directions; hero edge fades (top 110px band, bottom 120 + 100px); rings #0C1627 → `--color-heading` (existing); tablet / mobile tile rules (existing `TODO: DS mobile`).
+
+### Checks (round 5)
+- [x] `pnpm run check`: 0 errors, 0 warnings, 0 hints
+- [x] `pnpm run lint` passes
+- [x] `pnpm run build` passes (only the existing content style warnings); built `/case-studies` has 13 tiles
+- [x] No horizontal overflow at the widths above
+
+### Screenshots (round 5)
+`/private/tmp/claude-501/-Users-emilygaitan-benormedia-website/40fe1ed7-f8f5-4e89-b21b-966e7ab38b50/scratchpad/v5/shots/`: before `before-{1920,1440,991,767,390}.png`; after `after-{1920,1440,991,767,390}.png`; motion at 1440, 5s apart: `motion-1440-a.png`, `motion-1440-b.png`; first frame (reduced motion) `first-1440.png`, `first-1920.png`; side by side with Figma `sbs-figma-vs-first-1440.png`, `sbs-figma-vs-first-1920.png`. Figma reference: `/private/tmp/claude-501/-Users-emilygaitan-benormedia-website/40fe1ed7-f8f5-4e89-b21b-966e7ab38b50/scratchpad/v5/ref/figma-hero-3790-36381.png`.
+
+### Notes
+- The fade is stronger than Figma at the top centre: Figma's top tile (3803:27305) sits on its fade box's top edge, so half of it is unfaded and cut; ours fades it (lead point 1). The radial values themselves are Figma's.
+- At 1440 the inner ring passes about 10–15px from the description's left and right ends (Figma geometry); tiles never overlap the text at ≥992.
+- Two live clients (Garaje de Ideas, Garaje Central) have near-identical "G." icons and both rank in the top 13.
+
+### Open questions for the project lead
+1. Hero edge fades (top 110px, bottom 220px) are not in Figma: OK as built?
+2. Speeds 200 / 160 / 120s, middle ring anticlockwise: OK?
+3. `--color-tile-sage` is unused now: remove it from `tokens.css` or keep it?
+4. Garaje de Ideas and Garaje Central both show a "G." tile: reorder in Studio or keep?

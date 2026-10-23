@@ -432,6 +432,10 @@ export interface CaseStudyCardClient {
   logo?: SanityImage;
   /** Logo for dark backgrounds (v0.11). Empty: the card whitens `logo` with CSS. */
   logoOnDark?: SanityImage;
+  /** Card thumbnail background, `#RRGGBB` (v0.13). Empty: `--color-navy`. The card re-checks the format. */
+  brandColor?: string | null;
+  /** Card glow, `#RRGGBB` (v0.13). Empty: `--color-blue-500`. The card re-checks the format. */
+  brandGlowColor?: string | null;
 }
 
 /** Index card and "Resources" card. */
@@ -500,10 +504,10 @@ export interface CaseStudy extends CaseStudyCard {
 
 // ---------------------------------------------------------------------------
 // Comparisons — results of `ALL_COMPARISONS` and `COMPARISON_BY_SLUG`
-// (SCHEMAS.md v0.13)
+// (SCHEMAS.md v0.14)
 // ---------------------------------------------------------------------------
 
-/** `accentSectionHeader`: eyebrow + gradient title + paragraph (v0.13). */
+/** `accentSectionHeader`: eyebrow + gradient title + paragraph (v0.14). */
 export interface AccentSectionHeader {
   eyebrow?: string | null;
   /** Required in Studio; may still be empty on an incomplete document. */
@@ -534,7 +538,7 @@ export interface ComparisonTableGroup {
   rows?: ComparisonTableRow[] | null;
 }
 
-/** `stat` with the comparison-only `source` / `sourceUrl` (v0.13). */
+/** `stat` with the comparison-only `source` / `sourceUrl` (v0.14). */
 export interface ComparisonStat extends Stat {
   _key: string;
   source?: string | null;
