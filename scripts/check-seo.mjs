@@ -55,6 +55,8 @@ const PAGES = {
   '/blog/webflow-security-php2shell': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow security' },
   '/blog/webflow-export-code': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow' },
   '/blog/ai-seo-myths': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'ai seo myths' },
+  '/blog/webflow-editor': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow editor' },
+  '/blog/headless-cms-comparison': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'headless cms' },
   '/blog/saas-technical-seo': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'saas technical seo' },
   '/blog/track-brand-mentions-in-chatgpt': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'brand mentions chatgpt' },
   '/blog/consent-mode-v2-webflow': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'consent mode v2' },

@@ -646,6 +646,18 @@ export const THUMBS: Record<string, ThumbEntry> = {
   }),
   // The myths and what to do instead.
   "ai-seo-myths": t(ThObject, { object: "lightbulb" }),
+  // Blog 2026-10-23 (lead). The roles that replaced the legacy Editor.
+  "webflow-editor": t(ThIconWall, {
+    icon: "person",
+    labels: ["Content editor", "Marketer", "Reviewer", "Designer", "Site manager"],
+  }),
+  // The CMSs compared, by the criteria the post uses.
+  "headless-cms-comparison": t(ThLogos, {
+    groups: [
+      { tag: "Editing and preview", logos: ["sanity", "storyblok"] },
+      { tag: "Localization", logos: ["contentful"] },
+    ],
+  }),
   // Content from the CMS, rendered for every device.
   "headless-cms-seo": t(ThObject, { object: "deviceStack" }),
   // Launch week.

@@ -57,6 +57,8 @@
 - [Webflow Security After PHP2Shell: What Changes](https://www.benormedia.com/blog/webflow-security-php2shell): What the October 2026 PHP2Shell flaws mean for WordPress and PHP sites, what Webflow security covers for you, and the work your team still owns.
 - [Webflow Code Export: What Breaks When You Leave](https://www.benormedia.com/blog/webflow-export-code): What Webflow's code export includes, what stops working when a site leaves Webflow, and how to replace forms, site search, and CMS content before launch.
 - [AI SEO Myths: What to Skip and What to Do](https://www.benormedia.com/blog/ai-seo-myths): Seven AI SEO myths B2B SaaS teams still act on, what Google's own documentation says about each one, and what to do with that time and budget instead.
+- [Webflow Editor Shutdown: How Teams Edit Now](https://www.benormedia.com/blog/webflow-editor): Webflow's legacy Editor shut down on August 4, 2026. How marketing teams edit now: content editor roles, seats, publishing rights, and a handover checklist.
+- [Headless CMS Comparison for Marketing Sites](https://www.benormedia.com/blog/headless-cms-comparison): A headless CMS comparison for B2B SaaS marketing sites: visual editing, preview, scheduling, localization, roles, hosting, and pricing drivers in six CMSs.
 
 ## Company
 
