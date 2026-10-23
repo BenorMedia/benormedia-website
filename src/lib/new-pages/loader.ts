@@ -419,11 +419,12 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
   const text = (value: unknown): string => gaps.toHtml(escapeHtml(gaps.tokenize(String(value ?? ""))));
 
   // Home page text classes (lead 2026-10-07): commercial sections, and the
-  // article body in the blog article template (Figma 3142:1617991).
+  // article body in the blog article template (Figma 3142:1617991). Article
+  // paragraphs (guides and blog posts) are `c-paragraph_m` (lead 2026-10-23).
   const classes =
     family === "commercial"
       ? { lead: "c-paragraph_m", firstP: "c-paragraph_m", p: "c-paragraph", li: "c-paragraph" }
-      : { lead: "c-paragraph_m", p: "c-paragraph", li: "c-paragraph" };
+      : { lead: "c-paragraph_m", p: "c-paragraph_m", li: "c-paragraph" };
   const rendered = renderBody(gaps.tokenize(body), {
     links,
     slugger,

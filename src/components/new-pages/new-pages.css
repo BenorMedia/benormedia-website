@@ -297,6 +297,33 @@
     color: var(--color-black-secondary);
   }
 }
+/* Article tables (guides and blog posts, lead 2026-10-23, after Cloudflare's
+   blog tables): a hairline grid on every cell, roomier cells, a plain header
+   row and light zebra rows. Commercial pages keep the rule-only table. */
+.c-np-prose.is-blog .c-np-table {
+  & table {
+    border: var(--border-default);
+    font-size: var(--fs-p-m);
+    line-height: 1.6;
+  }
+  & th,
+  & td {
+    padding: 1.143rem 1.286rem; /* 16 / 18px */
+    border: var(--border-default);
+  }
+  & th {
+    background: var(--color-white);
+    color: var(--color-text);
+    font-weight: 400;
+  }
+  & tbody tr:nth-child(odd) td {
+    background: color-mix(in srgb, var(--color-gray-light) 45%, var(--color-white));
+  }
+}
+@media (max-width: 767px) {
+  .c-np-prose.is-blog .c-np-table th,
+  .c-np-prose.is-blog .c-np-table td { padding: 1.556rem 1.778rem; }
+}
 /* Fenced code blocks (blog posts). No code style in the design system:
    existing tokens, the table border and the card radius. Long lines scroll
    inside the block, never the page. */
