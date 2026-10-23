@@ -20,9 +20,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-/* TODO: DS — travel and smoothing are proposals (no motion spec): ±10% of
-   the card's height (about ±22px at 1440), the CTA vector's smoothing. */
-const TRAVEL_PERCENT = 10;
+/* TODO: DS — travel and smoothing are proposals (no motion spec): ±20% of
+   the card's height (about ±45px at 1440; lead 2026-10-23: more visible,
+   was 10%), the CTA vector's smoothing. */
+const TRAVEL_PERCENT = 20;
 const SCRUB_SMOOTHING = 1;
 
 export function initStepsParallax(): void {
