@@ -69,6 +69,19 @@ const glowId = `cmp-glow-${card._id}`;
     border: 0.5px solid var(--color-border);
     border-radius: 8px;
     background: var(--color-white);
+    transition:
+      transform var(--duration-hover) var(--ease-smooth),
+      border-color var(--duration-hover) var(--ease-smooth),
+      box-shadow var(--duration-hover) var(--ease-smooth);
+  }
+  /* Hover / keyboard focus: the blog cards' hover (`NpBlogResources`, lead
+     comment 2026-10-23): lift 3%, accent border, soft shadow. On the whole
+     card, which is the bordered box here (the blog's thumbnail is). */
+  .c-cmp-card:hover,
+  .c-cmp-card:has(.c-cmp-card__more:focus-visible) {
+    transform: translateY(-3%);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--color-black-secondary) 20%, transparent);
   }
   /* 543 × 243 panel and the divider under it (Figma 3790:37995 / 38009).
      It is the size container of the pill (`ComparisonPill is-card`). */
