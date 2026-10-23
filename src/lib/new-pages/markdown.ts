@@ -106,7 +106,7 @@ function table(caption: string | undefined, rows: string[], opts: RenderOptions)
   const region = caption
     ? attrs({ class: "c-np-table", role: "region", "aria-labelledby": `${id}-caption`, tabindex: "0" })
     : attrs({ class: "c-np-table" });
-  return `<div${region}><table${attrs({ class: wide ? "is-wide" : undefined })}>${captionHtml}${thead}${tbody}</table></div>`;
+  return `<div${region}><table${attrs({ class: wide ? "c-paragraph is-wide" : "c-paragraph" })}>${captionHtml}${thead}${tbody}</table></div>`;
 }
 
 /** Converts a (tokenized) body. `leadSrc` names the lead paragraphs. */

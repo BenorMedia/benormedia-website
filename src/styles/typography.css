@@ -14,6 +14,7 @@
 .c-paragraph_xl,
 .c-paragraph_l,
 .c-paragraph_m,
+.c-paragraph_ms,
 .c-paragraph,
 .c-paragraph_s,
 .c-button {
@@ -72,6 +73,12 @@
 .c-paragraph_m {
   font-family: var(--font-body);
   font-size: var(--fs-p-m);
+  line-height: 1.6;
+}
+/* 15% smaller than c-paragraph_m: guide and blog body text (lead 2026-10-23). */
+.c-paragraph_ms {
+  font-family: var(--font-body);
+  font-size: calc(var(--fs-p-m) * 0.85);
   line-height: 1.6;
 }
 .c-paragraph {
