@@ -103,6 +103,19 @@ const stats = (card.cardStats ?? []).filter((stat) => stat?.value?.trim() && sta
     border: 0.5px solid var(--color-border);
     border-radius: 8px;
     background: var(--color-white);
+    transition:
+      transform var(--duration-hover) var(--ease-smooth),
+      border-color var(--duration-hover) var(--ease-smooth),
+      box-shadow var(--duration-hover) var(--ease-smooth);
+  }
+  /* Hover / keyboard focus: the blog cards' hover (`NpBlogResources`, live
+     /blog; lead feedback 2026-10-23): lift 3%, accent border, soft shadow,
+     on the whole card (the bordered box here). */
+  .c-cs-card:hover,
+  .c-cs-card:has(.c-cs-card__more:focus-visible) {
+    transform: translateY(-3%);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--color-black-secondary) 20%, transparent);
   }
   /* 543 × 243 thumbnail (Figma 3798:19208) in the client's brand colour
      (default navy), the divider line under it. */
