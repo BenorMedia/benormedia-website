@@ -32,7 +32,8 @@ export function comparisonIndexCopyFields(): CopyField[] {
     { label: '/comparison hero eyebrow', source: `${COPY_FILE} → COMPARISON_COPY.indexHero.eyebrow`, value: hero.eyebrow },
     { label: '/comparison hero title', source: `${COPY_FILE} → COMPARISON_COPY.indexHero.title`, value: hero.title },
     { label: '/comparison hero description', source: `${COPY_FILE} → COMPARISON_COPY.indexHero.description`, value: hero.description },
-    { label: '/comparison meta title', source: `${COPY_FILE} → COMPARISON_COPY.indexMeta.title`, value: meta.title },
+    // TODO: COPY: reads like final copy, so it is flagged explicitly (QA m5). Drop `todo` once the lead confirms the title.
+    { label: '/comparison meta title', source: `${COPY_FILE} → COMPARISON_COPY.indexMeta.title`, value: meta.title, todo: true },
     { label: '/comparison meta description', source: `${COPY_FILE} → COMPARISON_COPY.indexMeta.description`, value: meta.description },
     { label: 'breadcrumb "Comparison" label', source: `${COPY_FILE} → COMPARISON_COPY.breadcrumb.index`, value: COMPARISON_COPY.breadcrumb.index },
   ];
@@ -60,8 +61,8 @@ export function comparisonSanityFields(comparison: Comparison): CopyField[] {
       for (const [key, child] of Object.entries(value)) {
         // System fields, keys and image assets hold no visible copy.
         if (key.startsWith('_') || key === 'asset' || key === 'hotspot' || key === 'crop' || key === 'marks') continue;
-        // Case studies are their own documents, checked by their own guard.
-        if (key === 'caseStudies' || key === 'latestCaseStudies') continue;
+        // Case studies and the other comparisons are their own documents, checked on their own.
+        if (key === 'caseStudies' || key === 'latestCaseStudies' || key === 'otherComparisons') continue;
         walk(child, path ? `${path}.${key}` : key);
       }
     }

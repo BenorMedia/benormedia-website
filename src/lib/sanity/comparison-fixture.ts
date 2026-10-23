@@ -143,7 +143,7 @@ export function createComparisonFixture(
       ],
     },
     tableHeader: {
-      // Figma 3834:38132 repeated "What to choose"; replaced at the lead's request (2026-10-22).
+      // TODO: COPY: proposed label, lead to confirm (Figma 3834:38132 repeated "What to choose"; replaced at the lead's request 2026-10-22).
       eyebrow: 'Feature comparison',
       title: title('Webflow vs WordPress, side by side', 'side by side'),
       description: 'Grouped by what actually matters to a SaaS marketing team.',
@@ -288,6 +288,11 @@ export function createComparisonFixture(
     card('framer', 'Framer', 'webflow-vs-framer', img(assets.framerLogo, 'Framer')),
     card('wix', 'Wix', 'webflow-vs-wix', img(assets.wixLogo, 'Wix')),
   ];
+
+  // Hero pill dropdown: the other fixture comparisons (Framer, Wix), index order.
+  comparison.otherComparisons = cards
+    .filter((c) => c._id !== comparison._id)
+    .map(({ _id, title, slug, competitorName, competitorLogo }) => ({ _id, title, slug, competitorName, competitorLogo: competitorLogo ?? null }));
 
   return { comparison, cards };
 }

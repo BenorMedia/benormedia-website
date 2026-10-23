@@ -551,7 +551,11 @@ export const COMPARISON_SLUGS = /* groq */ `
 *[${PUBLISHED_COMPARISON}].slug.current
 `;
 
-/** One published comparison (`$slug`). */
+/**
+ * One published comparison (`$slug`). `otherComparisons`: every other
+ * published comparison, in the index order, for the hero pill dropdown
+ * (lead 2026-10-22).
+ */
 export const COMPARISON_BY_SLUG = /* groq */ `
 *[${PUBLISHED_COMPARISON} && slug.current == $slug][0]{
   _id,
@@ -590,6 +594,13 @@ export const COMPARISON_BY_SLUG = /* groq */ `
     ${CASE_STUDY_CARD_FIELDS}
   },
   faqSections[]{ _key, title, faqs[]{ _key, question, answer } },
+  "otherComparisons": *[${PUBLISHED_COMPARISON} && _id != ^._id] | order(publishedAt desc, title asc){
+    _id,
+    title,
+    "slug": slug.current,
+    competitorName,
+    "competitorLogo": competitorLogo${IMAGE}
+  },
   "seo": seo${SEO}
 }
 `;

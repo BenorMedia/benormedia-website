@@ -56,6 +56,6 @@ const noIndex = !cards.some((card) => card.noIndex !== true);
 
 <BaseLayout title={meta.title} description={meta.description} noIndex={noIndex}>
   {comparisonIndexJsonLd({ name: COMPARISON_COPY.breadcrumb.index, description: meta.description }, cards).map((data) => <JsonLd data={data} />)}
-  <ComparisonIndexHero empty={cards.length === 0} />
+  <ComparisonIndexHero />
   <ComparisonGrid cards={cards} />
 </BaseLayout>

@@ -257,9 +257,14 @@ ACCENT_SECTION_HEADER = { eyebrow, "title": title${ACCENT_TITLE}, description }
   "latestCaseStudies": *[_type == "caseStudy" && defined(slug.current) && !(_id in path("drafts.**"))]
     | order(publishedAt desc, title asc)[0...3]{ ${CASE_STUDY_CARD_FIELDS} },
   faqSections[]{ _key, title, faqs[]{ _key, question, answer } },
+  "otherComparisons": *[${PUBLISHED_COMPARISON} && _id != ^._id] | order(publishedAt desc, title asc){
+    _id, title, "slug": slug.current, competitorName, "competitorLogo": competitorLogo${IMAGE}
+  },
   "seo": seo${SEO}
 }
 ```
+
+Hero pill dropdown (lead 2026-10-22): `otherComparisons` = every other published comparison, same order as the index; each item renders the competitor logo and `title` as a link to `/comparison/<slug>`. Empty → the pill has no chevron and no control. Projection only, no schema field.
 
 Rendering notes for Astro: an empty optional field renders nothing (no empty wrappers); a section with no header and no items is skipped. `caseStudies` empty → render `latestCaseStudies`; both empty → no section. Card title = `cardTitle ?? title`. Meta: `seo` → `title` / `subtitle` → siteSettings. JSON-LD (if any) goes through the shared helper; no `offers`.
 

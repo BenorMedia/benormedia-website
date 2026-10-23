@@ -37,6 +37,8 @@ export interface CopyField {
   /** Where to replace it: file and key. */
   source: string;
   value: string;
+  /** Known placeholder that reads like final copy (e.g. a title = the Figma eyebrow): always reported. */
+  todo?: boolean;
 }
 
 const PLACEHOLDER = /lorem\s+ipsum|TODO\s*:?\s*COPY/i;
@@ -100,7 +102,7 @@ export function guardPlaceholderCopy(
   pattern: RegExp = PLACEHOLDER,
   what = 'placeholder copy (Lorem ipsum / TODO: COPY)',
 ): void {
-  const bad = fields.filter((f) => pattern.test(f.value));
+  const bad = fields.filter((f) => f.todo === true || pattern.test(f.value));
   // One entry per source (the breadcrumb label can appear in both lists).
   const unique = [...new Map(bad.map((f) => [f.source, f])).values()];
   if (unique.length === 0) return;

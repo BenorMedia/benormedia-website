@@ -23,10 +23,14 @@ export const COMPARISON_COPY = {
   learnMore: copy.resources.learnMore,
   // Figma pill text between the two logos (3790:37354), uppercased in CSS.
   vs: 'vs',
+  // Visually hidden in place of "VS" for screen readers ("Webflow versus WordPress").
+  versus: 'versus',
   // Same heading as the service pages (FAQ heading fixed in code, SCHEMAS v0.13).
   faqHeading: 'Frequently asked questions.',
   // Accessible name of the FAQ tabs.
   faqTabsLabel: 'FAQ topics',
+  // Accessible name added to the hero pill's dropdown trigger (after the competitor logo alt).
+  otherComparisons: 'Other comparisons',
   // Visually hidden header of the table's first column (row headers).
   tableFeature: 'Feature',
   // Accessible label of the "Why switch" stat row and the steps list.

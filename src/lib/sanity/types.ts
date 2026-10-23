@@ -571,6 +571,15 @@ export interface ComparisonCard {
   noIndex?: boolean;
 }
 
+/** Another published comparison, as listed in the hero pill dropdown. */
+export interface ComparisonSwitchItem {
+  _id: string;
+  title: string;
+  slug: string;
+  competitorName: string;
+  competitorLogo?: SanityImage | null;
+}
+
 export interface Comparison extends Omit<ComparisonCard, 'noIndex'> {
   /** ISO datetime of the last edit (Sanity system field). */
   _updatedAt: string;
@@ -594,5 +603,7 @@ export interface Comparison extends Omit<ComparisonCard, 'noIndex'> {
   /** The 3 newest published case studies (fallback when `caseStudies` is empty). */
   latestCaseStudies?: CaseStudyCard[] | null;
   faqSections?: ServiceFaqSection[] | null;
+  /** Every other published comparison, index order (hero pill dropdown). Empty → no dropdown. */
+  otherComparisons?: ComparisonSwitchItem[] | null;
   seo?: Seo | null;
 }

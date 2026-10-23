@@ -626,10 +626,15 @@ Without adding to your team." with "website moving." marked Gradient (published 
 | 2026-10-22 | Migration steps reuse `processStep` (name, description, image as icon), max 4; `note` and `features` hidden there | Existing object fits; design has 4 staggered cards | Lead |
 | 2026-10-22 | Stat source shows as plain text after the label, no link; "What to choose" WordPress image kept at the Figma resolution; Webflow logo export kept as is | Lead answers 2026-10-22 | Lead |
 
-| 2026-10-22 | Competitor logo size comes from the file: SVG at its own size, raster as a 2x export (half its pixel size), height clamped to the Figma range (pill 26–37.43px, table header 26–40px) | No size field in the schema; Figma shows each logo at its own size (WordPress 37.4px tall, Framer and Wix 26px) | Proposed |
+| 2026-10-22 | Competitor logo size comes from the file: SVG at its own size, raster as a 2x export (half its pixel size), height clamped to the Figma range (pill 26–37.43px, table header 26–36.5px) | No size field in the schema; Figma shows each logo at its own size (WordPress 37.4px tall, Framer and Wix 26px) | Proposed |
 | 2026-10-22 | The production build also stops when a published comparison still holds Lorem ipsum, `TODO: COPY` or an open marker (`[FACT NEEDED: …]` etc.) in Sanity, not only in code copy; other builds warn | A Sanity publish rebuilds production without review; markers must never go live (CLAUDE.md) | Proposed |
 | 2026-10-22 | Migration steps built as a new `ComparisonSteps` (4 staggered cards), not `ServiceProcess` | `ServiceProcess` is a tab set with one large image per step; the design shows every step at once | Proposed |
 | 2026-10-22 | `ALL_COMPARISONS` also returns `"noIndex": seo.noIndex == true` (derived from the existing `seo` field) | Keeps the `/comparison` robots tag in line with the sitemap, as `ALL_CASE_STUDIES` does | Proposed |
+| 2026-10-22 | Hero pill chevron = dropdown of the other published comparisons (logo + title → `/comparison/<slug>`, index order); no other comparison → no chevron and no control. Styled like the nav Services panel; `<details>` enhanced by `src/scripts/ui/details-menu.ts` | Lead decision; no Figma frame for the open state, so it reuses the site's dropdown | Lead |
+| 2026-10-22 | Comparison table ≤767: never a scroll area; each row restacks with CSS (feature name full width, Webflow and competitor cells side by side under it), the header bar becomes the same two columns so the logos line up; explicit ARIA table roles keep the semantics | Lead feedback (no mobile frame); the scrolling table hid the competitor column at 390 (QA M1) | Proposed |
+| 2026-10-22 | Comparison table spacing = Figma 3790:37411 values scaled with the type (×0.728: Figma 20px text → `c-paragraph`): bar 70px, 8px under it, 12px between rows, 24px cell and group padding, 48px between columns | Lead asked for a more compact table; px ÷ 14 against scaled type made it 25–30% taller than Figma (QA m3) | Proposed |
+| 2026-10-22 | Index card pill sized with container units (`3.315cqi` = 18px in a 543px card) | The pill must scale with the card, not the viewport; rem can't express it (units rule exception) | Proposed |
+| 2026-10-22 | Hero pill on phones capped at `min(1.35rem, (100vw − 4rem) / 29)` | At 320px the pill was wider than the screen and the page panned sideways, so the H1 looked clipped (lead screenshot) | Proposed |
 ### Open questions
 #### Content
 - **Comparison copy** — Final copy for every lorem block and the FAQ, plus the figures and sources for the reason stats. Built meanwhile with `TODO: COPY` and `[FACT NEEDED]`. (2026-10-22)
@@ -638,12 +643,16 @@ Without adding to your team." with "website moving." marked Gradient (published 
 - **Logo uploads** — Upload competitor logos as SVG at display size or as raster at 2x (e.g. 324 × 75 px for a 162 × 37.5 logo); the page sizes them from the file (see Decisions). (2026-10-22)
 - **Framer and Wix comparisons** — Only Webflow vs WordPress has copy in Figma. The index shows them once their documents are published. (2026-10-22)
 #### Design team
-- **Hero pill chevron** — Figma 3790:37260 shows a dropdown chevron next to the competitor logo in the "Webflow VS" pill. No spec for what it opens (a switcher between comparisons?). Schema needs no field either way; built meanwhile as a static pill. (2026-10-22)
-- **Comparison mobile and tablet** — No mobile or tablet frames. Built meanwhile: hero buttons stacked full width, "What to choose" cards and reason rows stacked (picture first), steps 2 per row at ≤991 and 1 per row at ≤767 without the stagger, the table keeps its 3 columns and scrolls inside its frame at ≤767. (2026-10-22)
-- **Comparison values without a token** — Card border `#EDEDED` (Grey 500) → `--color-border`; table group row `#FAFAFA` (Grey 400) → `--color-gray-light`; table feature names Acumin Medium 500 (kit has 400 / 700); step number 24px → `c-text`; table group label 18px → `c-paragraph_s`; pill "VS" 18px → 1.286rem. All marked `TODO: DS`. (2026-10-22)
+- ~~**Hero pill chevron**~~ — RESOLVED 2026-10-22: a dropdown to pick the other comparisons, designed to match the nav Services panel (lead; see Decisions).
+- **Comparison mobile and tablet** — No mobile or tablet frames. Built meanwhile: hero buttons stacked full width, "What to choose" cards and reason rows stacked (picture first), steps 2 per row at ≤991 and 1 per row at ≤767 without the stagger, the table restacks its rows at ≤767 (see Decisions, 2026-10-22 round 2). (2026-10-22)
+- **Comparison values without a token** — Card border `#EDEDED` (Grey 500) → `--color-border`; table group row `#FAFAFA` (Grey 400) → `--color-gray-light`; table feature names Acumin Medium 500 → 400 and group labels Semibold 600 → 700 (kit has 400 / 700); step number 24px → `c-text`; table group label 18px → `c-paragraph_s`; pill "VS" 18px → 1.286rem. All marked `TODO: DS`. (2026-10-22)
 - **"What to choose" card spacing** — Figma uses 40px picture → text on the Webflow card and 48px on the WordPress card; built with 40px on both. (2026-10-22)
 - ~~**Stat source display**~~ — RESOLVED 2026-10-22: plain text inline after the label, as in Figma; no link for now (lead).
 #### Needs lead OK
+- **Comparison table mobile restack** — rows restacked at ≤767, never a scroll area. (2026-10-22)
+- **Compact table spacing** — Figma values scaled with the type. (2026-10-22)
+- **Card pill in `cqi`** — container units for the index card pill. (2026-10-22)
+- **Hero pill cap on phones** — keeps the pill inside the screen. (2026-10-22)
 - ~~**Comparison schema field list**~~ — RESOLVED 2026-10-22: approved by the lead.
 - **Hero button actions fixed** — labels editable, actions in code. (2026-10-22)
 - **Webflow side fixed in code** — plus optional competitor white logo. (2026-10-22)

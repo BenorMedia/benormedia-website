@@ -4,8 +4,17 @@
  * "Webflow VS <competitor>" (Figma hero 3790:37351, index card 3790:38001):
  * a thin bordered box with a square on each side (the Eyebrow / CaseStudyLogo
  * pattern), the Webflow logo in an accent box, "VS", and the competitor logo
- * in a gray box. The hero variant adds the chevron after the competitor logo
- * (static: no interaction spec yet, DECISIONS → Comparison, design team).
+ * in a gray box.
+ *
+ * Hero dropdown (lead 2026-10-22, no Figma frame for the open state): when
+ * `others` (the other published comparisons) is not empty, the competitor
+ * side is a `<details>` menu: the summary (logo + chevron) toggles a panel of
+ * links "logo + title" to `/comparison/<slug>`, styled like the nav Services
+ * panel (same surface, border, radius, shadow, item type, hover and fade;
+ * Nav's styles are scoped, so they are mirrored here with the same tokens).
+ * `initDetailsMenu` (src/scripts/ui/details-menu.ts) adds the nav behavior:
+ * aria-expanded, Esc, click outside, arrow keys. Without JS the native
+ * `<details>` still opens. No others → no chevron and no control.
  *
  * Every size is in `em` of the pill's own font size (Figma "VS" = 18px), so
  * the whole pill scales as one: the hero sets 18px at the 14px base
@@ -20,19 +29,22 @@
 import { Image } from "astro:assets";
 import webflowLogo from "../../assets/comparison/logos/webflow.png";
 import chevron from "../../assets/comparison/icons/chevron-down.svg?raw";
-import { COMPARISON_COPY, WEBFLOW_NAME } from "./copy";
+import { COMPARISON_COPY, WEBFLOW_NAME, comparisonHref } from "./copy";
+import type { ComparisonSwitchItem } from "../../lib/sanity/types";
 import { altOr, logoBox, type ComparisonImageInput } from "./image";
 
 interface Props {
   competitorName: string;
   competitorLogo?: ComparisonImageInput;
   variant?: "hero" | "card";
+  /** Hero only: the other published comparisons (dropdown). Empty → static pill. */
+  others?: readonly (ComparisonSwitchItem & { competitorLogo?: ComparisonImageInput })[] | null | undefined;
   /** Above the fold: load eagerly. */
   eager?: boolean;
   class?: string;
 }
 
-const { competitorName, competitorLogo, variant = "hero", eager = false, class: className } = Astro.props;
+const { competitorName, competitorLogo, variant = "hero", others, eager = false, class: className } = Astro.props;
 
 // Figma px at the pill's 18px type: Webflow 153.6 × 26.39; competitor logos
 // from 26 (Framer, Wix) to 37.43 (WordPress) tall.
@@ -41,9 +53,23 @@ const logo = logoBox(competitorLogo, altOr(competitorLogo, competitorName), { mi
 const em = (px: number): string => `${Math.round((px / PILL_PX) * 1000) / 1000}em`;
 const loading = eager ? "eager" : "lazy";
 const rootClass = ["c-cmp-pill", `is-${variant}`, className].filter(Boolean).join(" ");
+
+// Dropdown items: logo box 20px tall (the nav panel's 35.5px icon row), up to 90px wide.
+const menu =
+  variant === "hero"
+    ? (others ?? [])
+        .filter((item) => item.slug)
+        .map((item) => ({
+          key: item._id,
+          href: comparisonHref(item.slug),
+          label: item.title?.trim() || `${WEBFLOW_NAME} vs ${item.competitorName}`,
+          logo: logoBox(item.competitorLogo, "", { minHeight: 14, maxHeight: 20 }),
+        }))
+    : [];
+const menuId = "cmp-pill-menu";
 ---
 
-<span class={rootClass}>
+<div class={rootClass}>
   <span class="c-cmp-pill__side is-webflow">
     <Image
       class="c-cmp-pill__logo is-webflow"
@@ -56,7 +82,44 @@ const rootClass = ["c-cmp-pill", `is-${variant}`, className].filter(Boolean).joi
     />
   </span>
   <span class="c-cmp-pill__vs" aria-hidden="true">{COMPARISON_COPY.vs}</span>
-  <span class="c-cmp-pill__side is-competitor">
+  <span class="c-cmp-pill__sr-only">{COMPARISON_COPY.versus}</span>
+  {menu.length > 0 ? (
+    <details class="c-cmp-pill__menu" data-details-menu>
+      <summary class="c-cmp-pill__side is-competitor is-trigger" aria-controls={menuId}>
+        {logo ? (
+          <img
+            class="c-cmp-pill__logo"
+            src={logo.src}
+            width={Math.round(logo.width)}
+            height={Math.round(logo.height)}
+            alt={logo.alt}
+            style={`height: ${em(logo.height)};`}
+            loading={loading}
+            decoding="async"
+          />
+        ) : (
+          <span class="c-cmp-pill__name">{competitorName}</span>
+        )}
+        <span class="c-cmp-pill__chevron" aria-hidden="true" set:html={chevron} />
+        <span class="c-cmp-pill__sr-only">{COMPARISON_COPY.otherComparisons}</span>
+      </summary>
+      <ul id={menuId} class="c-cmp-pill__panel">
+        {menu.map((item) => (
+          <li>
+            <a class="c-cmp-pill__panel-link" href={item.href}>
+              <span class="c-cmp-pill__panel-logo" aria-hidden="true">
+                {item.logo && (
+                  <img src={item.logo.src} width={Math.round(item.logo.width)} height={Math.round(item.logo.height)} alt="" loading="lazy" decoding="async" />
+                )}
+              </span>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </details>
+  ) : (
+    <span class="c-cmp-pill__side is-competitor">
     {logo ? (
       <img
         class="c-cmp-pill__logo"
@@ -71,9 +134,17 @@ const rootClass = ["c-cmp-pill", `is-${variant}`, className].filter(Boolean).joi
     ) : (
       <span class="c-cmp-pill__name">{competitorName}</span>
     )}
-    {variant === "hero" && <span class="c-cmp-pill__chevron" aria-hidden="true" set:html={chevron} />}
-  </span>
-</span>
+    </span>
+  )}
+</div>
+
+<script>
+  import { initDetailsMenu } from "../../scripts/ui/details-menu";
+
+  document.querySelectorAll<HTMLDetailsElement>("details[data-details-menu]").forEach((menu) => {
+    initDetailsMenu(menu);
+  });
+</script>
 
 <style>
   /* Figma 3790:37351: 0.6px #C9CEDA border (Eyebrow's 0.5px gray), 3.6px
@@ -163,16 +234,166 @@ const rootClass = ["c-cmp-pill", `is-${variant}`, className].filter(Boolean).joi
     height: 0.491em;
   }
 
+
+  /* --- Hero dropdown (lead 2026-10-22; no Figma frame for the open state) ---
+     The competitor side is the trigger. The panel mirrors the nav Services
+     panel (Nav.astro `.c-nav__panel` / `.c-nav__panel-link`, scoped there):
+     white surface, `--border-default`, 8px radius, the nav panel shadow,
+     15 / 24px padding, 20px between items, Tag-like uppercase links with a
+     1px border that turns `--color-gray` on hover, 200ms fade. Sizes in rem
+     (not the pill's em) so the panel matches the nav at every width. */
+  .c-cmp-pill__menu {
+    position: relative;
+    display: flex;
+  }
+  .c-cmp-pill__side.is-trigger {
+    list-style: none;
+    cursor: pointer;
+    transition: border-color var(--duration-hover) var(--ease-smooth);
+  }
+  .c-cmp-pill__side.is-trigger::-webkit-details-marker {
+    display: none;
+  }
+  .c-cmp-pill__side.is-trigger:hover,
+  .c-cmp-pill__menu.is-open > .c-cmp-pill__side.is-trigger {
+    border-color: var(--color-text);
+  }
+  .c-cmp-pill__side.is-trigger:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+  .c-cmp-pill__chevron :global(svg) {
+    transition: transform var(--duration-hover) var(--ease-smooth);
+  }
+  .c-cmp-pill__menu[open]:not(.is-enhanced) .c-cmp-pill__chevron :global(svg),
+  .c-cmp-pill__menu.is-open .c-cmp-pill__chevron :global(svg) {
+    transform: rotate(180deg);
+  }
+
+  /* Anchored under the competitor side, right edges aligned, so it opens
+     toward the centre of the page and never past the viewport's right edge;
+     above the logo strip, below the sticky nav (z-index 100). */
+  .c-cmp-pill__panel {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    z-index: 20;
+    width: max-content;
+    max-width: calc(100vw - 4rem);
+    margin: 0;
+    padding: 0.9375rem 1.5rem;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.25rem;
+    background: var(--color-white);
+    border: var(--border-default);
+    border-radius: 8px;
+    box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.15); /* the nav panel's shadow (Nav.astro) */
+    font-size: 1rem;
+    text-align: left;
+  }
+  /* Enhanced: always in the DOM (the <details> stays open), faded like the nav. */
+  .c-cmp-pill__menu.is-enhanced .c-cmp-pill__panel {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 200ms var(--ease-smooth), visibility 200ms var(--ease-smooth);
+  }
+  .c-cmp-pill__menu.is-enhanced.is-open .c-cmp-pill__panel {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+  /* Bridge over the 0.5rem gap (as the nav panel). */
+  .c-cmp-pill__panel::before {
+    content: "";
+    position: absolute;
+    top: -0.5rem;
+    left: 0;
+    right: 0;
+    height: 0.5rem;
+  }
+  /* Item = `.c-nav__panel-link`: 6px padding, 10px gap, 1px transparent
+     border, 3px radius, Tag type (0.9375rem uppercase, 0.064em tracking). */
+  .c-cmp-pill__panel-link {
+    display: flex;
+    align-items: center;
+    gap: 0.714rem;
+    padding: 0.429rem;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: 0.064em;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: border-color var(--duration-hover) var(--ease-smooth);
+  }
+  .c-cmp-pill__panel-link:hover {
+    border-color: var(--color-gray);
+  }
+  .c-cmp-pill__panel-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  /* Logo column in place of the nav icon: the icon's 2.537rem height, a
+     fixed width so the labels line up. TODO: DS (no design). */
+  .c-cmp-pill__panel-logo {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    width: 6.429rem;
+    height: 2.537rem;
+  }
+  .c-cmp-pill__panel-logo img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: 1.429rem;
+    object-fit: contain;
+    object-position: left center;
+  }
+  .c-cmp-pill__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+  @media (max-width: 767px) {
+    .c-cmp-pill__panel {
+      max-width: calc(100vw - 4rem);
+    }
+    /* Phones: the c-tag mobile size (Tag.astro, lead 2026-10-16). */
+    .c-cmp-pill__panel-link {
+      font-size: 1.1333rem;
+      white-space: normal;
+    }
+  }
+
   /* Index card: the same pill at the card's scale (18px in a 543px card,
      Figma 3790:38001). The thumbnail is the size container. */
   .c-cmp-pill.is-card {
     font-size: 3.315cqi;
   }
 
-  /* Phones: the hero pill keeps one line on a 375px screen. TODO: DS mobile (no mobile design). */
+  /* Phones: the hero pill (≈ 29em wide with the chevron) never gets wider
+     than the screen minus the 2rem gutters, or the page would pan sideways
+     (lead 2026-10-22: the H1 looked clipped on the left). TODO: DS mobile
+     (no mobile design). */
   @media (max-width: 767px) {
     .c-cmp-pill.is-hero {
-      font-size: 1.35rem;
+      font-size: min(1.35rem, calc((100vw - 4rem) / 29));
     }
   }
 </style>
