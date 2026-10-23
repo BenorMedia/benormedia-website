@@ -658,6 +658,27 @@ export const THUMBS: Record<string, ThumbEntry> = {
       { tag: "Localization", logos: ["contentful"] },
     ],
   }),
+  // AI tools around the site, under the post's allow, ask and block policy.
+  "webflow-mcp": t(ThDome, {
+    outer: [
+      { icon: "cms", label: "CMS items" },
+      { icon: "designGrid", label: "Design" },
+      { icon: "codeBlocks", label: "Custom code" },
+      { icon: "graphics", label: "Assets" },
+      { icon: "analytics", label: "Analytics" },
+    ],
+    middle: [
+      { icon: "person", label: "Your role" },
+      { icon: "shieldLock", label: "Approvals" },
+      { icon: "pencilDoc", label: "Agent instructions" },
+      { icon: "reporting", label: "Site Activity log" },
+    ],
+    inner: [
+      { icon: "ai", label: "Allow" },
+      { icon: "calendar", label: "Ask" },
+      { icon: "shield", label: "Block" },
+    ],
+  }),
   // Content from the CMS, rendered for every device.
   "headless-cms-seo": t(ThObject, { object: "deviceStack" }),
   // Launch week.

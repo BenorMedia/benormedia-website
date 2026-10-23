@@ -59,6 +59,7 @@
 - [AI SEO Myths: What to Skip and What to Do](https://www.benormedia.com/blog/ai-seo-myths): Seven AI SEO myths B2B SaaS teams still act on, what Google's own documentation says about each one, and what to do with that time and budget instead.
 - [Webflow Editor Shutdown: How Teams Edit Now](https://www.benormedia.com/blog/webflow-editor): Webflow's legacy Editor shut down on August 4, 2026. How marketing teams edit now: content editor roles, seats, publishing rights, and a handover checklist.
 - [Headless CMS Comparison for Marketing Sites](https://www.benormedia.com/blog/headless-cms-comparison): A headless CMS comparison for B2B SaaS marketing sites: visual editing, preview, scheduling, localization, roles, hosting, and pricing drivers in six CMSs.
+- [Webflow MCP: What to Allow on a Marketing Site](https://www.benormedia.com/blog/webflow-mcp): The Webflow MCP server lets AI tools edit, publish, and delete on your site. What each action does, what to allow or block, and a review policy that works.
 
 ## Company
 
