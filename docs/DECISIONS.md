@@ -633,8 +633,8 @@ Without adding to your team." with "website moving." marked Gradient (published 
 ### Open questions
 #### Content
 - **Comparison copy** — Final copy for every lorem block and the FAQ, plus the figures and sources for the reason stats. Built meanwhile with `TODO: COPY` and `[FACT NEEDED]`. (2026-10-22)
-- **Hero headline spelling** — Figma 3790:37360 reads "Wordpress wasn't built for SaaS." (lowercase p); the rest of the page writes "WordPress". The fixture keeps Figma word for word; confirm the spelling for Sanity. (2026-10-22)
-- **Table section eyebrow** — Figma 3834:38132 repeats "What to choose" above "Webflow vs WordPress, side by side" (same eyebrow as the section before). Kept word for word in the fixture; confirm or send the right label. (2026-10-22)
+- ~~**Hero headline spelling**~~ — RESOLVED 2026-10-22: "WordPress" with capital P (lead).
+- ~~**Table section eyebrow**~~ — RESOLVED 2026-10-22: the repeat was a slip; lead asked the orchestrator for a label: "Feature comparison" (proposed wording, lead to confirm).
 - **Logo uploads** — Upload competitor logos as SVG at display size or as raster at 2x (e.g. 324 × 75 px for a 162 × 37.5 logo); the page sizes them from the file (see Decisions). (2026-10-22)
 - **Framer and Wix comparisons** — Only Webflow vs WordPress has copy in Figma. The index shows them once their documents are published. (2026-10-22)
 #### Design team

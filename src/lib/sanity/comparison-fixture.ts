@@ -112,8 +112,8 @@ export function createComparisonFixture(
     competitorName: 'WordPress',
     competitorLogo: WORDPRESS_LOGO,
     competitorLogoOnDark: img(assets.wordpressLogoWhite, 'WordPress'),
-    // Figma 3790:37360, word for word ("Wordpress" spelled as in Figma).
-    headline: title("Wordpress wasn't built for SaaS. Webflow was.", 'Webflow was.'),
+    // Figma 3790:37360; "WordPress" capitalized per the lead (2026-10-22).
+    headline: title("WordPress wasn't built for SaaS. Webflow was.", 'Webflow was.'),
     // TODO: COPY: Figma lorem (3790:37362).
     subtitle:
       'Lorem ipsum dolor sit amet consectetur. Libero non nisl dictum morbi sed eu condimentum. Sit eget amet ac sagittis nam in pharetra nec.',
@@ -143,8 +143,8 @@ export function createComparisonFixture(
       ],
     },
     tableHeader: {
-      // Figma 3834:38132 repeats "What to choose" here (likely a copy slip; kept word for word).
-      eyebrow: 'What to choose',
+      // Figma 3834:38132 repeated "What to choose"; replaced at the lead's request (2026-10-22).
+      eyebrow: 'Feature comparison',
       title: title('Webflow vs WordPress, side by side', 'side by side'),
       description: 'Grouped by what actually matters to a SaaS marketing team.',
     },
