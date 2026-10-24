@@ -1,0 +1,25 @@
+---
+/**
+ * Contact page (Figma 3790:36790, docs/refs/contact-us/Contact.png).
+ * Every "Get in Touch" / Contact CTA links here (lead 2026-10-22; replaces
+ * the contact popup).
+ *
+ * Copy is static (ContactSection). Sanity supplies Surfe's testimonial
+ * (`getContactTestimonialCached`, the ContactModal's pick) and the logo
+ * strip clients. No CTA banner: the design ends on the footer.
+ */
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ContactSection from "../components/sections/ContactSection.astro";
+import { getAllClientsWithLogo } from "../lib/sanity/queries";
+import { getContactTestimonialCached } from "../lib/sanity/site";
+import { PAGE_META } from "../lib/content/seo";
+
+const [testimonial, clients] = await Promise.all([
+  getContactTestimonialCached(),
+  getAllClientsWithLogo(),
+]);
+---
+
+<BaseLayout title={PAGE_META.contact.title} description={PAGE_META.contact.description} showCtaBanner={false}>
+  <ContactSection testimonial={testimonial} clients={clients} />
+</BaseLayout>

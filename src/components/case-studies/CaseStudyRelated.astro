@@ -30,7 +30,7 @@ const list = cards.slice(0, 3);
       <header class="c-cs-related__header">
         <Eyebrow>{CASE_STUDY_COPY.related.eyebrow}</Eyebrow>
         <h2 id="cs-related-title" class="c-cs-related__title c-text_xl">{CASE_STUDY_COPY.related.heading}</h2>
-        <Button variant="gradient" class="js-open-contact c-cs-related__button">{CASE_STUDY_COPY.relatedButton}</Button>
+        <Button variant="gradient" href="/contact" class="c-cs-related__button">{CASE_STUDY_COPY.relatedButton}</Button>
       </header>
       <CaseStudyGrid cards={list} variant="resources" />
     </Container>

@@ -214,6 +214,7 @@
 | 2026-10-07 | Ahrefs Web Analytics in `BaseLayout` `<head>` (`analytics.ahrefs.com/analytics.js`, `data-key` = the Ahrefs site key, `async`, `is:inline` so Astro does not bundle it). Production only (`PUBLIC_SITE_ENV === "production"`, same switch as GTM): previews and dev never send visits | Lead: install Ahrefs analytics | Lead |
 | 2026-10-17 | Google tag (gtag.js) for GA4 `G-LC2VQ4Z1VV` in `BaseLayout` `<head>`, the official snippet verbatim right after GTM. Production only (`PUBLIC_SITE_ENV === "production"`, same switch as GTM): previews and dev never send hits. If GTM also fires a GA4 tag for this ID, page views count twice | Lead: install the Google tag in the head | Lead |
 | 2026-10-17 | GTM container replaced: `GTM-5HNF8BWX` (was `GTM-M4MHRTDM`) in both the head snippet and the `<noscript>` iframe. Same loader and production-only switch as before | Lead: new GTM scripts | Lead |
+| 2026-10-22 | Contact is a page, `/contact` (supersedes 2026-09-25 "Contact is a popup"): every contact CTA links there (Nav desktop + mobile, Footer "Contact", `CtaActions` `contact` links via `hrefFromLink` → `CONTACT_PATH`, PricingCard, NpActions, NpBlogSidebar, CaseStudyRelated). `ContactModal` kept but no longer rendered by BaseLayout (mounted only on `/dev/styleguide`); its submit logic moved to `src/scripts/ui/contact-form.ts`, shared with the page. Sanity link type `contact` relabelled "Contact page"; `contact` added to the service reserved slugs | Lead request (Figma 3790:36790, `docs/refs/contact-us/Contact.png`) | Lead |
 
 ### Open questions
 
@@ -661,3 +662,32 @@ Without adding to your team." with "website moving." marked Gradient (published 
 - **`/blog` index design** — no Figma frame; built from the hero and Resources cards. Send the frame if there is one. Cards have no search or category filter (SITEMAP) because the posts have no category. (2026-10-15)
 - **Code block style** — no monospace font or code style in the DS: `.c-np-code` (`new-pages.css`) uses `--color-gray-light`, the table border and an 8px radius, font `ui-monospace` stack marked `TODO: DS`. (2026-10-15)
 - **Related live pages on posts** — `related` entries that are Sanity pages (`/growth`, `/ongoing-website-support`, `/custom-websites-migrations`) get no Resources card, as on the guides (cards are pack pages only). (2026-10-15)
+
+---
+
+## Contact
+
+### Decisions
+| Date | Decision | Reason | Status |
+|---|---|---|---|
+| 2026-10-22 | `/contact` = `ContactSection` (two columns, grid areas intro / form / proof so ≤991 stacks title → form → testimonial + logos), no CTA banner. Copy = Figma word for word; testimonial = `getContactTestimonialCached()` (Surfe's Sanity testimonial, same as the modal); logos = `LogoStrip inline` (new prop: no borders, 22.4px logos 48px apart, edge fade by mask). Form fields, names, budget values and honeypot = the modal's, so `/api/contact` is unchanged. Form-card line art = Figma asset as exported (`public/images/contact/form-bg.svg`) | Figma 3790:36790 | Proposed |
+| 2026-10-23 | `/contact` visual QA (desktop): section top padding −50% (110 → 55px; bottom and ≤767 unchanged); testimonial quote → author space −50% (≈65 → 32.5px); author photo −50% (69 → 34.5px); Surfe logo −25% (38 → ≈28.6px tall); form card keeps the Figma 123px under Submit (`padding-bottom`) so the line art stays below the button now that the left column is shorter | Lead visual QA (Vercel comments) | Lead |
+
+### Open questions
+
+#### Content
+- **Meta title / description** — `PAGE_META.contact` is a placeholder (`TODO: COPY`): "Contact" + the Figma subtitle shortened (124 characters, under the 140–160 target). (2026-10-22)
+- **Testimonial** — Figma shows David Chevalier's quote with the Surfe logo; the page renders Surfe's testimonial from Sanity (Trelise Mansfield), like the modal. If the design quote is wanted, it must exist in Sanity. (2026-10-22)
+- **Form status messages** — still the modal's `TODO: COPY` lines (sending / success / error). (2026-10-22)
+
+#### Design team
+- **Tablet / mobile design** — none; built as one column at ≤991 (title, form, testimonial, logos). (2026-10-22)
+- **Required asterisk color** — Figma `#E74F0D` / `#E31837` has no token; the asterisk keeps the label color (`TODO: DS`). (2026-10-22)
+- **Title color** — Figma `#0A0B0B` → `--color-heading` (closest token). (2026-10-22)
+
+#### Needs lead OK
+- **`/contact` page build** — see the Contact Decisions row. (2026-10-22)
+
+#### Engineering follow-ups
+- **ContactModal** — not rendered anywhere but `/dev/styleguide`; delete it (and `siteSettings.contactModal`) only if the lead confirms the popup won't come back. (2026-10-22)
+

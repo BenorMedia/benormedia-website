@@ -64,10 +64,10 @@ const blogLinks = [
 ];
 // `hidden`: kept in the markup, not shown. Testimonials stays out of
 // production for now (lead 2026-09-30, same as the nav).
-const aboutLinks: Array<{ label: string; href: string; openContact?: boolean; hidden?: boolean }> = [
+const aboutLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   { label: "Our Work", href: "/work" },
   { label: "Pricing", href: "/pricing" },
-  { label: "Contact", href: "#", openContact: true },
+  { label: "Contact", href: "/contact" },
   { label: "Testimonials", href: "/testimonials", hidden: true },
 ];
 
@@ -135,11 +135,7 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
           <ul class="c-footer__col-list">
             {aboutLinks.map((l) => (
               <li hidden={l.hidden}>
-                {l.openContact ? (
-                  <button type="button" class="c-footer__col-link is-button" data-open-contact>{l.label}</button>
-                ) : (
-                  <a href={l.href} class="c-footer__col-link">{l.label}</a>
-                )}
+                <a href={l.href} class="c-footer__col-link">{l.label}</a>
               </li>
             ))}
           </ul>
@@ -308,15 +304,6 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   }
   .c-footer__col-link:hover {
     color: var(--color-accent);
-  }
-  .c-footer__col-link.is-button {
-    background: none;
-    border: 0;
-    padding: 0;
-    cursor: pointer;
-    font: inherit;
-    color: inherit;
-    text-align: left;
   }
 
   /* Side column: badges + socials */

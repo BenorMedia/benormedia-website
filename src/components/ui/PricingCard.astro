@@ -1,7 +1,7 @@
 ---
 /**
  * PricingCard — plan name, description, gradient price, feature list and a
- * full-width "Get In Touch" button that opens the contact modal.
+ * full-width "Get In Touch" button that links to /contact.
  * Ref: `docs/refs/pricing/pricing-cards.jpg`.
  *
  * Price: `price` (+ optional `period`, e.g. "/mo") or `priceLabel` (e.g.
@@ -76,7 +76,7 @@ const rootClass = ["c-pricing-card", className].filter(Boolean).join(" ");
   </ul>
 
   <div class="c-pricing-card__cta">
-    <Button variant="gradient" class="c-pricing-card__button js-open-contact">{ctaLabel}</Button>
+    <Button variant="gradient" href="/contact" class="c-pricing-card__button">{ctaLabel}</Button>
   </div>
 </article>
 

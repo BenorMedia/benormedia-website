@@ -17,6 +17,7 @@ const RESERVED_SLUGS = [
   'pricing',
   'testimonials',
   'blog',
+  'contact',
   'studio',
   'dev',
   '404',

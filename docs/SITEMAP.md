@@ -15,12 +15,13 @@ English only. No locale prefix.
 | Ongoing Website Support | `/ongoing-website-support` | Service template | `service` | |
 | Blog | `/blog` | Singleton + list | `blogPage` + `post[]` | Search input + category filter dropdown. Optional for launch (DECISIONS 2026-09-29) |
 | Blog article | `/blog/[slug]` | Dynamic | `post` | |
+| Contact | `/contact` | Static | `testimonial` (Surfe) + `client[]` (logos) | Figma 3790:36790. Every "Get in Touch" / Contact CTA links here (2026-10-22) |
 | 404 | `/404` | Static | `siteSettings` | |
 
 Global UI (not pages):
 - **Services**: header dropdown only. No services index page and no `/services/` prefix: each service lives at the root (`/<service-slug>`), built from `src/pages/[service].astro`.
-- **Reserved slugs**: a service slug can never be `work`, `case-studies`, `pricing`, `testimonials`, `blog`, `studio`, `dev`, `404` (enforced by Sanity validation).
-- **Contact**: popup (`c-contact-modal`), opened by every "Get in Touch" link. No `/contact` page.
+- **Reserved slugs**: a service slug can never be `work`, `case-studies`, `pricing`, `testimonials`, `blog`, `contact`, `studio`, `dev`, `404` (enforced by Sanity validation).
+- **Contact**: the `/contact` page (2026-10-22; was the `c-contact-modal` popup, kept in code but not rendered).
 - **Legal**: no pages for now. Footer legal links hidden until they exist.
 
 Not public:

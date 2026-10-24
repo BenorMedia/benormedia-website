@@ -1,0 +1,363 @@
+---
+/**
+ * ContactSection — c-contact
+ * The /contact page body (Figma 3790:36790, docs/refs/contact-us/Contact.png).
+ *
+ * Two equal columns, 60px apart: left = title + subtitle, then Surfe's
+ * testimonial (`TestimonialCard`, same pick as the ContactModal) and the
+ * client logos (`LogoStrip inline`); right = the form card, as tall as the
+ * left column, with the Figma line art anchored to its bottom
+ * (`/images/contact/form-bg.svg`, Figma asset as exported).
+ *
+ * Grid areas keep the DOM order intro → form → proof, so ≤991 stacks the
+ * form right under the title. TODO: DS — no tablet/mobile design.
+ *
+ * Form → `POST /api/contact` through `initContactForm`
+ * (src/scripts/ui/contact-form.ts, shared with the ContactModal): same
+ * fields, names, budget values and honeypot as the modal, so the endpoint
+ * is unchanged. Copy = Figma, word for word.
+ *
+ * px → rem at 1/14 (DESIGN_SYSTEM §1).
+ */
+import Button from "../ui/Button.astro";
+import Container from "../ui/Container.astro";
+import TestimonialCard from "../ui/TestimonialCard.astro";
+import LogoStrip from "./LogoStrip.astro";
+import type { Client, Testimonial } from "../../lib/sanity/types";
+
+interface Props {
+  testimonial: Testimonial | null;
+  clients: Client[];
+}
+
+const { testimonial, clients } = Astro.props;
+
+const BUDGETS = [
+  { value: "<5000", label: "<5,000" },
+  { value: "5000-15000", label: "5,000 - 15,000" },
+  { value: "15000-30000", label: "15,000 - 30,000" },
+  { value: "30000+", label: "30,000+" },
+];
+---
+
+<section class="c-contact">
+  <Container class="c-contact__container">
+    <header class="c-contact__intro">
+      <h1 class="c-text_xl c-contact__title">Let's work together.</h1>
+      <p class="c-paragraph_m c-contact__subtitle">
+        Please fill out the form below and one of our team members will be in touch
+        with you within 24 hours. You can also reach out at{" "}
+        <a href="mailto:info@benor.media">info@benor.media</a>
+      </p>
+    </header>
+
+    <div class="c-contact__card">
+      <img
+        class="c-contact__card-bg"
+        src="/images/contact/form-bg.svg"
+        alt=""
+        width="1272"
+        height="197"
+        loading="lazy"
+        decoding="async"
+      />
+      <form class="c-contact__form" novalidate>
+        <div class="c-contact__row">
+          <label class="c-contact__field">
+            <span class="c-paragraph c-contact__label">Your Name<span class="c-contact__required" aria-hidden="true">*</span></span>
+            <input type="text" name="name" autocomplete="name" required />
+          </label>
+          <label class="c-contact__field">
+            <span class="c-paragraph c-contact__label">Email<span class="c-contact__required" aria-hidden="true">*</span></span>
+            <input type="email" name="email" autocomplete="email" required />
+          </label>
+        </div>
+
+        <label class="c-contact__field">
+          <span class="c-paragraph c-contact__label">Company<span class="c-contact__required" aria-hidden="true">*</span></span>
+          <input type="text" name="company" autocomplete="organization" required />
+        </label>
+
+        <fieldset class="c-contact__field c-contact__budget">
+          <legend class="c-paragraph c-contact__label">Engagement Budget<span class="c-contact__required" aria-hidden="true">*</span></legend>
+          <div class="c-contact__budget-options">
+            {BUDGETS.map((b, i) => (
+              <label class="c-paragraph c-contact__budget-option">
+                <input type="radio" name="budget" value={b.value} required={i === 0} />
+                <span>{b.label}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <label class="c-contact__field">
+          <span class="c-paragraph c-contact__label">Message</span>
+          <textarea name="message" class="c-contact__message"></textarea>
+        </label>
+
+        {/* Honeypot: hidden from people (and screen readers); bots fill it. */}
+        <div class="c-contact__hp" aria-hidden="true">
+          <label>
+            Website
+            <input type="text" name="website" tabindex="-1" autocomplete="off" />
+          </label>
+        </div>
+
+        <Button variant="gradient" type="submit" class="c-contact__submit">Submit</Button>
+        {/* TODO: COPY — status messages are set by contact-form.ts. */}
+        <p class="c-contact__status c-paragraph_s" role="status" aria-live="polite" data-contact-status></p>
+      </form>
+    </div>
+
+    {(testimonial || clients.length > 0) && (
+      <div class="c-contact__proof">
+        {testimonial && <TestimonialCard testimonial={testimonial} class="c-contact__testimonial" />}
+        {clients.length > 0 && <LogoStrip clients={clients} inline />}
+      </div>
+    )}
+  </Container>
+</section>
+
+<script>
+  import { initContactForm } from "../../scripts/ui/contact-form";
+
+  initContactForm(document.querySelector<HTMLFormElement>(".c-contact__form"));
+</script>
+
+<style>
+  /* --- Layout (Figma 3790:36805): 110px / 120px padding, 60px column gap,
+     35px between the intro and the proof column. ----------------------- */
+  :global(.c-contact__container) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "intro form"
+      "proof form";
+    column-gap: 4.286rem; /* 60px */
+    row-gap: 2.5rem; /* 35px */
+    padding-top: 3.929rem; /* Figma 110px, −50% (lead visual QA 2026-10-23) */
+    padding-bottom: 7.857rem; /* 110px */
+  }
+
+  .c-contact__intro {
+    grid-area: intro;
+    display: flex;
+    flex-direction: column;
+    gap: 1.714rem; /* 24px */
+  }
+  .c-contact__title {
+    color: var(--color-heading); /* Figma #0A0B0B → closest token. TODO: DS */
+  }
+  .c-contact__subtitle {
+    max-width: 48.658rem; /* 681.207px */
+    color: var(--color-text);
+  }
+  .c-contact__subtitle a {
+    color: inherit;
+  }
+
+  .c-contact__proof {
+    grid-area: proof;
+    display: flex;
+    flex-direction: column;
+    gap: 2.143rem; /* 30px */
+    min-width: 0;
+  }
+
+  /* --- Testimonial (Figma 3790:36811) ----------------------------------
+     The shared card at column width: radius 8px, 69px photo 21px from the
+     name, 122 × 38px logo, the author row at the bottom of a 110px slot. */
+  .c-contact__proof :global(.c-contact__testimonial) {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  /* Quote → author space: Figma 24px gap + 41px (110px slot − 69px photo),
+     −50% (lead visual QA 2026-10-23): 1.714rem gap + 0.607rem = 32.5px. */
+  .c-contact__proof :global(.c-contact__testimonial .c-testimonial-card__author) {
+    padding-top: 0.607rem;
+  }
+  .c-contact__proof :global(.c-contact__testimonial .c-testimonial-card__person) {
+    gap: 1.5rem; /* 21px */
+  }
+  .c-contact__proof :global(.c-contact__testimonial .c-testimonial-card__photo) {
+    width: 2.464rem; /* Figma 69px, −50% (lead visual QA 2026-10-23) */
+    height: 2.464rem;
+  }
+  .c-contact__proof :global(.c-contact__testimonial .c-testimonial-card__logo) {
+    /* Figma 122.388 × 38.095px, −25% to balance the smaller photo (lead
+       visual QA 2026-10-23). */
+    height: 2.041rem;
+    max-width: 6.557rem;
+  }
+
+  /* --- Form card (Figma 3790:37041) ------------------------------------ */
+  .c-contact__card {
+    grid-area: form;
+    position: relative;
+    overflow: hidden;
+    padding: 2.679rem; /* 37.5px */
+    /* Figma: 123px between Submit and the card bottom (the line art shows
+       there). Kept once the left column got shorter (lead QA 2026-10-23). */
+    padding-bottom: 8.786rem;
+    border: var(--border-default);
+    border-radius: 8px;
+    background: var(--color-white);
+  }
+  /* Line art: 1272 × 197px, bottom of the card, 41px right of center. */
+  .c-contact__card-bg {
+    position: absolute;
+    bottom: 0;
+    left: calc(50% + 2.929rem);
+    width: 90.857rem;
+    max-width: none;
+    height: auto;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .c-contact__form {
+    position: relative; /* above the line art */
+    display: flex;
+    flex-direction: column;
+    gap: 1.714rem; /* 24px */
+  }
+  .c-contact__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1.071rem; /* 15px */
+  }
+  .c-contact__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.429rem; /* 6px */
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .c-contact__label {
+    padding: 0;
+    color: var(--color-black-secondary); /* Figma #212427 */
+  }
+  /* Figma #E74F0D: no DS token, the asterisk keeps the label color.
+     TODO: DS required-mark color. */
+  .c-contact__required {
+    color: inherit;
+  }
+
+  .c-contact__field input[type="text"],
+  .c-contact__field input[type="email"],
+  .c-contact__message {
+    width: 100%;
+    height: 3.482rem; /* 48.75px */
+    padding: 0.5rem 0;
+    border: 0;
+    border-bottom: var(--border-default);
+    border-radius: 0;
+    background: transparent;
+    color: var(--color-heading);
+    font-family: var(--font-body);
+    font-size: var(--fs-p);
+    outline: none;
+    transition: border-color var(--duration-hover) var(--ease-smooth);
+  }
+  .c-contact__message {
+    height: 10.571rem; /* 148px */
+    resize: vertical;
+  }
+  .c-contact__field input:focus-visible,
+  .c-contact__message:focus-visible {
+    border-bottom-color: var(--color-accent);
+  }
+
+  /* Budget radios (Figma 3790:37075): 16px under the label, 17px apart. */
+  /* A <legend> ignores the fieldset's gap: margin instead. */
+  .c-contact__budget .c-contact__label {
+    margin-bottom: 1.143rem; /* 16px */
+  }
+  .c-contact__budget-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.714rem 1.214rem; /* wrap row gap TODO: DS / 17px */
+  }
+  .c-contact__budget-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.571rem; /* 8px */
+    color: var(--color-text);
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .c-contact__budget-option input {
+    width: 1.283rem; /* 17.965px */
+    height: 1.283rem;
+    margin: 0;
+    accent-color: var(--color-accent);
+  }
+
+  :global(.c-contact__submit) {
+    width: 100%;
+  }
+  :global(.c-contact__submit:disabled) {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  /* Submit result (TODO: DS — no design). Empty = takes no space. */
+  .c-contact__status {
+    margin: 0;
+    color: var(--color-text);
+  }
+  .c-contact__status:empty {
+    display: none;
+  }
+  .c-contact__status[data-state="success"] {
+    color: var(--color-accent);
+  }
+
+  /* Honeypot: off-screen, not focusable (tabindex -1), hidden from AT. */
+  .c-contact__hp {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  /* --- Breakpoints (TODO: DS — no tablet/mobile design) ---------------- */
+  @media (max-width: 991px) {
+    :global(.c-contact__container) {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto;
+      grid-template-areas:
+        "intro"
+        "form"
+        "proof";
+    }
+  }
+  @media (max-width: 767px) {
+    :global(.c-contact__container) {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
+    .c-contact__card {
+      padding: 2rem;
+    }
+    .c-contact__row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1.714rem;
+    }
+    /* Same as the ContactModal on phones (lead 2026-10-05): fields 1.7rem. */
+    .c-contact__field input[type="text"],
+    .c-contact__field input[type="email"],
+    .c-contact__message {
+      font-size: 1.7rem;
+      height: 4.5rem;
+    }
+    .c-contact__message {
+      height: 12rem;
+    }
+  }
+</style>
