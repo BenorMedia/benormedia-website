@@ -1,0 +1,100 @@
+---
+/**
+ * Comparison template — one static page per published Sanity `comparison`
+ * (`/comparison/<slug>`, SCHEMAS v0.14, DECISIONS → Comparison). Drafts
+ * never build: the queries return published documents only.
+ *
+ * Body: the shared `ComparisonPage` (also used by `/dev/comparison`); CTA
+ * banner + footer from BaseLayout. The page fetches the logo strip clients
+ * and testimonials (global data, as on service pages).
+ *
+ * SEO: `comparison.seo` wins in `Seo` (metaTitle, metaDescription, ogImage,
+ * noIndex, canonicalUrl); fallbacks: title = the comparison title,
+ * description = the subtitle (≤160 characters), else the site default.
+ * Canonical = `/comparison/<slug>` (Seo's default).
+ *
+ * JSON-LD: Article (author and publisher = the shared Organization `@id`,
+ * `dateModified` = the date of `_updatedAt`, never before `publishedAt`,
+ * `image` = the SEO OG image when set) + BreadcrumbList (Home › Comparison
+ * › title); FAQPage from `FaqSection` (same array as the visible FAQ). No
+ * offers.
+ *
+ * Placeholder guard (`comparison-release.ts`): a production build STOPS
+ * when a published comparison would show placeholder code copy, or Sanity
+ * copy that is still Lorem ipsum / TODO: COPY / an open `[FACT NEEDED: …]`
+ * marker; other builds warn.
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import JsonLd from "../../components/layout/JsonLd.astro";
+import ComparisonPage from "../../components/comparison/ComparisonPage.astro";
+import { getAllClientsWithLogo, getComparisonBySlug, getComparisonSlugs, getTestimonials } from "../../lib/sanity/queries";
+import type { Comparison } from "../../lib/sanity/types";
+import { comparisonJsonLd } from "../../lib/new-pages/jsonld";
+import { COMPARISON_COPY, COMPARISON_PATH, comparisonHref } from "../../components/comparison/copy";
+import {
+  comparisonDetailCopyFields,
+  guardComparisonContent,
+  guardComparisonCopy,
+  isProductionBuild,
+} from "../../lib/sanity/comparison-release";
+import { urlFor } from "../../lib/sanity/image";
+
+export async function getStaticPaths() {
+  const slugs = await getComparisonSlugs();
+  const comparisons = (await Promise.all(slugs.map((slug) => getComparisonBySlug(slug)))).filter(
+    (c): c is Comparison => c !== null,
+  );
+  const production = isProductionBuild();
+  for (const comparison of comparisons) {
+    const page = comparisonHref(comparison.slug);
+    guardComparisonCopy(page, comparisonDetailCopyFields(), production);
+    guardComparisonContent(page, comparison, production);
+  }
+  return comparisons.map((comparison) => ({ params: { slug: comparison.slug }, props: { comparison } }));
+}
+
+interface Props {
+  comparison: Comparison;
+}
+
+const { comparison } = Astro.props;
+const [logoClients, testimonials] = await Promise.all([getAllClientsWithLogo(), getTestimonials()]);
+
+// Same clamp as the service and case study templates.
+function clamp(text: string, max = 160): string {
+  const clean = text.replace(/\s+/g, " ").trim();
+  if (clean.length <= max) return clean;
+  const cut = clean.slice(0, max - 1);
+  return `${cut.slice(0, cut.lastIndexOf(" ")).replace(/[\s,;:.]+$/, "")}…`;
+}
+
+const subtitle = comparison.subtitle?.trim();
+const metaDescription = comparison.seo?.metaDescription?.trim() || (subtitle ? clamp(subtitle) : undefined);
+const layoutOptional = metaDescription ? { description: metaDescription } : {};
+
+// Article `dateModified`: the date part of `_updatedAt`, never earlier than `publishedAt`.
+const updated = comparison._updatedAt?.slice(0, 10);
+const dateModified = updated && updated > comparison.publishedAt ? updated : comparison.publishedAt;
+const ogImage = comparison.seo?.ogImage;
+const articleImage = ogImage?.asset ? urlFor(ogImage).width(1200).height(630).fit("crop").url() : undefined;
+
+const path = comparisonHref(comparison.slug);
+const jsonLd = comparisonJsonLd({
+  url: path,
+  headline: comparison.title,
+  description: metaDescription,
+  datePublished: comparison.publishedAt,
+  dateModified,
+  image: articleImage,
+  crumbs: [
+    { name: COMPARISON_COPY.breadcrumb.home, url: "/" },
+    { name: COMPARISON_COPY.breadcrumb.index, url: COMPARISON_PATH },
+    { name: comparison.title, url: path },
+  ],
+});
+---
+
+<BaseLayout pageSeo={comparison.seo ?? null} title={comparison.title} {...layoutOptional}>
+  {jsonLd.map((data) => <JsonLd data={data} />)}
+  <ComparisonPage comparison={comparison} logoClients={logoClients} testimonials={testimonials} />
+</BaseLayout>

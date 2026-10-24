@@ -9,6 +9,7 @@ import sanity from '@sanity/astro';
 import sitemap from '@astrojs/sitemap';
 import { sitemapInfo } from './src/lib/new-pages/registry.mjs';
 import { caseStudySitemapInfo } from './src/lib/sanity/case-study-sitemap.mjs';
+import { comparisonSitemapInfo } from './src/lib/sanity/comparison-sitemap.mjs';
 
 /** @type {{ env: { NODE_ENV?: string }, cwd(): string, argv: string[] }} */
 const proc = /** @type {any} */ (globalThis).process;
@@ -150,6 +151,17 @@ const CASE_STUDIES = await caseStudySitemapInfo({
   failHard: !isDevServer,
 });
 
+// Comparisons (Sanity `comparison`, DECISIONS → Comparison 2026-10-22): the
+// same rules as case studies. `/comparison` is listed only once an
+// indexable comparison is published; detail pages take `lastmod` =
+// `publishedAt`. Same fail-closed behavior.
+const COMPARISONS = await comparisonSitemapInfo({
+  projectId,
+  dataset,
+  apiVersion: SANITY_API_VERSION,
+  failHard: !isDevServer,
+});
+
 // https://astro.build/config
 export default defineConfig({
   ...(siteUrl ? { site: siteUrl } : {}),
@@ -176,7 +188,8 @@ export default defineConfig({
     // from this list when they go live). Privacy Policy + Terms are
     // indexable since 2026-10-05, so they are listed. `/case-studies` while
     // no indexable case study is published (production builds don't emit it
-    // at all then), and case studies set to noindex.
+    // at all then), and case studies set to noindex. Same for `/comparison`
+    // and comparisons set to noindex.
     sitemap({
       filter: (page) => {
         const path = new URL(page).pathname.replace(/\/$/, '');
@@ -184,12 +197,15 @@ export default defineConfig({
           !/\/(dev|studio)(\/|$)|\/404$|^\/(cookie-policy|testimonials)\/?$/.test(new URL(page).pathname) &&
           !NEW_PAGES.draftPaths.has(path) &&
           !(path === '/case-studies' && !CASE_STUDIES.hasPublished) &&
-          !CASE_STUDIES.noIndexPaths.has(path)
+          !CASE_STUDIES.noIndexPaths.has(path) &&
+          !(path === '/comparison' && !COMPARISONS.hasPublished) &&
+          !COMPARISONS.noIndexPaths.has(path)
         );
       },
       serialize(item) {
         const path = new URL(item.url).pathname.replace(/\/$/, '') || '/';
-        const lastmod = LASTMOD[path] ?? NEW_PAGES.lastmod[path] ?? CASE_STUDIES.lastmod[path];
+        const lastmod =
+          LASTMOD[path] ?? NEW_PAGES.lastmod[path] ?? CASE_STUDIES.lastmod[path] ?? COMPARISONS.lastmod[path];
         if (lastmod) item.lastmod = lastmod;
         return item;
       },

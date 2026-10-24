@@ -1,0 +1,62 @@
+---
+/**
+ * ComparisonSectionHeader — a Sanity `accentSectionHeader` (eyebrow +
+ * gradient title + paragraph, SCHEMAS v0.14) on the shared `SectionHeader`.
+ * Renders nothing when the title is empty.
+ *
+ * `titleWidth` / `descriptionWidth`: the Figma text boxes, which set the
+ * line breaks (e.g. "Which one is right / for your team?"). Full width on
+ * phones.
+ */
+import SectionHeader from "../ui/SectionHeader.astro";
+import type { AccentSectionHeader } from "../../lib/sanity/types";
+import { accentTitleSegments, accentTitleText } from "../../lib/sanity/portable-text";
+
+interface Props {
+  header: AccentSectionHeader | null | undefined;
+  /** CSS length, e.g. "34.5rem". */
+  titleWidth?: string;
+  descriptionWidth?: string;
+  class?: string;
+}
+
+const { header, titleWidth, descriptionWidth, class: className } = Astro.props;
+const title = accentTitleText(header?.title);
+const segments = accentTitleSegments(header?.title);
+const eyebrow = header?.eyebrow?.trim();
+const description = header?.description?.trim();
+const optional = {
+  ...(eyebrow ? { eyebrow } : {}),
+  ...(description ? { description } : {}),
+};
+const style = [
+  titleWidth && `--c-cmp-header-title: ${titleWidth};`,
+  descriptionWidth && `--c-cmp-header-desc: ${descriptionWidth};`,
+]
+  .filter(Boolean)
+  .join(" ");
+---
+
+{title && (
+  <div class={["c-cmp-header", className].filter(Boolean).join(" ")} style={style || undefined}>
+    <SectionHeader title={title} titleSegments={segments} {...optional} />
+  </div>
+)}
+
+<style>
+  /* Figma Text XL boxes (60px) scaled to `c-text_xl`; Paragraph M boxes
+     (25px) to `c-paragraph_m`. TODO: DS */
+  .c-cmp-header :global(.c-section-header__title) {
+    max-width: var(--c-cmp-header-title, none);
+    line-height: 1.4; /* Figma Text XL 1.4 (`c-text_xl` is 1.2). TODO: DS */
+  }
+  .c-cmp-header :global(.c-section-header__description) {
+    max-width: var(--c-cmp-header-desc, 42rem);
+  }
+  @media (max-width: 767px) {
+    .c-cmp-header :global(.c-section-header__title),
+    .c-cmp-header :global(.c-section-header__description) {
+      max-width: 100%;
+    }
+  }
+</style>

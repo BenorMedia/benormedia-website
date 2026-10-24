@@ -1,0 +1,345 @@
+---
+/**
+ * CaseStudiesIndexHero — c-cs-index-hero
+ * The `/case-studies` hero (Figma 3790:36381 + background 3803:27030, lead
+ * 2026-10-22): eyebrow, two-line title (second line in the gradient) and
+ * description via the shared `SectionHeader`, over a decorative layer of
+ * three concentric rings, client icon tiles orbiting along them, and a
+ * white fade on top.
+ *
+ * Tiles (lead 2026-10-22, rounds 5–6): the first 21 clients with a Sanity
+ * `icon` in the Studio order (`getClientsWithIconByRank`, `orderRank` = the
+ * Work page order): outer 8, middle 7, inner 6, evenly spaced on each ring
+ * and staggered between rings, so the hero is balanced at every moment of
+ * the loop (not only the first frame). All tiles are white with the 1.5px
+ * border: in Figma the coloured tiles are coloured icons, not a fill by
+ * position.
+ *
+ * Orbit (lead request 2026-10-22, round 5): each ring's tiles rotate along
+ * it, CSS only (`rotate` on the ring, the opposite `rotate` on each tile so
+ * logos stay upright). Outer 200s clockwise, middle 160s anticlockwise, inner
+ * 120s clockwise: about the same 25–27px/s along each ring at 1920. Paused
+ * while the hero is off screen (IntersectionObserver below); without JS it
+ * just keeps running. `prefers-reduced-motion: reduce`: no animation, tiles
+ * sit at their start angles (the same even layout).
+ *
+ * Geometry: the Figma frame is 1760 × 1727 in the 1920 page; it is drawn at
+ * 91.667% of the hero's width (1760px at 1920, capped at 125.714rem), its
+ * centre 336.56px (24.04rem) below the top of Figma's hero container. Rings
+ * and orbits are percentages of that frame, so the composition scales with
+ * the viewport while the text keeps its size. The hero clips the layer (no
+ * horizontal overflow). Decorative (`aria-hidden`, empty alts); fixed tile
+ * sizes, so no layout shift.
+ */
+import Container from "../ui/Container.astro";
+import SectionHeader from "../ui/SectionHeader.astro";
+import type { Client } from "../../lib/sanity/types";
+import { urlFor, type Source } from "../../lib/sanity/image";
+
+interface Props {
+  eyebrow: string;
+  /** `\n` = forced line break (SectionHeader). */
+  title: string;
+  accent?: string;
+  description?: string;
+  /** Clients with an icon, in the Studio order (`getClientsWithIconByRank`). */
+  clients: readonly Pick<Client, "_id" | "name" | "icon">[];
+  /** No case study listed: keep the listing's gap above the CTA banner. */
+  empty?: boolean;
+  /** `h2` where another hero holds the page's h1 (`/dev/comparison`). */
+  as?: "h1" | "h2";
+}
+
+const { eyebrow, title, accent, description, clients, empty = false, as = "h1" } = Astro.props;
+
+/** Figma 3803:27040 rings (frame units), outer → inner. Shared centre. */
+const RING_CENTRE = [896.62, 863.39] as const;
+const FRAME = [1760, 1727] as const;
+const RINGS = [
+  { key: "outer", r: 861.62, stroke: 2.85, count: 8, shift: 0 },
+  { key: "middle", r: 678.68, stroke: 2.85, count: 7, shift: 1 / 2 },
+  { key: "inner", r: 471.07, stroke: 2, count: 6, shift: 1 / 3 },
+] as const;
+
+/**
+ * Even spacing (lead round 6): each ring's tiles sit 360°/n apart, so every
+ * ring shows about the same number of tiles at every moment of the loop;
+ * the rings are staggered (middle by half a step, inner by a third) so the
+ * start frame has no radial lines of tiles. Angles in degrees clockwise
+ * from 3 o'clock, around the rings' centre. Counts chosen so the visible
+ * part of the hero shows 7–10 tiles at 1440 and 1920 (handoff, round 6).
+ */
+const TILE_TOTAL = RINGS.reduce((sum, ring) => sum + ring.count, 0);
+
+// The first clients in the Studio order, dealt to the rings in proportion
+// to their counts (each client goes to the ring furthest behind its share),
+// so the top-ranked clients are spread over all three rings.
+// 51px image at 2x. Width only, so wide icons aren't cropped (ClientIcon).
+const ranked = clients.filter((client) => client.icon?.asset).slice(0, TILE_TOTAL);
+const buckets: (typeof ranked)[] = RINGS.map(() => []);
+ranked.forEach((client, i) => {
+  let pick = 0;
+  let behind = -Infinity;
+  RINGS.forEach((ring, k) => {
+    const d = ((i + 1) * ring.count) / TILE_TOTAL - (buckets[k]?.length ?? 0);
+    if (d > behind && (buckets[k]?.length ?? 0) < ring.count) {
+      behind = d;
+      pick = k;
+    }
+  });
+  buckets[pick]?.push(client);
+});
+
+const orbits = RINGS.map((ring, k) => {
+  const step = 360 / ring.count;
+  return {
+    key: ring.key,
+    // Square on the ring, as % of the frame width.
+    style: `--size: ${((2 * ring.r) / FRAME[0]) * 100}%`,
+    tiles: (buckets[k] ?? []).map((client, i) => {
+      const angle = ((ring.shift + i) * step * Math.PI) / 180;
+      return {
+        key: client._id,
+        src: urlFor(client.icon as Source).width(102).fit("max").auto("format").url(),
+        style: `--x: ${(50 + 50 * Math.cos(angle)).toFixed(3)}%; --y: ${(50 + 50 * Math.sin(angle)).toFixed(3)}%`,
+      };
+    }),
+  };
+});
+
+const optional = {
+  ...(accent !== undefined && { accent }),
+  ...(description !== undefined && { description }),
+};
+---
+
+<section
+  class:list={["c-cs-index-hero", { "is-empty": empty }]}
+  style={`--cx: ${(RING_CENTRE[0] / FRAME[0]) * 100}%; --cy: ${(RING_CENTRE[1] / FRAME[1]) * 100}%`}
+  data-cs-index-hero
+>
+  <div class="c-cs-index-hero__art" aria-hidden="true">
+    <svg class="c-cs-index-hero__rings" viewBox="0 0 1760 1727" fill="none" focusable="false">
+      {RINGS.map((ring) => (
+        <circle class="c-cs-index-hero__ring" cx={RING_CENTRE[0]} cy={RING_CENTRE[1]} r={ring.r} stroke-width={ring.stroke} />
+      ))}
+    </svg>
+    {orbits.map((orbit) => (
+      <div class={`c-cs-index-hero__orbit is-${orbit.key}`} style={orbit.style}>
+        {orbit.tiles.map((tile) => (
+          <span class="c-cs-index-hero__tile" style={tile.style}>
+            <img src={tile.src} alt="" width="51" height="51" loading="lazy" decoding="async" draggable="false" />
+          </span>
+        ))}
+      </div>
+    ))}
+  </div>
+  <Container>
+    <SectionHeader
+      as={as}
+      eyebrow={eyebrow}
+      title={title}
+      {...optional}
+      titleClass="c-text_xl c-cs-index-hero__title"
+      class="c-cs-index-hero__header"
+    />
+  </Container>
+</section>
+
+<script>
+  // Orbit: pause the CSS animation while the hero is off screen (no paint
+  // or compositing work below the fold). Hidden tabs are throttled by the
+  // browser. Without JS the orbit simply keeps running.
+  document.querySelectorAll<HTMLElement>("[data-cs-index-hero]").forEach((hero) => {
+    const observer = new IntersectionObserver(([entry]) => {
+      hero.classList.toggle("is-paused", !entry?.isIntersecting);
+    });
+    observer.observe(hero);
+  });
+</script>
+
+<style>
+  /* Figma: 110px from the nav to the hero container, 120px padding inside
+     it (top and bottom), 100px to the listing (which adds its own 110px). */
+  .c-cs-index-hero {
+    --c-cs-index-hero-top: 7.857rem; /* Figma 110px */
+    --c-cs-index-hero-bottom: calc(8.571rem + 7.143rem); /* 120px + 100px */
+    --c-cs-index-hero-fade-top: 5rem; /* TODO: DS */
+    --c-cs-index-hero-fade-bottom: 8.571rem; /* Figma 120px, TODO: DS */
+    position: relative;
+    overflow: hidden;
+    overflow: clip;
+    background: var(--color-white);
+  }
+  .c-cs-index-hero :global(.c-container) {
+    position: relative;
+    z-index: 1;
+    padding-top: calc(var(--c-cs-index-hero-top) + 8.571rem); /* + 120px */
+    padding-bottom: var(--c-cs-index-hero-bottom);
+  }
+  /* Empty index: the listing's top padding too (CaseStudyListing). TODO: DS
+     (no empty-state design). */
+  .c-cs-index-hero.is-empty :global(.c-container) {
+    padding-bottom: calc(var(--c-cs-index-hero-bottom) + 7.857rem);
+  }
+
+  /* Title and description keep the site classes (lead 2026-10-22, round 2):
+     `c-text_xl` (54.7px / 1.2; Figma 60px / 1.4) and SectionHeader's 42rem
+     description (Figma 662px). */
+
+  /* Decorative frame (Figma 1760 × 1727), centred on the hero; its centre
+     sits 336.56px below the top of Figma's hero container. */
+  .c-cs-index-hero__art {
+    position: absolute;
+    top: calc(var(--c-cs-index-hero-top) + 24.04rem);
+    left: 50%;
+    width: min(91.667%, 125.714rem);
+    aspect-ratio: 1760 / 1727;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .c-cs-index-hero__rings {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  /* Figma #0C1627 at 8% (3803:27040): no token, closest --color-heading
+     (#12142B), TODO: DS. Stroke widths are Figma's inner strokes. */
+  .c-cs-index-hero__ring {
+    stroke: var(--color-heading);
+    opacity: 0.08;
+  }
+
+  /* Orbit: a square on each ring (centre = the rings' centre), rotated;
+     tiles sit on its edge circle and turn the other way to stay upright.
+     Speeds and directions are not in Figma (lead request: 120–200s per
+     turn), TODO: DS. */
+  .c-cs-index-hero__orbit {
+    --c-cs-index-hero-turn: 1turn;
+    position: absolute;
+    top: var(--cy);
+    left: var(--cx);
+    width: var(--size);
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    animation: c-cs-index-hero-orbit var(--c-cs-index-hero-speed) linear infinite;
+  }
+  .c-cs-index-hero__orbit.is-outer {
+    --c-cs-index-hero-speed: 200s;
+  }
+  .c-cs-index-hero__orbit.is-middle {
+    --c-cs-index-hero-speed: 160s;
+    --c-cs-index-hero-turn: -1turn;
+  }
+  .c-cs-index-hero__orbit.is-inner {
+    --c-cs-index-hero-speed: 120s;
+  }
+  /* Figma tile: 84px, 12px radius, 1.5px #E4E6EA border, 51px icon, white
+     (round 5: no fill by position). `translate` + `rotate` (not
+     `transform`) so the counter-rotation turns the tile about its own
+     centre. */
+  .c-cs-index-hero__tile {
+    position: absolute;
+    top: var(--y);
+    left: var(--x);
+    display: flex;
+    width: 6rem;
+    height: 6rem;
+    align-items: center;
+    justify-content: center;
+    translate: -50% -50%;
+    border: 1.5px solid var(--color-border);
+    border-radius: 12px;
+    background: var(--color-white);
+    animation: c-cs-index-hero-counter var(--c-cs-index-hero-speed) linear infinite;
+  }
+  .c-cs-index-hero__tile img {
+    display: block;
+    width: 3.643rem;
+    height: 3.643rem;
+    object-fit: contain;
+  }
+  .c-cs-index-hero.is-paused :is(.c-cs-index-hero__orbit, .c-cs-index-hero__tile) {
+    animation-play-state: paused;
+  }
+  @keyframes c-cs-index-hero-orbit {
+    to {
+      rotate: var(--c-cs-index-hero-turn);
+    }
+  }
+  @keyframes c-cs-index-hero-counter {
+    to {
+      rotate: calc(var(--c-cs-index-hero-turn) * -1);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .c-cs-index-hero__orbit,
+    .c-cs-index-hero__tile {
+      animation: none;
+    }
+  }
+
+  /* White fade over the rings and tiles, above the orbit and below the
+     text (lead round 6: softer than Figma 3804:27352, whose 38–79% radial
+     turned most tiles pale; tiles inside the hero stay at full colour and
+     only the edges fade). One layer on the hero, so it follows the hero's
+     own box at every width:
+     - an ellipse through the hero's corners (centred at 45%, near the text),
+       transparent to 72%, white at the corners;
+     - the top 5rem (under the nav) and the bottom 8.571rem (Figma's 120px
+       container padding) fade to white, so nothing ends in a hard cut where
+       the hero clips the layer.
+     Values not in Figma, TODO: DS. */
+  .c-cs-index-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(var(--color-white), transparent) top / 100% var(--c-cs-index-hero-fade-top) no-repeat,
+      linear-gradient(transparent, var(--color-white)) bottom / 100% var(--c-cs-index-hero-fade-bottom) no-repeat,
+      radial-gradient(ellipse farthest-corner at 50% 45%, transparent 72%, var(--color-white) 100%);
+  }
+
+  /* Tablet (no design, TODO: DS mobile): the frame keeps 91.667% of the
+     width; the inner ring's 6 tiles are hidden (it runs beside and under
+     the text column at this width); the outer and middle rings' 15 tiles
+     orbit at 64px. */
+  @media (max-width: 991px) {
+    .c-cs-index-hero__tile {
+      width: 5.333rem;
+      height: 5.333rem;
+      border-radius: 10px;
+    }
+    .c-cs-index-hero__tile img {
+      width: 3.238rem;
+      height: 3.238rem;
+    }
+    .c-cs-index-hero__orbit.is-inner {
+      display: none;
+    }
+  }
+  /* Mobile: the site's mobile hero spacing (PageHero: 5rem above, the
+     listing's 5rem below); rings only, no tiles (the text spans the width,
+     the rings mostly sit off screen). Hidden tiles never load (lazy). */
+  @media (max-width: 767px) {
+    .c-cs-index-hero {
+      --c-cs-index-hero-top: 5rem;
+      --c-cs-index-hero-fade-bottom: 5rem;
+    }
+    .c-cs-index-hero :global(.c-container) {
+      padding-top: var(--c-cs-index-hero-top);
+      padding-bottom: 0;
+    }
+    .c-cs-index-hero.is-empty :global(.c-container) {
+      padding-bottom: 5rem;
+    }
+    .c-cs-index-hero__art {
+      top: calc(var(--c-cs-index-hero-top) + 16rem);
+    }
+    .c-cs-index-hero__orbit {
+      display: none;
+    }
+  }
+</style>

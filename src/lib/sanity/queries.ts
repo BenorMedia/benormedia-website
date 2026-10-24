@@ -20,6 +20,8 @@ import type {
   CaseStudy,
   CaseStudyCard,
   Client,
+  Comparison,
+  ComparisonCard,
   HomePage,
   PageSeoDoc,
   PageSingletonType,
@@ -266,6 +268,23 @@ export const ALL_CLIENTS_WITH_ICON = /* groq */ `
 `;
 
 // ---------------------------------------------------------------------------
+// CLIENTS_WITH_ICON_BY_RANK — the `/case-studies` hero orbit: the same
+// clients and fields as ALL_CLIENTS_WITH_ICON, in the Studio drag-and-drop
+// order (`orderRank`, the Work page order), then name, so the hero shows the
+// first clients editors rank (lead 2026-10-22, round 5). Home keeps its own.
+// ---------------------------------------------------------------------------
+
+export const CLIENTS_WITH_ICON_BY_RANK = /* groq */ `
+*[_type == "client" && defined(icon.asset) && !(_id in path("drafts.**"))]
+  | order(orderRank asc, name asc){
+  _id,
+  _type,
+  name,
+  "icon": icon${IMAGE}
+}
+`;
+
+// ---------------------------------------------------------------------------
 // TESTIMONIALS — every published testimonial, oldest first, with the client
 // that references it (`client.testimonial`) so cards can show that client's
 // logo. Used by the shared TestimonialMarquee (Home + other pages).
@@ -384,7 +403,9 @@ export const SERVICE_BY_SLUG = /* groq */ `
 /**
  * Card fields: the index cards and the "Resources" cards at the end of a case
  * study. Shared by ALL_CASE_STUDIES and CASE_STUDY_BY_SLUG (`related`,
- * `latest`) so the card projection is defined once.
+ * `latest`) so the card projection is defined once. `cardStats` (max 2) and
+ * `client.logoOnDark` are optional (SCHEMAS v0.11); so are
+ * `client.brandColor` / `brandGlowColor` (hex strings, SCHEMAS v0.13).
  */
 const CASE_STUDY_CARD_FIELDS = /* groq */ `
   _id,
@@ -392,10 +413,14 @@ const CASE_STUDY_CARD_FIELDS = /* groq */ `
   title,
   "slug": slug.current,
   publishedAt,
+  cardStats[]{ _key, value, label },
   "client": client->{
     _id,
     name,
-    "logo": logo${IMAGE}
+    "logo": logo${IMAGE},
+    "logoOnDark": logoOnDark${IMAGE},
+    brandColor,
+    brandGlowColor
   }
 `;
 
@@ -452,11 +477,15 @@ export const CASE_STUDY_BY_SLUG = /* groq */ `
   intro,
   industry,
   challenge,
+  solution,
+  timeline,
+  stack,
   "client": client->{
     _id,
     _type,
     name,
     "logo": logo${IMAGE},
+    "websiteScreenshot": websiteScreenshot${IMAGE},
     websiteUrl
   },
   "services": services[defined(@->_id)]->{
@@ -479,9 +508,13 @@ export const CASE_STUDY_BY_SLUG = /* groq */ `
     listItem,
     level,
     children[]{ _key, _type, text, marks },
-    markDefs[]{ _key, _type, href, openInNewTab }
+    markDefs[]{ _key, _type, href, openInNewTab },
+    title,
+    items
   },
-  results[]{ _key, value, description },
+  resultsIntro,
+  results[]{ _key, value, label, description },
+  resultsSummary,
   "related": related[defined(@->slug.current) && !(@->_id in path("drafts.**"))]->{
     ${CASE_STUDY_CARD_FIELDS}
   },
@@ -500,6 +533,95 @@ export const CASE_STUDY_SLUG_BY_CLIENT = /* groq */ `
 *[${PUBLISHED_CASE_STUDY} && defined(client._ref)] | order(publishedAt desc){
   "clientId": client._ref,
   "slug": slug.current
+}
+`;
+
+// ---------------------------------------------------------------------------
+// Comparisons (SCHEMAS.md v0.14 "GROQ: comparison") — `/comparison` index and
+// the `/comparison/[slug]` template. Only published documents with a slug.
+// ---------------------------------------------------------------------------
+
+/** Published comparisons with a slug (shared filter; keep in sync with `comparison-sitemap.mjs`). */
+const PUBLISHED_COMPARISON = /* groq */ `_type == "comparison" && defined(slug.current) && !(_id in path("drafts.**"))`;
+
+/** `accentSectionHeader`: eyebrow + gradient title + paragraph. */
+const ACCENT_SECTION_HEADER = /* groq */ `{ eyebrow, "title": title${ACCENT_TITLE}, description }`;
+
+/**
+ * Every published comparison, newest first. `noIndex` (not in the SCHEMAS
+ * projection, derived from the existing `seo` field) keeps the index's
+ * robots tag in line with the sitemap, as `ALL_CASE_STUDIES` does.
+ */
+export const ALL_COMPARISONS = /* groq */ `
+*[${PUBLISHED_COMPARISON}] | order(publishedAt desc, title asc){
+  _id,
+  _type,
+  title,
+  "slug": slug.current,
+  publishedAt,
+  competitorName,
+  "competitorLogo": competitorLogo${IMAGE},
+  cardTitle,
+  cardDescription,
+  "noIndex": seo.noIndex == true
+}
+`;
+
+export const COMPARISON_SLUGS = /* groq */ `
+*[${PUBLISHED_COMPARISON}].slug.current
+`;
+
+/**
+ * One published comparison (`$slug`). `otherComparisons`: every other
+ * published comparison, in the index order, for the hero pill dropdown
+ * (lead 2026-10-22).
+ */
+export const COMPARISON_BY_SLUG = /* groq */ `
+*[${PUBLISHED_COMPARISON} && slug.current == $slug][0]{
+  _id,
+  _type,
+  _updatedAt,
+  title,
+  "slug": slug.current,
+  publishedAt,
+  competitorName,
+  "competitorLogo": competitorLogo${IMAGE},
+  "competitorLogoOnDark": competitorLogoOnDark${IMAGE},
+  "headline": headline${ACCENT_TITLE},
+  subtitle,
+  primaryButtonLabel,
+  secondaryButtonLabel,
+  "chooseHeader": chooseHeader${ACCENT_SECTION_HEADER},
+  "webflowChoice": webflowChoice{ "title": title${ACCENT_TITLE}, reasons },
+  "competitorChoice": competitorChoice{ "image": image${IMAGE}, "title": title${ACCENT_TITLE}, reasons },
+  "tableHeader": tableHeader${ACCENT_SECTION_HEADER},
+  tableGroups[]{ _key, label, rows[]{ _key, feature, webflow, competitor } },
+  "reasonsHeader": reasonsHeader${ACCENT_SECTION_HEADER},
+  reasons[]{
+    _key,
+    "image": image${IMAGE},
+    title,
+    text,
+    stats[]{ _key, value, label, source, sourceUrl }
+  },
+  "migrationHeader": migrationHeader${ACCENT_SECTION_HEADER},
+  migrationSteps[]{ _key, name, description, "image": image${IMAGE} },
+  "caseStudiesHeader": caseStudiesHeader${ACCENT_SECTION_HEADER},
+  "caseStudies": caseStudies[defined(@->slug.current) && !(@->_id in path("drafts.**"))]->{
+    ${CASE_STUDY_CARD_FIELDS}
+  },
+  "latestCaseStudies": *[${PUBLISHED_CASE_STUDY}] | order(publishedAt desc, title asc)[0...3]{
+    ${CASE_STUDY_CARD_FIELDS}
+  },
+  faqSections[]{ _key, title, faqs[]{ _key, question, answer } },
+  "otherComparisons": *[${PUBLISHED_COMPARISON} && _id != ^._id] | order(publishedAt desc, title asc){
+    _id,
+    title,
+    "slug": slug.current,
+    competitorName,
+    "competitorLogo": competitorLogo${IMAGE}
+  },
+  "seo": seo${SEO}
 }
 `;
 
@@ -599,6 +721,14 @@ export async function getAllClientsWithIcon(): Promise<Client[]> {
 }
 
 /**
+ * Fetch every published client that has an icon asset, in the Studio order
+ * (`orderRank`), then name. Consumed by the `/case-studies` hero orbit.
+ */
+export async function getClientsWithIconByRank(): Promise<Client[]> {
+  return await sanityClient.fetch<Client[]>(CLIENTS_WITH_ICON_BY_RANK);
+}
+
+/**
  * Fetch every published, named client for the Work page listing, in the
  * Studio drag-and-drop order (`orderRank`), then name.
  */
@@ -672,4 +802,21 @@ export async function getCaseStudySlugsByClient(): Promise<Map<string, string>> 
     if (!byClient.has(clientId)) byClient.set(clientId, slug);
   }
   return byClient;
+}
+
+/** Every published comparison, newest first (index cards). */
+export async function getAllComparisons(): Promise<ComparisonCard[]> {
+  return await sanityClient.fetch<ComparisonCard[]>(ALL_COMPARISONS);
+}
+
+/** Slugs of every published comparison (the template's `getStaticPaths`). */
+export async function getComparisonSlugs(): Promise<string[]> {
+  const result = await sanityClient.fetch<(string | null)[]>(COMPARISON_SLUGS);
+  return result.filter((slug): slug is string => typeof slug === 'string' && slug.length > 0);
+}
+
+/** One published comparison by slug, or `null`. */
+export async function getComparisonBySlug(slug: string): Promise<Comparison | null> {
+  const result = await sanityClient.fetch<Comparison | null>(COMPARISON_BY_SLUG, { slug });
+  return result ?? null;
 }

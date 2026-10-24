@@ -1,6 +1,40 @@
-# Sanity ↔ Astro Data Contract (v0.10, approved)
+# Sanity ↔ Astro Data Contract (v0.14, v0.11 to v0.14 not deployed)
 
-Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) approved 2026-09-29. v0.7 (`client.orderRank`) requested by the lead 2026-09-29. v0.8 (`client.websiteVideo`) requested by the lead 2026-09-30. v0.9 (`client.sector`) requested by the lead 2026-10-01. v0.10 (`caseStudy`) approved by the lead 2026-10-20.
+Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) approved 2026-09-29. v0.7 (`client.orderRank`) requested by the lead 2026-09-29. v0.8 (`client.websiteVideo`) requested by the lead 2026-09-30. v0.9 (`client.sector`) requested by the lead 2026-10-01. v0.10 (`caseStudy`) approved by the lead 2026-10-20. v0.11 (`caseStudy.cardStats`, `client.logoOnDark`) requested by Emily 2026-10-22, code only, pending Sergio's OK. v0.12 (case study template Figma 3842:40046: hero facts, body quote and callout, results texts, `kpi.label`) added by the ui agent 2026-10-22, approved by the lead 2026-10-22 (deploy by the orchestrator). v0.13 (`client.brandColor`, `client.brandGlowColor`) requested by Emily 2026-10-22, code only, not deployed. v0.14 (`comparison` document, Figma 3790:37245 / 3790:37967) added by the sanity agent 2026-10-22 from the lead's Comparison decisions (DECISIONS → Comparison), field list approved by the lead 2026-10-22, code only, not deployed.
+
+### v0.14 changes vs v0.13 (2026-10-22, field list approved by the lead; code only, NOT deployed)
+Figma template 3790:37245 and index 3790:37967. Routes `/comparison` and `/comparison/[slug]` (SITEMAP, DECISIONS → Comparison).
+- **New `comparison` document**, routable at `/comparison/<slug>` (see the table below). Index `/comparison` lists every published comparison, `order(publishedAt desc, title asc)`. Drafts never build.
+- **New objects:** `accentSectionHeader` (eyebrow + `accentTitle` + description: `sectionHeader` has a plain string title, so it can't render gradient words such as "side by side"), `comparisonChoice`, `comparisonTableGroup`, `comparisonTableRow`, `comparisonReason`.
+- **`stat`** gains optional `source` (string) and `sourceUrl` (url), shown in Studio only inside `comparison.reasons[].stats`. `value` stays free text, so a `[FACT NEEDED: …]` marker fits.
+- **`processStep`**: `note` and `features` are hidden in Studio inside `comparison.migrationSteps` (not in the design). No shape change.
+- **Reserved service slugs** gain `comparison`.
+- **New queries:** `ALL_COMPARISONS`, `COMPARISON_SLUGS`, `COMPARISON_BY_SLUG` (see "GROQ: comparison" below).
+- Unchanged and not stored on `comparison`: the logo strip and testimonials (global data, as on service pages), the FAQ heading (fixed in code, as on service pages), the CTA banner (`siteSettings`), the index hero copy and index SEO (code, as `/case-studies`), and every Webflow-side asset (pill logo, table header logo, "What to choose" illustration).
+
+### v0.13 changes vs v0.12 (2026-10-22, lead decision Emily; code only, NOT deployed, no documents written)
+The case-study card's navy thumbnail and blue glow are Surfe's brand colours, not site colours: each client gets its own.
+- **`client.brandColor`** (optional `string`, validated `^#[0-9a-fA-F]{6}$`, next to `logoOnDark`): the card thumbnail background. Empty → `--color-navy` (#001F3D, Surfe).
+- **`client.brandGlowColor`** (optional `string`, same validation): the card glow behind the logo. Empty → `--color-blue-500` (#1355FF, Surfe).
+- **Queries:** both projected in the card's `client->` (`CASE_STUDY_CARD_FIELDS`, so `ALL_CASE_STUDIES` and `CASE_STUDY_BY_SLUG` `related` / `latest`).
+- **Render:** the card sets them inline as `--c-cs-card-bg` / `--c-cs-card-glow` on the thumbnail, only when the value passes the same hex check in code (no other string reaches the style attribute). The logo stays white (`logoOnDark` or the whitened `logo`), so the brand colour must be dark enough for a white logo.
+- No new dependency (no colour-input plugin in the repo): plain strings.
+
+### v0.12 changes vs v0.11 (2026-10-22, approved by the lead 2026-10-22; deploy by the orchestrator, not deployed by the ui agent)
+Figma template 3842:40046 (case studies v3). All new fields optional; the page renders nothing for an empty one.
+- **`caseStudy.solution`** (string, Hero tab, `initialValue: "BenorMedia"`, lead 2026-10-22): "04 / Solution" in the facts row.
+- **`caseStudy.timeline`** (string, Hero tab): "05 / Timeline".
+- **`caseStudy.stack`** (array of strings, Hero tab): "06 / Stack", joined with " / ".
+- **`caseStudy.body`**: new block style **`blockquote`** (Studio "Quote": the highlighted quote with the gradient bar) and new array member **`caseStudyCallout`** (object: `title` string required, `items` array of strings, min 1): the boxed list ("Deliverables — Design Phase"). Bullet lists now render with check-circle icons (no schema change).
+- **`caseStudy.resultsIntro`** / **`caseStudy.resultsSummary`** (text, Results tab): paragraphs above and below the results row.
+- **`kpi.label`** (string, optional, shown in Studio only inside `caseStudy.results`): the line between the value and the description in a result cell. Testimonial KPIs unchanged.
+- **Wiring only, no schema change:** `CASE_STUDY_BY_SLUG` now also reads `client.websiteScreenshot` (the hero browser frame) next to `client.websiteUrl` (URL bar host and "Visit live site").
+- **Display changes:** `challenge` is no longer shown on the page (Figma removed it from the facts); it stays the meta description fallback. `services` moves to "03 / Services delivered"; the client name is "01 / Client". The hero no longer shows the date and read time (`publishedAt` stays on cards and in the JSON-LD; `readTime` is unused on the page).
+
+### v0.11 changes vs v0.10 (2026-10-22, code only, NOT deployed, pending Sergio's OK in the PR)
+- **`caseStudy.cardStats`** (optional, array of `cardStat`, max 2): the stats row on the case-study card (Figma 3798:19226). `cardStat` object: `value` (string, required, e.g. "+40%") · `label` (string, required, short). Hidden on the card when empty.
+- **`client.logoOnDark`** (optional image + `alt`, SVG preferred): the client logo for dark backgrounds (the navy card thumbnail). Empty → the card uses `logo` with a CSS whitening filter (works for one-colour logos only).
+- **Queries:** `cardStats[]{ _key, value, label }` in the case-study card fields (`ALL_CASE_STUDIES`, `related`, `latest`); `logoOnDark` next to `logo` in the card's `client->` projection. The index hero tiles reuse `ALL_CLIENTS_WITH_ICON` (client `icon`).
 
 ### v0.10 changes vs v0.9 (2026-10-20)
 - **New `caseStudy` document**, routable at `/case-studies/<slug>` (see the table below). Index `/case-studies` lists every published case study, `order(publishedAt desc)`. Created as drafts only until the lead says otherwise.
@@ -56,6 +90,9 @@ Approach: **repeatable data lives in Sanity documents; page copy is authored dir
 | Funds Raised | `fundsRaised` | string | optional. e.g. `$25.0M`. Template appends "Raised" |
 | Category | `category` | reference → `category` | optional |
 | Sector | `sector` | string, dropdown: `agency` · `professional-services` · `saas` | optional, one value. Work page filters (v0.9) |
+| Logo on dark | `logoOnDark` | image (SVG preferred) + alt | optional. Logo for dark backgrounds (navy case-study card). Empty → `logo` with a CSS whitening filter (v0.11) |
+| Brand colour | `brandColor` | string, `#RRGGBB` | optional. Case-study card thumbnail background. Empty → `--color-navy` (v0.13) |
+| Brand glow colour | `brandGlowColor` | string, `#RRGGBB` | optional. Case-study card glow. Empty → `--color-blue-500` (v0.13) |
 | Website URL | `websiteUrl` | url | optional |
 | Order Rank | `orderRank` | string (LexoRank) | hidden, read-only. Set by the Studio drag-and-drop list (`@sanity/orderable-document-list`). Only the Work page listing sorts by it |
 
@@ -70,7 +107,7 @@ Fields are grouped in Studio tabs, one per page section, in this order.
 | Tab | Field | Name | Type | Rules |
 |---|---|---|---|---|
 | Overview (default) | Service name | `name` | string | required. Studio title, hero breadcrumb, anywhere the service name appears |
-| Overview | Slug | `slug` | slug (from name) | required, unique among services, lowercase kebab-case (`a-z`, `0-9`, `-`). Can't be a reserved slug: `work`, `pricing`, `testimonials`, `blog`, `studio`, `dev`, `404` (SITEMAP) |
+| Overview | Slug | `slug` | slug (from name) | required, unique among services, lowercase kebab-case (`a-z`, `0-9`, `-`). Can't be a reserved slug: `work`, `case-studies`, `comparison`, `pricing`, `testimonials`, `blog`, `studio`, `dev`, `404` (SITEMAP) |
 | Overview | Related clients | `clients` | array of references → `client` | optional, no duplicates. How they render is decided in the Astro template |
 | Hero | Headline | `headline` | `accentTitle` | required, exactly one line of text (Shift+Enter for a line break) |
 | Hero | Subtitle | `subtitle` | text (3 rows) | optional |
@@ -108,20 +145,138 @@ Fields are grouped in Studio tabs, in this order.
 |---|---|---|---|---|
 | Overview (default) | Title | `title` | string | required. H1, card title, last breadcrumb item |
 | Overview | Slug | `slug` | slug (from title) | required, unique among case studies, lowercase kebab-case |
-| Overview | Client | `client` | reference → `client` | required. Card and hero logo, "01 / Company" (client name) |
-| Overview | Published on | `publishedAt` | date | required, default today. Card and hero date (blog format), index order |
-| Overview | Time to read | `readTime` | number (minutes) | optional override. If empty, calculated from the body word count at build |
+| Overview | Client | `client` | reference → `client` | required. Card and hero logo, "01 / Client" (client name); the client's `websiteScreenshot` + `websiteUrl` fill the hero browser frame (v0.12) |
+| Overview | Published on | `publishedAt` | date | required, default today. Card date, index order (not shown in the hero since v0.12) |
+| Overview | Time to read | `readTime` | number (minutes) | optional override. Not shown on the page since v0.12 (Figma 3842:40046 has no read time) |
 | Hero | Intro | `intro` | text (3 rows) | optional. Hero paragraph; meta description fallback |
 | Hero | Industry | `industry` | string | optional. "02 / Industry" |
-| Hero | Services | `services` | array of references → `service` | optional, no duplicates. "03 / Solution" (service names) |
-| Hero | Challenge | `challenge` | text (3 rows) | optional. "04 / The challenge" |
+| Hero | Services | `services` | array of references → `service` | optional, no duplicates. "03 / Services delivered" (service names joined with " / ", v0.12) |
+| Hero | Solution | `solution` | string | optional, initial value "BenorMedia" (lead 2026-10-22). "04 / Solution" (v0.12) |
+| Hero | Timeline | `timeline` | string | optional. "05 / Timeline" (v0.12) |
+| Hero | Stack | `stack` | array of strings | optional. "06 / Stack", joined with " / " (v0.12) |
+| Hero | Challenge | `challenge` | text (3 rows) | optional. Not shown on the page since v0.12; meta description fallback |
 | Hero | Testimonial | `testimonial` | reference → `testimonial` | optional. Falls back to the client's testimonial; no quote block when both are empty |
-| Article | Body | `body` | Portable Text | H2 (a section; feeds the table of contents), H3 (a phase), normal, bold, italic, links (`href` must be a full `http(s)://` address, a path starting with `/` or an `#anchor`: validated since 2026-10-21; `openInNewTab` optional), bullet + numbered lists. No images, embeds or tables. Content from an H3 to the next H2 renders indented with a left rule |
-| Results | Results | `results` | array of `kpi` | optional, max 3. Results row under the body |
+| Article | Body | `body` | Portable Text | H2 (a section; feeds the table of contents), H3 (a phase), normal, bold, italic, links (`href` must be a full `http(s)://` address, a path starting with `/` or an `#anchor`: validated since 2026-10-21; `openInNewTab` optional), bullet (check-circle icons) + numbered lists, `blockquote` style (v0.12), `caseStudyCallout` boxes (v0.12). No images, embeds or tables. Content from an H3 to the next H2 renders in a narrower column (no rule since v0.12) |
+| Results | Results intro | `resultsIntro` | text (3 rows) | optional. Paragraph under "The results" (v0.12) |
+| Results | Results | `results` | array of `kpi` | optional, max 3. Results row under the body; `kpi.label` optional line above the description (v0.12) |
+| Results | Results summary | `resultsSummary` | text (3 rows) | optional. Paragraph under the results row (v0.12) |
+| Card | Card stats | `cardStats` | array of `cardStat` | optional, max 2. Stats row on the card (value + short label); hidden when empty (v0.11) |
 | Related | Related case studies | `related` | array of references → `caseStudy` | optional, max 3, no duplicates, not itself. Falls back to the latest published ones |
 | SEO | SEO | `seo` | `seo` object | optional, falls back to title / intro / siteSettings |
 
 Preview: title · client name · client logo. Desk list ordered by `publishedAt` desc.
+
+### `comparison` — Comparison pages (routable at `/comparison/<slug>`, v0.14)
+Figma template 3790:37245, index card 3790:37967. Fields are grouped in Studio tabs, one per page section in page order, then Card and SEO. "Required" blocks publishing only: drafts always save.
+
+| Tab | Field | Name | Type | Rules |
+|---|---|---|---|---|
+| Overview (default) | Title | `title` | string | required. Studio title, last breadcrumb item, meta title fallback, card title fallback. e.g. "Webflow vs WordPress" |
+| Overview | Slug | `slug` | slug (from title) | required, unique among comparisons, lowercase kebab-case. e.g. `webflow-vs-wordpress` |
+| Overview | Competitor name | `competitorName` | string | required. e.g. "WordPress": alt fallback for the logos, any place the page names the competitor in code |
+| Overview | Competitor logo | `competitorLogo` | image (hotspot, SVG preferred) + `alt` | required. Hero pill ("Webflow VS <logo>") and index card pill. Alt required when set (Astro falls back to `competitorName`) |
+| Overview | Competitor logo on dark | `competitorLogoOnDark` | image (hotspot, SVG preferred) + `alt` | optional. Table header row (gradient background). Empty → `competitorLogo` with a CSS whitening filter (same pattern as `client.logoOnDark`) |
+| Overview | Published on | `publishedAt` | date | required, default today. Index order (newest first), JSON-LD `datePublished` |
+| Hero | Headline | `headline` | `accentTitle` | required, max 1 block. H1; "Webflow was." marked Gradient |
+| Hero | Subtitle | `subtitle` | text (3 rows) | optional. Hero paragraph; meta description fallback |
+| Hero | Main button text | `primaryButtonLabel` | string | required, warning over 40 chars. Gradient button; action fixed in code: opens the contact popup |
+| Hero | Second button text | `secondaryButtonLabel` | string | required, warning over 40 chars. Outline button; action fixed in code: anchor to the table section |
+| What to choose | Section header | `chooseHeader` | `accentSectionHeader` | optional (section hidden when header and both cards are empty) |
+| What to choose | Webflow card | `webflowChoice` | `comparisonChoice` | optional. `image` hidden in Studio (illustration fixed in code); reasons render with a check |
+| What to choose | Competitor card | `competitorChoice` | `comparisonChoice` | optional. Reasons render with a dash |
+| Table | Section header | `tableHeader` | `accentSectionHeader` | optional. The section's `id` (anchor of the second hero button) is set in code |
+| Table | Table groups | `tableGroups` | array of `comparisonTableGroup` | optional. Header row (both logos) built in code |
+| Why switch | Section header | `reasonsHeader` | `accentSectionHeader` | optional |
+| Why switch | Reasons | `reasons` | array of `comparisonReason` | optional, warning over 4. Rows alternate image left / right in code, first row image left |
+| Migration | Section header | `migrationHeader` | `accentSectionHeader` | optional. Eyebrow e.g. "WordPress → Webflow" |
+| Migration | Migration steps | `migrationSteps` | array of `processStep` | optional, max 4. Uses `name`, `description`, `image` (the icon); `note` and `features` hidden in Studio and not rendered. Step number = array order |
+| Case studies | Section header | `caseStudiesHeader` | `accentSectionHeader` | optional |
+| Case studies | Case studies | `caseStudies` | array of references → `caseStudy` | optional, max 3, no duplicates. Unpublished references filtered out. Empty → the 3 newest published case studies (`latestCaseStudies`) |
+| FAQs | FAQ sections | `faqSections` | array of `faqSection` | optional. Same object and rendering as `service` (tab per section, FAQPage JSON-LD). The heading "Frequently asked questions." is fixed in code, as on service pages |
+| Card | Card title | `cardTitle` | string | optional. Index card heading; falls back to `title` |
+| Card | Card description | `cardDescription` | text (3 rows) | optional, warning over 200 chars. Index card paragraph |
+| SEO | SEO | `seo` | `seo` object | optional, falls back to title / subtitle / siteSettings |
+
+Preview: title · `/comparison/<slug>` · competitor logo. Desk list "Comparisons" ordered by `publishedAt` desc.
+
+`comparisonChoice` object ("What to choose" card):
+
+| Field | Name | Type | Rules |
+|---|---|---|---|
+| Illustration | `image` | image (hotspot, SVG preferred) + `alt` | optional; hidden for `webflowChoice`. Alt required when set |
+| Title | `title` | `accentTitle` | required, max 1 block. e.g. "Choose Webflow if…" with "Webflow" marked Gradient |
+| Reasons | `reasons` | array of string | required, min 1, warning over 3 |
+
+`comparisonTableGroup` object: `label` (string, required, e.g. "Performance", uppercased in CSS) · `rows` (array of `comparisonTableRow`, required, min 1).
+`comparisonTableRow` object: `feature` (string, required) · `webflow` (string, required, rendered with a check) · `competitor` (string, required, rendered with a dash).
+
+`comparisonReason` object ("Why switch" row):
+
+| Field | Name | Type | Rules |
+|---|---|---|---|
+| Illustration | `image` | image (hotspot, SVG preferred) + `alt` | optional. Alt required when set |
+| Title | `title` | string | required |
+| Text | `text` | text (3 rows) | optional |
+| Stats | `stats` | array of `stat` | optional, max 2. `value` free text (holds `[FACT NEEDED: …]` until confirmed), `label`, optional `source` + `sourceUrl` |
+
+`accentSectionHeader` object: `eyebrow` (string, optional) · `title` (`accentTitle`, required, max 1 block) · `description` (text, optional).
+
+#### GROQ: comparison
+Fragments `IMAGE`, `SEO`, `ACCENT_TITLE` and `CASE_STUDY_CARD_FIELDS` are the existing ones in `src/lib/sanity/queries.ts`.
+
+```groq
+// Shared filter: published comparisons with a slug.
+PUBLISHED_COMPARISON = _type == "comparison" && defined(slug.current) && !(_id in path("drafts.**"))
+
+// Section header fragment.
+ACCENT_SECTION_HEADER = { eyebrow, "title": title${ACCENT_TITLE}, description }
+
+// ALL_COMPARISONS — /comparison index cards.
+*[${PUBLISHED_COMPARISON}] | order(publishedAt desc, title asc){
+  _id, _type, title, "slug": slug.current, publishedAt,
+  competitorName,
+  "competitorLogo": competitorLogo${IMAGE},
+  cardTitle, cardDescription
+}
+
+// COMPARISON_SLUGS — getStaticPaths.
+*[${PUBLISHED_COMPARISON}].slug.current
+
+// COMPARISON_BY_SLUG — /comparison/[slug] ($slug).
+*[${PUBLISHED_COMPARISON} && slug.current == $slug][0]{
+  _id, _type, _updatedAt, title, "slug": slug.current, publishedAt,
+  competitorName,
+  "competitorLogo": competitorLogo${IMAGE},
+  "competitorLogoOnDark": competitorLogoOnDark${IMAGE},
+  "headline": headline${ACCENT_TITLE},
+  subtitle, primaryButtonLabel, secondaryButtonLabel,
+  "chooseHeader": chooseHeader${ACCENT_SECTION_HEADER},
+  "webflowChoice": webflowChoice{ "title": title${ACCENT_TITLE}, reasons },
+  "competitorChoice": competitorChoice{ "image": image${IMAGE}, "title": title${ACCENT_TITLE}, reasons },
+  "tableHeader": tableHeader${ACCENT_SECTION_HEADER},
+  tableGroups[]{ _key, label, rows[]{ _key, feature, webflow, competitor } },
+  "reasonsHeader": reasonsHeader${ACCENT_SECTION_HEADER},
+  reasons[]{ _key, "image": image${IMAGE}, title, text,
+    stats[]{ _key, value, label, source, sourceUrl } },
+  "migrationHeader": migrationHeader${ACCENT_SECTION_HEADER},
+  migrationSteps[]{ _key, name, description, "image": image${IMAGE} },
+  "caseStudiesHeader": caseStudiesHeader${ACCENT_SECTION_HEADER},
+  "caseStudies": caseStudies[defined(@->slug.current) && !(@->_id in path("drafts.**"))]->{
+    ${CASE_STUDY_CARD_FIELDS}
+  },
+  "latestCaseStudies": *[_type == "caseStudy" && defined(slug.current) && !(_id in path("drafts.**"))]
+    | order(publishedAt desc, title asc)[0...3]{ ${CASE_STUDY_CARD_FIELDS} },
+  faqSections[]{ _key, title, faqs[]{ _key, question, answer } },
+  "otherComparisons": *[${PUBLISHED_COMPARISON} && _id != ^._id] | order(publishedAt desc, title asc){
+    _id, title, "slug": slug.current, competitorName, "competitorLogo": competitorLogo${IMAGE}
+  },
+  "seo": seo${SEO}
+}
+```
+
+Hero pill dropdown (lead 2026-10-22): `otherComparisons` = every other published comparison, same order as the index; each item renders the competitor logo and `title` as a link to `/comparison/<slug>`. Empty → the pill has no chevron and no control. Projection only, no schema field.
+
+Rendering notes for Astro: an empty optional field renders nothing (no empty wrappers); a section with no header and no items is skipped. `caseStudies` empty → render `latestCaseStudies`; both empty → no section. Card title = `cardTitle ?? title`. Meta: `seo` → `title` / `subtitle` → siteSettings. JSON-LD (if any) goes through the shared helper; no `offers`.
 
 ### `testimonial` — Testimonials
 | Field | Name | Type | Rules |
@@ -197,10 +352,13 @@ Seed: Fintech · SaaS · HR Tech · Cleantech · Venture Capital · E-Commerce �
 | `link` | label, type (`internal` / `external` / `contact`), internalRef (page singleton, post or service), externalUrl, openInNewTab. `contact` opens the contact popup |
 | `button` | link + variant (`gradient` / `gradient-outline` / `white` / `glass`) |
 | `sectionHeader` | eyebrow, title, description |
-| `stat` | value (string, e.g. "$700M+"), label |
-| `kpi` | value, description |
+| `stat` | value (string, e.g. "$700M+"), label, source + sourceUrl (optional, `comparison.reasons[].stats` only, v0.14) |
+| `kpi` | value, description, label (optional, case study results only, v0.12) |
+| `caseStudyCallout` | title (required), items[] (strings, min 1). `caseStudy.body` only (v0.12) |
 | `accentTitle` | one-block Portable Text title with the "Gradient" (`accent`) decorator (see `service`) |
-| `processStep` | name, description, note (optional link line), features[], image + alt (see `service`) |
+| `processStep` | name, description, note (optional link line), features[], image + alt (see `service`). In `comparison.migrationSteps` only name, description, image (v0.14) |
+| `accentSectionHeader` | eyebrow, title (`accentTitle`), description (v0.14, see `comparison`) |
+| `comparisonChoice` / `comparisonTableGroup` / `comparisonTableRow` / `comparisonReason` | `comparison` only (v0.14) |
 
 ---
 
@@ -233,7 +391,8 @@ Routable documents use field groups:
 |---|---|
 | `post` | **Content** (all post fields, default) · **SEO** |
 | `service` | **Overview** (default) · **Hero** · **Problem** · **Process** · **FAQs** · **SEO** |
-| `caseStudy` | **Overview** (default) · **Hero** · **Article** · **Results** · **Related** · **SEO** |
+| `caseStudy` | **Overview** (default) · **Hero** · **Article** · **Results** · **Card** · **Related** · **SEO** |
+| `comparison` | **Overview** (default) · **Hero** · **What to choose** · **Table** · **Why switch** · **Migration** · **Case studies** · **FAQs** · **Card** · **SEO** |
 
 The **SEO** tab holds the `seo` object (metaTitle, metaDescription, ogImage, noIndex, canonicalUrl).
 
@@ -243,7 +402,7 @@ Meta resolution order: page/post/service `seo` field → generated from content 
 
 ## Rules
 - Every content image has alt text. Logos, icons and author photos auto-generate alt from the related name (editor can override).
-- Routable documents: `post` (`/blog/[slug]`), `service` (`/<slug>`, from `src/pages/[service].astro`; reserved slugs blocked by validation) and `caseStudy` (`/case-studies/[slug]`). Page routes (`/`, `/work`, `/pricing`, `/testimonials`, `/blog`) are static Astro pages that read only their SEO singleton from Sanity.
+- Routable documents: `post` (`/blog/[slug]`), `service` (`/<slug>`, from `src/pages/[service].astro`; reserved slugs blocked by validation), `caseStudy` (`/case-studies/[slug]`) and `comparison` (`/comparison/[slug]`). Page routes (`/`, `/work`, `/pricing`, `/testimonials`, `/blog`) are static Astro pages that read only their SEO singleton from Sanity.
 - Deleting a `category`, `author` or `testimonial` that is referenced is blocked by Sanity by default. Keep it that way.
 - Astro queries only fields listed here. Any new field → update this file first.
 

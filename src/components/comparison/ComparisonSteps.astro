@@ -1,0 +1,192 @@
+---
+/**
+ * ComparisonSteps — migration steps (Figma 3790:37729): section header
+ * (`migrationHeader`, eyebrow e.g. "WordPress → Webflow") and up to four
+ * numbered cards in one staggered row: steps 1 and 3 sit 110px lower than
+ * 2 and 4, neighbours share their 1px border. Each card: the step number
+ * on a gradient square at the top-left corner, the 48px icon, the name
+ * (h3) and the description.
+ *
+ * Not `ServiceProcess`: that section is a tab set with one large image per
+ * step; this design shows every step at once as cards, so it shares only
+ * `SectionHeader` and the `processStep` data (name, description, image).
+ *
+ * Data: Sanity `migrationSteps` (max 4, number = array order). Icons:
+ * `image` (decorative, `alt=""`: the step name is next to it).
+ * ≤991: two per row, ≤767: one per row, no stagger. TODO: DS mobile.
+ *
+ * Motion (lead comment 2026-10-23): ≥992px, odd cards drift up and even
+ * cards down with the scroll (`src/scripts/animations/steps-parallax.ts`,
+ * `data-steps-parallax`, about ±45px at 1440). No JS / reduced motion: static.
+ */
+import Container from "../ui/Container.astro";
+import ComparisonSectionHeader from "./ComparisonSectionHeader.astro";
+import type { AccentSectionHeader, ComparisonMigrationStep } from "../../lib/sanity/types";
+import { accentTitleText } from "../../lib/sanity/portable-text";
+import { imageAtWidth, type ComparisonImageInput } from "./image";
+
+interface Props {
+  header?: AccentSectionHeader | null | undefined;
+  steps?: readonly (ComparisonMigrationStep & { image?: ComparisonImageInput })[] | null | undefined;
+}
+
+const { header, steps } = Astro.props;
+
+const ICON_PX = 48;
+const items = (steps ?? [])
+  .filter((step) => step.name?.trim())
+  .slice(0, 4)
+  .map((step, i) => ({
+    key: step._key,
+    num: String(i + 1),
+    name: step.name.trim(),
+    description: step.description?.trim() || null,
+    icon: imageAtWidth(step.image, ICON_PX, ""),
+  }));
+const hasHeader = accentTitleText(header?.title).length > 0;
+---
+
+{(hasHeader || items.length > 0) && (
+  <section class="c-cmp-steps">
+    <Container>
+      <ComparisonSectionHeader header={header} titleWidth="46.5rem" />
+      {items.length > 0 && (
+        <ol class="c-cmp-steps__list" style={`--c-cmp-steps: ${items.length};`} data-steps-parallax>
+          {items.map((item) => (
+            <li class="c-cmp-steps__item">
+              <div class="c-cmp-steps__card">
+                <span class="c-cmp-steps__num c-text" aria-hidden="true">{item.num}</span>
+                {item.icon && (
+                  <img
+                    class="c-cmp-steps__icon"
+                    src={item.icon.src}
+                    srcset={item.icon.srcset}
+                    width={item.icon.width}
+                    height={item.icon.height}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                )}
+                <h3 class="c-cmp-steps__name c-text_m">{item.name}</h3>
+                {item.description && <p class="c-cmp-steps__description c-paragraph">{item.description}</p>}
+              </div>
+            </li>
+          ))}
+        </ol>
+      )}
+    </Container>
+  </section>
+)}
+
+<style>
+  .c-cmp-steps {
+    background: var(--color-white);
+  }
+  /* Figma: 110px above and below. */
+  .c-cmp-steps :global(.c-container) {
+    padding-top: 7.857rem;
+    padding-bottom: 7.857rem;
+  }
+  /* Header → cards 60px; four equal columns; neighbours overlap 1px so
+     shared borders stay 1px (Figma `mr -1px`). */
+  .c-cmp-steps__list {
+    display: grid;
+    grid-template-columns: repeat(var(--c-cmp-steps, 4), minmax(0, 1fr));
+    align-items: start;
+    margin: 4.286rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .c-cmp-steps__item + .c-cmp-steps__item {
+    margin-left: -1px;
+  }
+  /* Stagger: steps 1 and 3 start 110px lower (Figma 355 vs 245px columns). */
+  .c-cmp-steps__item:nth-child(odd) {
+    margin-top: 7.857rem;
+  }
+  /* Figma 3790:37753: 1px #C9CEDA border, 25px padding, 13px gaps,
+     centred text. */
+  .c-cmp-steps__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.929rem;
+    padding: 1.786rem;
+    border: 1px solid var(--color-gray);
+    background: var(--color-white);
+    text-align: center;
+  }
+  /* Number: 62px gradient square, 4px radius, over the top-left corner;
+     Brulia 24px white (→ `c-text`, TODO: DS). */
+  .c-cmp-steps__num {
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    display: grid;
+    place-items: center;
+    width: 4.429rem;
+    height: 4.429rem;
+    border-radius: 4px;
+    background: var(--gradient-primary);
+    color: var(--color-white);
+    line-height: 1.4;
+  }
+  .c-cmp-steps__icon {
+    display: block;
+    width: 3.429rem;
+    height: 3.429rem;
+    object-fit: contain;
+  }
+  /* Figma Text M (30px, 1.5) Black 500; 8px name → description. */
+  .c-cmp-steps__name {
+    margin: 0;
+    color: var(--color-black-secondary);
+    line-height: 1.5;
+  }
+  .c-cmp-steps__description {
+    max-width: 23.3rem; /* Figma text box 326px */
+    margin: -0.357rem 0 0;
+    color: var(--color-text);
+  }
+
+  @media (max-width: 991px) {
+    .c-cmp-steps__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0;
+    }
+    .c-cmp-steps__item:nth-child(odd) {
+      margin-top: 0;
+    }
+    .c-cmp-steps__item:nth-child(2n + 1) {
+      margin-left: 0;
+    }
+    .c-cmp-steps__item:nth-child(n + 3) {
+      margin-top: -1px;
+    }
+    .c-cmp-steps__card {
+      height: 100%;
+    }
+    .c-cmp-steps__list {
+      align-items: stretch;
+    }
+  }
+  @media (max-width: 767px) {
+    .c-cmp-steps :global(.c-container) {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
+    .c-cmp-steps__list {
+      grid-template-columns: minmax(0, 1fr);
+      margin-top: 3rem;
+    }
+    .c-cmp-steps__item + .c-cmp-steps__item {
+      margin-left: 0;
+      margin-top: -1px;
+    }
+    .c-cmp-steps__card {
+      padding: 2.5rem 2rem;
+    }
+  }
+</style>

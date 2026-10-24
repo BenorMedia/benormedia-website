@@ -48,6 +48,12 @@
   margin-left: 0.5em; /* TODO: DS gap between button text and icon */
   color: var(--color-white);
 }
+/* Light buttons: the icon can't be clipped to the text gradient, so it
+   takes the gradient's end colour (Figma 3842:40096 "Visit live site"). */
+.c-button.is-white .c-button__icon,
+.c-button.is-gradient-outline .c-button__icon {
+  color: var(--color-blue-light);
+}
 
 /* 1. Gradient Solid */
 .c-button.is-gradient {

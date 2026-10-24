@@ -87,6 +87,8 @@ export const processStep = defineType({
         }),
       ],
       validation: (Rule) => Rule.max(1).error('Keep the note to one paragraph.'),
+      // Not part of the comparison migration steps (SCHEMAS v0.14).
+      hidden: ({ path }) => path[0] === 'migrationSteps',
     }),
     defineField({
       name: 'features',
@@ -97,11 +99,14 @@ export const processStep = defineType({
       of: [defineArrayMember({ type: 'string' })],
       options: { layout: 'tags' },
       validation: (Rule) => Rule.unique(),
+      // Not part of the comparison migration steps (SCHEMAS v0.14).
+      hidden: ({ path }) => path[0] === 'migrationSteps',
     }),
     defineField({
       name: 'image',
       title: 'Image',
-      description: 'Illustration shown next to this step. Drag the dot to control the crop.',
+      description:
+        'Illustration shown next to this step (on comparison pages: the small icon above the step name). Drag the dot to control the crop.',
       type: 'image',
       options: { hotspot: true },
       fields: [

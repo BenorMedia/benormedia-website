@@ -1,34 +1,38 @@
 ---
 /**
  * CaseStudyBody — c-cs-body
- * The case study's Portable Text body (Figma article column 3768:26274):
+ * The case study's Portable Text body (Figma article column 3842:40186):
  * H2 sections (Text L, ids for the table of contents: `caseStudyToc` gives
- * the sidebar the same ids), paragraphs, bold / italic, links, bullet and
- * numbered lists. From an H3 up to the next H2 the content sits in the
- * phase block with the left rule (3768:26281). The tree comes from
+ * the sidebar the same ids), paragraphs, bold / italic, links, quotes,
+ * check-mark bullet lists (the blog body's check circle, `CHECK_MASK`),
+ * numbered lists and callout boxes (`NpKeyTakeaways`, which needs
+ * `new-pages.css`). From an H3 up to the next H2 the content sits in the
+ * narrower phase column (3842:40216). The tree comes from
  * `parseCaseStudyBody` (`src/lib/sanity/case-study-body.ts`); the markup is
  * in `./body/`. Renders nothing when the body is empty.
  */
 import CaseStudyNodes from "./body/CaseStudyNodes.astro";
-import type { CaseStudyBodyBlock } from "../../lib/sanity/types";
+import type { CaseStudyBodyItem } from "../../lib/sanity/types";
 import { parseCaseStudyBody } from "../../lib/sanity/case-study-body";
+import { CHECK_MASK } from "../new-pages/blog-icons";
+import "../new-pages/new-pages.css";
 
 interface Props {
-  body: readonly CaseStudyBodyBlock[] | null | undefined;
+  body: readonly CaseStudyBodyItem[] | null | undefined;
 }
 
 const nodes = parseCaseStudyBody(Astro.props.body);
 ---
 
 {nodes.length > 0 && (
-  <div class="c-cs-body">
+  <div class="c-cs-body" style={`--np-check: ${CHECK_MASK};`}>
     <CaseStudyNodes nodes={nodes} />
   </div>
 )}
 
 <style>
   /* Figma: Paragraph 20px #5B6170, line-height 1.5; 24px between blocks,
-     80px between sections. Sizes follow the blog body's tokens. */
+     48px between sections. Sizes follow the blog body's tokens. */
   .c-cs-body {
     color: var(--color-text);
     font-family: var(--font-body);
@@ -36,23 +40,24 @@ const nodes = parseCaseStudyBody(Astro.props.body);
     line-height: 1.5;
   }
   /* Margins reset at zero specificity so the spacing rules below win. */
-  :global(:where(.c-cs-body__h2, .c-cs-body__h3, .c-cs-body__p, .c-cs-body__list)) {
+  :global(:where(.c-cs-body__h2, .c-cs-body__h3, .c-cs-body__p, .c-cs-body__list, .c-cs-body__quote)) {
     margin: 0;
   }
-  .c-cs-body :global(.c-cs-body__h2),
-  .c-cs-body :global(.c-cs-body__h3) {
+  /* Headings: global so `CaseStudyResults` shares the H2 (QA round 1). */
+  :global(.c-cs-body__h2),
+  :global(.c-cs-body__h3) {
     color: var(--color-black-secondary);
     font-family: var(--font-heading);
     font-weight: 400;
     scroll-margin-top: calc(var(--c-nav-height, 0px) + 2rem);
   }
   /* Figma Text L 38px. */
-  .c-cs-body :global(.c-cs-body__h2) {
+  :global(.c-cs-body__h2) {
     font-size: var(--fs-text-l);
     line-height: 1.3;
   }
-  /* Figma Text M 30px. */
-  .c-cs-body :global(.c-cs-body__h3) {
+  /* Figma Text M 30px / 1.5. */
+  :global(.c-cs-body__h3) {
     font-size: var(--fs-text-m);
     line-height: 1.5;
   }
@@ -61,10 +66,11 @@ const nodes = parseCaseStudyBody(Astro.props.body);
   .c-cs-body :global(.c-cs-body__phase > * + *) {
     margin-top: 1.714rem;
   }
-  /* 80px before each section and before the phase block; 24px under an H2. */
+  /* 48px before each section and before the phase column (Figma 3842:40186
+     "Content section" gaps); 24px under an H2. */
   .c-cs-body > :global(* + .c-cs-body__h2),
   .c-cs-body > :global(* + .c-cs-body__phase) {
-    margin-top: 5.714rem;
+    margin-top: 3.429rem;
   }
   .c-cs-body > :global(.c-cs-body__h2 + *) {
     margin-top: 1.714rem;
@@ -73,30 +79,15 @@ const nodes = parseCaseStudyBody(Astro.props.body);
   .c-cs-body :global(.c-cs-body__phase > * + .c-cs-body__h3) {
     margin-top: 2.857rem;
   }
-  /* Phase block: 40px left padding, the rule from 22px down (Figma 976px
-     line in a 1084px block; here to the block's end). */
-  .c-cs-body :global(.c-cs-body__phase) {
-    position: relative;
-    padding-left: 2.857rem;
-  }
-  /* Phase text 858px of the 1180px next to the rule (Figma), as a share. */
+  /* Phase column: 858px of the 1220px article (Figma 3842:40216), no rule
+     (removed in 3842:40046). */
   .c-cs-body :global(.c-cs-body__phase > *) {
-    max-width: 72.7%;
+    max-width: 70.33%;
   }
-  .c-cs-body :global(.c-cs-body__phase)::before {
-    content: "";
-    position: absolute;
-    top: 1.571rem;
-    bottom: 0;
-    left: 0;
-    width: 1px;
-    background: var(--color-border);
-  }
-  /* Figma: Poppins SemiBold 20px #212427 (no Poppins in the DS: body font at
-     600, TODO: DS). */
+  /* Figma: Acumin Pro Medium 500 20px #212427 (lead 2026-10-22). */
   .c-cs-body :global(strong) {
     color: var(--color-black-secondary);
-    font-weight: 600;
+    font-weight: 500;
   }
   .c-cs-body :global(a) {
     color: var(--color-accent);
@@ -109,33 +100,79 @@ const nodes = parseCaseStudyBody(Astro.props.body);
     outline-offset: 2px;
     border-radius: 2px;
   }
-  /* Figma: disc bullets, 30px indent. */
-  .c-cs-body :global(.c-cs-body__list) {
-    padding-left: 2.143rem;
+
+  /* Quote (Figma 3842:40194): 16px more space around it, the brand
+     gradient at 8% behind, a 5px gradient bar on the left, Text M / 1.5
+     #212427, 16 / 30px padding. */
+  .c-cs-body :global(.c-cs-body__quote) {
+    position: relative;
+    isolation: isolate;
+    padding: 1.143rem 2.143rem;
+    overflow: hidden;
+    color: var(--color-black-secondary);
+    line-height: 1.5;
   }
-  .c-cs-body :global(ul.c-cs-body__list) {
-    list-style: disc;
+  .c-cs-body > :global(.c-cs-body__quote),
+  .c-cs-body > :global(.c-cs-body__quote + *),
+  .c-cs-body :global(.c-cs-body__phase > .c-cs-body__quote),
+  .c-cs-body :global(.c-cs-body__phase > .c-cs-body__quote + *) {
+    margin-top: 2.857rem; /* 24 + 16px */
+  }
+  .c-cs-body :global(.c-cs-body__quote)::before,
+  .c-cs-body :global(.c-cs-body__quote)::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+    background: var(--gradient-primary);
+  }
+  .c-cs-body :global(.c-cs-body__quote)::before {
+    right: 0;
+    opacity: 0.08;
+  }
+  .c-cs-body :global(.c-cs-body__quote)::after {
+    width: 0.357rem; /* Figma 5px */
+  }
+  .c-cs-body :global(.c-cs-body__quote p) {
+    margin: 0;
+  }
+
+  /* Lists: Figma 3842:40198. Top-level bullet lists get the blog body's
+     check-circle bullets from `.c-np-prose.is-blog` (`CaseStudyList`
+     wrapper, QA round 1); numbered and nested lists keep these rules. */
+  .c-cs-body :global(ol.c-cs-body__list),
+  .c-cs-body :global(.c-cs-body__list .c-cs-body__list) {
+    padding-left: 2.143rem;
   }
   .c-cs-body :global(ol.c-cs-body__list) {
     list-style: decimal;
   }
   .c-cs-body :global(.c-cs-body__list .c-cs-body__list) {
-    margin-top: 0;
+    margin-top: 0.714rem;
+    list-style: disc;
   }
+  .c-cs-body :global(ol.c-cs-body__list > li + li),
+  .c-cs-body :global(.c-cs-body__list .c-cs-body__list > li + li) {
+    margin-top: 0.714rem;
+  }
+
+  /* Callout box: `NpKeyTakeaways` (Figma 3842:40220 matches its box, label
+     and square bullets). Its items take the article's paragraph size here
+     (the blog's prose is `--fs-p-m`; Figma 18.2px next to 20px body text). */
+  .c-cs-body :global(.c-cs-body__callout .c-np-prose) {
+    font-size: var(--fs-p);
+    line-height: 1.5;
+  }
+
   @media (max-width: 767px) {
-    .c-cs-body > :global(* + .c-cs-body__h2),
-    .c-cs-body > :global(* + .c-cs-body__phase) {
-      margin-top: 4.444rem;
-    }
-    .c-cs-body > :global(.c-cs-body__h2 + *) {
-      margin-top: 1.714rem;
-    }
-    .c-cs-body :global(.c-cs-body__phase) {
-      padding-left: 1.778rem;
-    }
     /* Mobile: phase text full width (lead 2026-10-21, round 4). */
     .c-cs-body :global(.c-cs-body__phase > *) {
       max-width: none;
+    }
+    .c-cs-body :global(.c-cs-body__quote) {
+      padding: 1.333rem 2.222rem;
     }
   }
 </style>

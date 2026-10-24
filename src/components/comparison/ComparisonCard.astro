@@ -1,0 +1,194 @@
+---
+/**
+ * ComparisonCard — c-cmp-card
+ * `/comparison` index card (Figma 3790:37994): a white 243px panel with a
+ * faint blue glow and three rings (the `CaseStudyCard` orbit pattern at
+ * opacity 0.1 + rings in `--color-border`, ui handoff 2026-10-22) behind
+ * the "Webflow VS <logo>" pill, a divider, the title (`cardTitle ?? title`),
+ * the description (`cardDescription`, hidden when empty) and "Learn more →".
+ *
+ * Interaction = `CaseStudyCard` / the blog cards: the whole card is the
+ * link's hit area (`::after`), hover / focus turn "Learn more" accent, focus
+ * ring on the link. Rendered as an `<li>`: place it in `ComparisonGrid`.
+ */
+import ComparisonPill from "./ComparisonPill.astro";
+import type { ComparisonCard as ComparisonCardData } from "../../lib/sanity/types";
+import type { ComparisonImageInput } from "./image";
+import { ARROW_RIGHT } from "../new-pages/blog-icons";
+import { COMPARISON_COPY, comparisonHref } from "./copy";
+
+interface Props {
+  card: ComparisonCardData & { competitorLogo?: ComparisonImageInput };
+  /** Heading level of the title (the index has no section heading above the grid: h2). */
+  headingLevel?: 2 | 3;
+}
+
+const { card, headingLevel = 2 } = Astro.props;
+const Heading = `h${headingLevel}` as "h2" | "h3";
+const title = card.cardTitle?.trim() || card.title;
+const description = card.cardDescription?.trim();
+const href = comparisonHref(card.slug);
+const glowId = `cmp-glow-${card._id}`;
+---
+
+<li class="c-cmp-card">
+  <div class="c-cmp-card__thumb">
+    <svg class="c-cmp-card__orbit" viewBox="0 0 545 545" fill="none" aria-hidden="true" focusable="false">
+      <defs>
+        <filter id={glowId} x="0" y="0" width="545" height="545" filterUnits="userSpaceOnUse">
+          <feGaussianBlur stdDeviation="75.36" />
+        </filter>
+      </defs>
+      <circle class="c-cmp-card__glow" cx="272.5" cy="272.5" r="98.27" filter={`url(#${glowId})`} />
+      <circle class="c-cmp-card__ring" cx="272.5" cy="272.5" r="97.92" />
+      <circle class="c-cmp-card__ring" cx="272.5" cy="272.5" r="180.09" />
+      <circle class="c-cmp-card__ring" cx="272.5" cy="272.5" r="272.07" />
+    </svg>
+    <ComparisonPill competitorName={card.competitorName} competitorLogo={card.competitorLogo} variant="card" class="c-cmp-card__pill" />
+  </div>
+  <div class="c-cmp-card__body">
+    <div class="c-cmp-card__text">
+      <Heading class="c-cmp-card__title c-text_m">{title}</Heading>
+      {description && <p class="c-cmp-card__description c-paragraph">{description}</p>}
+    </div>
+    <a class="c-cmp-card__more c-paragraph" href={href}>
+      {COMPARISON_COPY.learnMore}<span class="c-cmp-card__sr-only">: {title}</span>
+      <span class="c-cmp-card__arrow" set:html={ARROW_RIGHT} />
+    </a>
+  </div>
+</li>
+
+<style>
+  /* Figma 3790:37994: 0.5px #E4E6EA border, 8px radius, white. */
+  .c-cmp-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    border: 0.5px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-white);
+    transition:
+      transform var(--duration-hover) var(--ease-smooth),
+      border-color var(--duration-hover) var(--ease-smooth),
+      box-shadow var(--duration-hover) var(--ease-smooth);
+  }
+  /* Hover / keyboard focus: the blog cards' hover (`NpBlogResources`, lead
+     comment 2026-10-23): lift 3%, accent border, soft shadow. On the whole
+     card, which is the bordered box here (the blog's thumbnail is). */
+  .c-cmp-card:hover,
+  .c-cmp-card:has(.c-cmp-card__more:focus-visible) {
+    transform: translateY(-3%);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--color-black-secondary) 20%, transparent);
+  }
+  /* 543 × 243 panel and the divider under it (Figma 3790:37995 / 38009).
+     It is the size container of the pill (`ComparisonPill is-card`). */
+  .c-cmp-card__thumb {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 543 / 243;
+    overflow: hidden;
+    container-type: inline-size;
+    border-bottom: 0.5px solid var(--color-border);
+  }
+  /* 544.82px frame centred on the panel; it overflows and is clipped. */
+  .c-cmp-card__orbit {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100.33%;
+    height: auto;
+    aspect-ratio: 1;
+    max-width: none;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  /* Glow: Blue 500 at 10%, blur 75.36 (ui handoff, Figma 3790:37996). */
+  .c-cmp-card__glow {
+    fill: var(--color-blue-500);
+    opacity: 0.1;
+  }
+  /* Rings: #E4E6EA, 0.675 stroke, 30%. */
+  .c-cmp-card__ring {
+    fill: none;
+    stroke: var(--color-border);
+    stroke-width: 0.675;
+    opacity: 0.3;
+  }
+  .c-cmp-card :global(.c-cmp-card__pill) {
+    position: relative;
+  }
+
+  /* Figma 3790:38010: 24px padding, 24px text → button, 16px title → text. */
+  .c-cmp-card__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.714rem;
+    padding: 1.714rem;
+  }
+  .c-cmp-card__text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 1.143rem;
+    width: 100%;
+  }
+  /* Figma Text M (30px, 1.5) Black 500. */
+  .c-cmp-card__title {
+    margin: 0;
+    color: var(--color-black-secondary);
+    line-height: 1.5;
+  }
+  .c-cmp-card__description {
+    margin: 0;
+    color: var(--color-text);
+  }
+  /* "Learn more" = CaseStudyCard / blog cards; Figma 8px above and below. */
+  .c-cmp-card__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.571rem;
+    padding: 0.571rem 0;
+    color: var(--color-black-secondary);
+    text-decoration: none;
+  }
+  .c-cmp-card__more::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+  .c-cmp-card__more:hover {
+    color: var(--color-accent);
+  }
+  .c-cmp-card__more:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  .c-cmp-card__arrow {
+    display: inline-flex;
+    width: 1.714rem;
+    height: 1.714rem;
+    align-items: center;
+    justify-content: center;
+  }
+  .c-cmp-card__arrow :global(svg) {
+    width: 0.82rem;
+    height: 1.24rem;
+  }
+  .c-cmp-card__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

@@ -214,6 +214,7 @@
 | 2026-10-07 | Ahrefs Web Analytics in `BaseLayout` `<head>` (`analytics.ahrefs.com/analytics.js`, `data-key` = the Ahrefs site key, `async`, `is:inline` so Astro does not bundle it). Production only (`PUBLIC_SITE_ENV === "production"`, same switch as GTM): previews and dev never send visits | Lead: install Ahrefs analytics | Lead |
 | 2026-10-17 | Google tag (gtag.js) for GA4 `G-LC2VQ4Z1VV` in `BaseLayout` `<head>`, the official snippet verbatim right after GTM. Production only (`PUBLIC_SITE_ENV === "production"`, same switch as GTM): previews and dev never send hits. If GTM also fires a GA4 tag for this ID, page views count twice | Lead: install the Google tag in the head | Lead |
 | 2026-10-17 | GTM container replaced: `GTM-5HNF8BWX` (was `GTM-M4MHRTDM`) in both the head snippet and the `<noscript>` iframe. Same loader and production-only switch as before | Lead: new GTM scripts | Lead |
+| 2026-10-22 | Shared components, backward compatible (case studies v3): `Button` gets optional `target` / `rel` (links only); icons in `is-white` / `is-gradient-outline` buttons take `--color-blue-light` (white was invisible on a white button); `NpKeyTakeaways` gets optional `label` / `labelId` so the case-study callout reuses the box. Without the new props every existing page renders as before | ui agent: reuse existing components (lead 2026-10-22) instead of new ones | Proposed |
 
 ### Open questions
 
@@ -291,6 +292,7 @@
 - **`SectionHeader` `titleSegments` + `\n` in description; `PageHero` slots** (2026-09-29)
 - **Shared `Breadcrumbs` (eyebrow crumbs, gradient current item, JSON-LD)** (2026-09-29)
 - **`hrefFromLink` in `src/lib/sanity/links.ts` (`service` → `/<slug>`)** (2026-09-29)
+- **`Button` target / rel, light-button icon colour, `NpKeyTakeaways` label** — small shared-component props added for the case-study v3 template (see Decisions). (2026-10-22)
 - ~~**`TestimonialCard` `fluid` variant (grid)**~~ — RESOLVED 2026-09-29: dropped; width 100% on the Testimonials page only (see Decisions).
 - ~~**Testimonial marquee pauses on hover / focus**~~ — RESOLVED 2026-09-29: lead removed the pause (see Decisions).
 - ~~**Nav links on the header's true center (grid `1fr auto 1fr`)**~~ — RESOLVED 2026-10-04: approved by the lead (see Decisions).
@@ -531,18 +533,48 @@ Without adding to your team." with "website moving." marked Gradient (published 
 | 2026-10-21 | `/case-studies` is not built in production while no case study is published (rest route `[...index].astro`); previews and staging build it (noindex, hero only). Its robots tag follows the indexable case studies only, like the sitemap | Lead, QA round 1 | Lead |
 | 2026-10-21 | Builds stop on purpose (a) when a Sanity project id is set and the sitemap can't read the published case studies (every build except `astro dev`), and (b) in production when a case study is published while `/case-studies` copy is still "Lorem ipsum" / "TODO: COPY" (non-production builds warn). The live site keeps its previous deploy | Lead, QA should-fix 2 and 3 | Lead |
 | 2026-10-21 | QA round 1 fixes: `/work` case-study link in its own column ≥992 and its own line ≤991 (case-study rows only; their CSS ships as a body `<link rel="stylesheet" href="data:text/css,…">` only when a row has a link); Article JSON-LD `dateModified` + `image`; body links must start with `/`, `#` or `http(s)://`; new-tab note on body links; page-specific fallback meta description | Lead, QA nits | Lead |
+| 2026-10-22 | Updated Figma (index 3790:36365, template 3790:36532) is the reference for the case-studies v2 round (branch `feat/case-studies-v2`) | Emily | Lead |
+| 2026-10-22 | Case-study card redesign (3798:19207 / 3798:19459): navy thumbnail, no orbit rings, 40% glow, white logo with solid white squares, stats row (two value + label), 32 / 24px body gaps | Emily | Lead |
+| 2026-10-22 | Card stats: new optional `caseStudy.cardStats` (max 2, value + short label), hidden when empty. White logo: new optional `client.logoOnDark`, CSS whitening fallback when empty. Code only, not deployed (SCHEMAS v0.11) | Emily; pending Sergio's OK in the PR | Proposed |
+| 2026-10-22 | New tokens for navy #001F3D and glow #1355FF. Updated 2026-10-22: they are Surfe's brand colours and stay as the default case-study card colours only (per-client row below) | Emily (no longer pending Sergio) | Lead |
+| 2026-10-22 | Index hero background (3803:27030): rings + logo tiles from the clients' Sanity `icon`s (`ALL_CLIENTS_WITH_ICON`), static (no motion spec); 120px hero padding | Emily | Lead |
+| 2026-10-22 | 1230px page container on the whole case-study index and template (extends the 2026-10-21 related-section row; Figma's 1680px row stays a follow-up for Sergio) | Emily | Lead |
+| 2026-10-22 | Related section: no button (matches Figma; supersedes "button stays Get in Touch"); heading → cards gap 60px. Phase rule runs the full height of the phase block. Bold labels in the article ("The indicators:") at weight 500 (supersedes semibold) | Emily | Lead |
+| 2026-10-22 | Figma values used for five gaps not in the design system, marked `TODO: DS`: index hero title 60px, index hero description 662px wide, hero date 18px, hero intro in Manrope, dividers and phase rule #D6D6D6. Superseded 2026-10-22 (v3): title and description back to site classes, hero date / divider / phase rule removed with the v3 template, intro now Figma Acumin Paragraph M (`c-paragraph_m`) | Emily | Lead |
+| 2026-10-22 | `placeholder-surfe` ("Placeholder: How Surfe scaled its website") was published in Sanity by Sergio on purpose (supersedes "drafts only" for this document). Left as is. Staging shows `/case-studies` with one card; a production build stops until the index copy is real | Emily | Lead |
+| 2026-10-22 | v2 build choices (ui): glow token named `--color-blue-500` (Figma name, like `--color-grey-700`); index hero tiles = the first 11 clients with an icon by name, white tiles, no rotation; hero 110 + 120px above the text and 120 + 100px below (Figma body padding and gap); card stat value uses the card title's `c-text_m`; mobile / tablet adaptations listed in `docs/handoffs/2026-10-22_ui_case-studies-v2.md` | ui agent, case-studies v2; approved by the lead 2026-10-22 | Lead |
+| 2026-10-22 | Index hero tile fills by position: the five tiles coloured in Figma 3803:27030 (3804:27327 #95A78D, 3804:27348 #EA515B, 3803:27300 #E74724, 3803:27293 #001F3C, 3803:27305 #0065FF) keep Figma's fill whatever client icon lands there; the other six are white; Figma border kept; values `TODO: DS`. Alphabetical 11 tiles, Figma hero spacing, stat values in the card-title style and the mobile list approved | Lead, v2 review | Lead |
+| 2026-10-22 | Case study template v3 = Figma 3842:40046 (replaces the deleted 3790:36532): hero with breadcrumbs, client logo chip + "Case study" tag, title, intro and a browser frame (client `websiteScreenshot`, URL host, "Visit live site" to `websiteUrl`) running off the right edge; a facts row (01 Client … 06 Stack) replaces the facts panel; centred quote with divider; body sections 48px apart, no phase rule, quote block, check-circle lists, callout box; results with intro, label line and summary. Index 3790:36365 unchanged since v2 | ui agent, case studies v3 (Emily's updated Figma); approved by the lead 2026-10-22 | Lead |
+| 2026-10-22 | v3 data, code only (SCHEMAS v0.12, not deployed): `caseStudy.solution`, `timeline`, `stack`, `resultsIntro`, `resultsSummary`, body `blockquote` style and `caseStudyCallout`, `kpi.label`; `client.websiteScreenshot` wired. `challenge` kept but no longer shown (meta fallback); hero date / read time removed (not in Figma) | Figma 3842:40046 needs them; nothing renders when empty. Approved by the lead 2026-10-22 (deploy by the orchestrator; hero date / read time drop approved) | Lead |
+| 2026-10-22 | v3 build choices (ui): existing classes where Figma is within a few px (hero title and result values `c-text_xl`, intro `c-paragraph_m`, facts values `c-paragraph`, quote `c-text_m`, URL text `c-paragraph_s`); logo chip = default `Eyebrow`; callout = `NpKeyTakeaways` (accent 5% tint, not Figma's 8%); check icons = the blog's `CHECK_MASK`; browser window `--color-gray-light`, window dots `--color-gray` (Figma red / yellow / green, no tokens); Figma's hand cursor left out; responsive list in `docs/handoffs/2026-10-22_ui_case-studies-v3.md` | Lead 2026-10-22: reuse site classes and tokens, list the gaps. Approved 2026-10-22 except the browser colours (next row) | Lead |
+| 2026-10-22 | v3 round 2 (lead answers): "04 / Solution" = "BenorMedia" (schema `initialValue`, one word; Figma "Benor Media" is a spelling variant); `challenge` stays in the schema, not rendered (SEO description fallback); new tokens `--color-browser-bg` #F4F5F7, `--color-browser-url` #8A909E, `--color-browser-red` #FF5B5F, `--color-browser-yellow` #FAC800, `--color-browser-green` #34C759 (browser frame) and `--color-tile-sage` #95A78D (index hero tile 4), supersedes the grey placeholders; hero title `c-text_xl` and the callout's 5% tint kept; index hero title and description back to the site classes (`c-text_xl`, SectionHeader's 42rem), supersedes "index hero title 60px, description 662px" in the five-gaps row | Lead | Lead |
+| 2026-10-22 | Per-client card colours: new optional `client.brandColor` (thumbnail background) and `client.brandGlowColor` (glow), plain strings validated `#RRGGBB` (no colour plugin in the repo), set inline on the card as `--c-cs-card-bg` / `--c-cs-card-glow` only when the value passes the hex check in code; empty → `--color-navy` / `--color-blue-500` (Surfe). Logo stays white (`logoOnDark` or whitened `logo`). Code only, not deployed (SCHEMAS v0.13) | Emily: navy and blue are Surfe's brand colours, not site colours | Lead |
+| 2026-10-22 | Tiles 7, 8, 9 and 11 stay white until the fixed client list exists (their Figma fills hid the alphabetical clients' icons: Candybox, Clerk, DarwinCX, Dimensions); only tile 4 keeps its fill (#95A78D). Supersedes the five-fill row above for those tiles | Emily | Lead |
+| 2026-10-22 | v3 round 4 (Figma update): browser bar 46px (was 63.7), default "Visit live site" position = Figma centre (686.5, 307.9) of the 1103 × 657.1 window; facts labels without numbers ("Client" … "Stack", "Services Delivered"); facts row ≥992 = natural-width items, values on one line, space-between (equal gaps); when the six do not fit, whole items wrap and rows are centred (`is-wrapped` from `src/scripts/ui/row-wrap.ts`; without JS rows stay space-between); ≤991 / ≤767 grids unchanged, values wrap there, list values joined with a no-break space before "/" | Emily's Figma update 2026-10-22 (3842:40085, 3842:40102); handoff v3 round 4 | Proposed |
+| 2026-10-22 | Index hero tiles all white with the 1.5px border, no fill by position (supersedes the two tile-fill rows above): in Figma the coloured tiles are coloured icons, not a fill that belongs to the position. Token `--color-tile-sage` stays in `tokens.css`, now unused | Emily, round 5 review (tile 4 put sage behind Bambi Health) | Lead |
+| 2026-10-22 | Index hero orbit (supersedes "static (no motion spec)" in the background row): the first 13 clients with an icon in the Studio order (`orderRank`, new hero-only query `CLIENTS_WITH_ICON_BY_RANK`; Home keeps `ALL_CLIENTS_WITH_ICON`); tiles 1–11 start at Figma 3803:27030's 11 positions snapped onto their ring (outer 3, middle 3, inner 5), tiles 12–13 on the outer ring at 92.8° / 287.7° (out of view at the start), so the first frame is Figma's composition; each ring turns, CSS only (`rotate`, tiles counter-rotate), outer 200s clockwise, middle 160s anticlockwise, inner 120s clockwise; paused off screen (IntersectionObserver); reduced motion = static start; ≤991 inner ring's tiles hidden (8 tiles, 64px), ≤767 rings only | Emily 2026-10-22 (explicit request; density and start layout from Figma) | Lead |
+| 2026-10-22 | Index hero fade (round 5): Figma 3804:27352 radial updated (1925.9 × 814.4 box, radii 1524.1 × 644.5, transparent to 38.372%, white from 78.655%) and no longer cut at its box (white beyond the ellipse); plus hero-edge fades to white, top over the 110px band above Figma's container and bottom over the 120 + 100px under the text, so rings and tiles never end in a hard cut. Speeds and edge fades `TODO: DS` | Emily, round 5 review (hard cuts at the bottom and corners); Figma itself ends in a cut | Proposed |
 
 ### Open questions
 
 #### Content
 - **BLOCKER: `/case-studies` copy before the first publish** — the index becomes indexable and enters the sitemap automatically when the first case study is published, but its title, intro, description and meta tags are still Lorem ipsum (`TODO: COPY`). Real copy must ship before (or with) the first published case study. (2026-10-21)
 - **All case-study copy** — index title second line, index description, card titles, template intro, "Resources" heading, every case-study body, results, quotes and meta tags are placeholders (`TODO: COPY`). The Figma body (MagBak / Fospha) and quote (David Chevalier, SimpleTiger, next to a Surfe logo) are sample content and are not reused. (2026-10-20)
+- **v3 fields to fill (after the v0.12 deploy)** — solution, timeline, stack, results intro / summary, result labels, body quotes and callout boxes are empty on `placeholder-surfe`, so its page shows 3 facts and no quote block or callout. Each client also needs `websiteScreenshot` + `websiteUrl` for the hero frame (without a screenshot the hero is text only). (2026-10-22)
+- **Client brand colours (after the v0.13 deploy)** — fill `brandColor` / `brandGlowColor` per client (Surfe: #001F3D / #1355FF, the defaults). Pick a dark `brandColor`: the card logo is always white, so a light colour makes it hard to read. (2026-10-22)
+- ~~**"04 / Solution" content**~~ — RESOLVED 2026-10-22: "BenorMedia", the schema's initial value (see Decisions).
 - **JOOR facts** — the first case study keeps every open marker of `docs/content/work-joor.md` (quote, person, result, language list, JOOR's written OK) until JOOR approves. (2026-10-20)
 
 #### Design team
 - **Mobile / tablet** — no designs; adapted from existing patterns, every choice listed in the handoff. `TODO: DS mobile`. (2026-10-20)
 - **Empty and long states** — no design for an index with 0 published case studies, a card without a client logo, a case study without results or testimonial, or more than 6 cards. (2026-10-20)
 - **Case study values with no token (`TODO: DS`)** — card glow Figma #1355FF (Blue 500) → `--color-accent`; quote name and body bold in Poppins SemiBold → body font at 600; Figma 15px uppercase labels (facts rows) → `--fs-p`; radii 3.6px / 2.9px (logo box), 14px (quote), 2.25px (results squares) and the facts glow blur 135px used as given in Figma (no radius / blur scale in the DS). Full list in `docs/handoffs/2026-10-20_ui_case-study-components.md`. (2026-10-20)
+- **Case-study v2 values without tokens (`TODO: DS`)** — index hero rings Figma #0C1627 at 8% → `--color-heading` at 8%; card stat labels Figma SF Pro 10.5px → body font at `--fs-text-xs` (10.9px); stat values Figma 30px → `c-text_m` like the card title; hero intro Manrope → body font (Manrope not loaded; obsolete since v3: Figma intro is Acumin Paragraph M); bold labels at 500 render as the nearest loaded Acumin weight until the Adobe kit is set. (2026-10-22)
+- ~~**Index hero tile colours**~~ — RESOLVED 2026-10-22: Emily: the colour comes from the icon itself; every tile is white, no fill (see Decisions). `--color-tile-sage` is unused.
+- ~~**v3 values without tokens**~~ — RESOLVED 2026-10-22: browser colours and tile 4 got tokens; class gaps (hero title `c-text_xl`, callout 5% tint) kept by the lead (see Decisions). Was: browser window #F4F5F7 → `--color-gray-light`; window dots #FF5B5F / #FAC800 / #34C759 → `--color-gray`; URL text #8A909E 13.2px → `--color-text` + `c-paragraph_s`; callout fill accent 8% → the shared box's 5% (contrast). Class gaps kept: hero title 60px / 1.4 → `c-text_xl` (54.7px / 1.2, title wraps to 3 lines at 1440 in the 45.8% column), callout items 18.2px → body `--fs-p`, results values 60px → `c-text_xl`. (2026-10-22)
+- **v3 mobile / tablet** — no design: browser frame under the text ≤991 (still clipped at the right edge), facts in 3 then 2 columns, quote divider hidden ≤767, results stacked ≤767. (2026-10-22)
+- **Facts row minimum gap (`TODO: DS`)** — Figma has only the space-between result (84.6px at 1920 with its sample values); the minimum gap before an item wraps is the round 1 2rem (28px at 1440). With the live Surfe values the six items fit on one line from about 1341px up (gaps 37px at 1440+) and wrap to 5 + 1 (Stack centred on row 2) from 992 to about 1340px. A smaller minimum (about 1.9rem or less) or a smaller value style would keep one row there; needs a design call. (2026-10-22)
+- ~~**Hero tiles: fixed list**~~ — RESOLVED 2026-10-22: the first 13 clients in the Studio order (`orderRank`), no fills (see Decisions).
 - **Case study card tags** — "Published on {date}" in the blog date format ("October 20, 2026") is longer than the Figma "01/01/01": at 1440 the two tags wrap to two lines in a card. Built with wrapping; a shorter date format or smaller tags needs a design call. (2026-10-20)
 - **Case study table of contents** — the Figma TOC box has small squares on its side borders; the shared blog sidebar (`NpBlogSidebar`) has none and was reused unchanged so blog pages stay identical. (2026-10-20)
 
@@ -554,7 +586,17 @@ Without adding to your team." with "website moving." marked Gradient (published 
 - ~~**`/dev/case-study` outside production**~~ — RESOLVED 2026-10-21: approved (see Decisions).
 - ~~**Related section button**~~ — RESOLVED 2026-10-21: "Get in Touch" (see Decisions).
 
+- **v0.11 schema fields (Sergio)** — `caseStudy.cardStats` and `client.logoOnDark` are in code only; OK and deploy. (2026-10-22)
+- ~~**v2 build choices (ui)**~~ — RESOLVED 2026-10-22: approved (see Decisions).
+- ~~**Case study template v3**~~ — RESOLVED 2026-10-22: approved by the lead (see Decisions).
+- ~~**v0.12 schema fields**~~ — RESOLVED 2026-10-22: deploy approved by the lead; the orchestrator deploys it.
+- ~~**New tokens #001F3D and #1355FF (Sergio)**~~ — RESOLVED 2026-10-22: Emily: Surfe's brand colours, kept as the default card colours; each client sets its own (`client.brandColor` / `brandGlowColor`, see Decisions). Whether they go into `DESIGN_SYSTEM.md` as defaults is for the orchestrator to relay.
+- **v3 round 4 (browser height, facts row)** — see the Decisions row; screenshots in the v3 handoff, round 4. (2026-10-22)
+- **v0.13 schema fields** — `client.brandColor` and `client.brandGlowColor` are in code only; deploy with v0.11 / v0.12. (2026-10-22)
+- **Index hero fade (round 5)** — see the Decisions row; Figma radial plus top and bottom edge fades (not in Figma). Screenshots in the v3 handoff, round 5. (2026-10-22)
+
 #### Engineering follow-ups
+- **Unused token `--color-tile-sage`** — no longer used after round 5 (tiles all white); kept in `tokens.css` (no token edits without the lead). Remove or keep for later. (2026-10-22)
 - **Brief alignment** — `docs/brief-next-pages.md` Part 2 and `docs/content/work-joor.md` still describe `/work/joor`, a code data file and the Flow Ninja section order; update them to match the decisions above before `/seo-work-joor` runs. (2026-10-20)
 - **Case-study character limits** — set max lengths for `title`, `intro`, `industry` and `challenge` once real copy shows what fits the design. (2026-10-20)
 - **Links to case studies** — allow `caseStudy` in `link.internalRef` and post-body internal links when someone needs it (SCHEMAS bump). (2026-10-20)
@@ -566,10 +608,77 @@ Without adding to your team." with "website moving." marked Gradient (published 
 - **`failHard` scope** — the "Sanity unreachable" stop also applies to `astro check`, `preview` and `sync` (`astro.config.mjs`), so an offline `pnpm run check` fails with "Build stopped". Consider limiting it to `astro build` or rewording. (QA round 2, 2026-10-21)
 - **Unused case-study CSS files** — `_astro/CaseStudyPage.*.css` (≈10.7 KB) and `_astro/case-study-release.*.css` (≈5 KB) ship in production with no page using them. (QA round 2, 2026-10-21)
 - **Sidebar CSS inline on posts and guides** — ≈3.4 KB per page instead of a cached shared file since the case-study sidebar reuse; rendering unchanged. (QA round 2, 2026-10-21)
+- ~~**Five Figma values without tokens (TODO: DS)**~~ — RESOLVED 2026-10-22 (v3): index hero title / description back to site classes; hero date, Manrope intro, dividers and phase rule #D6D6D6 no longer exist in the template (see Decisions).
 - **TOC side squares** — Figma shows small squares on the table-of-contents box's side borders; the shared blog sidebar has none. Decide later whether to add them to blog, guides and case studies together. (2026-10-20)
 - **Card motion** — the animated card thumbnails are in open PRs #61 and #67, not on `dev`; when they merge, merge `dev` into this branch so the case-study cards match. (2026-10-20)
 
 ---
+
+## Comparison
+
+### Decisions
+| Date | Decision | Reason | Status |
+|---|---|---|---|
+| 2026-10-22 | Routes `/comparison` (index) and `/comparison/[slug]` (detail) | Matches the "Comparison" eyebrow in Figma 3790:37967 | Lead |
+| 2026-10-22 | Content from a new Sanity document type `comparison`; drafts never build | New comparisons (Framer, Wix) without a developer, same pattern as case studies | Lead |
+| 2026-10-22 | Template mockups (Webflow Designer, WordPress admin, plugins panel, performance audit, CMS) exported from Figma as SVG with alt text | Pixel fidelity and weight; decorative UI illustrations | Lead |
+| 2026-10-22 | Index lists only published comparisons; no card links to a page that does not exist | Framer and Wix have no copy yet | Lead |
+| 2026-10-22 | Lorem copy in Figma (hero subtitles, index intro, card descriptions, case studies intro) and the template FAQ (pricing questions) ship as `TODO: COPY` | No final copy; FAQ in Figma is a pricing placeholder | Lead |
+| 2026-10-22 | Stats `+X%`, `X` and `[source]` labels are `[FACT NEEDED]` markers, never guessed | House rule: no invented figures | Lead |
+| 2026-10-22 | Preview with in-code fixture at `/dev/comparison`, not built in production | Same pattern as `/dev/case-study` | Lead |
+| 2026-10-22 | Comparison assets in `src/assets/comparison/`: the 4 "Why SaaS teams switch" mockups as SVG with their light blue panel (`#F5F9FE`, 8px radius) kept inside the SVG; the 2 "What to choose" images, the platform logos and the 4 step icons as raster (they are raster images in Figma); hero line art reuses `service-mid-hero-bg.webp`; index card glow reuses the `CaseStudyCard` orbit pattern plus 3 rings in `--color-border` | No token matches `#F5F9FE`; SVG of a raster fill would embed base64; the hero art and glow already exist in code | Lead |
+| 2026-10-22 | `comparison` schema (SCHEMAS v0.14): one tab per section; section titles use a new `accentSectionHeader` (eyebrow + gradient title + paragraph) | `sectionHeader.title` is plain text and can't mark "side by side" in Gradient | Lead |
+| 2026-10-22 | Hero buttons: only the labels are editable; the main button always opens the contact popup, the second always scrolls to the table | Actions are fixed by the design; the `link` object has no anchor type | Proposed |
+| 2026-10-22 | Webflow side fixed in code (pill logo, table header logo, "What to choose" illustration); competitor side editable, plus an optional white logo for the table header (empty → CSS whitening) | Same Webflow assets on every comparison; same pattern as `client.logoOnDark` | Proposed |
+| 2026-10-22 | Case studies section: up to 3 picked case studies; empty → the 3 newest published | Same fallback as case study "Related" | Proposed |
+| 2026-10-22 | Index order: `publishedAt` newest first | Same as `/case-studies` | Proposed |
+| 2026-10-22 | FAQ heading fixed in code; only `faqSections` editable | Same as service pages | Proposed |
+| 2026-10-22 | Reason stats reuse `stat` with optional `source` + `sourceUrl` (comparison only); `value` is free text for `[FACT NEEDED]` markers | Figures need a citable source; no new object | Lead |
+| 2026-10-22 | Migration steps reuse `processStep` (name, description, image as icon), max 4; `note` and `features` hidden there | Existing object fits; design has 4 staggered cards | Lead |
+| 2026-10-22 | Stat source shows as plain text after the label, no link; "What to choose" WordPress image kept at the Figma resolution; Webflow logo export kept as is | Lead answers 2026-10-22 | Lead |
+
+| 2026-10-22 | Competitor logo size comes from the file: SVG at its own size, raster as a 2x export (half its pixel size), height clamped to the Figma range (pill 26–37.43px, table header 26–36.5px) | No size field in the schema; Figma shows each logo at its own size (WordPress 37.4px tall, Framer and Wix 26px) | Proposed |
+| 2026-10-22 | The production build also stops when a published comparison still holds Lorem ipsum, `TODO: COPY` or an open marker (`[FACT NEEDED: …]` etc.) in Sanity, not only in code copy; other builds warn | A Sanity publish rebuilds production without review; markers must never go live (CLAUDE.md) | Proposed |
+| 2026-10-22 | Migration steps built as a new `ComparisonSteps` (4 staggered cards), not `ServiceProcess` | `ServiceProcess` is a tab set with one large image per step; the design shows every step at once | Proposed |
+| 2026-10-22 | `ALL_COMPARISONS` also returns `"noIndex": seo.noIndex == true` (derived from the existing `seo` field) | Keeps the `/comparison` robots tag in line with the sitemap, as `ALL_CASE_STUDIES` does | Proposed |
+| 2026-10-22 | Hero pill chevron = dropdown of the other published comparisons (logo + title → `/comparison/<slug>`, index order); no other comparison → no chevron and no control. Styled like the nav Services panel; `<details>` enhanced by `src/scripts/ui/details-menu.ts` | Lead decision; no Figma frame for the open state, so it reuses the site's dropdown | Lead |
+| 2026-10-22 | Comparison table ≤767: never a scroll area; each row restacks with CSS (feature name full width, Webflow and competitor cells side by side under it), the header bar becomes the same two columns so the logos line up; explicit ARIA table roles keep the semantics | Lead feedback (no mobile frame); the scrolling table hid the competitor column at 390 (QA M1) | Proposed |
+| 2026-10-22 | Comparison table spacing = Figma 3790:37411 values scaled with the type (×0.728: Figma 20px text → `c-paragraph`): bar 70px, 8px under it, 12px between rows, 24px cell and group padding, 48px between columns | Lead asked for a more compact table; px ÷ 14 against scaled type made it 25–30% taller than Figma (QA m3) | Proposed |
+| 2026-10-22 | Index card pill sized with container units (`3.315cqi` = 18px in a 543px card) | The pill must scale with the card, not the viewport; rem can't express it (units rule exception) | Proposed |
+| 2026-10-22 | Hero pill on phones capped at `min(1.35rem, (100vw − 4rem) / 29)` | At 320px the pill was wider than the screen and the page panned sideways, so the H1 looked clipped (lead screenshot) | Proposed |
+### Open questions
+#### Content
+- **Comparison copy** — Final copy for every lorem block and the FAQ, plus the figures and sources for the reason stats. Built meanwhile with `TODO: COPY` and `[FACT NEEDED]`. (2026-10-22)
+- ~~**Hero headline spelling**~~ — RESOLVED 2026-10-22: "WordPress" with capital P (lead).
+- ~~**Table section eyebrow**~~ — RESOLVED 2026-10-22: the repeat was a slip; lead asked the orchestrator for a label: "Feature comparison" (proposed wording, lead to confirm).
+- **Logo uploads** — Upload competitor logos as SVG at display size or as raster at 2x (e.g. 324 × 75 px for a 162 × 37.5 logo); the page sizes them from the file (see Decisions). (2026-10-22)
+- **Framer and Wix comparisons** — Only Webflow vs WordPress has copy in Figma. The index shows them once their documents are published. (2026-10-22)
+#### Design team
+- ~~**Hero pill chevron**~~ — RESOLVED 2026-10-22: a dropdown to pick the other comparisons, designed to match the nav Services panel (lead; see Decisions).
+- **Comparison mobile and tablet** — No mobile or tablet frames. Built meanwhile: hero buttons stacked full width, "What to choose" cards and reason rows stacked (picture first), steps 2 per row at ≤991 and 1 per row at ≤767 without the stagger, the table restacks its rows at ≤767 (see Decisions, 2026-10-22 round 2). (2026-10-22)
+- **Comparison values without a token** — Card border `#EDEDED` (Grey 500) → `--color-border`; table group row `#FAFAFA` (Grey 400) → 33% `--color-gray-light` on `--color-white` (= #FAFAFA, lead 2026-10-23); table feature names Acumin Medium 500 → 400 and group labels Semibold 600 → 700 (kit has 400 / 700); step number 24px → `c-text`; table group label 18px → `c-paragraph_s`; pill "VS" 18px → 1.286rem. All marked `TODO: DS`. (2026-10-22)
+- **"What to choose" card spacing** — Figma uses 40px picture → text on the Webflow card and 48px on the WordPress card; built with 40px on both. (2026-10-22)
+- ~~**Stat source display**~~ — RESOLVED 2026-10-22: plain text inline after the label, as in Figma; no link for now (lead).
+#### Needs lead OK
+- **Comparison table mobile restack** — rows restacked at ≤767, never a scroll area. (2026-10-22)
+- **Compact table spacing** — Figma values scaled with the type. (2026-10-22)
+- **Card pill in `cqi`** — container units for the index card pill. (2026-10-22)
+- **Hero pill cap on phones** — keeps the pill inside the screen. (2026-10-22)
+- ~~**Comparison schema field list**~~ — RESOLVED 2026-10-22: approved by the lead.
+- **Hero button actions fixed** — labels editable, actions in code. (2026-10-22)
+- **Webflow side fixed in code** — plus optional competitor white logo. (2026-10-22)
+- **Case studies fallback** — empty → 3 newest published. (2026-10-22)
+- **Index order** — newest first. (2026-10-22)
+- **FAQ heading in code** — as on service pages. (2026-10-22)
+- ~~**Stat source fields**~~ — RESOLVED 2026-10-22: approved by the lead.
+- ~~**Migration steps via `processStep`**~~ — RESOLVED 2026-10-22: approved by the lead.
+- ~~**Comparison asset formats**~~ — RESOLVED 2026-10-22: approved by the lead.
+- **Competitor logo size from the file** — SVG at its own size, raster at 2x, clamped to the Figma range. (2026-10-22)
+- **Sanity content guard** — production build stops on placeholders or open markers in a published comparison. (2026-10-22)
+- **Migration steps as a new component** — `ComparisonSteps`, not `ServiceProcess`. (2026-10-22)
+- **`noIndex` in `ALL_COMPARISONS`** — derived projection, needs a line in SCHEMAS "GROQ: comparison" (sanity agent). (2026-10-22)
+#### Engineering follow-ups
+- **Testimonials on comparison pages** — The template renders the shared Testimonials section, which is hidden site-wide (lead 2026-09-30); it shows up here when it comes back everywhere. (2026-10-22)
 
 ## Testimonials
 

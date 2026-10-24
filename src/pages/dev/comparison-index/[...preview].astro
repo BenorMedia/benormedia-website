@@ -1,0 +1,57 @@
+---
+/**
+ * /dev/comparison-index — the `/comparison` index preview on its own URL
+ * (lead 2026-10-22). Same blocks as the real index (Figma 3790:37967):
+ * `ComparisonIndexHero` (h1) → `ComparisonGrid` → CTA banner (BaseLayout),
+ * with the three fixture cards (WordPress, Framer, Wix).
+ *
+ * noindex, outside the sitemap (`/dev/*` filter in astro.config.mjs), and
+ * not built in production (same rule as `/dev/comparison`): the fixture
+ * holds TODO: COPY placeholders.
+ */
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ComparisonIndexHero from "../../../components/comparison/ComparisonIndexHero.astro";
+import ComparisonGrid from "../../../components/comparison/ComparisonGrid.astro";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { createComparisonFixture } from "../../../lib/sanity/comparison-fixture";
+import type { FixtureAsset } from "../../../lib/sanity/case-study-fixture";
+import { PRICING_FAQ_GROUPS } from "../../../lib/content/faqs";
+import { isProductionBuild } from "../../../lib/sanity/comparison-release";
+
+export function getStaticPaths() {
+  return isProductionBuild() ? [] : [{ params: { preview: undefined } }];
+}
+
+// Figma exports, read at render time (never emitted in production).
+const TYPES: Record<string, string> = { png: "image/png", jpg: "image/jpeg", svg: "image/svg+xml" };
+const cmp = (file: string, width: number, height: number): FixtureAsset => ({
+  src: `data:${TYPES[file.split(".").pop() ?? ""] ?? "image/png"};base64,${readFileSync(join(process.cwd(), "src/assets/comparison", file)).toString("base64")}`,
+  width,
+  height,
+});
+
+const { cards } = createComparisonFixture(
+  {
+    wordpressLogo: cmp("logos/wordpress.png", 324, 75),
+    wordpressLogoWhite: cmp("logos/wordpress-white.png", 352, 80),
+    framerLogo: cmp("logos/framer.png", 190, 52),
+    wixLogo: cmp("logos/wix.png", 92, 52),
+    chooseWordpress: cmp("mockups/choose-wordpress.jpg", 1532, 858),
+    reasonWebflowDesigner: cmp("mockups/reason-webflow-designer.svg", 936, 582),
+    reasonPluginsVsUpdates: cmp("mockups/reason-plugins-vs-updates.svg", 936, 582),
+    reasonPerformanceAi: cmp("mockups/reason-performance-ai.svg", 934, 582),
+    reasonCmsLocalization: cmp("mockups/reason-cms-localization.svg", 936, 582),
+    stepAudit: cmp("icons/step-audit.png", 96, 96),
+    stepDesignBuild: cmp("icons/step-design-build.png", 96, 96),
+    stepCmsSeo: cmp("icons/step-cms-seo.png", 96, 96),
+    stepLaunch: cmp("icons/step-launch.png", 96, 96),
+  },
+  { caseStudies: [], faqGroups: PRICING_FAQ_GROUPS },
+);
+---
+
+<BaseLayout title="Comparison index preview" description="Preview of the comparison index with placeholder content." noIndex>
+  <ComparisonIndexHero />
+  <ComparisonGrid cards={cards} />
+</BaseLayout>

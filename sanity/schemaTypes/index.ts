@@ -1,5 +1,5 @@
 // Sanity schema types registry — flat list of every document, object and singleton.
-// See docs/SCHEMAS.md v0.10 for the contract.
+// See docs/SCHEMAS.md v0.14 for the contract.
 
 import { seo } from './objects/seo';
 import { link } from './objects/link';
@@ -7,10 +7,16 @@ import { button } from './objects/button';
 import { sectionHeader } from './objects/sectionHeader';
 import { stat } from './objects/stat';
 import { kpi } from './objects/kpi';
+import { cardStat } from './objects/cardStat';
+import { caseStudyCallout } from './objects/caseStudyCallout';
 import { faq } from './objects/faq';
 import { faqSection } from './objects/faqSection';
 import { accentTitle } from './objects/accentTitle';
 import { processStep } from './objects/processStep';
+import { accentSectionHeader } from './objects/accentSectionHeader';
+import { comparisonChoice } from './objects/comparisonChoice';
+import { comparisonTableGroup, comparisonTableRow } from './objects/comparisonTable';
+import { comparisonReason } from './objects/comparisonReason';
 
 import { category } from './documents/category';
 import { author } from './documents/author';
@@ -19,6 +25,7 @@ import { client } from './documents/client';
 import { post } from './documents/post';
 import { service } from './documents/service';
 import { caseStudy } from './documents/caseStudy';
+import { comparison } from './documents/comparison';
 
 import { siteSettings } from './singletons/siteSettings';
 import { homePage } from './singletons/homePage';
@@ -35,10 +42,17 @@ export const schemaTypes = [
   sectionHeader,
   stat,
   kpi,
+  cardStat,
+  caseStudyCallout,
   faq,
   faqSection,
   accentTitle,
   processStep,
+  accentSectionHeader,
+  comparisonChoice,
+  comparisonTableRow,
+  comparisonTableGroup,
+  comparisonReason,
 
   // Documents
   category,
@@ -48,6 +62,7 @@ export const schemaTypes = [
   post,
   service,
   caseStudy,
+  comparison,
 
   // Singletons (SEO-only per Lead decision 2026-09-25)
   siteSettings,

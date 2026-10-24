@@ -1,0 +1,224 @@
+---
+/**
+ * ComparisonReasons — "Why SaaS teams switch" (Figma 3790:39738): section
+ * header (`reasonsHeader`) and one row per reason, the illustration and
+ * the text side by side, image left on odd rows and right on even rows
+ * (SCHEMAS v0.14: alternation in code, first row image left).
+ *
+ * Text: h3 title, paragraph, then the stats under a thin rule: each stat is
+ * the value (Brulia, Blue) over its label in a bordered box (the
+ * `CaseStudyCard` stat label: the site `Tag`). A stat's `source` shows as
+ * plain text after the label, as "[source]" in Figma (lead 2026-10-22: no
+ * link for now, `sourceUrl` not rendered).
+ *
+ * Illustrations: Sanity `image` (SVG served as the raw file in an `<img>`,
+ * never inlined, ui handoff), lazy, with width and height. The light blue
+ * panel is part of each SVG. A row without an image is text only.
+ */
+import Container from "../ui/Container.astro";
+import Tag from "../ui/Tag.astro";
+import ComparisonSectionHeader from "./ComparisonSectionHeader.astro";
+import type { AccentSectionHeader, ComparisonReason } from "../../lib/sanity/types";
+import { accentTitleText } from "../../lib/sanity/portable-text";
+import { imageAtWidth, type ComparisonImageInput } from "./image";
+import { COMPARISON_COPY } from "./copy";
+
+interface Props {
+  header?: AccentSectionHeader | null | undefined;
+  reasons?: readonly (ComparisonReason & { image?: ComparisonImageInput })[] | null | undefined;
+}
+
+const { header, reasons } = Astro.props;
+
+// Figma illustration panel: 935.79 × 582.
+const IMG_W = 936;
+
+const items = (reasons ?? [])
+  .filter((reason) => reason.title?.trim())
+  .map((reason, i) => ({
+    key: reason._key,
+    title: reason.title.trim(),
+    text: reason.text?.trim() || null,
+    img: imageAtWidth(reason.image, IMG_W, reason.image?.alt?.trim() ?? ""),
+    reverse: i % 2 === 1,
+    stats: (reason.stats ?? [])
+      .filter((stat) => stat?.value?.trim() && stat?.label?.trim())
+      .slice(0, 2)
+      .map((stat) => ({ key: stat._key, value: stat.value.trim(), label: stat.label.trim(), source: stat.source?.trim() || null })),
+  }));
+const hasHeader = accentTitleText(header?.title).length > 0;
+---
+
+{(hasHeader || items.length > 0) && (
+  <section class="c-cmp-reasons">
+    <Container>
+      <ComparisonSectionHeader header={header} titleWidth="53.5rem" />
+      {items.length > 0 && (
+        <div class="c-cmp-reasons__list">
+          {items.map((item) => (
+            <article class={["c-cmp-reasons__row", item.reverse && "is-reverse", !item.img && "is-text-only"].filter(Boolean).join(" ")}>
+              {item.img && (
+                <div class="c-cmp-reasons__media">
+                  <img
+                    class="c-cmp-reasons__img"
+                    src={item.img.src}
+                    srcset={item.img.srcset}
+                    width={item.img.width}
+                    height={item.img.height}
+                    alt={item.img.alt}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+              )}
+              <div class="c-cmp-reasons__content">
+                <h3 class="c-cmp-reasons__title c-text_l">{item.title}</h3>
+                {item.text && <p class="c-cmp-reasons__text c-paragraph">{item.text}</p>}
+                {item.stats.length > 0 && (
+                  <ul class="c-cmp-reasons__stats" aria-label={COMPARISON_COPY.statsLabel}>
+                    {item.stats.map((stat) => (
+                      <li class="c-cmp-reasons__stat">
+                        <span class="c-cmp-reasons__stat-value c-text_l">{stat.value}</span>
+                        <Tag class:list={["c-cmp-reasons__stat-label", { "is-sourced": stat.source }]}>
+                          {stat.label}{stat.source && <> <span class="c-cmp-reasons__stat-source">{stat.source}</span></>}
+                        </Tag>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </Container>
+  </section>
+)}
+
+<style>
+  .c-cmp-reasons {
+    background: var(--color-white);
+  }
+  /* Figma: 110px above and below. */
+  .c-cmp-reasons :global(.c-container) {
+    padding-top: 7.857rem;
+    padding-bottom: 7.857rem;
+  }
+  /* Header → first row 60px, rows 60px apart. */
+  .c-cmp-reasons__list {
+    display: flex;
+    flex-direction: column;
+    gap: 4.286rem;
+    margin-top: 4.286rem;
+  }
+  /* Figma row: 935.79px picture, 100px gap, text column (1680 frame). */
+  .c-cmp-reasons__row {
+    display: flex;
+    align-items: center;
+    gap: 5.952%;
+  }
+  .c-cmp-reasons__row.is-reverse {
+    flex-direction: row-reverse;
+  }
+  .c-cmp-reasons__media {
+    flex: 0 0 55.702%;
+    min-width: 0;
+  }
+  .c-cmp-reasons__img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  .c-cmp-reasons__content {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.071rem;
+    min-width: 0;
+  }
+  .c-cmp-reasons__row.is-text-only .c-cmp-reasons__content {
+    max-width: 46rem;
+  }
+  /* Figma Text L (38px, normal line-height) Black 500. */
+  .c-cmp-reasons__title {
+    margin: 0;
+    color: var(--color-black-secondary);
+    line-height: 1.2;
+  }
+  .c-cmp-reasons__text {
+    margin: 0;
+    color: var(--color-text);
+  }
+  /* Figma 3790:39797: 1px #C9CEDA rule, 16px above the stats, 16px apart. */
+  .c-cmp-reasons__stats {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 1.143rem;
+    width: 100%;
+    margin: 0;
+    padding: 1.143rem 0 0;
+    list-style: none;
+    border-top: 1px solid var(--color-gray);
+  }
+  /* Value over label, 7px apart, left aligned. */
+  .c-cmp-reasons__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    min-width: 0;
+    max-width: 100%;
+  }
+  /* Figma Text L in Blue (#6275F6). */
+  .c-cmp-reasons__stat-value {
+    color: var(--color-blue);
+    line-height: 1.2;
+  }
+  /* Label = the site `Tag` at the case-study card stat size (Figma
+     3792:41680: 10.5px uppercase in a 1px #E4E6EA box, the text box 94.6px
+     wide so it wraps on two lines → `--fs-text-xs`, TODO: DS). */
+  .c-cmp-reasons :global(.c-cmp-reasons__stat-label) {
+    display: block;
+    max-width: calc(9.012em + 2.1em + 1px);
+    font-size: var(--fs-text-xs);
+    line-height: 1.5;
+    white-space: normal;
+    text-wrap: balance;
+  }
+  /* With "[source]" Figma widens the text box (3792:41704 112.5px,
+     3792:41710 132.8px) so the label still wraps on two lines; wider here
+     because the fallback font is wider than Acumin (QA 2026-10-22). */
+  .c-cmp-reasons :global(.c-cmp-reasons__stat-label.is-sourced) {
+    max-width: 16em;
+  }
+
+  /* ≤991: picture above the text. TODO: DS mobile (no mobile design). */
+  @media (max-width: 991px) {
+    .c-cmp-reasons__row,
+    .c-cmp-reasons__row.is-reverse {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 2.857rem;
+    }
+    .c-cmp-reasons__media {
+      flex-basis: auto;
+    }
+  }
+  @media (max-width: 767px) {
+    .c-cmp-reasons :global(.c-container) {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
+    .c-cmp-reasons__list {
+      gap: 4rem;
+      margin-top: 3rem;
+    }
+    .c-cmp-reasons__row,
+    .c-cmp-reasons__row.is-reverse {
+      gap: 2rem;
+    }
+  }
+</style>

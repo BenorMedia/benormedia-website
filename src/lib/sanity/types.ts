@@ -136,6 +136,8 @@ export interface Stat {
 export interface Kpi {
   value: string;
   description: string;
+  /** Case study results only (SCHEMAS v0.12): the line above `description`. */
+  label?: string | null;
 }
 
 export interface Seo {
@@ -398,11 +400,42 @@ export interface PortableTextLinkDef {
 export interface CaseStudyBodyBlock extends PortableTextBlock {
   _key: string;
   _type: 'block';
-  style?: 'normal' | 'h2' | 'h3';
+  style?: 'normal' | 'h2' | 'h3' | 'blockquote';
   listItem?: 'bullet' | 'number';
   level?: number;
   children?: PortableTextSpan[];
   markDefs?: PortableTextLinkDef[];
+}
+
+/** A callout box in a case study body (`caseStudyCallout`, SCHEMAS v0.12). */
+export interface CaseStudyCalloutBlock {
+  _key: string;
+  _type: 'caseStudyCallout';
+  title?: string | null;
+  items?: (string | null)[] | null;
+}
+
+/** Any item of `caseStudy.body`. */
+export type CaseStudyBodyItem = CaseStudyBodyBlock | CaseStudyCalloutBlock;
+
+/** One item of the card's stats row (`caseStudy.cardStats`, SCHEMAS v0.11). */
+export interface CaseStudyCardStat {
+  _key?: string;
+  value: string;
+  label: string;
+}
+
+/** The client as projected on a case-study card. */
+export interface CaseStudyCardClient {
+  _id: string;
+  name?: string;
+  logo?: SanityImage;
+  /** Logo for dark backgrounds (v0.11). Empty: the card whitens `logo` with CSS. */
+  logoOnDark?: SanityImage;
+  /** Card thumbnail background, `#RRGGBB` (v0.13). Empty: `--color-navy`. The card re-checks the format. */
+  brandColor?: string | null;
+  /** Card glow, `#RRGGBB` (v0.13). Empty: `--color-blue-500`. The card re-checks the format. */
+  brandGlowColor?: string | null;
 }
 
 /** Index card and "Resources" card. */
@@ -414,7 +447,9 @@ export interface CaseStudyCard {
   /** `YYYY-MM-DD` (a Sanity `date`, not a datetime like `post.publishedAt`). */
   publishedAt: string;
   /** `null` when the client reference is dangling. */
-  client: { _id: string; name?: string; logo?: SanityImage } | null;
+  client: CaseStudyCardClient | null;
+  /** Card stats row (max 2); `null` / missing / empty = the row is hidden. */
+  cardStats?: CaseStudyCardStat[] | null;
   /** `seo.noIndex` is on. Only in `ALL_CASE_STUDIES` (the index's robots tag). */
   noIndex?: boolean;
 }
@@ -435,24 +470,144 @@ export interface CaseStudy extends CaseStudyCard {
   readTime?: number | null;
   intro?: string | null;
   industry?: string | null;
+  /** Not shown on the page (v0.12); meta description fallback. */
   challenge?: string | null;
+  /** Hero facts "04 / Solution", "05 / Timeline", "06 / Stack" (v0.12). */
+  solution?: string | null;
+  timeline?: string | null;
+  stack?: (string | null)[] | null;
   client: {
     _id: string;
     _type: 'client';
     name?: string;
     logo?: SanityImage;
     websiteUrl?: string;
+    /** Hero browser frame (v0.12 wiring of the existing client field). */
+    websiteScreenshot?: SanityImage;
   } | null;
   services?: CaseStudyService[] | null;
   /** The case study's own testimonial, else the client's; `null` = no quote block. */
   testimonial?: CaseStudyTestimonial | null;
   /** Not required in the schema: may be missing. */
-  body?: CaseStudyBodyBlock[] | null;
+  body?: CaseStudyBodyItem[] | null;
+  /** Paragraphs around the results row (v0.12). */
+  resultsIntro?: string | null;
+  resultsSummary?: string | null;
   /** Max 3. */
   results?: (Kpi & { _key: string })[] | null;
   /** Editor picks (max 3), unpublished / dangling references removed. */
   related?: CaseStudyCard[] | null;
   /** The 3 newest other published case studies (fallback for `related`). */
   latest?: CaseStudyCard[] | null;
+  seo?: Seo | null;
+}
+
+// ---------------------------------------------------------------------------
+// Comparisons — results of `ALL_COMPARISONS` and `COMPARISON_BY_SLUG`
+// (SCHEMAS.md v0.14)
+// ---------------------------------------------------------------------------
+
+/** `accentSectionHeader`: eyebrow + gradient title + paragraph (v0.14). */
+export interface AccentSectionHeader {
+  eyebrow?: string | null;
+  /** Required in Studio; may still be empty on an incomplete document. */
+  title?: AccentTitle | null;
+  description?: string | null;
+}
+
+/** "What to choose" card. `image` is never projected for the Webflow card (fixed in code). */
+export interface ComparisonChoice {
+  image?: SanityImage | null;
+  title?: AccentTitle | null;
+  reasons?: (string | null)[] | null;
+}
+
+export interface ComparisonTableRow {
+  _key: string;
+  feature: string;
+  /** Rendered with a check. */
+  webflow: string;
+  /** Rendered with a dash. */
+  competitor: string;
+}
+
+export interface ComparisonTableGroup {
+  _key: string;
+  /** Uppercased in CSS. */
+  label: string;
+  rows?: ComparisonTableRow[] | null;
+}
+
+/** `stat` with the comparison-only `source` / `sourceUrl` (v0.14). */
+export interface ComparisonStat extends Stat {
+  _key: string;
+  source?: string | null;
+  /** Not rendered for now (lead 2026-10-22: source is plain text inline after the label). */
+  sourceUrl?: string | null;
+}
+
+/** "Why switch" row. */
+export interface ComparisonReason {
+  _key: string;
+  image?: SanityImage | null;
+  title: string;
+  text?: string | null;
+  /** Max 2. */
+  stats?: ComparisonStat[] | null;
+}
+
+/** `processStep` as projected in `comparison.migrationSteps` (name, description, image). */
+export type ComparisonMigrationStep = Pick<ProcessStep, '_key' | 'name' | 'description' | 'image'>;
+
+/** `/comparison` index card. */
+export interface ComparisonCard {
+  _id: string;
+  _type: 'comparison';
+  title: string;
+  slug: string;
+  /** `YYYY-MM-DD`. */
+  publishedAt: string;
+  competitorName: string;
+  competitorLogo?: SanityImage | null;
+  cardTitle?: string | null;
+  cardDescription?: string | null;
+  /** `seo.noIndex` is on. Only in `ALL_COMPARISONS` (the index's robots tag). */
+  noIndex?: boolean;
+}
+
+/** Another published comparison, as listed in the hero pill dropdown. */
+export interface ComparisonSwitchItem {
+  _id: string;
+  title: string;
+  slug: string;
+  competitorName: string;
+  competitorLogo?: SanityImage | null;
+}
+
+export interface Comparison extends Omit<ComparisonCard, 'noIndex'> {
+  /** ISO datetime of the last edit (Sanity system field). */
+  _updatedAt: string;
+  competitorLogoOnDark?: SanityImage | null;
+  headline?: AccentTitle | null;
+  subtitle?: string | null;
+  primaryButtonLabel?: string | null;
+  secondaryButtonLabel?: string | null;
+  chooseHeader?: AccentSectionHeader | null;
+  webflowChoice?: ComparisonChoice | null;
+  competitorChoice?: ComparisonChoice | null;
+  tableHeader?: AccentSectionHeader | null;
+  tableGroups?: ComparisonTableGroup[] | null;
+  reasonsHeader?: AccentSectionHeader | null;
+  reasons?: ComparisonReason[] | null;
+  migrationHeader?: AccentSectionHeader | null;
+  migrationSteps?: ComparisonMigrationStep[] | null;
+  caseStudiesHeader?: AccentSectionHeader | null;
+  /** Editor picks (max 3), unpublished / dangling references removed. */
+  caseStudies?: CaseStudyCard[] | null;
+  /** The 3 newest published case studies (fallback when `caseStudies` is empty). */
+  latestCaseStudies?: CaseStudyCard[] | null;
+  faqSections?: ServiceFaqSection[] | null;
+  /** Every other published comparison, index order (hero pill dropdown). Empty → no dropdown. */
+  otherComparisons?: ComparisonSwitchItem[] | null;
   seo?: Seo | null;
 }

@@ -1,0 +1,33 @@
+---
+/**
+ * ComparisonIndexHero — the `/comparison` hero: the `/case-studies` hero
+ * (`CaseStudiesIndexHero`: rings with client icon tiles orbiting on them)
+ * with the comparison copy, so both indexes share one animation (lead
+ * comment on the preview, 2026-10-23). Copy from `COMPARISON_COPY.indexHero`
+ * (Figma 3790:37982; intro is TODO: COPY). Tiles: clients with an icon in
+ * the Studio order (`getClientsWithIconByRank`), as on `/case-studies`.
+ */
+import CaseStudiesIndexHero from "../case-studies/CaseStudiesIndexHero.astro";
+import { getClientsWithIconByRank } from "../../lib/sanity/queries";
+import { COMPARISON_COPY } from "./copy";
+
+interface Props {
+  /** `h2` on `/dev/comparison`, where the template hero holds the page's h1. */
+  as?: "h1" | "h2";
+  /** No comparison listed: keep the listing's gap above the CTA banner. */
+  empty?: boolean;
+}
+
+const { as = "h1", empty = false } = Astro.props;
+const hero = COMPARISON_COPY.indexHero;
+const clients = await getClientsWithIconByRank();
+---
+
+<CaseStudiesIndexHero
+  eyebrow={hero.eyebrow}
+  title={hero.title}
+  description={hero.description}
+  clients={clients}
+  empty={empty}
+  as={as}
+/>

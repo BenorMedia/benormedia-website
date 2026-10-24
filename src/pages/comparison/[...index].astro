@@ -1,0 +1,61 @@
+---
+/**
+ * Comparison index — `/comparison` (Figma 3790:37967, DECISIONS →
+ * Comparison 2026-10-22, SITEMAP). Hero (`ComparisonIndexHero`) + every
+ * published comparison (`ComparisonGrid`, newest first, no pagination or
+ * filters; only published documents, so no card links to a missing page).
+ * CTA banner + footer from BaseLayout. SEO lives in code
+ * (`COMPARISON_COPY.indexMeta`, like `/case-studies`).
+ *
+ * A rest route, not `index.astro`, so the page can be left out of a build
+ * (same pattern as `/case-studies`). `getStaticPaths` only ever returns
+ * `index: undefined`, i.e. `/comparison` itself; `[slug].astro` owns
+ * `/comparison/<slug>`.
+ *
+ * While no comparison is published (lead 2026-10-22, as `/case-studies`):
+ *   - production builds (`isProductionBuild`) don't emit the page at all;
+ *   - other builds (dev, Vercel previews) emit it, noindex, hero only.
+ * Once one is published, every build emits it, indexable when at least one
+ * listed comparison is indexable; `astro.config.mjs` lists it in the
+ * sitemap under the same rule (`comparison-sitemap.mjs`).
+ * Placeholder guard (`guardComparisonCopy`): with a comparison published,
+ * a production build STOPS while the hero or meta copy is still a
+ * placeholder; other builds warn.
+ *
+ * JSON-LD: CollectionPage (ItemList of the comparisons) + BreadcrumbList,
+ * as `/case-studies` (shared helper, publisher = the Organization `@id`).
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import JsonLd from "../../components/layout/JsonLd.astro";
+import ComparisonIndexHero from "../../components/comparison/ComparisonIndexHero.astro";
+import ComparisonGrid from "../../components/comparison/ComparisonGrid.astro";
+import { getAllComparisons } from "../../lib/sanity/queries";
+import { COMPARISON_COPY } from "../../components/comparison/copy";
+import { comparisonIndexJsonLd } from "../../lib/new-pages/jsonld";
+import { comparisonIndexCopyFields, guardComparisonCopy, isProductionBuild } from "../../lib/sanity/comparison-release";
+import type { ComparisonCard } from "../../lib/sanity/types";
+
+export async function getStaticPaths() {
+  const cards = await getAllComparisons();
+  const production = isProductionBuild();
+  if (cards.length === 0) return production ? [] : [{ params: { index: undefined }, props: { cards } }];
+  guardComparisonCopy("/comparison", comparisonIndexCopyFields(), production);
+  return [{ params: { index: undefined }, props: { cards } }];
+}
+
+interface Props {
+  cards: ComparisonCard[];
+}
+
+const { cards } = Astro.props;
+const meta = COMPARISON_COPY.indexMeta;
+// Indexable only when at least one listed comparison is indexable, so the
+// robots tag agrees with the sitemap.
+const noIndex = !cards.some((card) => card.noIndex !== true);
+---
+
+<BaseLayout title={meta.title} description={meta.description} noIndex={noIndex}>
+  {comparisonIndexJsonLd({ name: COMPARISON_COPY.breadcrumb.index, description: meta.description }, cards).map((data) => <JsonLd data={data} />)}
+  <ComparisonIndexHero empty={cards.length === 0} />
+  <ComparisonGrid cards={cards} />
+</BaseLayout>

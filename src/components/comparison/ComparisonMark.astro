@@ -1,0 +1,47 @@
+---
+/**
+ * ComparisonMark — c-cmp-mark
+ * The 24px icon in front of a Webflow point (check, `basil:check-outline`
+ * in the brand gradient) or a competitor point (dash, 2px `#C9CEDA` =
+ * `--color-gray`). Figma 3790:37383 / 3790:37400. Decorative: the column or
+ * card heading says which side the text is on.
+ *
+ * The check is a CSS mask filled with `--gradient-primary` (Figma path,
+ * exported 2026-10-22), so no SVG gradient id is repeated on the page.
+ */
+interface Props {
+  kind: "check" | "dash";
+  class?: string;
+}
+
+const { kind, class: className } = Astro.props;
+---
+
+<span class={["c-cmp-mark", `is-${kind}`, className].filter(Boolean).join(" ")} aria-hidden="true"></span>
+
+<style>
+  .c-cmp-mark {
+    position: relative;
+    display: inline-block;
+    flex: 0 0 auto;
+    width: 1.714rem;
+    height: 1.714rem;
+  }
+  .c-cmp-mark.is-check {
+    background: var(--gradient-primary);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M19.9637 6.67805C20.1491 6.86367 20.2532 7.11529 20.2532 7.37765C20.2532 7.64 20.1491 7.89162 19.9637 8.07725L10.7237 17.3172C10.5381 17.5026 10.2864 17.6068 10.0241 17.6068C9.76173 17.6068 9.51011 17.5026 9.32448 17.3172L4.04448 12.0372C3.94721 11.9466 3.8692 11.8373 3.81509 11.7159C3.76098 11.5944 3.73189 11.4633 3.72954 11.3304C3.72719 11.1975 3.75165 11.0654 3.80144 10.9422C3.85123 10.8189 3.92534 10.7069 4.01935 10.6129C4.11336 10.5189 4.22534 10.4448 4.34861 10.395C4.47188 10.3452 4.60392 10.3208 4.73685 10.3231C4.86978 10.3254 5.00087 10.3545 5.12231 10.4087C5.24375 10.4628 5.35305 10.5408 5.44368 10.638L10.0241 15.2184L18.5645 6.67805C18.7501 6.49265 19.0017 6.38852 19.2641 6.38852C19.5264 6.38852 19.7781 6.49265 19.9637 6.67805Z'/%3E%3C/svg%3E") center / contain no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M19.9637 6.67805C20.1491 6.86367 20.2532 7.11529 20.2532 7.37765C20.2532 7.64 20.1491 7.89162 19.9637 8.07725L10.7237 17.3172C10.5381 17.5026 10.2864 17.6068 10.0241 17.6068C9.76173 17.6068 9.51011 17.5026 9.32448 17.3172L4.04448 12.0372C3.94721 11.9466 3.8692 11.8373 3.81509 11.7159C3.76098 11.5944 3.73189 11.4633 3.72954 11.3304C3.72719 11.1975 3.75165 11.0654 3.80144 10.9422C3.85123 10.8189 3.92534 10.7069 4.01935 10.6129C4.11336 10.5189 4.22534 10.4448 4.34861 10.395C4.47188 10.3452 4.60392 10.3208 4.73685 10.3231C4.86978 10.3254 5.00087 10.3545 5.12231 10.4087C5.24375 10.4628 5.35305 10.5408 5.44368 10.638L10.0241 15.2184L18.5645 6.67805C18.7501 6.49265 19.0017 6.38852 19.2641 6.38852C19.5264 6.38852 19.7781 6.49265 19.9637 6.67805Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+  /* Dash: Figma line x 3.73 → 20.5 at y 12 in a 24px box, 2px round cap. */
+  .c-cmp-mark.is-dash::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 15.5%;
+    right: 14.6%;
+    height: 0.143rem; /* 2px */
+    transform: translateY(-50%);
+    border-radius: 0.071rem;
+    background: var(--color-gray);
+  }
+</style>

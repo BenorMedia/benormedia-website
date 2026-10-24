@@ -32,9 +32,9 @@ import {
   getTestimonials,
 } from "../lib/sanity/queries";
 import { getCtaBadgeUrlsCached, getSiteSettingsCached } from "../lib/sanity/site";
-import { accentTitleSegments, accentTitleText, portableTextToPlain } from "../lib/sanity/portable-text";
+import { accentTitleSegments, accentTitleText } from "../lib/sanity/portable-text";
+import { faqGroupsFromSections } from "../lib/sanity/faq-groups";
 import type { Client, Service } from "../lib/sanity/types";
-import type { FaqGroup } from "../lib/content/faqs";
 import { OUR_WORK_GRID_IDS, OUR_WORK_LIST_IDS } from "../lib/content/our-work";
 import ServiceHero from "../components/sections/ServiceHero.astro";
 import { SERVICE_LAYOUT } from "../lib/content/service-layout";
@@ -91,24 +91,7 @@ const problemSegments = accentTitleSegments(service.problemTitle);
 const processSegments = accentTitleSegments(service.processTitle);
 
 // --- FAQs: Sanity faqSections → FaqSection groups ----------------------------
-const slugify = (text: string): string =>
-  text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-
-const usedValues = new Set<string>();
-const faqGroups: FaqGroup[] = (service.faqSections ?? []).flatMap((section, i) => {
-  const label = section.title?.trim();
-  if (!label) return [];
-  let value = slugify(label) || `section-${i + 1}`;
-  if (usedValues.has(value)) value = `${value}-${i + 1}`;
-  usedValues.add(value);
-  const items = (section.faqs ?? [])
-    .map((faq) => ({ question: faq.question?.trim() ?? "", answer: portableTextToPlain(faq.answer) }))
-    .filter((item) => item.question.length > 0);
-  return [{ label, value, items }];
-});
+const faqGroups = faqGroupsFromSections(service.faqSections);
 
 // --- SEO fallback --------------------------------------------------------------
 function clamp(text: string, max = 160): string {

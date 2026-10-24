@@ -7,8 +7,12 @@ import { KEBAB_CASE, slugify } from './service';
  *
  * One Studio tab per page part, in page order, plus SEO. Layout is fixed by
  * the approved design: no page builder. The body is plain Portable Text
- * (paragraphs, H2, H3, bold, italic, links, lists): no images, embeds or
- * tables.
+ * (paragraphs, H2, H3, quote, bold, italic, links, lists) plus callout
+ * boxes: no images, embeds or tables.
+ *
+ * v0.12 (Figma 3842:40046, code only, not deployed): hero facts `solution`,
+ * `timeline`, `stack`; body `blockquote` style and `caseStudyCallout`;
+ * `resultsIntro` / `resultsSummary` around the results; `kpi.label`.
  */
 
 const API_VERSION = '2026-09-25';
@@ -28,6 +32,7 @@ export const caseStudy = defineType({
     { name: 'hero', title: 'Hero' },
     { name: 'article', title: 'Article' },
     { name: 'results', title: 'Results' },
+    { name: 'card', title: 'Card' },
     { name: 'related', title: 'Related' },
     { name: 'seo', title: 'SEO' },
   ],
@@ -74,7 +79,7 @@ export const caseStudy = defineType({
       name: 'client',
       title: 'Client',
       description:
-        'The client this case study is about. Their logo is shown on the card and at the top of the page, and their name under "01 / Company".',
+        'The client this case study is about. Their logo is shown on the card and at the top of the page, and their name under "01 / Client". The website screenshot and website URL set on the client are shown in the browser frame at the top of the page.',
       type: 'reference',
       to: [{ type: 'client' }],
       group: 'overview',
@@ -122,16 +127,42 @@ export const caseStudy = defineType({
       name: 'services',
       title: 'Services',
       description:
-        'The services BenorMedia delivered. Their names are shown under "03 / Solution". Pick each service once; drag to reorder.',
+        'The services BenorMedia delivered. Their names are shown under "03 / Services delivered". Pick each service once; drag to reorder.',
       type: 'array',
       group: 'hero',
       of: [defineArrayMember({ type: 'reference', to: [{ type: 'service' }] })],
       validation: (Rule) => Rule.unique().error('Each service can only be added once.'),
     }),
     defineField({
+      name: 'solution',
+      title: 'Solution',
+      description: 'Shown under "04 / Solution". Defaults to "BenorMedia". Left empty, the item is hidden.',
+      type: 'string',
+      group: 'hero',
+      // Lead 2026-10-22: the value is the brand, one word (house style).
+      initialValue: 'BenorMedia',
+    }),
+    defineField({
+      name: 'timeline',
+      title: 'Timeline',
+      description: 'Optional. How long the project took, e.g. "10 weeks", shown under "05 / Timeline". Left empty, the item is hidden.',
+      type: 'string',
+      group: 'hero',
+    }),
+    defineField({
+      name: 'stack',
+      title: 'Stack',
+      description:
+        'Optional. The tools and platforms used, one per item, e.g. "Webflow". Shown under "06 / Stack", separated by slashes. Left empty, the item is hidden.',
+      type: 'array',
+      group: 'hero',
+      of: [defineArrayMember({ type: 'string' })],
+    }),
+    defineField({
       name: 'challenge',
       title: 'Challenge',
-      description: 'A short summary of the client\'s problem, shown under "04 / The challenge".',
+      description:
+        'A short summary of the client\'s problem. Not shown on the page: used in the search description when the SEO tab has none.',
       type: 'text',
       rows: 3,
       group: 'hero',
@@ -151,7 +182,7 @@ export const caseStudy = defineType({
       name: 'body',
       title: 'Article',
       description:
-        'The case study text. Use Heading 2 for each main section (they build the table of contents) and Heading 3 for a phase inside a section: everything from a Heading 3 to the next Heading 2 is shown indented with a line on the left. You can also use bold, italic, links and bullet or numbered lists.',
+        'The case study text. Use Heading 2 for each main section (they build the table of contents) and Heading 3 for a phase inside a section: everything from a Heading 3 to the next Heading 2 is shown in a narrower column. Use Quote for a short highlighted quote, bullet lists for check-mark lists, and "Callout box" for a boxed list such as deliverables. You can also use bold, italic, links and numbered lists.',
       type: 'array',
       group: 'article',
       of: [
@@ -161,6 +192,7 @@ export const caseStudy = defineType({
             { title: 'Paragraph', value: 'normal' },
             { title: 'Heading 2', value: 'h2' },
             { title: 'Heading 3', value: 'h3' },
+            { title: 'Quote', value: 'blockquote' },
           ],
           lists: [
             { title: 'Bulleted list', value: 'bullet' },
@@ -211,19 +243,48 @@ export const caseStudy = defineType({
             ],
           },
         }),
+        defineArrayMember({ type: 'caseStudyCallout' }),
       ],
     }),
 
     // Results
     defineField({
+      name: 'resultsIntro',
+      title: 'Results intro',
+      description: 'Optional. A short paragraph under "The results" heading, above the numbers.',
+      type: 'text',
+      rows: 3,
+      group: 'results',
+    }),
+    defineField({
       name: 'results',
       title: 'Results',
       description:
-        'Optional. Up to 3 key numbers shown in a row under the article. Each one has a value and a short line explaining it.',
+        'Optional. Up to 3 key numbers shown in a row under the article. Each one has a value, an optional label and a short line explaining it.',
       type: 'array',
       group: 'results',
       of: [defineArrayMember({ type: 'kpi' })],
       validation: (Rule) => Rule.max(3).error('Add 3 results at most: the design has room for 3.'),
+    }),
+    defineField({
+      name: 'resultsSummary',
+      title: 'Results summary',
+      description: 'Optional. A short closing paragraph under the numbers.',
+      type: 'text',
+      rows: 3,
+      group: 'results',
+    }),
+
+    // Card (v0.11)
+    defineField({
+      name: 'cardStats',
+      title: 'Card stats',
+      description:
+        'Optional. Up to 2 key numbers shown in a row on this case study\'s card (on the case studies page and in "Related" sections). Each one has a value and a short label. If left empty, the card shows no stats row.',
+      type: 'array',
+      group: 'card',
+      of: [defineArrayMember({ type: 'cardStat' })],
+      validation: (Rule) => Rule.max(2).error('Add 2 card stats at most: the card has room for 2.'),
     }),
 
     // Related

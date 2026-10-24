@@ -1,0 +1,70 @@
+---
+/**
+ * ComparisonGrid — c-cmp-grid
+ * The `/comparison` card grid (Figma 3790:37991 "container case studies"):
+ * three `ComparisonCard`s per row with 24px gaps (as a share of the 1680
+ * frame, like `CaseStudyGrid is-index`), one per row at ≤991, a short last
+ * row centred. 110px above the grid (the `/case-studies` listing gap, under
+ * the same hero, lead 2026-10-23) and 110px below it. Renders nothing without cards (no empty-state design).
+ */
+import Container from "../ui/Container.astro";
+import ComparisonCard from "./ComparisonCard.astro";
+import type { ComparisonCard as ComparisonCardData } from "../../lib/sanity/types";
+import type { ComparisonImageInput } from "./image";
+
+interface Props {
+  cards: readonly (ComparisonCardData & { competitorLogo?: ComparisonImageInput })[];
+  /** Wrap in the page container with the section spacing. Default true. */
+  section?: boolean;
+}
+
+const { cards, section = true } = Astro.props;
+---
+
+{cards.length > 0 && (
+  section ? (
+    <div class="c-cmp-listing">
+      <Container>
+        <ul class="c-cmp-grid">
+          {cards.map((card) => <ComparisonCard card={card} />)}
+        </ul>
+      </Container>
+    </div>
+  ) : (
+    <ul class="c-cmp-grid">
+      {cards.map((card) => <ComparisonCard card={card} />)}
+    </ul>
+  )
+)}
+
+<style>
+  /* Hero → grid and grid → CTA banner 110px, as `CaseStudyListing`. */
+  .c-cmp-listing :global(.c-container) {
+    padding-top: 7.857rem;
+    padding-bottom: 7.857rem;
+  }
+  .c-cmp-grid {
+    --c-cmp-grid-col: 1.429%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.714rem var(--c-cmp-grid-col);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .c-cmp-grid > :global(*) {
+    flex: 0 1 calc((100% - 2 * var(--c-cmp-grid-col)) / 3);
+  }
+  @media (max-width: 991px) {
+    .c-cmp-grid > :global(*) {
+      flex-basis: 100%;
+    }
+  }
+  @media (max-width: 767px) {
+    .c-cmp-listing :global(.c-container) {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
+  }
+</style>
