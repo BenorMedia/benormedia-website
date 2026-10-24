@@ -679,6 +679,10 @@ export const THUMBS: Record<string, ThumbEntry> = {
       { icon: "shield", label: "Block" },
     ],
   }),
+  // React into Webflow, Webflow into React, and apps on Webflow Cloud.
+  "webflow-devlink": t(ThOrbit, {
+    icons: ["codeBlocks", "puzzle3d", "devices3d", "plugs", "speedGauge", "designGrid", "ai", "seoChart"],
+  }),
   // Content from the CMS, rendered for every device.
   "headless-cms-seo": t(ThObject, { object: "deviceStack" }),
   // Launch week.

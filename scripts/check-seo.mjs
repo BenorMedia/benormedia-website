@@ -58,6 +58,7 @@ const PAGES = {
   '/blog/webflow-editor': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow editor' },
   '/blog/headless-cms-comparison': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'headless cms' },
   '/blog/webflow-mcp': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow mcp' },
+  '/blog/webflow-devlink': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow devlink' },
   '/blog/saas-technical-seo': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'saas technical seo' },
   '/blog/track-brand-mentions-in-chatgpt': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'brand mentions chatgpt' },
   '/blog/consent-mode-v2-webflow': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'consent mode v2' },
