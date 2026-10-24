@@ -2,19 +2,28 @@
 /**
  * NpKeyTakeaways — `takeaways` as an aside under the lead (brief 7.2). The
  * label is a `<p>` that names the aside, not a heading.
+ *
+ * Also the case study callout box (Figma 3842:40220, same box, label and
+ * square bullets): `label` replaces the "Key takeaways" label and `labelId`
+ * keeps ids unique when a page has several boxes. Both optional; the blog
+ * output is unchanged without them. Items are HTML (escape plain text).
  */
 import copy from "../../lib/new-pages/copy.json";
 
 interface Props {
   items: readonly string[];
+  label?: string;
+  labelId?: string;
 }
 
-const { items } = Astro.props;
+const { items, label = copy.takeawaysLabel, labelId = "np-takeaways-label" } = Astro.props;
+// An empty label (a case-study callout without a title): no label, no labelling.
+const hasLabel = label.trim().length > 0;
 ---
 
 {items.length > 0 && (
-  <aside class="c-np-takeaways" aria-labelledby="np-takeaways-label">
-    <p id="np-takeaways-label" class="c-np-takeaways__label c-paragraph_s">{copy.takeawaysLabel}</p>
+  <aside class="c-np-takeaways" aria-labelledby={hasLabel ? labelId : undefined}>
+    {hasLabel && <p id={labelId} class="c-np-takeaways__label c-paragraph_s">{label}</p>}
     <div class="c-np-prose c-np-takeaways__list">
       <ul>
         {items.map((item) => <li data-np-src="takeaway" set:html={item} />)}
@@ -38,7 +47,7 @@ const { items } = Astro.props;
     letter-spacing: 0.064em;
     text-transform: uppercase;
   }
-  .c-np-takeaways__list {
+  .c-np-takeaways__label + .c-np-takeaways__list {
     margin-top: 1.143rem;
   }
   @media (max-width: 767px) {

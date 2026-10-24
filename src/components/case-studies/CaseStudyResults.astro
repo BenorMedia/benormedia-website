@@ -1,11 +1,12 @@
 ---
 /**
  * CaseStudyResults — c-cs-results
- * "The results" (Figma 3768:26292 / 3768:26295): the H2 (a table of
- * contents entry, id `CASE_STUDY_RESULTS_ID`), then up to three KPI cells
- * in one bordered row with short vertical dividers between cells and a
- * small square on the left and right edges. Renders nothing when there are
- * no results.
+ * "The results" (Figma 3842:40247): the H2 (a table of contents entry, id
+ * `CASE_STUDY_RESULTS_ID`), the optional intro paragraph, up to three KPI
+ * cells in one bordered row (value, then the optional label line and the
+ * description, centred) with short vertical dividers between cells and a
+ * small square on the left and right edges, then the optional summary
+ * paragraph (SCHEMAS v0.12). Renders nothing when there are no results.
  */
 import type { Kpi } from "../../lib/sanity/types";
 import { CASE_STUDY_RESULTS_ID } from "../../lib/sanity/case-study-body";
@@ -13,23 +14,34 @@ import { CASE_STUDY_COPY } from "./copy";
 
 interface Props {
   results: readonly (Kpi & { _key?: string })[] | null | undefined;
+  intro?: string | null | undefined;
+  summary?: string | null | undefined;
 }
 
-const { results } = Astro.props;
+const { results, intro: introRaw, summary: summaryRaw } = Astro.props;
+const intro = introRaw?.trim();
+const summary = summaryRaw?.trim();
 const items = (results ?? []).filter((r) => r.value?.trim()).slice(0, 3);
 ---
 
 {items.length > 0 && (
   <section class="c-cs-results" aria-labelledby={CASE_STUDY_RESULTS_ID}>
-    <h2 id={CASE_STUDY_RESULTS_ID} class="c-cs-results__title">{CASE_STUDY_COPY.resultsHeading}</h2>
+    <h2 id={CASE_STUDY_RESULTS_ID} class="c-cs-body__h2">{CASE_STUDY_COPY.resultsHeading}</h2>
+    {intro && <p class="c-cs-results__text c-paragraph">{intro}</p>}
     <ul class="c-cs-results__row">
       {items.map((kpi) => (
         <li class="c-cs-results__item">
           <span class="c-cs-results__value c-text_xl">{kpi.value}</span>
-          {kpi.description && <span class="c-cs-results__desc c-paragraph">{kpi.description}</span>}
+          {(kpi.label?.trim() || kpi.description) && (
+            <span class="c-cs-results__desc c-paragraph">
+              {kpi.label?.trim() && <span class="c-cs-results__label">{kpi.label.trim()}</span>}
+              {kpi.description && <span class="c-cs-results__label">{kpi.description}</span>}
+            </span>
+          )}
         </li>
       ))}
     </ul>
+    {summary && <p class="c-cs-results__text c-paragraph">{summary}</p>}
   </section>
 )}
 
@@ -39,21 +51,16 @@ const items = (results ?? []).filter((r) => r.value?.trim()).slice(0, 3);
     flex-direction: column;
     gap: 1.714rem; /* 24px */
   }
-  /* Same as the body H2 (Figma Text L 38px). */
-  .c-cs-results__title {
+  /* The H2 is the body's `.c-cs-body__h2` (styles in CaseStudyBody). */
+  .c-cs-results__text {
     margin: 0;
-    color: var(--color-black-secondary);
-    font-family: var(--font-heading);
-    font-size: var(--fs-text-l);
-    font-weight: 400;
-    line-height: 1.3;
-    scroll-margin-top: calc(var(--c-nav-height, 0px) + 2rem);
+    color: var(--color-text);
   }
-  /* Figma: 1px #E4E6EA border, 8px radius, 32px between cells. */
+  /* Figma: 1px #E4E6EA border, 8px radius, 24px between cells. */
   .c-cs-results__row {
     position: relative;
     display: flex;
-    gap: 2.286rem;
+    gap: 1.714rem;
     margin: 0;
     padding: 0;
     border: var(--border-default);
@@ -79,22 +86,25 @@ const items = (results ?? []).filter((r) => r.value?.trim()).slice(0, 3);
   .c-cs-results__row::after {
     right: -0.559rem;
   }
+  /* 24px padding, 8px value → text, centred (Figma). */
   .c-cs-results__item {
     position: relative;
     display: flex;
     flex: 1 1 0;
     flex-direction: column;
-    gap: 1.714rem;
+    align-items: center;
+    gap: 0.571rem;
     min-width: 0;
     padding: 1.714rem;
+    text-align: center;
   }
-  /* Divider: 158px of the 276px row, centred in the 32px gap. */
+  /* Divider: 158px of the 200px row, centred in the 24px gap. */
   .c-cs-results__item + .c-cs-results__item::before {
     content: "";
     position: absolute;
-    top: 21.35%;
-    bottom: 21.35%;
-    left: calc(-1.143rem - 0.5px);
+    top: 10.46%;
+    bottom: 10.46%;
+    left: calc(-0.857rem - 0.5px);
     width: 1px;
     background: var(--color-border);
   }
@@ -104,6 +114,10 @@ const items = (results ?? []).filter((r) => r.value?.trim()).slice(0, 3);
   }
   .c-cs-results__desc {
     color: var(--color-text);
+  }
+  /* Label and description: one line each (Figma). */
+  .c-cs-results__label {
+    display: block;
   }
   /* Mobile: cells stack, horizontal dividers (the vertical ones turn 90°). */
   @media (max-width: 767px) {

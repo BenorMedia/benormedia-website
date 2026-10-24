@@ -9,11 +9,20 @@
  * - H3 = a phase: everything from an H3 up to the next H2 goes into one
  *   `phase` node (Figma 3768:26281, the block with the left rule).
  * - Lists: consecutive `listItem` blocks become one list; `level` nests.
+ * - `blockquote` style → a `quote` node; `caseStudyCallout` items → a
+ *   `callout` node (title + plain-text items), SCHEMAS v0.12.
  * - Spans: `strong` / `em` decorators; `link` annotations (relative paths
  *   allowed, `openInNewTab` → new tab). Unsafe hrefs drop the link, keep
  *   the text.
  */
-import type { CaseStudyBodyBlock, PortableTextLinkDef } from './types';
+import type {
+  CaseStudyBodyBlock,
+  CaseStudyBodyItem,
+  CaseStudyCalloutBlock,
+  CaseStudyFigureBlock,
+  PortableTextLinkDef,
+  SanityImage,
+} from './types';
 
 /** Results heading id (`CaseStudyResults`), reserved so a body H2 never takes it. */
 export const CASE_STUDY_RESULTS_ID = 'results';
@@ -44,8 +53,27 @@ export interface ListNode {
   items: ListItemNode[];
 }
 
+export interface CalloutNode {
+  type: 'callout';
+  key: string;
+  title: string;
+  items: string[];
+}
+
+/** A framed image (`caseStudyFigure`); rendered with the Sanity image URL builder. */
+export interface FigureNode {
+  type: 'figure';
+  key: string;
+  image: SanityImage;
+  alt: string;
+  caption: string;
+}
+
 export type FlowNode =
   | { type: 'p'; key: string; inline: InlineRun[] }
+  | FigureNode
+  | { type: 'quote'; key: string; inline: InlineRun[] }
+  | CalloutNode
   | { type: 'h3'; key: string; id: string; text: string; inline: InlineRun[] }
   | ListNode;
 
@@ -107,7 +135,7 @@ function inlineRuns(block: CaseStudyBodyBlock): InlineRun[] {
 }
 
 /** Ids for every H2 and H3 in `body`, by block key, in order. */
-function headingIds(body: readonly CaseStudyBodyBlock[], reserved: readonly string[]): Map<string, string> {
+function headingIds(body: readonly CaseStudyBodyItem[], reserved: readonly string[]): Map<string, string> {
   const used = new Set<string>(reserved);
   const ids = new Map<string, string>();
   body.forEach((block, i) => {
@@ -128,11 +156,14 @@ function headingIds(body: readonly CaseStudyBodyBlock[], reserved: readonly stri
  * use (default: the results heading).
  */
 export function parseCaseStudyBody(
-  body: readonly CaseStudyBodyBlock[] | null | undefined,
+  body: readonly CaseStudyBodyItem[] | null | undefined,
   reservedIds: readonly string[] = [CASE_STUDY_RESULTS_ID],
 ): BodyNode[] {
-  const blocks = (body ?? []).filter((b) => b._type === 'block');
-  const ids = headingIds(blocks, reservedIds);
+  const items = (body ?? []).filter(
+    (b): b is CaseStudyBodyBlock | CaseStudyCalloutBlock | CaseStudyFigureBlock =>
+      b?._type === 'block' || b?._type === 'caseStudyCallout' || b?._type === 'caseStudyFigure',
+  );
+  const ids = headingIds(items, reservedIds);
   const top: BodyNode[] = [];
   let phase: { type: 'phase'; key: string; children: FlowNode[] } | null = null;
   // Open list levels: [0] = the list in the current container.
@@ -140,7 +171,30 @@ export function parseCaseStudyBody(
 
   const target = (): BodyNode[] => (phase ? phase.children : top);
 
-  blocks.forEach((block, i) => {
+  items.forEach((item, i) => {
+    if (item._type === 'caseStudyFigure') {
+      stack = [];
+      // No image asset → nothing (no empty frame).
+      if (item.image?.asset) {
+        target().push({
+          type: 'figure',
+          key: item._key || String(i),
+          image: item.image,
+          alt: item.image.alt?.trim() ?? '',
+          caption: item.caption?.trim() ?? '',
+        });
+      }
+      return;
+    }
+    if (item._type === 'caseStudyCallout') {
+      stack = [];
+      const title = item.title?.trim() ?? '';
+      const lines = (item.items ?? []).map((t) => t?.trim() ?? '').filter(Boolean);
+      // No items → nothing (an empty box); the title alone is not a callout.
+      if (lines.length > 0) target().push({ type: 'callout', key: item._key || String(i), title, items: lines });
+      return;
+    }
+    const block = item;
     const key = block._key || String(i);
     const inline = inlineRuns(block);
     const text = blockText(block).trim();
@@ -183,6 +237,10 @@ export function parseCaseStudyBody(
       phase.children.push({ type: 'h3', key, id: ids.get(key) ?? slugifyHeading(text), text, inline });
       return;
     }
+    if (block.style === 'blockquote') {
+      target().push({ type: 'quote', key, inline });
+      return;
+    }
     target().push({ type: 'p', key, inline });
   });
 
@@ -191,7 +249,7 @@ export function parseCaseStudyBody(
 
 /** Table of contents: every body H2 and H3 in order, ids as in `parseCaseStudyBody`. */
 export function caseStudyToc(
-  body: readonly CaseStudyBodyBlock[] | null | undefined,
+  body: readonly CaseStudyBodyItem[] | null | undefined,
   reservedIds: readonly string[] = [CASE_STUDY_RESULTS_ID],
 ): TocItem[] {
   return parseCaseStudyBody(body, reservedIds).flatMap((node) => {

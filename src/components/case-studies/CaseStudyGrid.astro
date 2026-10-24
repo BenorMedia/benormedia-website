@@ -8,8 +8,8 @@
  * Variants (Figma gaps as a share of the 1680 frame, so cards keep the
  * frame's proportions in the 1230px container):
  *   - `index`     (3764:15808): 24px gaps (1.429%), card titles are h2.
- *   - `resources` (3764:16201): 40px columns, 40px below the section header,
- *     card titles are h3.
+ *   - `resources` (3790:36695): 40px columns, 60px below the section header
+ *     (lead 2026-10-22), card titles are h3.
  * Renders nothing when `cards` is empty (no empty-state design yet).
  */
 import CaseStudyCard from "./CaseStudyCard.astro";
@@ -52,7 +52,7 @@ const list = typeof limit === "number" ? cards.slice(0, limit) : cards;
     --c-cs-grid-col: 2.857rem;
     /* Rows: the blog cards' 60px (Figma shows one row). */
     gap: 4.286rem var(--c-cs-grid-col);
-    margin-top: 2.857rem;
+    margin-top: 4.286rem;
   }
   @media (max-width: 991px) {
     .c-cs-grid > :global(*) {

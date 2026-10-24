@@ -2,23 +2,43 @@
 /**
  * CaseStudyList — a body list (bullet → `<ul>`, number → `<ol>`); nested
  * levels render inside their parent item.
+ *
+ * A top-level bullet list sits in a `c-np-prose is-blog` wrapper so it gets
+ * the blog body's check-circle bullets as they are (`new-pages.css`, the
+ * `> ul > li` rules; `--np-check` is set on `.c-cs-body`). Numbered and
+ * nested lists keep the case-study list styles (`CaseStudyBody`).
  */
 import CaseStudyInline from "./CaseStudyInline.astro";
 import type { ListNode } from "../../../lib/sanity/case-study-body";
 
 interface Props {
   list: ListNode;
+  nested?: boolean;
 }
 
-const { list } = Astro.props;
+const { list, nested = false } = Astro.props;
 const Tag = list.ordered ? "ol" : "ul";
+const checks = !list.ordered && !nested;
 ---
 
-<Tag class="c-cs-body__list">
-  {list.items.map((item) => (
-    <li>
-      <CaseStudyInline runs={item.inline} />
-      {item.children && <Astro.self list={item.children} />}
-    </li>
-  ))}
-</Tag>
+{checks ? (
+  <div class="c-np-prose is-blog c-cs-body__checks">
+    <ul class="c-cs-body__list">
+      {list.items.map((item) => (
+        <li>
+          <CaseStudyInline runs={item.inline} />
+          {item.children && <Astro.self list={item.children} nested />}
+        </li>
+      ))}
+    </ul>
+  </div>
+) : (
+  <Tag class="c-cs-body__list">
+    {list.items.map((item) => (
+      <li>
+        <CaseStudyInline runs={item.inline} />
+        {item.children && <Astro.self list={item.children} nested />}
+      </li>
+    ))}
+  </Tag>
+)}

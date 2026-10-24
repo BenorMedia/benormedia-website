@@ -178,3 +178,20 @@ Since a Sanity publish rebuilds the live site without a pull request, the produc
 - The index's robots tag still follows "any published case study" (the cards query has no `noIndex`). If every published case study were noindex, `/case-studies` would be indexable but outside the sitemap. Harmless; say if it should follow the indexable ones instead (needs `seo.noIndex` in `ALL_CASE_STUDIES`).
 - `astro check` also fails closed when Sanity is unreachable (it loads the config); only `astro dev` warns.
 - Schema validation also accepts `#anchor` links, since the renderer does.
+
+## v0.11 (2026-10-22, branch `feat/case-studies-v2`, SCHEMAS v0.11, not deployed)
+
+### Changed files
+- `src/lib/sanity/queries.ts`: `CASE_STUDY_CARD_FIELDS` gains `cardStats[]{ _key, value, label }` and `"logoOnDark": logoOnDark${IMAGE}` next to `logo` in `client->`. So `ALL_CASE_STUDIES` (keeps `noIndex`), `CASE_STUDY_BY_SLUG.related` and `.latest` all return them. The detail `client->` projection is unchanged (the hero does not use the dark logo).
+- `src/lib/sanity/types.ts`: new `CaseStudyCardStat { _key?: string; value: string; label: string }` and `CaseStudyCardClient { _id; name?; logo?; logoOnDark?: SanityImage }`. `CaseStudyCard.client` is now `CaseStudyCardClient | null`, and `CaseStudyCard.cardStats?: CaseStudyCardStat[] | null`. `CaseStudy.client` keeps its own inline type (no `logoOnDark`), still assignable to the card's.
+- `src/lib/sanity/case-study-fixture.ts`: `cardStats` with the Figma placeholders (`XXX` / `Lorem ipsum` ×2, `// TODO: COPY`) on the fixture cards and the main fixture. Nothing else changed.
+
+### Index hero tiles
+`ALL_CLIENTS_WITH_ICON` and `getAllClientsWithIcon(): Promise<Client[]>` already exist and are exported: published clients with `icon.asset`, `order(name asc)`, projecting `_id`, `_type`, `name`, `icon` (IMAGE fragment, `alt` included). Unchanged.
+
+### Checks
+- groq-js 2.0.0 (throwaway script in the scratchpad, `./client` stubbed): every exported query parses. On a mock dataset a case study with two stats and a client with `logoOnDark` projects both; one without them projects `cardStats: null` and `client.logoOnDark: null`, in `ALL_CASE_STUDIES`, `related` and `latest`.
+- `pnpm run check`: 0 errors, 0 warnings, 0 hints. `pnpm run lint`: clean.
+
+### Notes for the ui agent
+- Missing fields come back as `null`, not `undefined` (GROQ). The types keep the requested `logoOnDark?: SanityImage` (like `logo`), so test with truthiness (`client.logoOnDark ?? client.logo`, `cardStats?.length`), never `!== undefined`.

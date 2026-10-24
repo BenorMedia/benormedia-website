@@ -1,0 +1,250 @@
+---
+/**
+ * CaseStudyBrowser — c-cs-browser
+ * The hero's website frame (Figma 3842:40085): a browser window (three
+ * window dots, the URL pill with the site's host) around the client's
+ * `websiteScreenshot`, and the "Visit live site" button (`Button`
+ * `is-white`) over the screenshot when the client has a `websiteUrl`,
+ * shown on hover / keyboard focus (always on touch screens). With a mouse
+ * it follows the pointer (`initCursorFollow`, src/scripts/ui/cursor-follow.ts).
+ * Figma's hand cursor next to the button is a mock pointer and is left out.
+ *
+ * Video (lead 2026-10-23): when the client has `websiteVideo` (the same
+ * file the Home featured card plays), it replaces the screenshot: muted,
+ * looping, inline, played while on screen, never under reduced motion or
+ * Data Saver (the poster stays: `websiteVideoPoster`, else the screenshot).
+ *
+ * Renders nothing without a screenshot or a video (no design for that state). The
+ * window is 112.4% as wide as its box (Figma 1103 of 981px) and the hero
+ * clips it at the viewport edge, as in Figma.
+ */
+import Button from "../ui/Button.astro";
+import type { CaseStudy } from "../../lib/sanity/types";
+import { clientImageAlt, isSvgAsset, urlFor, type Source } from "../../lib/sanity/image";
+import { hasImage, type CaseStudyImageInput } from "./image";
+import { CASE_STUDY_COPY } from "./copy";
+
+interface Props {
+  client: CaseStudy["client"];
+}
+
+const { client } = Astro.props;
+const shot = client?.websiteScreenshot as CaseStudyImageInput;
+const url = client?.websiteUrl?.trim() || undefined;
+
+let src: string | undefined;
+if (shot?.previewSrc) src = shot.previewSrc;
+else if (shot?.asset) {
+  const id = shot.asset._id ?? shot.asset._ref;
+  // 1069px wide in Figma at 1920: fetched at 2x.
+  src = isSvgAsset(id) ? urlFor(shot as Source).url() : urlFor(shot as Source).width(2138).fit("max").auto("format").url();
+}
+const alt = clientImageAlt(shot?.alt, client?.name, "website");
+
+const videoUrl = client?.websiteVideo?.asset?.url || undefined;
+const posterSource = client?.websiteVideoPoster?.asset ? client.websiteVideoPoster : undefined;
+const poster = posterSource
+  ? urlFor(posterSource as Source).width(2138).fit("max").auto("format").url()
+  : src;
+
+let host = "";
+if (url) {
+  try {
+    host = new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    host = "";
+  }
+}
+---
+
+{(videoUrl || (hasImage(shot) && src)) && (
+  <div class="c-cs-browser">
+    <div class="c-cs-browser__window">
+      <div class="c-cs-browser__bar" aria-hidden="true">
+        <span class="c-cs-browser__dots"><span></span><span></span><span></span></span>
+        <span class="c-cs-browser__url c-paragraph_s">{host}</span>
+      </div>
+      {videoUrl ? (
+        <video
+          class="c-cs-browser__shot"
+          src={videoUrl}
+          poster={poster}
+          aria-label={alt}
+          width="1069"
+          height="611"
+          muted
+          loop
+          playsinline
+          preload="none"
+          data-cs-browser-video
+        />
+      ) : (
+        <img class="c-cs-browser__shot" src={src} alt={alt} width="1069" height="611" loading="eager" decoding="async" />
+      )}
+      {url && (
+        <Button variant="white" href={url} target="_blank" rel="noopener" class="c-cs-browser__cta">
+          {CASE_STUDY_COPY.visitSite}<span class="c-cs-browser__sr-only">{CASE_STUDY_COPY.newTab}</span>
+          <svg slot="icon" class="c-cs-browser__icon" viewBox="0 0 16 16" width="16" height="16" fill="none" focusable="false">
+            <path fill="currentColor" fill-rule="evenodd" d="M14 2.5a.5.5 0 0 0-.5-.5h-6a.5.5 0 0 0 0 1h4.793L2.146 13.146a.5.5 0 0 0 .708.708L13 3.707V8.5a.5.5 0 0 0 1 0z" />
+          </svg>
+        </Button>
+      )}
+    </div>
+  </div>
+)}
+
+<script>
+  import { initCursorFollow } from "../../scripts/ui/cursor-follow";
+
+  document.querySelectorAll<HTMLElement>(".c-cs-browser__window").forEach((area) => {
+    const cta = area.querySelector<HTMLElement>(".c-cs-browser__cta");
+    if (cta) initCursorFollow(area, cta);
+  });
+
+  // Frame video: same rules as the Home featured card (ClientCard): plays
+  // while on screen, pauses when it leaves; never under reduced motion or
+  // Data Saver, where the poster stays.
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const saveData =
+    (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData === true;
+  const videos = Array.from(document.querySelectorAll<HTMLVideoElement>("[data-cs-browser-video]"));
+  if (videos.length > 0 && !saveData) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const video = entry.target as HTMLVideoElement;
+        if (entry.isIntersecting && !reduced.matches) void video.play().catch(() => {});
+        else if (!entry.isIntersecting && !video.paused) video.pause();
+      });
+    });
+    videos.forEach((video) => observer.observe(video));
+  }
+</script>
+
+<style>
+  /* The box the hero gives it; the window is wider and is clipped by the
+     hero (Figma frame 3842:40084, 981px, overflow clip). */
+  .c-cs-browser {
+    position: relative;
+    min-width: 0;
+  }
+  /* Figma: #F4F5F7, 8px radius, overflow clip. */
+  .c-cs-browser__window {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 112.4%;
+    overflow: hidden;
+    border-radius: 8px;
+    background: var(--color-browser-bg);
+  }
+  /* 46px bar (Figma 3842:40086, round 4; was 63.7px): three 16.8px dots
+     from 30px, 14.4px apart, centred vertically (y 14.6); the URL pill
+     (287.7 × 28.8px at y 8.6, white, 1px border) centred. */
+  .c-cs-browser__bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 3.286rem;
+  }
+  .c-cs-browser__dots {
+    position: absolute;
+    top: 50%;
+    left: 2.141rem;
+    display: flex;
+    gap: 1.028rem;
+    transform: translateY(-50%);
+  }
+  /* Figma window dots (3842:40088–40090). */
+  .c-cs-browser__dots span {
+    width: 1.199rem;
+    height: 1.199rem;
+    border-radius: 50%;
+    background: var(--color-browser-red);
+  }
+  .c-cs-browser__dots span:nth-child(2) {
+    background: var(--color-browser-yellow);
+  }
+  .c-cs-browser__dots span:nth-child(3) {
+    background: var(--color-browser-green);
+  }
+  /* URL text Figma 13.2px #8A909E: `c-paragraph_s` (12.6px). */
+  .c-cs-browser__url {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26.1%;
+    min-width: 8rem;
+    height: 2.055rem;
+    overflow: hidden;
+    border: var(--border-default);
+    border-radius: 999px;
+    background: var(--color-white);
+    color: var(--color-browser-url);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  /* Screenshot: 1069 of 1103px (16.9px each side), top corners 8px. */
+  .c-cs-browser__shot {
+    display: block;
+    width: 96.94%;
+    height: auto;
+    aspect-ratio: 1069 / 611;
+    object-fit: cover;
+    object-position: top left;
+    border-radius: 8px 8px 0 0;
+    background: var(--color-white);
+  }
+  /* Default button position (no mouse, touch, no JS): Figma 3842:40094 at
+     x 590, y 277.9, 193 × 60, so its centre (686.5, 307.9) as shares of the
+     1103 × 657.1 window (round 4). */
+  .c-cs-browser :global(.c-cs-browser__cta) {
+    position: absolute;
+    top: 46.86%;
+    left: 62.24%;
+    white-space: nowrap;
+    translate: -50% -50%;
+  }
+  /* Lead 2026-10-22: the button appears on hover over the window. Keyboard
+     focus shows it too; touch screens (no hover) always show it. */
+  @media (hover: hover) {
+    .c-cs-browser :global(.c-cs-browser__cta) {
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .c-cs-browser__window:hover :global(.c-cs-browser__cta),
+    .c-cs-browser__window:focus-within :global(.c-cs-browser__cta) {
+      opacity: 1;
+    }
+  }
+  @media (hover: hover) and (prefers-reduced-motion: reduce) {
+    .c-cs-browser :global(.c-cs-browser__cta) {
+      transition: none;
+    }
+  }
+  .c-cs-browser__icon {
+    display: block;
+    width: 1em;
+    height: 1em;
+  }
+  .c-cs-browser__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+  /* Mobile: the button in the middle of the visible part of the screenshot. */
+  @media (max-width: 767px) {
+    .c-cs-browser :global(.c-cs-browser__cta) {
+      top: 55%;
+      left: 44.5%;
+    }
+  }
+</style>

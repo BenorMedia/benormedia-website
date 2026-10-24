@@ -23,22 +23,27 @@ export const CASE_STUDY_COPY = {
   tag: 'Case study',
   // TODO: COPY: Figma "Published on 01/01/01"; date in the blog format (lead 2026-10-20).
   published: 'Published on {date}',
-  readTime: copy.blog.readTime,
   learnMore: copy.resources.learnMore,
-  /** Related section button: Get in Touch (lead confirmed 2026-10-21; Figma shows "Start a Project"). */
-  relatedButton: copy.buttons.contact,
   breadcrumb: {
     home: copy.livePathNames['/'],
     // TODO: COPY: Figma breadcrumb level 2.
     index: 'Case studies',
   },
-  // TODO: COPY: Figma facts panel labels ("01 / Company" …), numbered in code.
+  // TODO: COPY: Figma facts row labels (3842:40102, round 4: no numbers), uppercase via Eyebrow.
   facts: {
-    company: 'Company',
+    client: 'Client',
     industry: 'Industry',
+    services: 'Services Delivered',
     solution: 'Solution',
-    challenge: 'The challenge',
+    timeline: 'Timeline',
+    stack: 'Stack',
   },
+  // aria-label of the facts row (no visible heading in Figma).
+  factsLabel: 'Project facts',
+  // TODO: COPY: Figma hero button (3842:40095).
+  visitSite: 'Visit live site',
+  // TODO: COPY: same text as ClientList / ClientCard (hardcoded there, not in copy.json).
+  newTab: ' (opens in a new tab)',
   // TODO: COPY: Figma results heading (also the last table of contents item).
   resultsHeading: 'The results',
   related: {
