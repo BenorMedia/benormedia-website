@@ -4,13 +4,14 @@
  *
  * Layout:
  *   1. .c-footer__inner  — max-width container with the top row:
- *      - Barcelona card (image + tint overlay + city/address text)
+ *      - Left column: Barcelona card (image + tint overlay + city/address
+ *        text), then the partner badges and socials under it (lead 2026-10-25)
  *      - SERVICES + SOLUTIONS/GUIDES + ABOUT link columns (Eyebrow labels;
  *        GUIDES and the new service pages added 2026-10-07; services grouped
  *        by pillar and SOLUTIONS stacked above GUIDES 2026-10-10; headless
  *        service and Webflow vs custom code guide added 2026-10-12; BLOG
  *        stacked above ABOUT 2026-10-15)
- *      - Socials, then the partner badges (images) — swapped lead 2026-09-30
+ *        The link columns run to the container's right edge (lead 2026-10-25).
  *   2. .c-footer__wordmark-strip — FULL-WIDTH strip, height 258px,
  *      border top + bottom, containing the wordmark image (move-in on
  *      scroll: scripts/animations/footer-wordmark.ts).
@@ -86,15 +87,40 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
 <footer class="c-footer">
   <div class="c-footer__inner">
     <div class="c-footer__top">
-      <div class="c-footer__card">
-        <img src="/images/barcelona.png" alt="Barcelona office" class="c-footer__card-img" width="480" height="300" />
-        <div class="c-footer__card-tint" aria-hidden="true"></div>
-        <div class="c-footer__card-overlay">
-          <div class="c-footer__card-city">Barcelona</div>
-          <div class="c-footer__card-address">
-            C/ Dos de Maig<br />
-            E1 6D, (08013)<br />
-            Barcelona, Spain.
+      {/* Card, then badges and socials under it, on the left (lead 2026-10-25). */}
+      <div class="c-footer__brand">
+        <div class="c-footer__card">
+          <img src="/images/barcelona.png" alt="Barcelona office" class="c-footer__card-img" width="480" height="300" />
+          <div class="c-footer__card-tint" aria-hidden="true"></div>
+          <div class="c-footer__card-overlay">
+            <div class="c-footer__card-city">Barcelona</div>
+            <div class="c-footer__card-address">
+              C/ Dos de Maig<br />
+              E1 6D, (08013)<br />
+              Barcelona, Spain.
+            </div>
+          </div>
+        </div>
+        <div class="c-footer__side">
+          {/* Badges first, then socials (lead 2026-10-01, swapped back). */}
+          <div class="c-footer__badges">
+            {/* Webflow profile (lead 2026-10-05). */}
+            <a href="https://webflow.com/@benor-media" class="c-footer__badge-link" target="_blank" rel="noopener">
+              <img src="/images/webflow-partner.png" alt="Webflow Professional Partner (opens BenorMedia's Webflow profile in a new tab)" class="c-footer__badge-img" />
+            </a>
+            <img src="/images/claude-partner.png" alt="Claude Partner Network" class="c-footer__badge-img" />
+          </div>
+          <div class="c-footer__socials">
+            <a href="https://www.linkedin.com/company/benormedia" class="c-footer__social" aria-label="BenorMedia on LinkedIn" target="_blank" rel="noopener">
+              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 29 29" fill="none" aria-hidden="true">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M0 2.3894C0.00068821 1.75591 0.252649 1.14855 0.700599 0.700602C1.14855 0.252652 1.7559 0.000691396 2.3894 3.18541e-06H26.208C26.522 -0.000509732 26.8331 0.060925 27.1234 0.18079C27.4137 0.300655 27.6774 0.476596 27.8996 0.69854C28.1218 0.920485 28.298 1.18407 28.4182 1.47422C28.5384 1.76436 28.6002 2.07536 28.6 2.3894V26.208C28.6 26.8422 28.3482 27.4504 27.8999 27.8989C27.4516 28.3475 26.8435 28.5997 26.2093 28.6H2.3894C1.75568 28.5993 1.14813 28.3472 0.70014 27.8989C0.252153 27.4507 0.00034404 26.843 0 26.2093V2.3894ZM11.3204 10.9044H15.1931V12.8492C15.7521 11.7312 17.1821 10.725 19.331 10.725C23.4507 10.725 24.427 12.9519 24.427 17.0378V24.6064H20.2579V17.9686C20.2579 15.6416 19.6989 14.3286 18.2793 14.3286C16.3098 14.3286 15.4908 15.7443 15.4908 17.9686V24.6064H11.3204V10.9044ZM4.1704 24.4283H8.3408V10.725H4.1704V24.4283ZM8.9375 6.2556C8.94536 6.61268 8.88182 6.96773 8.75061 7.29991C8.6194 7.6321 8.42316 7.93473 8.1734 8.19004C7.92365 8.44536 7.62541 8.64822 7.29619 8.78671C6.96698 8.92521 6.61341 8.99654 6.25625 8.99654C5.89909 8.99654 5.54553 8.92521 5.21631 8.78671C4.88709 8.64822 4.58885 8.44536 4.3391 8.19004C4.08934 7.93473 3.8931 7.6321 3.76189 7.29991C3.63068 6.96773 3.56714 6.61268 3.575 6.2556C3.59043 5.55471 3.8797 4.88773 4.38085 4.39749C4.882 3.90726 5.55519 3.63275 6.25625 3.63275C6.95731 3.63275 7.6305 3.90726 8.13165 4.39749C8.6328 4.88773 8.92207 5.55471 8.9375 6.2556Z" fill="currentColor"/>
+              </svg>
+            </a>
+            <a href="https://x.com/benormedia" class="c-footer__social" aria-label="BenorMedia on X (Twitter)" target="_blank" rel="noopener">
+              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 29 29" fill="none" aria-hidden="true">
+                <path d="M4.08571 0C1.83219 0 0 1.83219 0 4.08571V24.5143C0 26.7678 1.83219 28.6 4.08571 28.6H24.5143C26.7678 28.6 28.6 26.7678 28.6 24.5143V4.08571C28.6 1.83219 26.7678 0 24.5143 0H4.08571ZM23.0524 5.3625L16.4258 12.9338L24.2206 23.2375H18.1176L13.3424 16.9876L7.87138 23.2375H4.83902L11.9252 15.1363L4.4496 5.3625H10.7058L15.0278 11.0761L20.02 5.3625H23.0524ZM20.6392 21.4245L9.79295 7.07978H7.98629L18.9539 21.4245H20.6329H20.6392Z" fill="currentColor"/>
+              </svg>
+            </a>
           </div>
         </div>
       </div>
@@ -145,29 +171,6 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
           </ul>
         </div>
       </div>
-
-      <div class="c-footer__side">
-        {/* Badges first, then socials (lead 2026-10-01, swapped back). */}
-        <div class="c-footer__badges">
-          {/* Webflow profile (lead 2026-10-05). */}
-          <a href="https://webflow.com/@benor-media" class="c-footer__badge-link" target="_blank" rel="noopener">
-            <img src="/images/webflow-partner.png" alt="Webflow Professional Partner (opens BenorMedia's Webflow profile in a new tab)" class="c-footer__badge-img" />
-          </a>
-          <img src="/images/claude-partner.png" alt="Claude Partner Network" class="c-footer__badge-img" />
-        </div>
-        <div class="c-footer__socials">
-          <a href="https://www.linkedin.com/company/benormedia" class="c-footer__social" aria-label="BenorMedia on LinkedIn" target="_blank" rel="noopener">
-            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 29 29" fill="none" aria-hidden="true">
-              <path fill-rule="evenodd" clip-rule="evenodd" d="M0 2.3894C0.00068821 1.75591 0.252649 1.14855 0.700599 0.700602C1.14855 0.252652 1.7559 0.000691396 2.3894 3.18541e-06H26.208C26.522 -0.000509732 26.8331 0.060925 27.1234 0.18079C27.4137 0.300655 27.6774 0.476596 27.8996 0.69854C28.1218 0.920485 28.298 1.18407 28.4182 1.47422C28.5384 1.76436 28.6002 2.07536 28.6 2.3894V26.208C28.6 26.8422 28.3482 27.4504 27.8999 27.8989C27.4516 28.3475 26.8435 28.5997 26.2093 28.6H2.3894C1.75568 28.5993 1.14813 28.3472 0.70014 27.8989C0.252153 27.4507 0.00034404 26.843 0 26.2093V2.3894ZM11.3204 10.9044H15.1931V12.8492C15.7521 11.7312 17.1821 10.725 19.331 10.725C23.4507 10.725 24.427 12.9519 24.427 17.0378V24.6064H20.2579V17.9686C20.2579 15.6416 19.6989 14.3286 18.2793 14.3286C16.3098 14.3286 15.4908 15.7443 15.4908 17.9686V24.6064H11.3204V10.9044ZM4.1704 24.4283H8.3408V10.725H4.1704V24.4283ZM8.9375 6.2556C8.94536 6.61268 8.88182 6.96773 8.75061 7.29991C8.6194 7.6321 8.42316 7.93473 8.1734 8.19004C7.92365 8.44536 7.62541 8.64822 7.29619 8.78671C6.96698 8.92521 6.61341 8.99654 6.25625 8.99654C5.89909 8.99654 5.54553 8.92521 5.21631 8.78671C4.88709 8.64822 4.58885 8.44536 4.3391 8.19004C4.08934 7.93473 3.8931 7.6321 3.76189 7.29991C3.63068 6.96773 3.56714 6.61268 3.575 6.2556C3.59043 5.55471 3.8797 4.88773 4.38085 4.39749C4.882 3.90726 5.55519 3.63275 6.25625 3.63275C6.95731 3.63275 7.6305 3.90726 8.13165 4.39749C8.6328 4.88773 8.92207 5.55471 8.9375 6.2556Z" fill="currentColor"/>
-            </svg>
-          </a>
-          <a href="https://x.com/benormedia" class="c-footer__social" aria-label="BenorMedia on X (Twitter)" target="_blank" rel="noopener">
-            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 29 29" fill="none" aria-hidden="true">
-              <path d="M4.08571 0C1.83219 0 0 1.83219 0 4.08571V24.5143C0 26.7678 1.83219 28.6 4.08571 28.6H24.5143C26.7678 28.6 28.6 26.7678 28.6 24.5143V4.08571C28.6 1.83219 26.7678 0 24.5143 0H4.08571ZM23.0524 5.3625L16.4258 12.9338L24.2206 23.2375H18.1176L13.3424 16.9876L7.87138 23.2375H4.83902L11.9252 15.1363L4.4496 5.3625H10.7058L15.0278 11.0761L20.02 5.3625H23.0524ZM20.6392 21.4245L9.79295 7.07978H7.98629L18.9539 21.4245H20.6329H20.6392Z" fill="currentColor"/>
-            </svg>
-          </a>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -206,15 +209,23 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
     gap: 3rem;
   }
 
-  /* --- Top row: 3 columns ------------------------------------------------ */
+  /* --- Top row: brand column + link columns ------------------------------ */
   .c-footer__top {
     display: grid;
-    /* The card column is the card's width (0.75 of the former 1fr), and the
-       links take the space it left (lead 2026-10-15: fill the gaps around
-       the link columns). Same 2.8fr total, so the card keeps its size. */
-    grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.45fr) minmax(0, 0.6fr);
+    /* The card column is the card's width (0.75 of the former 1fr). The
+       links take the rest, up to the container's edge, since the badges
+       moved under the card (lead 2026-10-25). Same 2.8fr total, so the card
+       keeps its size. */
+    grid-template-columns: minmax(0, 0.75fr) minmax(0, 2.05fr);
     gap: 3rem;
     align-items: start;
+  }
+
+  /* Brand column: card, then badges + socials */
+  .c-footer__brand {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
   }
 
   /* Barcelona card */
@@ -319,14 +330,12 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
     text-align: left;
   }
 
-  /* Side column: badges + socials */
+  /* Badges + socials, under the card on the left */
   .c-footer__side {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     gap: 1rem; /* lead 2026-10-01 (was 9.5 × --fs-p) */
-    height: 100%;
-    align-items: flex-end;
+    align-items: flex-start;
   }
   .c-footer__badges {
     display: flex;
@@ -433,10 +442,6 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
       gap: 2rem;
     }
     .c-footer__card { width: 75%; } /* as before the 2026-10-15 desktop grid */
-    .c-footer__side {
-      grid-column: 1 / -1;
-      align-items: flex-start;
-    }
     .c-footer__wordmark-strip { height: 12rem; }
   }
   @media (max-width: 767px) {
