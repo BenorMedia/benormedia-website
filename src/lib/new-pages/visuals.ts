@@ -65,22 +65,13 @@ export const DIAGRAMS: Record<string, DiagramEntry> = {
     component: TimelineDiagram,
     props: { milestones: ["Audit", "Stakeholder sign-offs", "Component library build", "Launch"] },
   },
-  // Labels: brief ("benchmark, map URLs, rebuild, move content, redirect, test, launch, monitor"), the guide's eight numbered steps.
+  // Labels: brief ("map, design, build, launch and audit"), the guide's four phases (lead 2026-10-25).
   "wordpress-to-webflow-migration:1": {
     component: FlowDiagram,
     props: {
       numbered: true,
       columns: 4,
-      steps: [
-        { label: "Benchmark" },
-        { label: "Map URLs" },
-        { label: "Rebuild" },
-        { label: "Move content" },
-        { label: "Redirect" },
-        { label: "Test" },
-        { label: "Launch" },
-        { label: "Monitor" },
-      ],
+      steps: [{ label: "Map" }, { label: "Design" }, { label: "Build" }, { label: "Launch and audit" }],
     },
   },
   // Labels: brief groups and pages; page names as in the "Pages a B2B SaaS website needs" table.

@@ -14,7 +14,7 @@ secondaryKeywords: [migrate from wordpress to webflow]
 targetCountry: US
 author: "Sergio Gancedo, Managing Director, BenorMedia"
 publishedAt: 2026-10-07
-updatedAt: 2026-10-07
+updatedAt: 2026-10-25
 reviewEvery: 30
 breadcrumb:
   - name: Home
@@ -38,6 +38,10 @@ faq:
     a: "A planned migration does not need downtime. The WordPress site can stay live while the Webflow site is built and tested on a staging copy, and the switch happens when the domain is pointed at the new site. Google advises lowering the DNS TTL about a week ahead and keeping the old setup until its traffic reaches zero."
   - q: What happens to your WordPress plugins when you move to Webflow?
     a: "Plugins do not move to Webflow. Each plugin's job is covered by a Webflow feature, an integration, or custom code, unless that job is dropped. List every active plugin during the audit and decide which of the three applies. SEO fields, redirects, sitemaps, and forms all have native Webflow equivalents."
+  - q: How many WordPress to Webflow migrations has BenorMedia done?
+    a: "30+ in the last six years, from early-stage companies like Motional Hub to established ones like JOOR, which has raised more than $100 million. The most recent, for Surfe, involved cleaning up more than 3,000 pages."
+  - q: What happens in the first call of a WordPress to Webflow migration?
+    a: "We map every page on your WordPress site to the new site, which tells us the redirects, templates, and pages to merge, and we agree on the new UI and UX direction."
 takeaways:
   - "Plan the URLs first: map every old URL to its new address before anything is built."
   - "Redirect every URL that changes with a permanent 301 redirect, and keep the redirects for at least a year."
@@ -86,6 +90,21 @@ sources:
   - label: "Webflow blog: New feature, site search"
     url: https://webflow.com/blog/new-feature-site-search
     accessed: 2026-10-06
+  - label: "WordPress.org: Yoast SEO"
+    url: https://wordpress.org/plugins/wordpress-seo/
+    accessed: 2026-10-24
+  - label: "WordPress.org: Rank Math SEO"
+    url: https://wordpress.org/plugins/seo-by-rank-math/
+    accessed: 2026-10-24
+  - label: "WordPress.org: HubSpot All-In-One Marketing"
+    url: https://wordpress.org/plugins/leadin/
+    accessed: 2026-10-24
+  - label: "WordPress.org: Site Kit by Google"
+    url: https://wordpress.org/plugins/google-site-kit/
+    accessed: 2026-10-24
+  - label: "WordPress.org: MonsterInsights"
+    url: https://wordpress.org/plugins/google-analytics-for-wordpress/
+    accessed: 2026-10-24
 volatile:
   - claim: "Webflow settings paths and behavior: Site settings, Publishing, 301 redirects; bulk import replaces the existing redirect list; Site settings, SEO, Indexing; page-level SEO settings"
     source: https://help.webflow.com/hc/en-us/articles/33961294898835
@@ -99,33 +118,88 @@ editorNotes:
   - "Every fact comes from Google Search Central or Webflow's help center, read on 2026-10-06. Recheck the Webflow menu names and limits on release day."
   - "The section on whether a move is the right call states a position. Confirm or edit it."
   - "All partner wording uses Webflow Professional Partner. See G2 in the facts sheet before release."
+  - "Experience edits applied 2026-10-25 from the lead's brief (Surfe case study, four phases, 30+ migrations, plugin install counts as shown on WordPress.org on 2026-10-24). Surfe and Romain Ginestou approved the case study, the quote, and the images. The quote uses the trimmed version of Romain's message."
 visuals:
   - after: How do you migrate from WordPress to Webflow without losing SEO?
+    place: top
     type: diagram
-    brief: "A horizontal eight-step flow: benchmark, map URLs, rebuild, move content, redirect, test, launch, monitor. Text outside the image."
-    alt: "The eight steps of a WordPress to Webflow migration, from benchmarking to monitoring"
+    brief: "A horizontal four-phase flow: map, design, build, launch and audit. Text outside the image."
+    alt: "The four phases of a WordPress to Webflow migration: map, design, build, and launch and audit"
 ---
 
 To migrate from WordPress to Webflow without losing SEO, plan the URLs before you build anything. Map every old URL to its new address, and carry over the content that already earns traffic along with its titles and descriptions. Redirect every URL that changes with a 301, and watch Google Search Console after launch.
 
+We've run 30+ WordPress to Webflow migrations in the last six years, from companies getting started and looking to raise funding, like [Motional Hub](https://www.motionalhub.com/), to large, established companies that have raised more than $100 million, like [JOOR](https://www.joor.com/). On our most recent one, for [Surfe](https://surfe.com/), we cleaned up more than 3,000 pages before anything moved to Webflow.
+
 ## How do you migrate from WordPress to Webflow without losing SEO?
 
-You migrate without losing SEO by treating the move as a URL project first and a design project second. Every old URL gets a planned destination, and every page that earns traffic arrives with its content and search fields intact. The work runs in eight steps.
+In four phases: map every old page to the new site, design a new system in Figma, build and migrate in Webflow, then launch and audit. We run every WordPress to Webflow migration in this order, because each phase settles what the next one needs. The page map decides the redirects and templates, the design system decides how the Webflow build is structured, and the content has to match WordPress before anything goes live. The SEO steps sit inside those phases.
 
-1. **Benchmark the WordPress site.** Crawl it, list every indexable URL, and record current rankings and organic traffic. The "after" needs a "before" to be compared with.
-2. **Map every old URL to a new one.** Keep URLs unchanged where you can, and record the old and new address for every URL that changes. [Google calls this map an important step](https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes) in any move that changes URLs.
-3. **Rebuild the structure in Webflow.** Build a template for each type of page, and use CMS Collections for repeating content such as posts and case studies.
-4. **Move the content and the SEO fields.** Titles, meta descriptions, headings, image alt text, canonical tags, and internal links should all travel with the content. For posts, Webflow documents an export route: export the WordPress content as XML, convert it to CSV, and import it into a Collection with field mapping.
-5. **Set up 301 redirects for every URL that changes.** A 301 is a permanent, server-side redirect, the kind Google recommends for a move. Webflow takes redirects one at a time or in bulk from a CSV file, and it supports wildcard rules.
-6. **Test before the switch.** Keep the staging copy out of the search index, crawl it, and check canonicals, robots rules and the sitemap. Check the redirect list against the URL map so that no old URL is left without a destination.
-7. **Launch.** Lower the DNS TTL about a week ahead, remove the staging block, publish the sitemap, and confirm the site is verified in Search Console.
-8. **Monitor after launch.** Watch indexing, crawl activity, and 404 errors in Search Console. Keep the redirects for at least a year, and expect rankings to move around for a while.
+### Phase 1: Map the old site and set the creative direction
+
+Start with a benchmark. Crawl the WordPress site, list every indexable URL, and record current rankings and organic traffic, so the "after" has a "before" to be compared with.
+
+Then we hold a working session with your team and map every old page to its place on the new site. Keep URLs unchanged where you can, and record the old and new address for every URL that changes. [Google calls this map an important step](https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes) in any move that changes URLs. Before any design work, the map tells us which URLs need 301 redirects, which templates the new site needs, and which pages to merge or remove. On Surfe's site, it meant cleaning up more than 3,000 pages.
+
+In the same session, we agree on the new UI and UX direction, so the design starts from the real page list.
+
+Figure: Surfe's redirect map (left) and its 301 redirects in Webflow (right).
+![Spreadsheet of Surfe's old URLs with a 301 redirect action for each, next to Webflow's 301 redirect settings listing old paths and their new destinations](/images/new-pages/guides/wordpress-to-webflow-migration/redirect-map.webp 1558x600)
+
+### Phase 2: Design the system in Figma, then the pages
+
+Next, we design everything in Figma, starting with the system: components, variables, and a completely new design system. Then we design every new page from those components. This is the critical step, because the Webflow build mirrors it one to one.
+
+Figure: Part of Surfe's design system in Figma (30+ components, 100+ variables) and the live homepage built from it.
+![Surfe's color variables and button components in Figma, connected to the live Surfe homepage built in Webflow](/images/new-pages/guides/wordpress-to-webflow-migration/design-system.webp 1558x600)
+
+### Phase 3: Build in Webflow and move the content
+
+In Webflow, we build a development system that follows the same logic as the Figma file, so every component and variable stays connected to its design. Then we:
+
+1. **Develop every page** from those components, with a template for each type of page.
+2. **Set up the Webflow CMS**, with CMS Collections for repeating content such as posts and case studies, in place of WordPress custom post types and custom fields.
+3. **Migrate all the content.** For posts, Webflow documents an export route: export the WordPress content as XML, convert it to CSV, and import it into a Collection with field mapping. Our [guide to importing WordPress posts](/blog/import-wordpress-to-webflow) shows the steps.
+4. **Clean up the data**, so every page reads exactly as it did on WordPress.
+5. **Carry over the SEO fields and set up redirects.** Titles, meta descriptions, headings, image alt text, canonical tags, and internal links travel with the content. Every URL that changes gets a 301 redirect, a permanent, server-side redirect, the kind Google recommends for a move. Webflow takes redirects one at a time or in bulk from a CSV file, and it supports wildcard rules.
+6. **Reconnect every integration.** Webflow has no plugins, so each tool connects through a native feature, an integration, or custom code, which is cleaner than a stack of plugins. For forms, see [connecting Webflow forms to HubSpot or Salesforce](/blog/webflow-salesforce-integration).
+7. **Test before the switch.** Keep the staging copy out of the search index, crawl it, and check canonicals, robots rules, and the sitemap. Check the redirect list against the URL map so that no old URL is left without a destination.
+
+Figure: Surfe's CMS Collections in Webflow. Every blog post has its own meta title, meta description, and schema markup fields.
+![Webflow CMS panel listing Surfe's Collections, such as Team, Case Studies, FAQs, and Glossary Terms, with the blog's fields for meta title, meta description, and schema markup](/images/new-pages/guides/wordpress-to-webflow-migration/cms-collections.webp 1558x600)
+
+### Phase 4: Launch, then audit
+
+**Launch.** Lower the DNS TTL about a week ahead, remove the staging block, publish the sitemap, and confirm the site is verified in Search Console.
+
+**Audit.** After release, we audit the live site against the page map. We crawl the new site for broken links, check that every old URL reaches its new page in a single redirect, and compare rankings and traffic with the benchmark, so anything that could cost rankings gets fixed early.
+
+**Monitor.** Watch indexing, crawl activity, and 404 errors in Search Console. Keep the redirects for at least a year, and expect rankings to move around for a while. Our [website launch checklist](/blog/website-launch-checklist) covers launch week, and our [redesign SEO checklist](/blog/website-redesign-seo-checklist) covers monitoring to day 90.
+
+Figure: Surfe's live site after launch: 97 for performance and 100 for SEO in PageSpeed Insights, and no internal URLs with errors in the October 5, 2026 site audit.
+![PageSpeed Insights report with scores of 97 for performance, 92 for accessibility, and 100 for best practices and SEO, next to a site audit with a health score of 100](/images/new-pages/guides/wordpress-to-webflow-migration/launch-audit.webp 1558x600)
 
 The sequence above follows Google's guidance on [moving a site with URL changes](https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes) and [without URL changes](https://developers.google.com/search/docs/crawling-indexing/site-move-no-url-changes), and Webflow's article on [migrating from WordPress](https://help.webflow.com/hc/en-us/articles/33961193662739-Migrate-your-site-from-WordPress-to-Webflow).
+
+### Case study: Surfe's WordPress to Webflow migration
+
+- **Starting point:** a WordPress site with more than 3,000 pages and posts, plus plugins for SEO, HubSpot, and analytics.
+- **Plugins:** none on Webflow. Every job those plugins did is covered by Webflow's built-in features and integrations.
+- **Cleanup:** more than 3,000 pages reviewed: 300 kept, 50 merged, 2,400 redirected, 250 removed.
+- **Design system:** 30+ components and 100+ variables in Figma, mirrored one to one in Webflow.
+- **Redirects:** 301 redirects for the 2,400 redirected pages, all tested before launch.
+- **Timeline:** 8 weeks from the first mapping session to launch on August 20, 2026.
+- **QA:** Santiago Lopez, Senior Webflow Developer and QA specialist, with Sergio Gancedo and the Surfe team.
+- **After launch:** 50% more traffic and a 3x faster go-to-market, compared with the month before launch.
+
+Quote: "Thank you very much for all your implication, work and help over the last 2 months, it's a pleasure and the results are there!"
+Cite: Romain Ginestou, Co-founder and CTO, Surfe
 
 ## How long does a WordPress to Webflow migration take?
 
 The timeline depends mostly on five things: the number of templates, the volume of CMS content, the number of redirects to map, the integrations involved, and how many review rounds your team needs. A site of 15 pages with no blog is a smaller job than a site with hundreds of posts, a store, and three integrations.
+
+In our projects, a site of about 20 pages takes 2 to 4 weeks, a mid-size site with a blog takes 4 to 8 weeks, and a large site takes 8 to 10 weeks. Surfe's migration took 8 weeks from the first mapping session to launch: half a week for mapping, 4 weeks for design, 3 for the build and content, and half a week for launch and audits.
 
 To get a real number from any agency, send the page count, the number of posts, and the tools your site depends on, such as forms, a CRM, site search, and consent management.
 
@@ -149,6 +223,8 @@ Google expects temporary ranking fluctuation during a move, and for a medium-siz
 ## What happens to your WordPress plugins, forms, and integrations?
 
 WordPress plugins do not move to Webflow. Each plugin's job is covered by a Webflow feature, an integration, or custom code, unless that job is dropped. List every active plugin during the audit and decide which of the three applies.
+
+On WordPress, these jobs usually fall to popular plugins: Yoast SEO (10+ million active installations) or Rank Math (4+ million) for titles and meta descriptions, HubSpot's own plugin (200,000+) for forms and tracking, and Site Kit by Google (5+ million) or MonsterInsights (2+ million) for analytics. Surfe's site ran plugins for SEO, HubSpot, and analytics, and on Webflow we covered all of those jobs without a single plugin.
 
 Table: Common WordPress plugin jobs and what covers them in Webflow
 
@@ -186,6 +262,13 @@ For most B2B marketing sites, the decision comes down to who edits the site and 
 
 A migration is a recommendation, not a reflex. If none of these situations applies and the site works for your team, staying on WordPress and fixing the site you have is a legitimate answer.
 
-## How was this guide written and checked?
+## What did Surfe's migration teach us?
 
-This guide is based on Google Search Central's documentation on site moves and on Webflow's Help Center. Each fact was read on the source's own page on 6 October 2026, the sources are listed at the end, and the guide is rechecked every 30 days because Webflow changes its settings and limits. We plan and run migrations for B2B companies, so we have an interest in the topic. The guide says where staying on WordPress is the better answer. To hand the work to BenorMedia, see its [WordPress to Webflow migration service](page:webflow-migration).
+- **Most of the old site was redirected, not rebuilt.** Of the more than 3,000 pages we reviewed, 2,400 were redirected and only 300 were kept. The other 300 were merged or removed.
+- **Design took the longest: 4 of the 8 weeks.** The components and variables built in Figma become the Webflow build, so that's where the time goes.
+- **The mapping session is short but decides the rest.** Half a week settled the redirects, the templates, and the merges before any design started.
+- **Launch was quick because the map was done.** Launch and audits took half a week, with every old URL already mapped to a destination.
+
+## How do we know this?
+
+This guide comes from the 30+ WordPress to Webflow migrations we've planned and run over the last six years, most recently Surfe's. Where Google or Webflow documents a step, we link to it. Sergio Gancedo, Managing Director, wrote it. Santiago Lopez, our Senior Webflow Developer and QA specialist, ran QA on Surfe's migration with Sergio and the Surfe team. Because we run these migrations for clients, we have an interest in the topic, and the guide says where staying on WordPress is the better answer. To hand the work to us, see our [WordPress to Webflow migration service](page:webflow-migration).
