@@ -3,7 +3,9 @@
  * by RULES.md section 8: `##` / `###` headings, paragraphs, `-` and `1.`
  * lists, `**bold**`, `[text](href)` links, GFM tables with a `Table: `
  * caption line, fenced code blocks and `inline code` (blog posts: printed as
- * is, escaped). No raw HTML, images or quotes. Astro 7 does not ship a
+ * is, escaped). Screenshots: a `Figure: <caption>` line, then
+ * `![alt](/images/... <width>x<height>)`; a pull quote: a `Quote: <text>`
+ * line, then `Cite: <who>` (lead 2026-10-25). No raw HTML. Astro 7 does not ship a
  * Markdown processor this repo can import, so this small converter covers
  * exactly that subset, with no dependency.
  *
@@ -83,6 +85,10 @@ const TABLE_SEP = /^\s*\|?(\s*:?-+:?\s*\|)+\s*:?-*:?\s*$/;
 const UL = /^\s*[-*]\s+(.*)$/;
 const FENCE = /^\s*```/;
 const OL = /^\s*\d+\.\s+(.*)$/;
+const FIGURE = /^Figure:\s+(.*)$/;
+const IMAGE = /^!\[([^\]]*)\]\((\/images\/[^\s)]+)\s+(\d+)x(\d+)\)\s*$/;
+const QUOTE = /^Quote:\s+(.*)$/;
+const CITE = /^Cite:\s+(.*)$/;
 
 const cells = (row: string): string[] =>
   row
@@ -125,6 +131,8 @@ export function renderBody(body: string, opts: RenderOptions): RenderedBody {
   let caption: string | undefined;
   let rows: string[] = [];
   let code: string[] | null = null;
+  let figCaption: string | undefined;
+  let quote: string | undefined;
 
   const flushPara = (): void => {
     if (para.length === 0) return;
@@ -193,6 +201,39 @@ export function renderBody(body: string, opts: RenderOptions): RenderedBody {
       }
       continue;
     }
+    // Screenshot with a visible caption; the image opens full size in a new tab.
+    const fig = FIGURE.exec(line);
+    if (fig && para.length === 0) {
+      flushAll();
+      figCaption = fig[1];
+      continue;
+    }
+    const img = IMAGE.exec(line);
+    if (img) {
+      flushAll();
+      const [, alt = "", src = "", w = "", h = ""] = img;
+      const image = `<img${attrs({ src, alt, width: w, height: h, loading: "lazy", decoding: "async" })} />`;
+      const link = `<a${attrs({ class: "c-np-figure__link", href: src, target: "_blank", rel: "noopener", "aria-label": `Open full size: ${alt}` })}>${image}</a>`;
+      const cap = figCaption ? `<figcaption${attrs({ class: "c-paragraph_s", "data-np-src": "figcaption" })}>${inline(figCaption, opts)}</figcaption>` : "";
+      push(`<figure class="c-np-figure">${link}${cap}</figure>`, true);
+      figCaption = undefined;
+      continue;
+    }
+    const q = QUOTE.exec(line);
+    if (q && para.length === 0) {
+      flushAll();
+      quote = q[1];
+      continue;
+    }
+    const cite = CITE.exec(line);
+    if (cite && quote !== undefined) {
+      push(
+        `<figure class="c-np-quote"><blockquote${attrs({ class: "c-paragraph_m", "data-np-src": "quote" })}>${inline(quote, opts)}</blockquote><figcaption${attrs({ class: "c-paragraph_s", "data-np-src": "cite" })}>${inline(cite[1] ?? "", opts)}</figcaption></figure>`,
+        true,
+      );
+      quote = undefined;
+      continue;
+    }
     const cap = CAPTION.exec(line);
     if (cap && para.length === 0) {
       flushList();
@@ -227,6 +268,8 @@ export function renderBody(body: string, opts: RenderOptions): RenderedBody {
     para.push(line.trim());
   }
   if (code) throw new Error("[new-pages] a fenced code block is never closed");
+  if (quote !== undefined) throw new Error("[new-pages] a Quote: line has no Cite: line");
+  if (figCaption !== undefined) throw new Error("[new-pages] a Figure: line has no image line");
   flushAll();
   return { lead, sections };
 }

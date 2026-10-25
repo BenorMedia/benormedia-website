@@ -62,17 +62,26 @@ const shots = await clientShots();
         <div class="c-np-article__main">
           <NpKeyTakeaways items={page.takeaways} />
           <div class="c-np-prose is-blog" style={`--np-check: ${CHECK_MASK};`}>
-            {page.sections.map((section) => (
-              <>
-                <h2 id={section.id} data-np-src="h2" set:html={section.titleHtml} />
-                <Fragment set:html={section.html} />
-                {resolveVisual(section.visual, page.includeDrafts) && (
-                  <figure class="c-np-article__figure">
-                    <NpVisual visual={section.visual} includeDrafts={page.includeDrafts} layout="full" />
-                  </figure>
-                )}
-              </>
-            ))}
+            {page.sections.map((section) => {
+              const visual = resolveVisual(section.visual, page.includeDrafts) ? section.visual : undefined;
+              // `place: top` puts the visual under the section's first paragraph (lead 2026-10-25).
+              const cut = visual?.place === "top" ? section.html.indexOf("</p>") + 4 : -1;
+              const [before, after] = cut > 3 ? [section.html.slice(0, cut), section.html.slice(cut)] : [section.html, ""];
+              const figure = visual && (
+                <figure class="c-np-article__figure">
+                  <NpVisual visual={visual} includeDrafts={page.includeDrafts} layout="full" />
+                </figure>
+              );
+              return (
+                <>
+                  <h2 id={section.id} data-np-src="h2" set:html={section.titleHtml} />
+                  <Fragment set:html={before} />
+                  {cut > 3 && figure}
+                  <Fragment set:html={after} />
+                  {cut <= 3 && figure}
+                </>
+              );
+            })}
           </div>
           <NpSources items={page.sources} />
         </div>

@@ -56,7 +56,7 @@ interface FrontMatter {
   takeaways?: string[];
   related?: string[];
   sources?: { label?: string; url?: string; accessed?: string }[];
-  visuals?: { after?: string; side?: string; type?: string; brief?: string; alt?: string }[];
+  visuals?: { after?: string; side?: string; place?: string; type?: string; brief?: string; alt?: string }[];
   process?: { section?: string; imagesFrom?: string };
 }
 
@@ -75,6 +75,8 @@ export interface Visual {
   n: number;
   type: string;
   side: "left" | "right";
+  /** Articles: under the section's first paragraph ("top") or after the section (default). */
+  place: "top" | "end";
   brief: string;
   alt: string;
 }
@@ -454,6 +456,7 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
       n,
       type: String(v.type ?? "diagram"),
       side: v.side === "left" ? "left" : "right",
+      place: v.place === "top" ? "top" : "end",
       brief: String(v.brief ?? ""),
       alt: String(v.alt ?? ""),
     };

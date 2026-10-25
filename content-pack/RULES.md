@@ -187,6 +187,9 @@ Required on every page (a `section` is exempt from `title`, `description`, `h1`,
 
 - Markdown. The text before the first H2 is the lead. No `# ` heading in the body. Use `##` and `###` only.
 - A table is preceded by a line that starts with `Table: ` and holds its caption. The template turns that line into the table caption.
+- A screenshot is a line `Figure: <caption>` followed by `![<alt text>](/images/<path> <width>x<height>)`; the file goes in `public/images/`. The caption is visible copy, the alt text is not. The image opens full size in a new tab (lead 2026-10-25).
+- A pull quote is a line `Quote: <the words, in quotation marks>` followed by `Cite: <name, role, company>`. Use it only for words the person has approved (lead 2026-10-25).
+- A `visuals` entry can take `place: top` to sit under the section's first paragraph instead of after the section (articles).
 - Do not put the FAQ, the byline, the key takeaways, the sources list or the closing call to action in the body. They come from the front matter and the template.
 - No raw HTML, no images (use `visuals`), no emoji, no horizontal rules.
 - Links, in this order of preference:

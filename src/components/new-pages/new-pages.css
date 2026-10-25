@@ -322,6 +322,45 @@
   .c-np-prose.is-blog .c-np-table th,
   .c-np-prose.is-blog .c-np-table td { padding: 1.556rem 1.778rem; }
 }
+/* Screenshots and pull quotes in the article body (markdown.ts, lead
+   2026-10-25). Screenshots bring their own frame and open full size in a
+   new tab; captions are Paragraph S. */
+.c-np-prose.is-blog > .c-np-figure,
+.c-np-prose.is-blog > .c-np-quote {
+  margin-top: 1.44rem;
+}
+.c-np-figure {
+  & .c-np-figure__link {
+    display: block;
+    border-radius: 20px; /* the screenshots carry their own frame */
+  }
+  & .c-np-figure__link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  & img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  & figcaption {
+    margin-top: 0.714rem;
+    color: var(--color-text);
+  }
+}
+.c-np-quote {
+  padding-left: 1.429rem;
+  border-left: 3px solid var(--color-accent);
+
+  & blockquote {
+    margin: 0;
+    color: var(--color-black-secondary);
+  }
+  & figcaption {
+    margin-top: 0.571rem;
+    color: var(--color-text);
+  }
+}
 /* Fenced code blocks (blog posts). No code style in the design system:
    existing tokens, the table border and the card radius. Long lines scroll
    inside the block, never the page. */

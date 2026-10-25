@@ -126,6 +126,11 @@ function bodyBlocks(body) {
     let m;
     if ((m = /^(#{2,3})\s+(.*)$/.exec(line))) { flush(); blocks.push({ src: m[1].length === 2 ? 'h2' : 'h3', text: norm(stripMd(m[2])) }); continue; }
     if (/^Table:\s+/.test(line) && !para.length) { blocks.push({ src: 'caption', text: norm(stripMd(line)) }); continue; }
+    // Screenshots and pull quotes (markdown.ts, lead 2026-10-25): the image line prints no text.
+    if ((m = /^Figure:\s+(.*)$/.exec(line)) && !para.length) { blocks.push({ src: 'figcaption', text: norm(stripMd(m[1])) }); continue; }
+    if (/^!\[[^\]]*\]\(\/images\/[^\s)]+\s+\d+x\d+\)\s*$/.test(line)) { flush(); continue; }
+    if ((m = /^Quote:\s+(.*)$/.exec(line)) && !para.length) { blocks.push({ src: 'quote', text: norm(stripMd(m[1])) }); continue; }
+    if ((m = /^Cite:\s+(.*)$/.exec(line)) && !para.length) { blocks.push({ src: 'cite', text: norm(stripMd(m[1])) }); continue; }
     if (/^\s*\|/.test(line)) {
       flush();
       if (/^\s*\|?(\s*:?-+:?\s*\|)+\s*:?-*:?\s*$/.test(line)) continue;
@@ -229,7 +234,7 @@ for (const { f, family, draft } of built) {
   // Units inside <main>.
   const srcEls = all(main, (n) => n.attrs['data-np-src'] !== undefined && !inside(n, (p) => p.attrs['data-np-src'] !== undefined));
   const units = srcEls.map((n) => ({ src: n.attrs['data-np-src'], text: norm(textOf(n)) }));
-  const BODY_SRC = new Set(['lead', 'p', 'li', 'h2', 'h3', 'caption', 'th', 'td']);
+  const BODY_SRC = new Set(['lead', 'p', 'li', 'h2', 'h3', 'caption', 'th', 'td', 'figcaption', 'quote', 'cite']);
   const bodyUnits = units.filter((u) => BODY_SRC.has(u.src)).map((u) => ({ src: u.src === 'th' || u.src === 'td' ? 'cell' : u.src, text: u.text }));
 
   const faq = (d.faq ?? []).filter((x) => x && x.q);
