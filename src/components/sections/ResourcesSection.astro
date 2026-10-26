@@ -1,0 +1,23 @@
+---
+/**
+ * ResourcesSection — "Resources" on Home, the service pages and the solution
+ * pages (lead 2026-10-26): the /blog and /guides cards (static thumbnails),
+ * three newest guides and posts, relevant categories first
+ * (`src/lib/new-pages/resources.ts`).
+ */
+import NpBlogResources from "../new-pages/NpBlogResources.astro";
+import copy from "../../lib/new-pages/copy.json";
+import { latestResources } from "../../lib/new-pages/resources";
+import { clientShots } from "../../lib/new-pages/shots";
+
+interface Props {
+  /** The page's slug, for its relevant categories; none = newest overall (Home). */
+  page?: string;
+}
+
+const { page } = Astro.props;
+const [shots] = await Promise.all([clientShots()]);
+const cards = latestResources(page);
+---
+
+<NpBlogResources cards={cards} shots={shots} eyebrow={copy.resources.eyebrow} heading={copy.resources.sectionHeading} still />

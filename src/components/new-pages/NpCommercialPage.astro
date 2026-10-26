@@ -29,6 +29,7 @@ import JsonLd from "../layout/JsonLd.astro";
 import Container from "../ui/Container.astro";
 import HomeHero from "../sections/HomeHero.astro";
 import OurWork from "../sections/OurWork.astro";
+import ResourcesSection from "../sections/ResourcesSection.astro";
 import Services from "../sections/Services.astro";
 import ServiceProcess from "../sections/ServiceProcess.astro";
 import NpDraftBanner from "./NpDraftBanner.astro";
@@ -138,6 +139,9 @@ const plain = (html: string): string => html.replace(/<[^>]*>/g, "").replace(/&a
   </div>
   <NpCtaBand headingHtml={withPeriod(page.closingHeadingHtml)} textHtml={page.closingTextHtml} src="closing" second={second} />
   <NpFaq id={page.faqId} headingHtml={withPeriod(page.faqHeadingHtml)} items={page.faq} />
+  <div data-np-live="resources" class="c-np-live">
+    <ResourcesSection page={page.slug} />
+  </div>
   {page.related.length > 0 && (
     <div class="c-np-related-wrap">
       <Container>

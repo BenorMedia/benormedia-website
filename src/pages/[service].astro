@@ -47,6 +47,7 @@ import ServiceProcess from "../components/sections/ServiceProcess.astro";
 import OurWork from "../components/sections/OurWork.astro";
 import Testimonials from "../components/sections/Testimonials.astro";
 import FaqSection from "../components/sections/FaqSection.astro";
+import ResourcesSection from "../components/sections/ResourcesSection.astro";
 
 export async function getStaticPaths() {
   const slugs = await getServiceSlugs();
@@ -180,6 +181,7 @@ const layoutOptional = metaDescription ? { description: metaDescription } : {};
   )}
   <Testimonials testimonials={testimonials} />
   <FaqSection title="Frequently asked questions." groups={faqGroups} />
+  <ResourcesSection page={service.slug} />
 </BaseLayout>
 
 <style>

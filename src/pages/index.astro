@@ -29,16 +29,31 @@ import Services from "../components/sections/Services.astro";
 import OurWork from "../components/sections/OurWork.astro";
 import Technologies from "../components/sections/Technologies.astro";
 import Testimonials from "../components/sections/Testimonials.astro";
+import ResourcesSection from "../components/sections/ResourcesSection.astro";
 
 const home = await getHome();
-const [heroClients, logoClients, featuredClients, workClients, workListClients, testimonials] = await Promise.all([
+const [heroClients, logoClients, featuredSource, workClients, workListClients, testimonials] = await Promise.all([
   getAllClientsWithIcon(),
   getAllClientsWithLogo(),
-  getClientsByIds(["client-surfe", "client-puzzle"]),
+  // Puzzle first, then Surfe (lead 2026-10-26).
+  getClientsByIds(["client-puzzle", "client-surfe"]),
   getClientsByIds(OUR_WORK_GRID_IDS),
   getClientsByIds(OUR_WORK_LIST_IDS),
   getTestimonials(),
 ]);
+
+// "Our impact in action": the first KPI on each card shows the client's
+// funding (lead 2026-10-26), in place of the Sanity value, which also feeds
+// other pages. The second KPI stays as in Sanity.
+const FEATURED_FIRST_KPI: Record<string, { value: string; description: string }> = {
+  "client-surfe": { value: "$14M", description: "Raised\nin funding" },
+  "client-puzzle": { value: "$66.5M", description: "Raised\nin funding" },
+};
+const featuredClients = featuredSource.map((c) => {
+  const kpi = FEATURED_FIRST_KPI[c._id];
+  if (!kpi || !c.testimonial) return c;
+  return { ...c, testimonial: { ...c.testimonial, kpis: [kpi, ...(c.testimonial.kpis ?? []).slice(1)] } };
+});
 
 // Organization + WebSite JSON-LD, Home only (SEO quick changes, lead
 // 2026-10-06). Facts from `lib/content/entity.ts`; description = the Home
@@ -83,4 +98,5 @@ const homeLd = {
   <OurWork clients={workClients} listClients={workListClients} />
   <Technologies />
   <Testimonials testimonials={testimonials} />
+  <ResourcesSection />
 </BaseLayout>
