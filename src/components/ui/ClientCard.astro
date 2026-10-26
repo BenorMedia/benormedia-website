@@ -66,6 +66,9 @@ const kpis: Kpi[] = (testimonial?.kpis ?? []).slice(0, 2);
 // KPI descriptions always on two lines (lead 2026-10-05): split at the word
 // break closest to the middle (by characters). One word stays one line.
 function kpiLines(text: string | undefined): [string, string] | [string] {
+  // An explicit "\n" sets the break (Home's funding KPIs, lead 2026-10-26).
+  const forced = (text ?? "").split("\n");
+  if (forced.length === 2) return [forced[0]!.trim(), forced[1]!.trim()];
   const words = (text ?? "").trim().split(/\s+/).filter(Boolean);
   if (words.length < 2) return [words.join(" ")];
   const total = words.join(" ").length;
