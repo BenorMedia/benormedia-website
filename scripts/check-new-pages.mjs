@@ -322,7 +322,7 @@ for (const { f, family, draft } of built) {
     ...sourceBody.filter((b) => b.src === 'h2').map((b) => b.text),
     head(norm(d.faqHeading)),
     ...(family === 'commercial' ? [head(norm(d.closing?.heading))] : []),
-    ...(family === 'article' ? [norm(copy.sourcesHeading)] : []),
+    ...(family === 'article' && d.hideSources !== true ? [norm(copy.sourcesHeading)] : []),
     // Articles (blog article template): the Resources heading when related cards render.
     ...(family === 'article' && h2s.includes(norm(copy.resources.heading)) ? [norm(copy.resources.heading)] : []),
   ];

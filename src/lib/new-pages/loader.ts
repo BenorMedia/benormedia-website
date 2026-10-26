@@ -56,6 +56,8 @@ interface FrontMatter {
   takeaways?: string[];
   related?: string[];
   sources?: { label?: string; url?: string; accessed?: string }[];
+  /** Articles: keep `sources` in the file but print no Sources section (lead 2026-10-26). */
+  hideSources?: boolean;
   visuals?: { after?: string; side?: string; place?: string; type?: string; brief?: string; alt?: string }[];
   process?: { section?: string; imagesFrom?: string };
 }
@@ -524,7 +526,7 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
     updatedAt: String(d.updatedAt ?? ""),
     reviewEvery: String(d.reviewEvery ?? ""),
     takeaways: (d.takeaways ?? []).map((t) => text(t)),
-    sources: (d.sources ?? []).map((s) => ({
+    sources: (d.hideSources === true ? [] : (d.sources ?? [])).map((s) => ({
       labelHtml: text(s.label),
       url: String(s.url ?? ""),
       accessed: String(s.accessed ?? ""),

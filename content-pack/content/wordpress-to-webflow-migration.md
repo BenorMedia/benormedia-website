@@ -56,6 +56,8 @@ inbound:
   - from: /custom-websites-migrations
     anchor: WordPress to Webflow migration
     where: in the content migration step (process step 04), one sentence with one link
+# The Sources section is hidden on the page (lead 2026-10-26); the list stays for the facts checks.
+hideSources: true
 sources:
   - label: "Google Search Central: Site moves with URL changes"
     url: https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes
@@ -119,6 +121,7 @@ editorNotes:
   - "The section on whether a move is the right call states a position. Confirm or edit it."
   - "All partner wording uses Webflow Professional Partner. See G2 in the facts sheet before release."
   - "Experience edits applied 2026-10-25 from the lead's brief (Surfe case study, four phases, 30+ migrations, plugin install counts as shown on WordPress.org on 2026-10-24). Surfe and Romain Ginestou approved the case study, the quote, and the images. The quote uses the trimmed version of Romain's message."
+  - "2026-10-26 (lead): the case study is its own H2, 'A real-life example: Surfe.com', before the lessons; Romain's quote is removed, and the Sources section is hidden (hideSources: true; the list stays for the facts checks)."
 visuals:
   - after: How do you migrate from WordPress to Webflow without losing SEO?
     place: top
@@ -180,20 +183,6 @@ Figure: Surfe's live site after launch: 97 for performance and 100 for SEO in Pa
 ![PageSpeed Insights report with scores of 97 for performance, 92 for accessibility, and 100 for best practices and SEO, next to a site audit with a health score of 100](/images/new-pages/guides/wordpress-to-webflow-migration/launch-audit.webp 1558x600)
 
 The sequence above follows Google's guidance on [moving a site with URL changes](https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes) and [without URL changes](https://developers.google.com/search/docs/crawling-indexing/site-move-no-url-changes), and Webflow's article on [migrating from WordPress](https://help.webflow.com/hc/en-us/articles/33961193662739-Migrate-your-site-from-WordPress-to-Webflow).
-
-### Case study: Surfe's WordPress to Webflow migration
-
-- **Starting point:** a WordPress site with more than 3,000 pages and posts, plus plugins for SEO, HubSpot, and analytics.
-- **Plugins:** none on Webflow. Every job those plugins did is covered by Webflow's built-in features and integrations.
-- **Cleanup:** more than 3,000 pages reviewed: 300 kept, 50 merged, 2,400 redirected, 250 removed.
-- **Design system:** 30+ components and 100+ variables in Figma, mirrored one to one in Webflow.
-- **Redirects:** 301 redirects for the 2,400 redirected pages, all tested before launch.
-- **Timeline:** 8 weeks from the first mapping session to launch on August 20, 2026.
-- **QA:** Santiago Lopez, Senior Webflow Developer and QA specialist, with Sergio Gancedo and the Surfe team.
-- **After launch:** 50% more traffic and a 3x faster go-to-market, compared with the month before launch.
-
-Quote: "Thank you very much for all your implication, work and help over the last 2 months, it's a pleasure and the results are there!"
-Cite: Romain Ginestou, Co-founder and CTO, Surfe
 
 ## How long does a WordPress to Webflow migration take?
 
@@ -261,6 +250,17 @@ For most B2B marketing sites, the decision comes down to who edits the site and 
 - **Multi-language sites with complex rules.** Check how language structure, URLs, and hreflang tags will carry over. Google advises updating hreflang annotations when a move changes URLs.
 
 A migration is a recommendation, not a reflex. If none of these situations applies and the site works for your team, staying on WordPress and fixing the site you have is a legitimate answer.
+
+## A real-life example: Surfe.com
+
+- **Starting point:** a WordPress site with more than 3,000 pages and posts, plus plugins for SEO, HubSpot, and analytics.
+- **Plugins:** none on Webflow. Every job those plugins did is covered by Webflow's built-in features and integrations.
+- **Cleanup:** more than 3,000 pages reviewed: 300 kept, 50 merged, 2,400 redirected, 250 removed.
+- **Design system:** 30+ components and 100+ variables in Figma, mirrored one to one in Webflow.
+- **Redirects:** 301 redirects for the 2,400 redirected pages, all tested before launch.
+- **Timeline:** 8 weeks from the first mapping session to launch on August 20, 2026.
+- **QA:** Santiago Lopez, Senior Webflow Developer and QA specialist, with Sergio Gancedo and the Surfe team.
+- **After launch:** 50% more traffic and a 3x faster go-to-market, compared with the month before launch.
 
 ## What did Surfe's migration teach us?
 
