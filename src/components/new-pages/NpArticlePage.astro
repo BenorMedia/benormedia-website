@@ -6,8 +6,9 @@
  *   header (breadcrumbs, tag, updated date, read time, H1, lead, screenshot
  *   collage, the author card below it) → two columns (sticky table of
  *   contents with Get in Touch and Share; the article: key takeaways, body
- *   with tables and figures, sources) → FAQ → the global CTA banner (lead
- *   2026-10-07: right below the FAQ) → Related resources. The author card
+ *   with tables and figures, the FAQ (lead 2026-10-26: in the body, H2 and
+ *   text at the body sizes), sources) → the global CTA banner (lead
+ *   2026-10-07) → Related resources. The author card
  *   moved from a third column into the header and the article took its
  *   width (Figma 3718:7504, lead 2026-10-12).
  * Draft banner and gaps panel in previews.
@@ -21,7 +22,7 @@ import NpBlogSidebar from "./NpBlogSidebar.astro";
 import NpBlogResources from "./NpBlogResources.astro";
 import NpKeyTakeaways from "./NpKeyTakeaways.astro";
 import NpVisual from "./NpVisual.astro";
-import NpFaq from "./NpFaq.astro";
+import FaqAccordion from "../ui/FaqAccordion.astro";
 import NpSources from "./NpSources.astro";
 import NpGapsPanel from "./NpGapsPanel.astro";
 import CtaBanner from "../layout/CtaBanner.astro";
@@ -44,6 +45,13 @@ const toc = [
   ...page.sections.map((s) => ({ id: s.id, html: s.titleHtml })),
   ...(page.faq.length > 0 ? [{ id: page.faqId, html: page.faqHeadingHtml }] : []),
 ];
+
+const faqItems = page.faq.map((item) => ({
+  question: item.q,
+  answer: item.a,
+  questionHtml: item.qHtml,
+  answerHtml: item.aHtml,
+}));
 
 // Client site screenshots (Our Work) for the header collage and the cards.
 const shots = await clientShots();
@@ -82,14 +90,20 @@ const shots = await clientShots();
                 </>
               );
             })}
+            {/* The FAQ sits in the body, after the last section (lead 2026-10-26). */}
+            {faqItems.length > 0 && (
+              <>
+                <h2 id={page.faqId} data-np-src="faqHeading" set:html={page.faqHeadingHtml} />
+                <FaqAccordion items={faqItems} name={`${page.faqId}-items`} npSrc class="c-np-article__faq" />
+              </>
+            )}
           </div>
           <NpSources items={page.sources} />
         </div>
       </div>
     </Container>
   </article>
-  <NpFaq id={page.faqId} headingHtml={page.faqHeadingHtml} items={page.faq} />
-  {/* The global CTA banner, right below the FAQ (lead 2026-10-07). */}
+  {/* The global CTA banner, right below the article (lead 2026-10-07). */}
   <div data-np-live="cta-banner" class="c-np-live-banner">
     <CtaBanner siteSettings={siteSettings} />
   </div>
@@ -126,6 +140,14 @@ const shots = await clientShots();
   }
   .c-np-article__figure {
     margin: 2.143rem 0 0;
+  }
+  /* FAQ in the body (lead 2026-10-26): the column's full width, questions
+     and answers at the body text size (`c-paragraph_ms`). */
+  .c-np-article__main :global(.c-np-article__faq) {
+    max-width: none;
+  }
+  .c-np-article__main :global(.c-np-article__faq .c-paragraph_m) {
+    font-size: calc(var(--fs-p-m) * 0.85);
   }
   @media (max-width: 1199px) {
     .c-np-article__grid {
