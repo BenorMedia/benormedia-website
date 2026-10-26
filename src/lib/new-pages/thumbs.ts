@@ -694,6 +694,7 @@ export const THUMBS: Record<string, ThumbEntry> = {
   "webflow-redirects": t(ThImage, { src: `${IMG}/webflow-redirects.webp`, w: 1084, h: 720 }),
   "trust-center": t(ThImage, { src: `${IMG}/trust-center.webp`, w: 1084, h: 720 }),
   "google-tag-gateway": t(ThImage, { src: `${IMG}/google-tag-gateway.webp`, w: 1084, h: 720 }),
+  "astro-cms": t(ThImage, { src: `${IMG}/astro-cms.webp`, w: 1084, h: 720 }),
   // Blog wave 4, batch 2 (lead 2026-10-26).
   // The page types for programmatic SEO.
   "programmatic-seo-webflow": t(ThIconWall, {
@@ -713,10 +714,6 @@ export const THUMBS: Record<string, ThumbEntry> = {
   "security-questionnaire": t(ThIconWall, {
     icon: "shieldLock",
     labels: ["SIG", "CAIQ", "HECVAT", "SOC 2 report", "Answer library"],
-  }),
-  // Hosted headless CMSs with Astro guides that the post names.
-  "astro-cms": t(ThLogos, {
-    groups: [{ tag: "Hosted headless", logos: ["sanity", "contentful", "storyblok"] }],
   }),
   // What marketers edit alone, and what still needs a developer.
   "headless-cms-visual-editor": t(ThIconWall, {
