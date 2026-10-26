@@ -695,6 +695,7 @@ export const THUMBS: Record<string, ThumbEntry> = {
   "trust-center": t(ThImage, { src: `${IMG}/trust-center.webp`, w: 1084, h: 720 }),
   "google-tag-gateway": t(ThImage, { src: `${IMG}/google-tag-gateway.webp`, w: 1084, h: 720 }),
   "astro-cms": t(ThImage, { src: `${IMG}/astro-cms.webp`, w: 1084, h: 720 }),
+  "copilot-seo": t(ThImage, { src: `${IMG}/copilot-seo.webp`, w: 1084, h: 720 }),
   // Blog wave 4, batch 2 (lead 2026-10-26).
   // The page types for programmatic SEO.
   "programmatic-seo-webflow": t(ThIconWall, {
@@ -719,11 +720,6 @@ export const THUMBS: Record<string, ThumbEntry> = {
   "headless-cms-visual-editor": t(ThIconWall, {
     icon: "designGrid",
     labels: ["Headings and copy", "Images", "Section order", "New sections", "Page types"],
-  }),
-  // The AI Performance report's metrics.
-  "copilot-seo": t(ThIconWall, {
-    icon: "reporting",
-    labels: ["Total Citations", "Average Cited Pages", "Grounding queries", "Citation Share", "Topics Portfolio"],
   }),
   // Search Console, the prompt panel and the monthly report.
   "ai-mode-tracking": t(ThOrbit, {
