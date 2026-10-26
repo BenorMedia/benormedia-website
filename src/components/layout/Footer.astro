@@ -26,6 +26,7 @@
  */
 import type { SiteSettings } from "../../lib/sanity/types";
 import Eyebrow from "../ui/Eyebrow.astro";
+import { latestPosts } from "../../lib/new-pages/resources";
 
 interface Props {
   siteSettings?: SiteSettings | null | undefined;
@@ -56,11 +57,12 @@ const guidesLinks = [
   { label: "Webflow Enterprise Guide", href: "/guides/webflow-enterprise" },
   { label: "Webflow vs Custom Code", href: "/guides/webflow-vs-custom-code" },
 ];
-// Blog: released posts only (drafts are not built in production), then the index.
+// Blog: the three newest released posts, automatically (lead 2026-10-26;
+// drafts are not built in production), then the index. Label: the post's
+// title tag without the brand, cut at its colon.
+const shortTitle = (title: string): string => title.replace(/\s*\|\s*BenorMedia\s*$/, "").split(":")[0]?.trim() ?? title;
 const blogLinks = [
-  { label: "AI Traffic in GA4", href: "/blog/ai-traffic-in-ga4" },
-  { label: "What B2B Buyers Need", href: "/blog/what-b2b-buyers-need-from-your-website" },
-  { label: "Webflow Price Increase", href: "/blog/webflow-price-increase" },
+  ...latestPosts(3).map((p) => ({ label: shortTitle(p.title), href: p.url })),
   { label: "All articles", href: "/blog" },
 ];
 // `hidden`: kept in the markup, not shown. Testimonials stays out of
