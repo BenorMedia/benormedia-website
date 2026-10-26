@@ -227,6 +227,8 @@ const nameOf = (author: string): string => author.split(",")[0]?.trim() ?? autho
   .c-np-res :global(.c-section-header__title) {
     margin: 0 auto;
     text-align: center;
+    /* Even lines, no lone last word (lead 2026-10-26). */
+    text-wrap: balance;
   }
   .c-np-res__thumb.is-gradient {
     background: linear-gradient(113deg, var(--color-blue) 2.88%, var(--color-blue-light) 96.84%);
