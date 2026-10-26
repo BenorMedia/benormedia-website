@@ -694,4 +694,19 @@ export const THUMBS: Record<string, ThumbEntry> = {
   "webflow-redirects": t(ThImage, { src: `${IMG}/webflow-redirects.webp`, w: 1084, h: 720 }),
   "trust-center": t(ThImage, { src: `${IMG}/trust-center.webp`, w: 1084, h: 720 }),
   "google-tag-gateway": t(ThImage, { src: `${IMG}/google-tag-gateway.webp`, w: 1084, h: 720 }),
+  // Blog wave 4, batch 2 (lead 2026-10-26).
+  // The page types for programmatic SEO.
+  "programmatic-seo-webflow": t(ThIconWall, {
+    icon: "cms",
+    labels: ["Integration pages", "Use case pages", "Comparison pages", "Template libraries", "City pages"],
+  }),
+  // OpenAI's crawlers, the answer, and how it is measured.
+  "how-to-rank-in-chatgpt": t(ThOrbit, {
+    icons: ["ai", "research", "shieldLock", "chartSearch", "pencilDoc", "crmCard", "reporting", "analytics"],
+  }),
+  // The two features, fan-out and where they are measured.
+  "optimize-for-ai-overviews": t(ThIconWall, {
+    icon: "chartSearch",
+    labels: ["AI Overviews", "AI Mode", "Query fan-out", "Search Console", "GA4"],
+  }),
 };

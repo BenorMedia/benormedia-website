@@ -112,7 +112,10 @@
     "webflow-devlink": "Webflow",
     "webflow-redirects": "Webflow",
     "trust-center": "Web Design",
-    "google-tag-gateway": "Analytics"
+    "google-tag-gateway": "Analytics",
+    "programmatic-seo-webflow": "SEO",
+    "how-to-rank-in-chatgpt": "AI Search",
+    "optimize-for-ai-overviews": "AI Search"
   },
   "resources": {
     "eyebrow": "Resources",

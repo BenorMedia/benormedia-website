@@ -64,6 +64,9 @@
 - [Webflow Redirects: CSV, Wildcards, and Limits](https://www.benormedia.com/blog/webflow-redirects): How Webflow redirects work at scale: what a CSV import overwrites, wildcard and capture group syntax, the rule limit, redirect chains, and a test routine.
 - [Trust Center vs Trust Page: What to Publish](https://www.benormedia.com/blog/trust-center): What a trust center is, how it differs from a trust page, and which security documents a B2B SaaS company should publish, gate, or leave out.
 - [Google Tag Gateway on Webflow: Setup and Checks](https://www.benormedia.com/blog/google-tag-gateway): What Google tag gateway does, how to turn it on for a Webflow site, how to check it works, and where consent mode and server-side tagging still matter.
+- [Programmatic SEO on Webflow Without Thin Pages](https://www.benormedia.com/blog/programmatic-seo-webflow): How to do programmatic SEO on Webflow: CMS item and API limits, the data model, CSV or API imports, and how to stay clear of Google's spam policies.
+- [How to Rank in ChatGPT: A Guide for B2B SaaS](https://www.benormedia.com/blog/how-to-rank-in-chatgpt): How to rank in ChatGPT: what OpenAI's crawlers need, which pages and brand mentions ChatGPT cites, and how a B2B SaaS team can measure progress.
+- [How to Optimize for AI Overviews and AI Mode](https://www.benormedia.com/blog/optimize-for-ai-overviews): How to optimize for AI Overviews and AI Mode: what Google requires, the new Search Console AI control and report, and what B2B SaaS pages need.
 
 ## Company
 
