@@ -109,7 +109,10 @@
     "webflow-editor": "Webflow",
     "headless-cms-comparison": "Web Design",
     "webflow-mcp": "Webflow",
-    "webflow-devlink": "Webflow"
+    "webflow-devlink": "Webflow",
+    "webflow-redirects": "Webflow",
+    "trust-center": "Web Design",
+    "google-tag-gateway": "Analytics"
   },
   "resources": {
     "eyebrow": "Resources",

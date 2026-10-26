@@ -15,6 +15,9 @@ import ThLogos from "../../components/new-pages/thumbs/ThLogos.astro";
 import ThOrbit from "../../components/new-pages/thumbs/ThOrbit.astro";
 import ThIconWall from "../../components/new-pages/thumbs/ThIconWall.astro";
 import ThObject from "../../components/new-pages/thumbs/ThObject.astro";
+import ThImage from "../../components/new-pages/thumbs/ThImage.astro";
+
+const IMG = "/images/new-pages/thumbs/images";
 
 export interface ThumbEntry {
   // Astro components take any props object.
@@ -687,4 +690,8 @@ export const THUMBS: Record<string, ThumbEntry> = {
   "headless-cms-seo": t(ThObject, { object: "deviceStack" }),
   // Launch week.
   "website-launch-checklist": t(ThObject, { object: "rocket" }),
+  // Images from the lead (2026-10-26).
+  "webflow-redirects": t(ThImage, { src: `${IMG}/webflow-redirects.webp`, w: 1084, h: 720 }),
+  "trust-center": t(ThImage, { src: `${IMG}/trust-center.webp`, w: 1084, h: 720 }),
+  "google-tag-gateway": t(ThImage, { src: `${IMG}/google-tag-gateway.webp`, w: 1084, h: 720 }),
 };

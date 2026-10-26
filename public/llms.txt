@@ -61,6 +61,9 @@
 - [Headless CMS Comparison for Marketing Sites](https://www.benormedia.com/blog/headless-cms-comparison): A headless CMS comparison for B2B SaaS marketing sites: visual editing, preview, scheduling, localization, roles, hosting, and pricing drivers in six CMSs.
 - [Webflow MCP: What to Allow on a Marketing Site](https://www.benormedia.com/blog/webflow-mcp): The Webflow MCP server lets AI tools edit, publish, and delete on your site. What each action does, what to allow or block, and a review policy that works.
 - [Webflow DevLink, Code Components, and Cloud](https://www.benormedia.com/blog/webflow-devlink): Webflow DevLink in 2026: React code components, DevLink Export, and Webflow Cloud. What each does, plan limits, SEO effects, and when hybrid beats a rebuild.
+- [Webflow Redirects: CSV, Wildcards, and Limits](https://www.benormedia.com/blog/webflow-redirects): How Webflow redirects work at scale: what a CSV import overwrites, wildcard and capture group syntax, the rule limit, redirect chains, and a test routine.
+- [Trust Center vs Trust Page: What to Publish](https://www.benormedia.com/blog/trust-center): What a trust center is, how it differs from a trust page, and which security documents a B2B SaaS company should publish, gate, or leave out.
+- [Google Tag Gateway on Webflow: Setup and Checks](https://www.benormedia.com/blog/google-tag-gateway): What Google tag gateway does, how to turn it on for a Webflow site, how to check it works, and where consent mode and server-side tagging still matter.
 
 ## Company
 
