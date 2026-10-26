@@ -718,4 +718,20 @@ export const THUMBS: Record<string, ThumbEntry> = {
   "astro-cms": t(ThLogos, {
     groups: [{ tag: "Hosted headless", logos: ["sanity", "contentful", "storyblok"] }],
   }),
+  // What marketers edit alone, and what still needs a developer.
+  "headless-cms-visual-editor": t(ThIconWall, {
+    icon: "designGrid",
+    labels: ["Headings and copy", "Images", "Section order", "New sections", "Page types"],
+  }),
+  // The AI Performance report's metrics.
+  "copilot-seo": t(ThIconWall, {
+    icon: "reporting",
+    labels: ["Total Citations", "Average Cited Pages", "Grounding queries", "Citation Share", "Topics Portfolio"],
+  }),
+  // Search Console, the prompt panel and the monthly report.
+  "ai-mode-tracking": t(ThOrbit, {
+    icons: ["chartSearch", "ai", "reporting", "analytics", "funnelTarget", "seoChart", "research", "calendar"],
+  }),
+  // A privacy signal the site honors.
+  "gpc-signal": t(ThObject, { object: "padlockHeart" }),
 };

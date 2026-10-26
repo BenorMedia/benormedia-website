@@ -69,6 +69,10 @@
 - [How to Optimize for AI Overviews and AI Mode](https://www.benormedia.com/blog/optimize-for-ai-overviews): How to optimize for AI Overviews and AI Mode: what Google requires, the new Search Console AI control and report, and what B2B SaaS pages need.
 - [Security Questionnaire Guide for B2B SaaS](https://www.benormedia.com/blog/security-questionnaire): What a security questionnaire is, the standard formats such as SIG and CAIQ, what buyers ask, and how B2B SaaS teams can answer faster and accurately.
 - [Astro CMS: How to Choose and Connect One](https://www.benormedia.com/blog/astro-cms): Astro has no built-in CMS. When content collections are enough, which CMS types fit, and how to connect one like Sanity with previews, as of Astro 7.
+- [Headless CMS Visual Editor: What Marketers Can Edit](https://www.benormedia.com/blog/headless-cms-visual-editor): What a headless CMS visual editor does, which CMSs offer one, what marketers can change without a developer, and what a developer must set up first.
+- [Copilot SEO: How to Get Cited in Microsoft Copilot](https://www.benormedia.com/blog/copilot-seo): How Microsoft Copilot picks sources, what Bing's AI Performance report and new Topics Portfolio show, and what B2B SaaS teams should change on their pages.
+- [AI Mode Tracking: How to Track Visibility in Google AI Mode](https://www.benormedia.com/blog/ai-mode-tracking): How to track visibility in Google AI Mode: what Search Console shows and hides, how AI Mode rank tracking works, and a monthly method for B2B SaaS teams.
+- [GPC Signal: How a B2B Website Should Honor It](https://www.benormedia.com/blog/gpc-signal): What the GPC signal is, which state laws make Global Privacy Control binding, whether B2B sites are exempt, and how to honor and test it on your website.
 
 ## Company
 

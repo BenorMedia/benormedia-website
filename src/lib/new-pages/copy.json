@@ -117,7 +117,11 @@
     "how-to-rank-in-chatgpt": "AI Search",
     "optimize-for-ai-overviews": "AI Search",
     "security-questionnaire": "Web Design",
-    "astro-cms": "Web Design"
+    "astro-cms": "Web Design",
+    "headless-cms-visual-editor": "Web Design",
+    "copilot-seo": "AI Search",
+    "ai-mode-tracking": "AI Search",
+    "gpc-signal": "Analytics"
   },
   "resources": {
     "eyebrow": "Resources",
