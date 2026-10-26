@@ -108,7 +108,7 @@ inbound:
     sentence: "In the services list, link to the post as the practical guide."
 editorNotes:
   - "Topic 5.6 absorbs 2.6 (Webflow CMS limits): the limits table carries the dated reference the 2.6 row asked for. 2.6 can be dropped from the backlog."
-  - "The 5.6 row said to write it only if we have built one. The post works as a sourced guide; #P56-1 asks for our first-hand detail. Please confirm before publishing; default deletes the marker."
+  - "Sergio confirmed on 2026-10-26 that we have built many programmatic page sets on Webflow and gave Poplin, Base Operations, and Orchestra as examples. All three are listed on /work, so the post names them; page types and URL patterns were checked on the live sites on 2026-10-26. #P56-1 now asks only for the data source, import method, and one result; default deletes the marker."
   - "#P56-3 asks for one line of first-hand experience on page sets that failed on data; default deletes the marker."
   - "#P56-2: Webflow's rate-limit page does not list the Premium plan yet. Default deletes the marker and keeps the sentence that says so."
   - "The DelightChat example comes from Webflow's own blog, last updated January 19, 2021, before Google's current spam policies; it is cited for the data model only, not for results."
@@ -273,6 +273,14 @@ A quality control routine for each batch:
 5. Prune on a schedule: improve, noindex, or remove pages with no impressions, and redirect removed URLs to the closest hub.
 
 Watch for duplicate content between siblings. If two pages share most of their text, merge them and redirect one to the other. Thin content rarely fails one page at a time; it fails as a pattern, so fix the template or the data, not single pages. Content quality in programmatic SEO comes from the data, not the design.
+
+We have built several programmatic page sets on Webflow, each with hundreds of pages or more:
+
+- **City pages for a local service.** Poplin's [laundry service hub](https://poplin.co/laundry-service) groups city pages by state, at URLs such as /laundry-service/boston-massachusetts, with an index page for each state.
+- **A location-based threat glossary.** Base Operations' [glossary](https://www.baseoperations.com/glossary) lists threat pages such as /threats/theft-anaheim-california, sorted by city or by threat type.
+- **A guides library.** Orchestra's [guides](https://www.getorchestra.io/guides) section holds thousands of pages on data tools and concepts, such as /guides/airflow-dag, with category filters and pagination.
+
+All three follow the pattern in this guide: one Collection template, one URL pattern, and hub pages that link the items.
 
 ## How do you handle internal linking, indexing, and measurement?
 

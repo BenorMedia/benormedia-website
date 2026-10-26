@@ -67,6 +67,8 @@
 - [Programmatic SEO on Webflow Without Thin Pages](https://www.benormedia.com/blog/programmatic-seo-webflow): How to do programmatic SEO on Webflow: CMS item and API limits, the data model, CSV or API imports, and how to stay clear of Google's spam policies.
 - [How to Rank in ChatGPT: A Guide for B2B SaaS](https://www.benormedia.com/blog/how-to-rank-in-chatgpt): How to rank in ChatGPT: what OpenAI's crawlers need, which pages and brand mentions ChatGPT cites, and how a B2B SaaS team can measure progress.
 - [How to Optimize for AI Overviews and AI Mode](https://www.benormedia.com/blog/optimize-for-ai-overviews): How to optimize for AI Overviews and AI Mode: what Google requires, the new Search Console AI control and report, and what B2B SaaS pages need.
+- [Security Questionnaire Guide for B2B SaaS](https://www.benormedia.com/blog/security-questionnaire): What a security questionnaire is, the standard formats such as SIG and CAIQ, what buyers ask, and how B2B SaaS teams can answer faster and accurately.
+- [Astro CMS: How to Choose and Connect One](https://www.benormedia.com/blog/astro-cms): Astro has no built-in CMS. When content collections are enough, which CMS types fit, and how to connect one like Sanity with previews, as of Astro 7.
 
 ## Company
 

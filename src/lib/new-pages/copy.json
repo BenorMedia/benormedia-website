@@ -115,7 +115,9 @@
     "google-tag-gateway": "Analytics",
     "programmatic-seo-webflow": "SEO",
     "how-to-rank-in-chatgpt": "AI Search",
-    "optimize-for-ai-overviews": "AI Search"
+    "optimize-for-ai-overviews": "AI Search",
+    "security-questionnaire": "Web Design",
+    "astro-cms": "Web Design"
   },
   "resources": {
     "eyebrow": "Resources",

@@ -65,6 +65,8 @@ const PAGES = {
   '/blog/programmatic-seo-webflow': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'programmatic seo' },
   '/blog/how-to-rank-in-chatgpt': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'rank in chatgpt' },
   '/blog/optimize-for-ai-overviews': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'ai overviews' },
+  '/blog/security-questionnaire': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'security questionnaire' },
+  '/blog/astro-cms': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'astro' },
   '/blog/saas-technical-seo': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'saas technical seo' },
   '/blog/track-brand-mentions-in-chatgpt': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'brand mentions chatgpt' },
   '/blog/consent-mode-v2-webflow': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'consent mode v2' },

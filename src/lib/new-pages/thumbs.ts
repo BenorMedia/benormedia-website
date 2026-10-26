@@ -709,4 +709,13 @@ export const THUMBS: Record<string, ThumbEntry> = {
     icon: "chartSearch",
     labels: ["AI Overviews", "AI Mode", "Query fan-out", "Search Console", "GA4"],
   }),
+  // The standard formats, the evidence and the answer library.
+  "security-questionnaire": t(ThIconWall, {
+    icon: "shieldLock",
+    labels: ["SIG", "CAIQ", "HECVAT", "SOC 2 report", "Answer library"],
+  }),
+  // Hosted headless CMSs with Astro guides that the post names.
+  "astro-cms": t(ThLogos, {
+    groups: [{ tag: "Hosted headless", logos: ["sanity", "contentful", "storyblok"] }],
+  }),
 };
