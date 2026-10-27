@@ -727,20 +727,12 @@ export const THUMBS: Record<string, ThumbEntry> = {
   }),
   // A privacy signal the site honors.
   "gpc-signal": t(ThObject, { object: "padlockHeart" }),
-  // The phases of a section-by-section rollout.
-  "saas-website-redesign": t(ThIconWall, {
-    icon: "ux",
-    labels: ["Pilot", "Core pages", "Solutions", "Content library", "Cleanup"],
-  }),
+  "saas-website-redesign": t(ThImage, { src: `${IMG}/saas-website-redesign.webp`, w: 1084, h: 720 }),
   // Webflow Collections served to other front ends.
   "webflow-cms-api": t(ThLogos, {
     groups: [{ tag: "Headless source", logos: ["webflow"] }],
   }),
-  // One page, two readers.
-  "cybersecurity-content-marketing": t(ThIconWall, {
-    icon: "shieldLock",
-    labels: ["Research reports", "Threat research", "Technical deep dives", "Integration guides", "Case studies"],
-  }),
+  "cybersecurity-content-marketing": t(ThImage, { src: `${IMG}/cybersecurity-content-marketing.webp`, w: 1084, h: 720 }),
   // What the AEO owner runs every month.
   "aeo-specialist": t(ThOrbit, {
     icons: ["ai", "person", "chartSearch", "techSeo", "pencilDoc", "reporting", "research", "calendar"],
