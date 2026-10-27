@@ -733,8 +733,5 @@ export const THUMBS: Record<string, ThumbEntry> = {
     groups: [{ tag: "Headless source", logos: ["webflow"] }],
   }),
   "cybersecurity-content-marketing": t(ThImage, { src: `${IMG}/cybersecurity-content-marketing.webp`, w: 1084, h: 720 }),
-  // What the AEO owner runs every month.
-  "aeo-specialist": t(ThOrbit, {
-    icons: ["ai", "person", "chartSearch", "techSeo", "pencilDoc", "reporting", "research", "calendar"],
-  }),
+  "aeo-specialist": t(ThImage, { src: `${IMG}/aeo-specialist.webp`, w: 1084, h: 720 }),
 };
