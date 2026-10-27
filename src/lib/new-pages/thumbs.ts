@@ -728,10 +728,7 @@ export const THUMBS: Record<string, ThumbEntry> = {
   // A privacy signal the site honors.
   "gpc-signal": t(ThObject, { object: "padlockHeart" }),
   "saas-website-redesign": t(ThImage, { src: `${IMG}/saas-website-redesign.webp`, w: 1084, h: 720 }),
-  // Webflow Collections served to other front ends.
-  "webflow-cms-api": t(ThLogos, {
-    groups: [{ tag: "Headless source", logos: ["webflow"] }],
-  }),
+  "webflow-cms-api": t(ThImage, { src: `${IMG}/webflow-cms-api.webp`, w: 1084, h: 720 }),
   "cybersecurity-content-marketing": t(ThImage, { src: `${IMG}/cybersecurity-content-marketing.webp`, w: 1084, h: 720 }),
   "aeo-specialist": t(ThImage, { src: `${IMG}/aeo-specialist.webp`, w: 1084, h: 720 }),
 };
