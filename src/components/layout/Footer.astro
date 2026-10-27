@@ -317,10 +317,20 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
     font-size: var(--fs-p);
     text-align: left;
     text-decoration: none;
-    transition: color var(--duration-hover) var(--ease-smooth);
+    transition:
+      color var(--duration-hover) var(--ease-smooth),
+      opacity var(--duration-hover) var(--ease-smooth);
   }
   .c-footer__col-link:hover {
     color: var(--color-accent);
+  }
+  /* Hovering one footer link dims all the others to 40% (lead 2026-10-27).
+     Pointer devices only, so a tap on touch screens doesn't leave them dimmed. */
+  @media (hover: hover) {
+    .c-footer:has(:is(.c-footer__col-link, .c-footer__legal-link):hover)
+      :is(.c-footer__col-link, .c-footer__legal-link):not(:hover) {
+      opacity: 0.4;
+    }
   }
   .c-footer__col-link.is-button {
     background: none;
@@ -430,7 +440,9 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
     line-height: 1.5;
     text-align: center;
     text-decoration: none;
-    transition: color var(--duration-hover) var(--ease-smooth);
+    transition:
+      color var(--duration-hover) var(--ease-smooth),
+      opacity var(--duration-hover) var(--ease-smooth);
   }
   .c-footer__legal-link:hover {
     color: var(--color-accent);
