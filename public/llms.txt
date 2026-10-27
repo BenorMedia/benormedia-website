@@ -73,6 +73,10 @@
 - [Copilot SEO: How to Get Cited in Microsoft Copilot](https://www.benormedia.com/blog/copilot-seo): How Microsoft Copilot picks sources, what Bing's AI Performance report and new Topics Portfolio show, and what B2B SaaS teams should change on their pages.
 - [AI Mode Tracking: How to Track Visibility in Google AI Mode](https://www.benormedia.com/blog/ai-mode-tracking): How to track visibility in Google AI Mode: what Search Console shows and hides, how AI Mode rank tracking works, and a monthly method for B2B SaaS teams.
 - [GPC Signal: How a B2B Website Should Honor It](https://www.benormedia.com/blog/gpc-signal): What the GPC signal is, which state laws make Global Privacy Control binding, whether B2B sites are exempt, and how to honor and test it on your website.
+- [SaaS Website Redesign in Phases: When It Beats a Relaunch](https://www.benormedia.com/blog/saas-website-redesign): When to redesign a SaaS website section by section instead of in one launch, how to sequence phases, share one domain, and protect SEO between releases.
+- [Webflow CMS API: Using Webflow as a Headless CMS](https://www.benormedia.com/blog/webflow-cms-api): Serve Webflow CMS content to Next.js, Astro, or an app with the Data API and the cached Content Delivery API: limits, previews, webhooks, and trade-offs.
+- [Cybersecurity Content Marketing for CISOs and Engineers](https://www.benormedia.com/blog/cybersecurity-content-marketing): How to write cybersecurity content for CISOs and security engineers at once: formats, two-layer pages, proof, and how buyers find it in AI answers.
+- [AEO Specialist or In-House Team: Who Should Own AEO?](https://www.benormedia.com/blog/aeo-specialist): What an AEO specialist does, which AEO work a B2B SaaS team can keep in-house, the roles a program needs, and when a specialist or consultant pays off.
 
 ## Company
 
