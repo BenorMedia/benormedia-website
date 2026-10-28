@@ -11,9 +11,13 @@
  * - Logo: siteSettings.logo overrides the static /images/Logo.svg fallback.
  * - "Get in Touch" is a <button> (no href), fires the ContactModal via
  *   [data-open-contact] — wired globally in ContactModal.astro.
- * - Services dropdown: hover on hover-capable devices; click toggle for touch
- *   and keyboard; Esc closes and restores focus; outside click and focus
- *   leaving the dropdown close it.
+ * - Services and Resources dropdowns: hover on hover-capable devices; click
+ *   toggle for touch and keyboard; Esc closes and restores focus; outside
+ *   click and focus leaving the dropdown close it. Opening one closes the
+ *   other.
+ * - Resources (lead 2026-10-28, Figma 3995:8355): two featured blog posts and
+ *   two featured guides as cards (each article's card thumbnail, title,
+ *   Learn more; hover = the /blog cards'), then "See all resources".
  * - Mobile (≤767): hamburger opens full-height off-canvas panel (a modal
  *   dialog). While open: body scroll is locked, the rest of the page is
  *   `inert`, focus moves to the close button. Close via X, Esc, backdrop or
@@ -23,6 +27,10 @@
 import type { SiteSettings } from "../../lib/sanity/types";
 import { urlFor } from "../../lib/sanity/image";
 import Button from "../ui/Button.astro";
+import { loadPages, type NpPage } from "../../lib/new-pages/loader";
+import { THUMBS } from "../../lib/new-pages/thumbs";
+import { withPeriod } from "../../lib/new-pages/html";
+import { ARROW_RIGHT } from "../new-pages/blog-icons";
 
 interface Props {
   siteSettings?: SiteSettings | null | undefined;
@@ -35,21 +43,34 @@ const logoUrl = siteSettings?.logo?.asset
   : "/images/Logo.svg";
 const logoAlt = siteSettings?.logo?.alt ?? siteSettings?.siteName ?? "BenorMedia";
 
-// Icons: 180px WebP (5× the 35.52px display), refs in docs/refs/navbar/.
+// Icons: the 3D icons on transparent backgrounds (the thumbnails set), in a
+// white square that turns grey on hover (lead 2026-10-28).
+const TH_ICONS = "/images/new-pages/thumbs/icons";
 const services = [
-  { label: "Custom Websites & Migrations", href: "/custom-websites-migrations", icon: "/images/nav/custom-websites-migrations.webp" },
-  { label: "Growth (SEO/GEO + CRO)", href: "/growth", icon: "/images/nav/growth.webp" },
-  { label: "Ongoing Website Support", href: "/ongoing-website-support", icon: "/images/nav/ongoing-website-support.webp" },
+  { label: "Custom Websites & Migrations", href: "/custom-websites-migrations", icon: { src: `${TH_ICONS}/code.webp`, w: 160, h: 103 } },
+  { label: "Growth (SEO/GEO + CRO)", href: "/growth", icon: { src: `${TH_ICONS}/seo-chart.webp`, w: 157, h: 160 } },
+  { label: "Ongoing Website Support", href: "/ongoing-website-support", icon: { src: `${TH_ICONS}/plugs.webp`, w: 160, h: 109 } },
 ];
 
 // `hidden`: kept in the markup but not shown (desktop bar + mobile menu).
 // Testimonials stays out of production for now — lead 2026-09-30.
+// Blog moved into Resources (lead 2026-10-28).
 const primaryLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   { label: "Work", href: "/work" },
   { label: "Pricing", href: "/pricing" },
-  { label: "Blog", href: "/blog" }, // lead 2026-10-17
   { label: "Testimonials", href: "/testimonials", hidden: true },
 ];
+
+// Resources: featured articles chosen by the lead (2026-10-28), by URL.
+const pages = loadPages();
+const featured = (urls: readonly string[]): NpPage[] =>
+  urls.map((url) => pages.find((p) => p.url === url)).filter((p): p is NpPage => p !== undefined);
+const resourceGroups = [
+  { id: "nav-res-blog", label: "Featured blog articles", pages: featured(["/blog/import-wordpress-to-webflow", "/blog/track-brand-mentions-in-chatgpt"]) },
+  { id: "nav-res-guides", label: "Featured guides", pages: featured(["/guides/wordpress-to-webflow-migration", "/guides/webflow-enterprise"]) },
+];
+// No /resources page yet: the blog index. TODO: lead to confirm the target.
+const allResources = { label: "See all resources", href: "/blog" };
 ---
 
 <header class="c-nav">
@@ -63,7 +84,7 @@ const primaryLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
         <li class="c-nav__item is-has-menu">
           <button
             type="button"
-            class="c-nav__services"
+            class="c-nav__trigger"
             aria-haspopup="true"
             aria-expanded="false"
             aria-controls="nav-services-panel"
@@ -86,15 +107,9 @@ const primaryLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
           >
             {services.map((s) => (
               <a href={s.href} role="menuitem" class="c-nav__panel-link">
-                <img
-                  src={s.icon}
-                  alt=""
-                  width="180"
-                  height="180"
-                  loading="lazy"
-                  decoding="async"
-                  class="c-nav__panel-icon"
-                />
+                <span class="c-nav__icon-box">
+                  <img src={s.icon.src} alt="" width={s.icon.w} height={s.icon.h} loading="lazy" decoding="async" />
+                </span>
                 {s.label}
               </a>
             ))}
@@ -105,6 +120,67 @@ const primaryLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
             <a href={link.href} class="c-nav__link">{link.label}</a>
           </li>
         ))}
+        <li class="c-nav__item is-has-menu is-wide">
+          <button
+            type="button"
+            class="c-nav__trigger"
+            aria-haspopup="true"
+            aria-expanded="false"
+            aria-controls="nav-resources-panel"
+          >
+            Resources
+            <svg
+              class="c-nav__caret"
+              aria-hidden="true"
+              viewBox="0 0 12 8"
+              width="12"
+              height="8"
+            >
+              <path d="M1 1.5L6 6.5L11 1.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <div id="nav-resources-panel" class="c-nav__panel is-resources">
+            <div class="c-nav__res-cols">
+              {resourceGroups.map((group) => (
+                <section class="c-nav__res-col" aria-labelledby={group.id}>
+                  <p class="c-nav__res-head">
+                    <span class="c-nav__icon-box">
+                      <img src="/images/nav/featured.webp" alt="" width="51" height="51" loading="lazy" decoding="async" />
+                    </span>
+                    <span id={group.id}>{group.label}</span>
+                  </p>
+                  <ul class="c-nav__res-list">
+                    {group.pages.map((page) => {
+                      const thumb = THUMBS[page.slug];
+                      const Thumb = thumb?.component as ((props: Record<string, unknown>) => unknown) | undefined;
+                      return (
+                        <li class="c-nav__res-card">
+                          <span class="c-nav__res-thumb" aria-hidden="true">
+                            {thumb && Thumb && <Thumb {...thumb.props} />}
+                          </span>
+                          <span class="c-nav__res-texts">
+                            <span class="c-nav__res-title c-text_m">{withPeriod(page.h1)}</span>
+                            <a class="c-nav__res-more c-paragraph" href={page.url}>
+                              Learn more
+                              <span class="c-nav__res-arrow" set:html={ARROW_RIGHT} />
+                            </a>
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </section>
+              ))}
+            </div>
+            <a class="c-nav__res-all" href={allResources.href}>
+              <span class="c-nav__icon-box is-large">
+                <img src="/images/new-pages/thumbs/art/object-lightbulb.webp" alt="" width="230" height="253" loading="lazy" decoding="async" />
+              </span>
+              <span class="c-nav__res-all-label c-text_m">{allResources.label}</span>
+              <span class="c-nav__res-arrow" set:html={ARROW_RIGHT} />
+            </a>
+          </div>
+        </li>
       </ul>
     </nav>
 
@@ -159,6 +235,15 @@ const primaryLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
       {primaryLinks.map((link) => (
         <li hidden={link.hidden}><a href={link.href} class="c-nav__mobile-link">{link.label}</a></li>
       ))}
+      <li class="c-nav__mobile-group">
+        <div class="c-nav__mobile-group-label">Resources</div>
+        <ul class="c-nav__mobile-sublist">
+          {resourceGroups.flatMap((group) => group.pages).map((page) => (
+            <li><a href={page.url} class="c-nav__mobile-sublink">{withPeriod(page.h1)}</a></li>
+          ))}
+          <li><a href={allResources.href} class="c-nav__mobile-sublink">{allResources.label}</a></li>
+        </ul>
+      </li>
     </ul>
 
     <div class="c-nav__mobile-cta">
@@ -168,48 +253,47 @@ const primaryLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
 </div>
 
 <script>
-  // --- Services dropdown (desktop, click/tap fallback) ---------------------
-  const services = document.querySelector<HTMLElement>(".c-nav__item.is-has-menu");
-  const trigger = services?.querySelector<HTMLButtonElement>(".c-nav__services");
-  const panel = services?.querySelector<HTMLElement>(".c-nav__panel");
+  // --- Services and Resources dropdowns (desktop, click/tap fallback) -------
+  const menus = Array.from(document.querySelectorAll<HTMLElement>(".c-nav__item.is-has-menu"));
 
-  function closeServices() {
-    if (!services || !trigger) return;
-    services.classList.remove("is-open");
-    trigger.setAttribute("aria-expanded", "false");
+  function closeMenu(menu: HTMLElement) {
+    menu.classList.remove("is-open");
+    menu.querySelector(".c-nav__trigger")?.setAttribute("aria-expanded", "false");
   }
-  function openServices() {
-    if (!services || !trigger) return;
-    services.classList.add("is-open");
-    trigger.setAttribute("aria-expanded", "true");
+  function openMenu(menu: HTMLElement) {
+    menus.filter((m) => m !== menu).forEach(closeMenu);
+    menu.classList.add("is-open");
+    menu.querySelector(".c-nav__trigger")?.setAttribute("aria-expanded", "true");
   }
 
-  if (trigger && services && panel) {
+  menus.forEach((menu) => {
+    const trigger = menu.querySelector<HTMLButtonElement>(".c-nav__trigger");
+    if (!trigger) return;
+
     trigger.addEventListener("click", (e) => {
       e.stopPropagation();
-      const isOpen = services.classList.contains("is-open");
-      if (isOpen) closeServices();
-      else openServices();
+      if (menu.classList.contains("is-open")) closeMenu(menu);
+      else openMenu(menu);
     });
 
     document.addEventListener("click", (e) => {
-      if (!services.contains(e.target as Node)) closeServices();
+      if (!menu.contains(e.target as Node)) closeMenu(menu);
     });
 
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && services.classList.contains("is-open")) {
-        closeServices();
+      if (e.key === "Escape" && menu.classList.contains("is-open")) {
+        closeMenu(menu);
         trigger.focus();
       }
     });
 
     // Close when keyboard focus leaves the trigger + panel (e.g. Tab past
     // the last link), so the panel and aria-expanded stay in sync.
-    services.addEventListener("focusout", (e) => {
+    menu.addEventListener("focusout", (e) => {
       const next = e.relatedTarget as Node | null;
-      if (!next || !services.contains(next)) closeServices();
+      if (!next || !menu.contains(next)) closeMenu(menu);
     });
-  }
+  });
 
   // Scroll state (`is-scrolled`: 1rem from the top, solid bar), hide on
   // scroll down / show on scroll up and the entry animation all live in
@@ -411,7 +495,7 @@ const primaryLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   /* Box + text mirror c-tag (Tag.astro) — lead 2026-09-30. Border is
      transparent at rest and fades to --color-gray on hover / while open. */
   .c-nav__link,
-  .c-nav__services {
+  .c-nav__trigger {
     background: none;
     padding: 0.5em 1.05em;
     border: 0.5px solid transparent;
@@ -432,8 +516,8 @@ const primaryLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
     transition: border-color var(--duration-hover) var(--ease-smooth);
   }
   .c-nav__link:hover,
-  .c-nav__services:hover,
-  .c-nav__item.is-open > .c-nav__services {
+  .c-nav__trigger:hover,
+  .c-nav__item.is-open > .c-nav__trigger {
     border-color: var(--color-gray);
   }
   .c-nav__caret {
@@ -524,12 +608,199 @@ const primaryLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   .c-nav__panel-link:hover {
     border-color: var(--color-gray);
   }
-  .c-nav__panel-icon {
+  /* Icon square (lead 2026-10-28): white with a hairline border; grey on
+     the link's hover. 35.52px ÷ 14 — lead visual QA 2026-09-30. */
+  .c-nav__icon-box {
+    display: grid;
     flex-shrink: 0;
-    /* 35.52px ÷ 14 — lead visual QA 2026-09-30 (was 59.2px) */
+    place-items: center;
     width: 2.537rem;
     height: 2.537rem;
+    border: var(--border-default);
     border-radius: 5.481px;
+    background: var(--color-white);
+    transition: background-color var(--duration-hover) var(--ease-smooth);
+  }
+  .c-nav__icon-box > img {
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
+  }
+  /* Image shows #F3F3F3; closest token. TODO: DS */
+  .c-nav__panel-link:hover .c-nav__icon-box,
+  .c-nav__res-all:hover .c-nav__icon-box {
+    background: var(--color-gray-light);
+  }
+
+  /* --- Resources panel (Figma 3995:8355, measured from the lead's
+     screenshot at 1440: 1 screenshot px ≈ 0.06rem) ----------------------- */
+  /* Wide panel: centered on the bar, not on its trigger. */
+  .c-nav__item.is-wide {
+    position: static;
+  }
+  .c-nav__panel.is-resources {
+    top: calc(100% + 0.5rem);
+    width: min(91.4rem, 100%);
+    padding: 1.25rem 1.5rem 1rem;
+    align-items: stretch;
+    gap: 2.5rem;
+  }
+  /* Bridge from the trigger, across the bar's bottom padding. */
+  .c-nav__panel.is-resources::before {
+    top: -2rem;
+    height: 2rem;
+  }
+  /* Thumbnails move only while the panel is open. */
+  .c-nav__panel.is-resources :global(.np-th *) {
+    animation-play-state: paused;
+  }
+  .c-nav__item.is-open > .c-nav__panel.is-resources :global(.np-th *) {
+    animation-play-state: running;
+  }
+  @media (hover: hover) {
+    .c-nav__item.is-has-menu:hover > .c-nav__panel.is-resources :global(.np-th *) {
+      animation-play-state: running;
+    }
+  }
+  .c-nav__res-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+  .c-nav__res-col {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  /* Same text as the Services links. */
+  .c-nav__res-head {
+    display: flex;
+    align-items: center;
+    gap: 0.714rem;
+    margin: 0;
+    padding-bottom: 1.5rem;
+    border-bottom: var(--border-default);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: normal;
+    letter-spacing: 0.064em;
+    text-transform: uppercase;
+  }
+  .c-nav__res-head .c-nav__icon-box {
+    width: 2.286rem;
+    height: 2.286rem;
+  }
+  .c-nav__res-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin: 1.6rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  /* Hover = the /blog cards (NpBlogResources): the card lifts 3%, the
+     thumbnail's border turns accent with a soft shadow. Keyboard too. */
+  .c-nav__res-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1.286rem;
+    transition: transform var(--duration-hover) var(--ease-smooth);
+  }
+  .c-nav__res-card:hover,
+  .c-nav__res-card:has(.c-nav__res-more:focus-visible) {
+    transform: translateY(-3%);
+  }
+  .c-nav__res-card:hover .c-nav__res-thumb,
+  .c-nav__res-card:has(.c-nav__res-more:focus-visible) .c-nav__res-thumb {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--color-black-secondary) 20%, transparent);
+  }
+  .c-nav__res-thumb {
+    position: relative;
+    display: block;
+    flex: none;
+    width: 16rem;
+    aspect-ratio: 544 / 362;
+    overflow: hidden;
+    border: var(--border-default);
+    border-radius: 8px;
+    background: var(--color-white);
+    transition:
+      border-color var(--duration-hover) var(--ease-smooth),
+      box-shadow var(--duration-hover) var(--ease-smooth);
+  }
+  .c-nav__res-texts {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.143rem;
+    min-width: 0;
+  }
+  /* Figma ≈ 1.6rem; closest heading token. TODO: DS */
+  .c-nav__res-title {
+    color: var(--color-black-secondary);
+    text-wrap: pretty;
+  }
+  .c-nav__res-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.571rem;
+    color: var(--color-black-secondary);
+    text-decoration: none;
+  }
+  /* The whole card is the link's hit area. */
+  .c-nav__res-more::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+  .c-nav__res-more:focus-visible,
+  .c-nav__res-all:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  .c-nav__res-arrow {
+    display: inline-flex;
+    width: 1.714rem;
+    height: 1.714rem;
+    align-items: center;
+    justify-content: center;
+  }
+  .c-nav__res-arrow :global(svg) {
+    width: 0.82rem;
+    height: 1.24rem;
+  }
+  /* "See all resources": a bordered row; hover = the cards' thumbnail. */
+  .c-nav__res-all {
+    display: flex;
+    align-items: center;
+    gap: 1.429rem;
+    padding: 0.96rem 1.5rem 0.96rem 1.429rem;
+    border: var(--border-default);
+    border-radius: 8px;
+    color: var(--color-black-secondary);
+    text-decoration: none;
+    transition:
+      border-color var(--duration-hover) var(--ease-smooth),
+      box-shadow var(--duration-hover) var(--ease-smooth);
+  }
+  .c-nav__res-all:hover {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--color-black-secondary) 20%, transparent);
+  }
+  .c-nav__res-all .c-nav__icon-box {
+    width: 3.429rem;
+    height: 3.429rem;
+  }
+  .c-nav__res-all-label {
+    flex: 1;
+  }
+  @media (max-width: 991px) {
+    .c-nav__res-thumb {
+      width: 10rem;
+    }
   }
 
   /* --- Mobile burger + panel --------------------------------------------- */
