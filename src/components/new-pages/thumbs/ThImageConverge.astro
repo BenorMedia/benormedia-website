@@ -20,8 +20,8 @@ interface Props {
   bg: ThAsset;
   /** The glass card, in design px: top-left and side. */
   card: { x: number; y: number; size: number };
-  /** The object on the card; image px at 2×, placed in design px. */
-  object: Placed;
+  /** The object on the card, placed in design px; `scale` = image px per design px (default 2). */
+  object: Placed & { scale?: number };
   /** The shapes; image px at 2×, placed in design px. */
   shapes: readonly Placed[];
 }
@@ -69,7 +69,7 @@ const paths = shapes.flatMap((s, i) => {
     src={object.src}
     width={object.w}
     height={object.h}
-    style={`--x: ${object.x}; --y: ${object.y}; --w: ${object.w / 2}; --h: ${object.h / 2};`}
+    style={`--x: ${object.x}; --y: ${object.y}; --w: ${object.w / (object.scale ?? 2)}; --h: ${object.h / (object.scale ?? 2)};`}
     alt=""
     loading="lazy"
     decoding="async"

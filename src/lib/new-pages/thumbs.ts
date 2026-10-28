@@ -430,7 +430,8 @@ export const THUMBS: Record<string, ThumbEntry> = {
   "track-brand-mentions-in-chatgpt": t(ThImageConverge, {
     bg: { src: `${GPT}/bg.webp`, w: 1088, h: 724 },
     card: { x: 150, y: 59.5, size: 244 },
-    object: { src: `${GPT}/shield.webp`, w: 324, h: 349, x: 194, y: 96 },
+    // The lead's Figma export (2026-10-28), 4× the design.
+    object: { src: `${GPT}/shield.webp`, w: 682, h: 773, scale: 4.1127, x: 190.5, y: 89.27 },
     shapes: [
       { src: `${GPT}/shape-6.webp`, w: 60, h: 60, x: -13.5, y: 116.0 },
       { src: `${GPT}/shape-1.webp`, w: 65, h: 57, x: 66.5, y: 133.0 },
