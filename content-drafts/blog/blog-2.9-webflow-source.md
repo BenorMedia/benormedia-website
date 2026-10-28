@@ -14,6 +14,7 @@ author: "Sergio Gancedo, Managing Director"
 publishedAt: 2026-10-28
 updatedAt: 2026-10-28
 reviewEvery: 14 days
+heroLead: 1
 primaryKeyword: "webflow source"
 secondaryKeywords: ["source by webflow", "what is webflow source", "webflow source pricing", "source webflow"]
 takeaways:

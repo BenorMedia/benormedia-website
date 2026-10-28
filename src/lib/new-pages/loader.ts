@@ -58,6 +58,8 @@ interface FrontMatter {
   sources?: { label?: string; url?: string; accessed?: string }[];
   /** Articles: keep `sources` in the file but print no Sources section (lead 2026-10-26). */
   hideSources?: boolean;
+  /** Articles: how many lead paragraphs the hero shows; the rest open the body (lead 2026-10-28). */
+  heroLead?: number;
   visuals?: { after?: string; side?: string; place?: string; type?: string; brief?: string; alt?: string }[];
   process?: { section?: string; imagesFrom?: string };
 }
@@ -101,6 +103,8 @@ export interface NpPage {
   h1: string;
   eyebrowHtml: string;
   lead: string[];
+  /** Lead paragraphs past `heroLead`, printed at body size above the first H2. */
+  intro: string[];
   sections: PageSection[];
   faqHeading: string;
   faqHeadingHtml: string;
@@ -430,6 +434,7 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
     family === "commercial"
       ? { lead: "c-paragraph_m", firstP: "c-paragraph_m", p: "c-paragraph", li: "c-paragraph" }
       : { lead: "c-paragraph_m", p: "c-paragraph_ms", li: "c-paragraph_ms" };
+  const heroLead = typeof d.heroLead === "number" ? d.heroLead : undefined;
   const rendered = renderBody(gaps.tokenize(body), {
     links,
     slugger,
@@ -501,7 +506,10 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
     description: String(d.description ?? ""),
     h1: String(d.h1 ?? ""),
     eyebrowHtml: text(d.eyebrow),
-    lead: rendered.lead,
+    lead: rendered.lead.slice(0, heroLead),
+    intro: rendered.lead
+      .slice(heroLead)
+      .map((h) => h.replace(`class="${classes.lead}"`, `class="${classes.p}"`).replace('data-np-src="lead"', 'data-np-src="p"')),
     sections,
     faqHeading,
     faqHeadingHtml,

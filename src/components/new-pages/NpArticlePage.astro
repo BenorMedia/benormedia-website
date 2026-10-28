@@ -70,6 +70,7 @@ const shots = await clientShots();
         <div class="c-np-article__main">
           <NpKeyTakeaways items={page.takeaways} />
           <div class="c-np-prose is-blog" style={`--np-check: ${CHECK_MASK};`}>
+            <Fragment set:html={page.intro.join("")} />
             {page.sections.map((section) => {
               const visual = resolveVisual(section.visual, page.includeDrafts) ? section.visual : undefined;
               // `place: top` puts the visual under the section's first paragraph (lead 2026-10-25).
