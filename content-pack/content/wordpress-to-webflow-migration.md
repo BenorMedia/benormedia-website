@@ -9,8 +9,8 @@ blockedBy: []
 title: "How to Migrate WordPress to Webflow | BenorMedia"
 description: "How to migrate from WordPress to Webflow without losing SEO: map URLs, move content, set 301 redirects, test, and monitor. Sourced from Google and Webflow."
 h1: "How to migrate from WordPress to Webflow without losing SEO"
-primaryKeyword: migrate wordpress to webflow
-secondaryKeywords: [migrate from wordpress to webflow]
+primaryKeyword: wordpress to webflow migration
+secondaryKeywords: [wordpress to webflow, migrate wordpress to webflow, how to migrate wordpress to webflow]
 targetCountry: US
 author: "Sergio Gancedo, Managing Director, BenorMedia"
 publishedAt: 2026-10-07
@@ -249,7 +249,7 @@ For most B2B marketing sites, the decision comes down to who edits the site and 
 - **Heavy custom plugins.** List what each plugin does, and decide whether a Webflow feature, an integration, or custom code replaces it.
 - **Multi-language sites with complex rules.** Check how language structure, URLs, and hreflang tags will carry over. Google advises updating hreflang annotations when a move changes URLs.
 
-A migration is a recommendation, not a reflex. If none of these situations applies and the site works for your team, staying on WordPress and fixing the site you have is a legitimate answer.
+A migration is a recommendation, not a reflex. If none of these situations applies and the site works for your team, staying on WordPress and fixing the site you have is a legitimate answer. To hand the work to us, see our [WordPress to Webflow migration service](page:webflow-migration).
 
 ## A real-life example: Surfe.com
 
@@ -271,4 +271,4 @@ A migration is a recommendation, not a reflex. If none of these situations appli
 
 ## How do we know this?
 
-This guide comes from the 30+ WordPress to Webflow migrations we've planned and run over the last six years, most recently Surfe's. Where Google or Webflow documents a step, we link to it. Sergio Gancedo, Managing Director, wrote it. Santiago Lopez, our Senior Webflow Developer and QA specialist, ran QA on Surfe's migration with Sergio and the Surfe team. Because we run these migrations for clients, we have an interest in the topic, and the guide says where staying on WordPress is the better answer. To hand the work to us, see our [WordPress to Webflow migration service](page:webflow-migration).
+This guide comes from the 30+ WordPress to Webflow migrations we've planned and run over the last six years, most recently Surfe's. Where Google or Webflow documents a step, we link to it. Sergio Gancedo, Managing Director, wrote it. Santiago Lopez, our Senior Webflow Developer and QA specialist, ran QA on Surfe's migration with Sergio and the Surfe team. Because we run these migrations for clients, we have an interest in the topic, and the guide says where staying on WordPress is the better answer.

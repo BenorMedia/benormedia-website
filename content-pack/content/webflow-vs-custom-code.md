@@ -318,7 +318,7 @@ Once you're ready to move, treat it as a site move and follow Google's guidance.
 - **7. Launch.** Lower your DNS TTL to a few hours at least a week ahead, as Google suggests. Switch DNS, remove any noindex tags or robots blocks, submit the new sitemap and check key pages with URL Inspection in Search Console.
 - **8. Monitor.** Check crawl errors, indexing and rankings daily for the first weeks. If your URLs stayed the same, Googlebot often crawls less for a while after launch, which Google calls normal; if they changed, expect it to crawl more. Keep redirects for as long as possible, generally at least a year.
 
-The same checks apply in the other direction. Our [Webflow migration](page:webflow-migration) page covers moves onto Webflow, including from WordPress.
+The same checks apply in the other direction. Our [Webflow migration services](page:webflow-migration) page covers moves onto Webflow, including from WordPress.
 
 ## When is staying on Webflow the better call?
 

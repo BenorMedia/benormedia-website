@@ -193,4 +193,4 @@ Use the Webflow API when redirects change every week or come from another system
 
 The API gives you a source of truth outside Site settings: a spreadsheet or repository that generates rules, logs every change, and can be reviewed before it ships. For most marketing sites below a few hundred rules, the CSV workflow above is enough. If you are weighing an upgrade for this and other controls, see [what to check before buying Webflow Enterprise](/guides/webflow-enterprise).
 
-We build and migrate Webflow sites for B2B companies, so we have an interest in the topic. If you are planning a move, see our [WordPress to Webflow migration](/webflow-migration) service.
+We build and migrate Webflow sites for B2B companies, so we have an interest in the topic. If you are planning a move, see our [Webflow migration service](/webflow-migration).

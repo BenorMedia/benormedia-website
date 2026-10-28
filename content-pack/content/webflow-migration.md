@@ -6,15 +6,15 @@ pageType: service
 wave: 1
 draft: false
 blockedBy: []
-title: "WordPress to Webflow Migration | BenorMedia"
-description: "WordPress to Webflow migration for B2B teams. Every URL mapped, every redirect tested, and a plan built around the pages that earn your traffic."
-h1: "WordPress to Webflow migration, planned around your search traffic"
+title: "Webflow Migration Services | BenorMedia"
+description: "WordPress to Webflow migration services for B2B teams. Every URL mapped, every redirect tested, and a plan built around the pages that earn traffic."
+h1: "WordPress to Webflow migration services, planned around your search traffic"
 eyebrow: Website migrations
-primaryKeyword: wordpress to webflow migration
-secondaryKeywords: [wordpress to webflow, convert wordpress to webflow, webflow migration services, webflow migration agency, squarespace to webflow migration]
+primaryKeyword: webflow migration services
+secondaryKeywords: [webflow migration agency, wordpress to webflow migration services, wordpress to webflow agency]
 targetCountry: US
 publishedAt: 2026-10-07
-updatedAt: 2026-10-07
+updatedAt: 2026-10-28
 reviewEvery: 90
 breadcrumb:
   - name: Home
