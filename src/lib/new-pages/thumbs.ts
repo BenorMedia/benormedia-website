@@ -21,6 +21,7 @@ import ThImageConverge from "../../components/new-pages/thumbs/ThImageConverge.a
 
 const IMG = "/images/new-pages/thumbs/images";
 const GPT = `${IMG}/chatgpt-mentions`;
+const WFS = `${IMG}/webflow-source`;
 
 export interface ThumbEntry {
   // Astro components take any props object.
@@ -429,9 +430,15 @@ export const THUMBS: Record<string, ThumbEntry> = {
   // The lead's image (2026-10-28): the shapes drift in from both sides behind the shield.
   "track-brand-mentions-in-chatgpt": t(ThImageConverge, {
     bg: { src: `${GPT}/bg.webp`, w: 1088, h: 724 },
-    card: { x: 150, y: 59.5, size: 244 },
-    // The lead's Figma export (2026-10-28), 4× the design.
-    object: { src: `${GPT}/shield.webp`, w: 682, h: 773, scale: 4.1127, x: 190.5, y: 89.27 },
+    cards: [
+      {
+        x: 150,
+        y: 59.5,
+        size: 244,
+        // The lead's Figma export (2026-10-28), 4× the design.
+        object: { src: `${GPT}/shield.webp`, w: 682, h: 773, scale: 4.1127, x: 190.5, y: 89.27 },
+      },
+    ],
     shapes: [
       { src: `${GPT}/shape-6.webp`, w: 60, h: 60, x: -13.5, y: 116.0 },
       { src: `${GPT}/shape-1.webp`, w: 65, h: 57, x: 66.5, y: 133.0 },
@@ -769,4 +776,24 @@ export const THUMBS: Record<string, ThumbEntry> = {
   "webflow-cms-api": t(ThImage, { src: `${IMG}/webflow-cms-api.webp`, w: 1084, h: 720 }),
   "cybersecurity-content-marketing": t(ThImage, { src: `${IMG}/cybersecurity-content-marketing.webp`, w: 1084, h: 720 }),
   "aeo-specialist": t(ThImage, { src: `${IMG}/aeo-specialist.webp`, w: 1084, h: 720 }),
+  // The lead's image (2026-10-28): the Webflow W and the Source slash on
+  // glass, cubes and spheres rising from the bottom behind them. The
+  // shapes the image cuts off at its edges use a whole shape of their kind.
+  "webflow-source": t(ThImageConverge, {
+    bg: { src: `${WFS}/bg.webp`, w: 1088, h: 724 },
+    from: "bottom",
+    cards: [
+      { x: 48, y: 67, size: 210.5, object: { src: `${WFS}/w.webp`, w: 316, h: 275, x: 75, y: 103 } },
+      { x: 285.5, y: 67, size: 210.5, object: { src: `${WFS}/slash.webp`, w: 323, h: 274, x: 311, y: 104 } },
+    ],
+    shapes: [
+      { src: `${WFS}/cube-cyan.webp`, w: 126, h: 123, x: -19.5, y: 251 },
+      { src: `${WFS}/sphere.webp`, w: 104, h: 104, x: 77.5, y: 305 },
+      { src: `${WFS}/cube-cyan.webp`, w: 126, h: 123, x: 212, y: 290 },
+      { src: `${WFS}/cube-lilac.webp`, w: 123, h: 111, x: 333.5, y: 274.5 },
+      { src: `${WFS}/sphere.webp`, w: 104, h: 104, x: 308.5, y: 344 },
+      { src: `${WFS}/cube-lilac.webp`, w: 123, h: 111, x: 447, y: 320.5 },
+      { src: `${WFS}/cube-cyan.webp`, w: 126, h: 123, x: 500.5, y: 285.5 },
+    ],
+  }),
 };

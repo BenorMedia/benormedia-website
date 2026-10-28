@@ -77,6 +77,7 @@
 - [Webflow CMS API: Using Webflow as a Headless CMS](https://www.benormedia.com/blog/webflow-cms-api): Serve Webflow CMS content to Next.js, Astro, or an app with the Data API and the cached Content Delivery API: limits, previews, webhooks, and trade-offs.
 - [Cybersecurity Content Marketing for CISOs and Engineers](https://www.benormedia.com/blog/cybersecurity-content-marketing): How to write cybersecurity content for CISOs and security engineers at once: formats, two-layer pages, proof, and how buyers find it in AI answers.
 - [AEO Specialist or In-House Team: Who Should Own AEO?](https://www.benormedia.com/blog/aeo-specialist): What an AEO specialist does, which AEO work a B2B SaaS team can keep in-house, the roles a program needs, and when a specialist or consultant pays off.
+- [What Is Webflow Source? Access, Pricing, and Demo Notes](https://www.benormedia.com/blog/webflow-source): What Webflow Source is, how it differs from Webflow, what it will cost, how to get access, and what the first live demo of the research preview showed.
 
 ## Company
 

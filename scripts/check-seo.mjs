@@ -76,6 +76,7 @@ const PAGES = {
   '/blog/cybersecurity-content-marketing': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'cybersecurity content marketing' },
   '/blog/aeo-specialist': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'aeo specialist' },
   '/blog/saas-technical-seo': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'saas technical seo' },
+  '/blog/webflow-source': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow source' },
   '/blog/track-brand-mentions-in-chatgpt': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'brand mentions chatgpt' },
   '/blog/consent-mode-v2-webflow': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'consent mode v2' },
   '/blog/webflow-accessibility-checklist': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow accessibility checklist' },

@@ -2,8 +2,9 @@
 /**
  * ThImageConverge — card thumbnail from a finished image the lead supplies
  * (lead 2026-10-28), cut into layers: the background without its shapes,
- * each shape, a glass card, then the card's object on top. Motion: the
- * shapes drift from the left and right edges to the center, turning slowly,
+ * each shape, one or more glass cards, then each card's object on top.
+ * Motion: the shapes drift from the left and right edges (or the bottom
+ * edge) to the nearest card's center, turning slowly,
  * and pass behind the glass (blurred through it) in an endless loop. Each
  * starts where the image has it, so the still frame (reduced motion, the
  * index pages) is the image. A second copy of each shape runs half a loop
@@ -15,39 +16,59 @@ import type { ThAsset } from "./assets";
 
 type Placed = ThAsset & { x: number; y: number };
 
-interface Props {
-  /** The image without the shapes or the card (1088 × 724, the cards' 2×). */
-  bg: ThAsset;
+interface Card {
   /** The glass card, in design px: top-left and side. */
-  card: { x: number; y: number; size: number };
+  x: number;
+  y: number;
+  size: number;
   /** The object on the card, placed in design px; `scale` = image px per design px (default 2). */
   object: Placed & { scale?: number };
-  /** The shapes; image px at 2×, placed in design px. */
-  shapes: readonly Placed[];
 }
 
-const { bg, card, object, shapes } = Astro.props;
+interface Props {
+  /** The image without the shapes or the cards (1088 × 724, the cards' 2×). */
+  bg: ThAsset;
+  /** One or more glass cards; each shape heads for the nearest one. */
+  cards: readonly Card[];
+  /** The shapes; image px at 2×, placed in design px. */
+  shapes: readonly Placed[];
+  /** Where the shapes come from: the left and right edges (default) or the bottom edge. */
+  from?: "sides" | "bottom";
+}
+
+const { bg, cards, shapes, from = "sides" } = Astro.props;
 
 // Paths in design px. Every shape enters 40 px past its edge and ends at
-// the card's center, pulled 40% of the way to the middle row.
-const CX = card.x + card.size / 2;
-const CY = card.y + card.size / 2;
+// its card's center, pulled 40% of the way to the card's middle line.
 const paths = shapes.flatMap((s, i) => {
   const w = s.w / 2;
   const h = s.h / 2;
   const px = s.x + w / 2;
   const py = s.y + h / 2;
-  const sx = px < CX ? -40 : 544 + 40;
-  const ey = CY + (py - CY) * 0.6;
-  // The start on the line from the end through the shape.
-  const sy = ey + ((py - ey) * (CX - sx)) / (CX - px);
-  const progress = (px - sx) / (CX - sx);
+  const c = cards.reduce((a, b) => (Math.abs(b.x + b.size / 2 - px) < Math.abs(a.x + a.size / 2 - px) ? b : a));
+  const CX = c.x + c.size / 2;
+  const CY = c.y + c.size / 2;
+  let sx: number, sy: number, ex: number, ey: number, progress: number;
+  if (from === "bottom") {
+    sy = 362 + 40;
+    ey = CY;
+    ex = CX + (px - CX) * 0.6;
+    // The start on the line from the end through the shape.
+    sx = ex + ((px - ex) * (sy - ey)) / (py - ey);
+    progress = (sy - py) / (sy - ey);
+  } else {
+    sx = px < CX ? -40 : 544 + 40;
+    ex = CX;
+    ey = CY + (py - CY) * 0.6;
+    sy = ey + ((py - ey) * (CX - sx)) / (CX - px);
+    progress = (px - sx) / (CX - sx);
+  }
   const dur = 30 + (i % 5) * 2.5;
   const turn = (i % 2 ? -1 : 1) * (60 + (i % 3) * 30);
   const base = [
     `--x: ${s.x}; --y: ${s.y}; --w: ${w}; --h: ${h};`,
     `--sx: ${(sx - px).toFixed(2)}; --sy: ${(sy - py).toFixed(2)};`,
-    `--ex: ${(CX - px).toFixed(2)}; --ey: ${(ey - py).toFixed(2)};`,
+    `--ex: ${(ex - px).toFixed(2)}; --ey: ${(ey - py).toFixed(2)};`,
     `--r0: ${(-progress * turn).toFixed(1)}deg; --r1: ${((1 - progress) * turn).toFixed(1)}deg;`,
     `animation-duration: ${dur}s;`,
   ].join(" ");
@@ -63,17 +84,21 @@ const paths = shapes.flatMap((s, i) => {
   {paths.map((p) => (
     <img class="np-th__art np-th-converge__shape" src={p.s.src} width={p.s.w} height={p.s.h} style={p.style} alt="" loading="lazy" decoding="async" />
   ))}
-  <span class="np-th__art np-th-converge__card" style={`--x: ${card.x}; --y: ${card.y}; --w: ${card.size}; --h: ${card.size};`}></span>
-  <img
-    class="np-th__art"
-    src={object.src}
-    width={object.w}
-    height={object.h}
-    style={`--x: ${object.x}; --y: ${object.y}; --w: ${object.w / (object.scale ?? 2)}; --h: ${object.h / (object.scale ?? 2)};`}
-    alt=""
-    loading="lazy"
-    decoding="async"
-  />
+  {cards.map((c) => (
+    <span class="np-th__art np-th-converge__card" style={`--x: ${c.x}; --y: ${c.y}; --w: ${c.size}; --h: ${c.size};`}></span>
+  ))}
+  {cards.map(({ object: o }) => (
+    <img
+      class="np-th__art"
+      src={o.src}
+      width={o.w}
+      height={o.h}
+      style={`--x: ${o.x}; --y: ${o.y}; --w: ${o.w / (o.scale ?? 2)}; --h: ${o.h / (o.scale ?? 2)};`}
+      alt=""
+      loading="lazy"
+      decoding="async"
+    />
+  ))}
 </span>
 
 <style>
