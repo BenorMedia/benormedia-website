@@ -779,12 +779,13 @@ export const THUMBS: Record<string, ThumbEntry> = {
   // The lead's image (2026-10-28): the Webflow W and the Source slash on
   // glass, cubes and spheres rising from the bottom behind them. The
   // shapes the image cuts off at its edges use a whole shape of their kind.
+  // The slash is the lead's sharper export (2026-10-28), about 4× the design.
   "webflow-source": t(ThImageConverge, {
     bg: { src: `${WFS}/bg.webp`, w: 1088, h: 724 },
     from: "bottom",
     cards: [
       { x: 48, y: 67, size: 210.5, object: { src: `${WFS}/w.webp`, w: 316, h: 275, x: 75, y: 103 } },
-      { x: 285.5, y: 67, size: 210.5, object: { src: `${WFS}/slash.webp`, w: 323, h: 274, x: 311, y: 104 } },
+      { x: 285.5, y: 67, size: 210.5, object: { src: `${WFS}/slash.webp`, w: 642, h: 543, scale: 3.975, x: 311, y: 104.2 } },
     ],
     shapes: [
       { src: `${WFS}/cube-cyan.webp`, w: 126, h: 123, x: -19.5, y: 251 },
