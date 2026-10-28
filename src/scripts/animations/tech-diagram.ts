@@ -2,8 +2,8 @@
  * Tech diagram — Home "Technologies" motion (lead 2026-10-28).
  *
  * - Small blue squares travel along the lines into the BenorMedia mark:
- *   down each line from a tool card, and up the line from the capability
- *   rows. Each line launches its next square after a random pause, so
+ *   down each line from a tool card, then on down the line below the mark
+ *   to the capability rows. Each line launches its next square after a random pause, so
  *   several can be moving at once, slowly, fading in and out.
  * - The three capability rows loop endlessly: row 1 right to left, row 2
  *   left to right, row 3 right to left.
@@ -132,8 +132,9 @@ function build(text: string, img: HTMLImageElement, picture: HTMLElement): () =>
     live.append(strip);
   });
 
-  // Squares: down every line to the top of the mark, and up the longest
-  // line (the one that runs on below the mark) from row 1 to its bottom.
+  // Squares: down every line to the top of the mark, and down the longest
+  // line (the one that runs on below the mark) from its bottom to row 1
+  // (lead 2026-10-28).
   const routes: Route[] = lines.map((path) => {
     const startY = path.getPointAtLength(0).y;
     return { path, from: path.getTotalLength(), to: startY - MARK_TOP + SQUARE_HALF };
@@ -144,8 +145,8 @@ function build(text: string, img: HTMLImageElement, picture: HTMLElement): () =>
   const lowestY = lowest.getPointAtLength(0).y;
   routes.push({
     path: lowest,
-    from: lowestY - ROW_TOP - SQUARE_HALF,
-    to: lowestY - MARK_BOTTOM - SQUARE_HALF,
+    from: lowestY - MARK_BOTTOM - SQUARE_HALF,
+    to: lowestY - ROW_TOP - SQUARE_HALF,
   });
 
   const timeline = gsap.timeline({ autoRemoveChildren: true });
