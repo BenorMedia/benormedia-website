@@ -235,4 +235,4 @@ A headless architecture usually costs more to run than a Webflow site, and we'd 
 - **Your marketers design new layouts often.** The Webflow Designer gives them more layout freedom than the headless editors we build with.
 - **You need one feature, not a new stack.** A Webflow Cloud app or a React code component adds it to the site you already have.
 
-In those cases we'll recommend Webflow and build it there, through [Webflow migration services](page:webflow-migration) or [Webflow Enterprise](page:webflow-enterprise-agency). Our [guide](page:webflow-vs-custom-code) covers the other reasons to stay.
+In those cases we'll recommend Webflow and build it there, through [Webflow migration services](page:webflow-migration) or [Webflow enterprise agency](page:webflow-enterprise-agency). Our [guide](page:webflow-vs-custom-code) covers the other reasons to stay.

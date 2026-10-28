@@ -7,10 +7,10 @@ wave: 1
 draft: false
 blockedBy: []
 title: "Webflow Enterprise: What to Check | BenorMedia"
-description: "What makes a website project enterprise, what Webflow Enterprise includes as of October 2026, and how to vet an agency. Sourced from Webflow, Google, and W3C."
+description: "What makes a website project enterprise, what Webflow Enterprise includes as of October 2026, and what to check before you commit."
 h1: "Webflow Enterprise: security, governance, and what to check before you commit"
 primaryKeyword: webflow enterprise
-secondaryKeywords: [webflow for enterprise, webflow enterprise pricing, enterprise webflow agency]
+secondaryKeywords: [webflow enterprise plan, webflow for enterprise]
 targetCountry: US
 author: "Sergio Gancedo, Managing Director, BenorMedia"
 publishedAt: 2026-10-07
@@ -249,6 +249,8 @@ Evaluate an agency for an enterprise Webflow site on evidence you can check, and
 7. **Accessibility and languages.** Ask which version and level of the Web Content Accessibility Guidelines (WCAG) the agency builds to and how it tests. WCAG 2.2 defines three levels: A, AA, and AAA. Ask how it handles locale URLs and hreflang.
 8. **References and handover.** Ask to speak to a client with similar review requirements, and ask what documentation, training, and ownership transfer you get at the end.
 
+To see how BenorMedia works on enterprise projects, read about its [Webflow enterprise agency service](page:webflow-enterprise-agency).
+
 ## When is Webflow not the right fit for an enterprise site?
 
 Webflow suits an enterprise team whose website is a marketing and content system. Another option is better in these cases:
@@ -263,4 +265,4 @@ Weighing a move to code? See [Webflow vs custom code](page:webflow-vs-custom-cod
 
 ## How was this guide written and checked?
 
-Every Webflow row in this guide was read on Webflow's own pages, listed at the end, on 6 or 7 October 2026, and each is marked as of October 2026 because plans and limits change. The guide is rechecked every 30 days. We build Webflow sites for B2B companies, including large ones, so we have an interest in the topic. To see how BenorMedia works on enterprise projects, read about its [Webflow enterprise agency service](page:webflow-enterprise-agency).
+Every Webflow row in this guide was read on Webflow's own pages, listed at the end, on 6 or 7 October 2026, and each is marked as of October 2026 because plans and limits change. The guide is rechecked every 30 days. We build Webflow sites for B2B companies, including large ones, so we have an interest in the topic.
