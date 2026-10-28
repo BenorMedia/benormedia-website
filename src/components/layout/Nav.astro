@@ -638,12 +638,12 @@ const allResources = { label: "See all resources", href: "/blog" };
   .c-nav__item.is-wide {
     position: static;
   }
-  /* Lead 2026-10-28: 30% narrower (was 91.4rem), and 1.5rem higher so it
+  /* Lead 2026-10-28: 76.8rem wide (was 91.4rem; 64rem, then 20% wider), and 1.5rem higher so it
      opens as close under its trigger as the Services panel (the bar's bottom
      padding and the taller logo put it lower). */
   .c-nav__panel.is-resources {
     top: calc(100% - 1rem);
-    width: min(64rem, 100%);
+    width: min(76.8rem, 100%);
     padding: 1.25rem 1.5rem 1rem;
     align-items: stretch;
     gap: 2.5rem;
@@ -794,8 +794,10 @@ const allResources = { label: "See all resources", href: "/blog" };
     width: 3.429rem;
     height: 3.429rem;
   }
+  /* Same size as the card titles (lead 2026-10-28). */
   .c-nav__res-all-label {
     flex: 1;
+    font-size: calc(var(--fs-text-m) * 0.7);
   }
   @media (max-width: 991px) {
     .c-nav__res-thumb {
