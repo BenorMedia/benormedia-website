@@ -1,0 +1,116 @@
+---
+/**
+ * ThImageConverge — card thumbnail from a finished image the lead supplies
+ * (lead 2026-10-28), cut into layers: the background without its shapes,
+ * each shape, a glass card, then the card's object on top. Motion: the
+ * shapes drift from the left and right edges to the center, turning slowly,
+ * and pass behind the glass (blurred through it) in an endless loop. Each
+ * starts where the image has it, so the still frame (reduced motion, the
+ * index pages) is the image. A second copy of each shape runs half a loop
+ * behind, so the sides never empty out; in the still frame those copies
+ * are hidden behind the glass or still off-stage.
+ */
+import "./th.css";
+import type { ThAsset } from "./assets";
+
+type Placed = ThAsset & { x: number; y: number };
+
+interface Props {
+  /** The image without the shapes or the card (1088 × 724, the cards' 2×). */
+  bg: ThAsset;
+  /** The glass card, in design px: top-left and side. */
+  card: { x: number; y: number; size: number };
+  /** The object on the card; image px at 2×, placed in design px. */
+  object: Placed;
+  /** The shapes; image px at 2×, placed in design px. */
+  shapes: readonly Placed[];
+}
+
+const { bg, card, object, shapes } = Astro.props;
+
+// Paths in design px. Every shape enters 40 px past its edge and ends at
+// the card's center, pulled 40% of the way to the middle row.
+const CX = card.x + card.size / 2;
+const CY = card.y + card.size / 2;
+const paths = shapes.flatMap((s, i) => {
+  const w = s.w / 2;
+  const h = s.h / 2;
+  const px = s.x + w / 2;
+  const py = s.y + h / 2;
+  const sx = px < CX ? -40 : 544 + 40;
+  const ey = CY + (py - CY) * 0.6;
+  // The start on the line from the end through the shape.
+  const sy = ey + ((py - ey) * (CX - sx)) / (CX - px);
+  const progress = (px - sx) / (CX - sx);
+  const dur = 30 + (i % 5) * 2.5;
+  const turn = (i % 2 ? -1 : 1) * (60 + (i % 3) * 30);
+  const base = [
+    `--x: ${s.x}; --y: ${s.y}; --w: ${w}; --h: ${h};`,
+    `--sx: ${(sx - px).toFixed(2)}; --sy: ${(sy - py).toFixed(2)};`,
+    `--ex: ${(CX - px).toFixed(2)}; --ey: ${(ey - py).toFixed(2)};`,
+    `--r0: ${(-progress * turn).toFixed(1)}deg; --r1: ${((1 - progress) * turn).toFixed(1)}deg;`,
+    `animation-duration: ${dur}s;`,
+  ].join(" ");
+  return [0, 0.5].map((phase) => ({
+    s,
+    style: `${base} animation-delay: ${(-((progress + phase) % 1) * dur).toFixed(2)}s;`,
+  }));
+});
+---
+
+<span class="np-th" aria-hidden="true" data-np-illustration>
+  <img class="np-th-converge__bg" src={bg.src} width={bg.w} height={bg.h} alt="" loading="lazy" decoding="async" />
+  {paths.map((p) => (
+    <img class="np-th__art np-th-converge__shape" src={p.s.src} width={p.s.w} height={p.s.h} style={p.style} alt="" loading="lazy" decoding="async" />
+  ))}
+  <span class="np-th__art np-th-converge__card" style={`--x: ${card.x}; --y: ${card.y}; --w: ${card.size}; --h: ${card.size};`}></span>
+  <img
+    class="np-th__art"
+    src={object.src}
+    width={object.w}
+    height={object.h}
+    style={`--x: ${object.x}; --y: ${object.y}; --w: ${object.w / 2}; --h: ${object.h / 2};`}
+    alt=""
+    loading="lazy"
+    decoding="async"
+  />
+</span>
+
+<style>
+  .np-th-converge__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .np-th-converge__shape {
+    animation-name: np-th-converge;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+  /* Frosted glass: the shapes behind it show blurred, as in the image. */
+  .np-th-converge__card {
+    border: calc(0.9 * var(--u)) solid var(--color-border);
+    border-radius: calc(12 * var(--u));
+    background: color-mix(in srgb, var(--color-white) 70%, transparent);
+    -webkit-backdrop-filter: blur(calc(9 * var(--u)));
+            backdrop-filter: blur(calc(9 * var(--u)));
+  }
+  /* Off-stage → the card's center; fades once it is behind the glass. */
+  @keyframes np-th-converge {
+    from {
+      transform: translate(calc(var(--sx) * var(--u)), calc(var(--sy) * var(--u))) rotate(var(--r0));
+    }
+    70% {
+      opacity: 1;
+    }
+    95% {
+      opacity: 0;
+    }
+    to {
+      transform: translate(calc(var(--ex) * var(--u)), calc(var(--ey) * var(--u))) rotate(var(--r1));
+      opacity: 0;
+    }
+  }
+</style>

@@ -17,8 +17,10 @@ import ThIconWall from "../../components/new-pages/thumbs/ThIconWall.astro";
 import ThObject from "../../components/new-pages/thumbs/ThObject.astro";
 import ThImage from "../../components/new-pages/thumbs/ThImage.astro";
 import ThImageChips from "../../components/new-pages/thumbs/ThImageChips.astro";
+import ThImageConverge from "../../components/new-pages/thumbs/ThImageConverge.astro";
 
 const IMG = "/images/new-pages/thumbs/images";
+const GPT = `${IMG}/chatgpt-mentions`;
 
 export interface ThumbEntry {
   // Astro components take any props object.
@@ -424,10 +426,33 @@ export const THUMBS: Record<string, ThumbEntry> = {
       { icon: "seoChart", label: "Search Console" },
     ],
   }),
-  // The five prompt types of the 30-prompt set.
-  "track-brand-mentions-in-chatgpt": t(ThIconWall, {
-    icon: "ai",
-    labels: ["Category", "Problem", "Comparison", "Alternatives", "Pricing"],
+  // The lead's image (2026-10-28): the shapes drift in from both sides behind the shield.
+  "track-brand-mentions-in-chatgpt": t(ThImageConverge, {
+    bg: { src: `${GPT}/bg.webp`, w: 1088, h: 724 },
+    card: { x: 150, y: 59.5, size: 244 },
+    object: { src: `${GPT}/shield.webp`, w: 324, h: 349, x: 194, y: 96 },
+    shapes: [
+      { src: `${GPT}/shape-6.webp`, w: 60, h: 60, x: -13.5, y: 116.0 },
+      { src: `${GPT}/shape-1.webp`, w: 65, h: 57, x: 66.5, y: 133.0 },
+      { src: `${GPT}/shape-3.webp`, w: 63, h: 63, x: 122.0, y: 139.2 },
+      { src: `${GPT}/shape-2.webp`, w: 65, h: 57, x: 479.5, y: 142.0 },
+      { src: `${GPT}/shape-3.webp`, w: 63, h: 63, x: 425.5, y: 145.0 },
+      { src: `${GPT}/shape-4.webp`, w: 53, h: 53, x: 21.5, y: 150.5 },
+      { src: `${GPT}/shape-4.webp`, w: 53, h: 53, x: 530.0, y: 162.8 },
+      { src: `${GPT}/shape-5.webp`, w: 52, h: 53, x: 96.0, y: 173.0 },
+      { src: `${GPT}/shape-6.webp`, w: 60, h: 60, x: 56.5, y: 176.5 },
+      { src: `${GPT}/shape-7.webp`, w: 53, h: 53, x: 454.5, y: 180.5 },
+      { src: `${GPT}/shape-5.webp`, w: 52, h: 53, x: -2.5, y: 182.5 },
+      { src: `${GPT}/shape-8.webp`, w: 59, h: 59, x: 490.0, y: 186.5 },
+      { src: `${GPT}/shape-9.webp`, w: 53, h: 54, x: 392.5, y: 189.0 },
+      { src: `${GPT}/shape-11.webp`, w: 61, h: 60, x: 120.0, y: 206.2 },
+      { src: `${GPT}/shape-10.webp`, w: 62, h: 62, x: 27.5, y: 210.0 },
+      { src: `${GPT}/shape-11.webp`, w: 61, h: 60, x: 424.0, y: 212.0 },
+      { src: `${GPT}/shape-12.webp`, w: 54, h: 53, x: 78.0, y: 220.5 },
+      { src: `${GPT}/shape-10.webp`, w: 62, h: 62, x: 515.5, y: 221.2 },
+      { src: `${GPT}/shape-13.webp`, w: 53, h: 53, x: 469.0, y: 229.0 },
+      { src: `${GPT}/shape-8.webp`, w: 59, h: 59, x: -12.8, y: 241.2 },
+    ],
   }),
   // The consent parameters, the two modes and the setup pieces.
   "consent-mode-v2-webflow": t(ThChips, {
