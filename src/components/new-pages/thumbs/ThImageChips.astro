@@ -1,0 +1,80 @@
+---
+/**
+ * ThImageChips — card thumbnail from a finished image the lead supplies (lead
+ * 2026-10-28), cut into layers so a column of labeled chips can move: the
+ * image with the column painted out, the chips, then the image's cards on
+ * top. Motion: the column scrolls from bottom to top in an endless loop.
+ */
+import "./th.css";
+import { TH_ICON, type ThAsset, type ThIcon } from "./assets";
+
+interface Props {
+  /** The image without the chips (1088 × 724, the cards' 2×). */
+  bg: ThAsset;
+  /** Cards in front of the chips, placed in design px. */
+  cards: readonly (ThAsset & { x: number; y: number })[];
+  /** Chips, top to bottom; the loop repeats them. */
+  chips: readonly { icon: ThIcon; label: string }[];
+  /** The column's left edge, first chip's top and width, in design px. */
+  column: { x: number; y: number; w: number };
+}
+
+const { bg, cards, chips, column } = Astro.props;
+// Two copies, so the second takes the first's place when the loop restarts.
+const loop = [...chips, ...chips];
+---
+
+<span class="np-th" aria-hidden="true" data-np-illustration>
+  <img class="np-th-image-chips__bg" src={bg.src} width={bg.w} height={bg.h} alt="" loading="lazy" decoding="async" />
+  <span class="np-th-image-chips__col" style={`--x: ${column.x}; --y: ${column.y}; --w: ${column.w}; --n: ${chips.length};`}>
+    {loop.map((chip) => (
+      <span class="np-th-chip np-th-image-chips__chip">
+        <span class="np-th-tile" style="--t: 52.5;"><img src={TH_ICON[chip.icon].src} width={TH_ICON[chip.icon].w} height={TH_ICON[chip.icon].h} alt="" loading="lazy" decoding="async" /></span>
+        <span>{chip.label}</span>
+      </span>
+    ))}
+  </span>
+  {cards.map((card) => (
+    <img
+      class="np-th__art"
+      src={card.src}
+      width={card.w}
+      height={card.h}
+      style={`--x: ${card.x}; --y: ${card.y}; --w: ${card.w / 2}; --h: ${card.h / 2};`}
+      alt=""
+      loading="lazy"
+      decoding="async"
+    />
+  ))}
+</span>
+
+<style>
+  .np-th-image-chips__bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .np-th-image-chips__col {
+    /* One chip plus the gap (Figma 79.75 + 10.45). */
+    --pitch: calc(90.2 * var(--u));
+    position: absolute;
+    left: calc(var(--x) * var(--u));
+    top: calc(var(--y) * var(--u));
+    display: flex;
+    flex-direction: column;
+    gap: calc(10.45 * var(--u));
+    width: calc(var(--w) * var(--u));
+    animation: np-th-image-chips-up 15s linear infinite;
+  }
+  .np-th-image-chips__chip {
+    height: calc(79.75 * var(--u));
+    gap: calc(22 * var(--u));
+    padding: calc(12.7 * var(--u)) calc(20 * var(--u));
+    font-size: calc(18.4 * var(--u));
+  }
+  @keyframes np-th-image-chips-up {
+    to { transform: translateY(calc(var(--n) * var(--pitch) * -1)); }
+  }
+</style>

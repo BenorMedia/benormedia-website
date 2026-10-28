@@ -16,6 +16,7 @@ import ThOrbit from "../../components/new-pages/thumbs/ThOrbit.astro";
 import ThIconWall from "../../components/new-pages/thumbs/ThIconWall.astro";
 import ThObject from "../../components/new-pages/thumbs/ThObject.astro";
 import ThImage from "../../components/new-pages/thumbs/ThImage.astro";
+import ThImageChips from "../../components/new-pages/thumbs/ThImageChips.astro";
 
 const IMG = "/images/new-pages/thumbs/images";
 
@@ -77,10 +78,21 @@ export const THUMBS: Record<string, ThumbEntry> = {
       { icon: "calendar", label: "Support" },
     ],
   }),
-  // The eight migration steps.
-  "wordpress-to-webflow-migration": t(ThIconWall, {
-    icon: "plugs",
-    labels: ["Benchmark", "Map every URL", "Move the content", "301 redirects", "Monitor after launch"],
+  // The lead's image (2026-10-28): the migration steps loop between WordPress and Webflow.
+  "wordpress-to-webflow-migration": t(ThImageChips, {
+    bg: { src: `${IMG}/wordpress-to-webflow-migration.webp`, w: 1088, h: 724 },
+    cards: [
+      { src: `${IMG}/wordpress-to-webflow-migration-wordpress.webp`, w: 372, h: 381, x: 22.5, y: 86 },
+      { src: `${IMG}/wordpress-to-webflow-migration-webflow.webp`, w: 372, h: 381, x: 332.5, y: 86 },
+    ],
+    chips: [
+      { icon: "codeBlocks", label: "301 redirects" },
+      { icon: "seoChart", label: "Monitor after launch" },
+      { icon: "speedGauge", label: "Benchmark" },
+      { icon: "designGrid", label: "Map every URL" },
+      { icon: "contentStack", label: "Move the content" },
+    ],
+    column: { x: 132, y: 6, w: 280 },
   }),
   // Webflow, the headless CMSs and the AI tools the guide names.
   "webflow-vs-custom-code": t(ThLogos, {
