@@ -8,7 +8,7 @@ draft: false
 blockedBy: []
 title: "Webflow Enterprise Agency | BenorMedia"
 description: "Webflow enterprise agency for B2B teams. Multi-language builds, security audits, access controls, and a dedicated team after launch."
-h1: "Webflow enterprise agency for B2B teams: security, governance, and scale"
+h1: "Webflow enterprise agency: security, governance, and scale"
 eyebrow: Enterprise websites
 primaryKeyword: webflow enterprise agency
 secondaryKeywords: [enterprise webflow agency, enterprise website design agency, enterprise web development agency]
