@@ -154,8 +154,6 @@ visuals:
 
 We design and build custom-coded websites on a headless CMS for B2B SaaS teams whose site has outgrown its website builder. Marketers keep a visual editor with live preview, and engineers get a Git repository they can review and deploy like the product.
 
-Webflow Professional Partner for 6+ years, so we recommend Webflow when it's enough. Our own site runs on Astro and Sanity.
-
 ## How a headless CMS works, in plain terms.
 
 A headless CMS separates content from design. It's a content management system that stores your content and delivers it through an API, without deciding how pages look. A traditional CMS such as WordPress, or a platform like Webflow, keeps content and design in one system. In a headless architecture, your pages are a separate front end, built in a framework such as Next.js or Astro, that requests the content and renders it. That's what headless web development means: we build both halves and the connection between them, so either can change without rebuilding the other.
