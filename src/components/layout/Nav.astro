@@ -638,17 +638,15 @@ const allResources = { label: "See all resources", href: "/blog" };
   .c-nav__item.is-wide {
     position: static;
   }
+  /* Lead 2026-10-28: 30% narrower (was 91.4rem), and 1.5rem higher so it
+     opens as close under its trigger as the Services panel (the bar's bottom
+     padding and the taller logo put it lower). */
   .c-nav__panel.is-resources {
-    top: calc(100% + 0.5rem);
-    width: min(91.4rem, 100%);
+    top: calc(100% - 1rem);
+    width: min(64rem, 100%);
     padding: 1.25rem 1.5rem 1rem;
     align-items: stretch;
     gap: 2.5rem;
-  }
-  /* Bridge from the trigger, across the bar's bottom padding. */
-  .c-nav__panel.is-resources::before {
-    top: -2rem;
-    height: 2rem;
   }
   /* Thumbnails move only while the panel is open. */
   .c-nav__panel.is-resources :global(.np-th *) {
