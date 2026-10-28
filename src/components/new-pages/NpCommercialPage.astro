@@ -26,7 +26,6 @@
  */
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import JsonLd from "../layout/JsonLd.astro";
-import Container from "../ui/Container.astro";
 import HomeHero from "../sections/HomeHero.astro";
 import OurWork from "../sections/OurWork.astro";
 import ResourcesSection from "../sections/ResourcesSection.astro";
@@ -38,7 +37,6 @@ import NpProblemSection from "./NpProblemSection.astro";
 import NpFitCards from "./NpFitCards.astro";
 import NpFaq from "./NpFaq.astro";
 import NpCtaBand from "./NpCtaBand.astro";
-import NpRelatedLinks from "./NpRelatedLinks.astro";
 import NpGapsPanel from "./NpGapsPanel.astro";
 import copy from "../../lib/new-pages/copy.json";
 import { withPeriod } from "../../lib/new-pages/html";
@@ -142,20 +140,10 @@ const plain = (html: string): string => html.replace(/<[^>]*>/g, "").replace(/&a
   <div data-np-live="resources" class="c-np-live">
     <ResourcesSection page={page.slug} />
   </div>
-  {page.related.length > 0 && (
-    <div class="c-np-related-wrap">
-      <Container>
-        <NpRelatedLinks items={page.related} />
-      </Container>
-    </div>
-  )}
   {page.includeDrafts && page.view === "review" && <NpGapsPanel gaps={page.gaps} />}
 </BaseLayout>
 
 <style>
-  .c-np-related-wrap :global(.c-container) {
-    padding-top: 0;
-  }
   .c-np-live {
     display: contents;
   }
