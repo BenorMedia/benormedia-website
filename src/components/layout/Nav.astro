@@ -66,8 +66,8 @@ const pages = loadPages();
 const featured = (urls: readonly string[]): NpPage[] =>
   urls.map((url) => pages.find((p) => p.url === url)).filter((p): p is NpPage => p !== undefined);
 const resourceGroups = [
-  { id: "nav-res-blog", label: "Featured blog articles", pages: featured(["/blog/import-wordpress-to-webflow", "/blog/track-brand-mentions-in-chatgpt"]) },
-  { id: "nav-res-guides", label: "Featured guides", pages: featured(["/guides/wordpress-to-webflow-migration", "/guides/webflow-enterprise"]) },
+  { id: "nav-res-blog", pages: featured(["/blog/import-wordpress-to-webflow", "/blog/track-brand-mentions-in-chatgpt"]) },
+  { id: "nav-res-guides", pages: featured(["/guides/wordpress-to-webflow-migration", "/guides/webflow-enterprise"]) },
 ];
 // No /resources page yet: the blog index. TODO: lead to confirm the target.
 const allResources = { label: "See all resources", href: "/blog" };
@@ -142,13 +142,7 @@ const allResources = { label: "See all resources", href: "/blog" };
           <div id="nav-resources-panel" class="c-nav__panel is-resources">
             <div class="c-nav__res-cols">
               {resourceGroups.map((group) => (
-                <section class="c-nav__res-col" aria-labelledby={group.id}>
-                  <p class="c-nav__res-head">
-                    <span class="c-nav__icon-box">
-                      <img src="/images/nav/featured.webp" alt="" width="51" height="51" loading="lazy" decoding="async" />
-                    </span>
-                    <span id={group.id}>{group.label}</span>
-                  </p>
+                <div class="c-nav__res-col">
                   <ul class="c-nav__res-list">
                     {group.pages.map((page) => {
                       const thumb = THUMBS[page.slug];
@@ -169,7 +163,7 @@ const allResources = { label: "See all resources", href: "/blog" };
                       );
                     })}
                   </ul>
-                </section>
+                </div>
               ))}
             </div>
             <a class="c-nav__res-all" href={allResources.href}>
@@ -557,13 +551,15 @@ const allResources = { label: "See all resources", href: "/blog" };
   }
   /* Invisible bridge that spans the visual 0.5rem gap between trigger and
      panel — keeps :hover on the parent li active while the cursor crosses. */
+  /* Lead 2026-10-29: taller than the visual gap, so moving down from the
+     trigger never leaves the li (the Resources panel sits on the bar). */
   .c-nav__panel::before {
     content: "";
     position: absolute;
-    top: -0.5rem;
+    top: -2rem;
     left: 0;
     right: 0;
-    height: 0.5rem;
+    height: 2rem;
   }
   .c-nav__item.is-open > .c-nav__panel {
     opacity: 1;
@@ -646,7 +642,8 @@ const allResources = { label: "See all resources", href: "/blog" };
     width: min(76.8rem, 100%);
     padding: 1.25rem 1.5rem 1rem;
     align-items: stretch;
-    gap: 2.5rem;
+    /* Lead 2026-10-29: same as the gap between the cards. */
+    gap: 1.5rem;
   }
   /* Thumbnails move only while the panel is open. */
   .c-nav__panel.is-resources :global(.np-th *) {
@@ -670,30 +667,11 @@ const allResources = { label: "See all resources", href: "/blog" };
     flex-direction: column;
     min-width: 0;
   }
-  /* Same text as the Services links. */
-  .c-nav__res-head {
-    display: flex;
-    align-items: center;
-    gap: 0.714rem;
-    margin: 0;
-    padding-bottom: 1.5rem;
-    border-bottom: var(--border-default);
-    color: var(--color-text);
-    font-family: var(--font-body);
-    font-size: 0.9375rem;
-    line-height: normal;
-    letter-spacing: 0.064em;
-    text-transform: uppercase;
-  }
-  .c-nav__res-head .c-nav__icon-box {
-    width: 2.286rem;
-    height: 2.286rem;
-  }
   .c-nav__res-list {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    margin: 1.6rem 0 0;
+    margin: 0;
     padding: 0;
     list-style: none;
   }
@@ -783,8 +761,13 @@ const allResources = { label: "See all resources", href: "/blog" };
     color: var(--color-black-secondary);
     text-decoration: none;
     transition:
+      transform var(--duration-hover) var(--ease-smooth),
       border-color var(--duration-hover) var(--ease-smooth),
       box-shadow var(--duration-hover) var(--ease-smooth);
+  }
+  .c-nav__res-all:hover,
+  .c-nav__res-all:focus-visible {
+    transform: translateY(-3%);
   }
   .c-nav__res-all:hover {
     border-color: var(--color-accent);

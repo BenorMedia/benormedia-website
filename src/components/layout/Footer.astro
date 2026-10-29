@@ -317,10 +317,16 @@ const legalLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
     font-size: var(--fs-p);
     text-align: left;
     text-decoration: none;
-    transition: color var(--duration-hover) var(--ease-smooth);
+    transition:
+      color var(--duration-hover) var(--ease-smooth),
+      opacity var(--duration-hover) var(--ease-smooth);
   }
   .c-footer__col-link:hover {
     color: var(--color-accent);
+  }
+  /* Lead 2026-10-29: hovering one link dims the others to 40%. */
+  .c-footer__cols:has(.c-footer__col-link:hover) .c-footer__col-link:not(:hover) {
+    opacity: 0.4;
   }
   .c-footer__col-link.is-button {
     background: none;
