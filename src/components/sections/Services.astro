@@ -96,9 +96,9 @@ const blobB: Art = { src: `${IMG}/blob-b.svg`, d: BLOB_B_D };
 // 1. Websites: Figma's two shapes streams, cut into their shapes, each
 // flowing from beyond the card's edge into the glass icon on an endless loop
 // (`stream-shapes.ts`). Desktop: from the card's top / right edges;
-// mobile: from its left and right edges only, below the copy. A second set runs half a loop
-// behind and only shows while the card is active, so the still frame is
-// Figma's.
+// mobile: from its left and right edges only, below the copy. Only the
+// neutral state's shapes, no extra set on hover (lead 2026-10-30: too
+// many).
 const STREAM_D: StreamBox[] = [
   { x: -400.06, y: 79.71, w: 604.055, h: 585.673, r: 29.57 },
   { x: -69.54, y: 280.6, w: 604.055, h: 585.673, r: -145.52, flip: true },
@@ -109,9 +109,9 @@ const STREAM_M: StreamBox[] = [
 ];
 /* TODO: DS motion: no spec; Figma px per second, tuned by eye. */
 const SHAPE_SPEED = 14;
-const websitesShapes = (phase: number): Art[] => {
-  const d = streamPaths(STREAM_D, { x: -252.6, y: 173.92 }, { x0: -822.77, y0: 0, x1: 0, y1: 388.81 }, SHAPE_SPEED, phase);
-  const m = streamPaths(STREAM_M, { x: 0, y: -100.83 }, { x0: -212, y0: -482.4, x1: 212, y1: 0 }, SHAPE_SPEED, phase, "sides");
+const websitesShapes = (): Art[] => {
+  const d = streamPaths(STREAM_D, { x: -252.6, y: 173.92 }, { x0: -822.77, y0: 0, x1: 0, y1: 388.81 }, SHAPE_SPEED);
+  const m = streamPaths(STREAM_M, { x: 0, y: -100.83 }, { x0: -212, y0: -482.4, x1: 212, y1: 0 }, SHAPE_SPEED, 0, "sides");
   return d.map((pd, i) => {
     const pm = m[i]!;
     const vars: Record<string, number> = {};
@@ -126,8 +126,7 @@ const websitesShapes = (phase: number): Art[] => {
     };
   });
 };
-const websitesShapesMain = websitesShapes(0);
-const websitesShapesLate = websitesShapes(0.5);
+const websitesShapesMain = websitesShapes();
 const websitesGlass: Art = {
   src: `${IMG}/websites-icon.webp`,
   d: { ax: 100, x: -252.6, ay: 0, y: 173.92, w: 282.426, h: 282.421 },
@@ -284,11 +283,6 @@ const CARDS: Card[] = [
                 {websitesShapesMain.map((a) => (
                   <img class:list={artClass(a, "is-shape")} style={artStyle(a)} src={a.src} alt="" loading="lazy" decoding="async" />
                 ))}
-                <span class="c-services__shapes-late">
-                  {websitesShapesLate.map((a) => (
-                    <img class:list={artClass(a, "is-shape")} style={artStyle(a)} src={a.src} alt="" loading="lazy" decoding="async" />
-                  ))}
-                </span>
                 <span class:list={artClass(websitesGlass, "c-services__glass")} style={artStyle(websitesGlass)}>
                   <span class="c-services__glass-icon">
                     <img src={websitesGlass.src} alt="" loading="lazy" decoding="async" />
@@ -701,13 +695,6 @@ const CARDS: Card[] = [
       animation-play-state: running;
     }
   }
-  /* The second set (half a loop behind) shows only while active. */
-  .c-services__shapes-late {
-    position: absolute;
-    inset: 0;
-    opacity: var(--on);
-    transition: opacity var(--duration-hover) var(--ease-smooth);
-  }
   @keyframes c-services-converge {
     from {
       translate: calc(var(--sx) * var(--u)) calc(var(--sy) * var(--u));
@@ -762,9 +749,6 @@ const CARDS: Card[] = [
   @media (prefers-reduced-motion: reduce) {
     .c-services__art.is-shape {
       animation: none;
-    }
-    .c-services__shapes-late {
-      display: none;
     }
   }
 </style>
