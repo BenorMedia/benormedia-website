@@ -93,8 +93,9 @@ const homeLd = {
   <HomeHero clients={heroClients} />
   {/* Hidden on Home above 767px (lead 2026-09-30); shown on phones (2026-10-06). */}
   <LogoStrip clients={logoClients} hidden />
-  <FeaturedWork clients={featuredClients} />
+  {/* Services before "Our impact in action" (Figma Home, lead 2026-10-30). */}
   <Services />
+  <FeaturedWork clients={featuredClients} />
   <OurWork clients={workClients} listClients={workListClients} />
   <Technologies />
   <Testimonials testimonials={testimonials} />
