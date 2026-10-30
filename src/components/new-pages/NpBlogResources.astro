@@ -17,12 +17,16 @@
  * /guides indexes, the author pages) stops every thumbnail's motion. Hover = Our Work's grid cards:
  * the card lifts, the thumbnail gets the accent border and a soft shadow;
  * no text changes color.
+ * Search + pagination (`searchable`, the /blog index; lead 2026-10-30): a
+ * keyword search bar above the grid and 12-card pagination below it
+ * (`src/scripts/ui/blog-listing.ts`). Without JS every card shows and both
+ * stay hidden.
  */
 import Container from "../ui/Container.astro";
 import Eyebrow from "../ui/Eyebrow.astro";
 import copy from "../../lib/new-pages/copy.json";
 import type { Card } from "../../lib/new-pages/loader";
-import { ARROW_RIGHT } from "./blog-icons";
+import { ARROW_RIGHT, TOC_ARROW } from "./blog-icons";
 import { HEROES } from "../../lib/new-pages/visuals";
 import { THUMBS } from "../../lib/new-pages/thumbs";
 import { categoryOf } from "../../lib/new-pages/categories";
@@ -40,6 +44,10 @@ interface Props {
   still?: boolean;
   /** Screen-reader heading only, no section header (the /blog index). */
   headingHidden?: boolean;
+  /** Keyword search above the grid, pagination below (the /blog index). */
+  searchable?: boolean;
+  /** Cards per page when `searchable`. */
+  perPage?: number;
 }
 
 const {
@@ -50,13 +58,20 @@ const {
   limit = 3,
   still = false,
   headingHidden = false,
+  searchable = false,
+  perPage = 12,
 } = Astro.props;
 const list = cards.slice(0, limit);
 const nameOf = (author: string): string => author.split(",")[0]?.trim() ?? author;
 ---
 
 {list.length > 0 && (
-  <section class={["c-np-res", headingHidden && "is-heading-hidden", still && "is-still"].filter(Boolean).join(" ")} aria-labelledby="np-resources">
+  <section
+    class={["c-np-res", headingHidden && "is-heading-hidden", still && "is-still"].filter(Boolean).join(" ")}
+    aria-labelledby="np-resources"
+    data-blog-listing={searchable ? "" : undefined}
+    data-per-page={searchable ? perPage : undefined}
+  >
     <Container>
       {headingHidden ? (
         <h2 id="np-resources" class="c-np-res__sr-only">{heading}</h2>
@@ -68,6 +83,20 @@ const nameOf = (author: string): string => author.split(",")[0]?.trim() ?? autho
           </div>
         </header>
       )}
+      {searchable && (
+        <form class="c-blog-search" role="search" data-blog-search hidden>
+          <img class="c-blog-search__icon" src="/images/new-pages/il-icons/seo.webp" width="110" height="110" alt="" />
+          <input
+            class="c-blog-search__input"
+            type="search"
+            name="q"
+            placeholder="Search by keyword..."
+            aria-label="Search articles"
+            autocomplete="off"
+            data-blog-search-input
+          />
+        </form>
+      )}
       <ul class="c-np-res__grid">
         {list.map((card, i) => {
           const thumb = card.slug ? THUMBS[card.slug] : undefined;
@@ -76,7 +105,10 @@ const nameOf = (author: string): string => author.split(",")[0]?.trim() ?? autho
           const Hero = hero?.component;
           const profile = card.author ? findAuthor(card.author) : undefined;
           return (
-          <li class="c-np-res__card">
+          <li
+            class="c-np-res__card"
+            data-search={searchable ? [card.title, card.description, categoryOf(card.slug, card.family), card.author ? profile?.name ?? nameOf(card.author) : ""].join(" ") : undefined}
+          >
             {thumb && Thumb ? (
               <span class="c-np-res__thumb is-thumb" aria-hidden="true">
                 <Thumb {...thumb.props} />
@@ -121,9 +153,27 @@ const nameOf = (author: string): string => author.split(",")[0]?.trim() ?? autho
           );
         })}
       </ul>
+      {searchable && (
+        <>
+          {/* TODO: COPY — empty state when no article matches the search. */}
+          <p class="c-blog-empty c-paragraph" data-blog-empty hidden>No articles match your search.</p>
+          <p class="c-np-res__sr-only" aria-live="polite" data-blog-status></p>
+          <nav class="c-blog-pager" aria-label="Pagination" data-blog-pager hidden>
+            <button class="c-blog-pager__arrow is-prev" type="button" aria-label="Previous page" data-blog-prev set:html={TOC_ARROW} />
+            <span class="c-blog-pager__pages" data-blog-pages></span>
+            <button class="c-blog-pager__arrow" type="button" aria-label="Next page" data-blog-next set:html={TOC_ARROW} />
+          </nav>
+        </>
+      )}
     </Container>
   </section>
 )}
+
+<script>
+  import { initBlogListing } from "../../scripts/ui/blog-listing";
+
+  document.querySelectorAll<HTMLElement>("[data-blog-listing]").forEach((root) => initBlogListing(root));
+</script>
 
 <style>
   /* Accent tag tint at 5% (the live 8% measures 4.48:1 with accent text). */
@@ -164,6 +214,9 @@ const nameOf = (author: string): string => author.split(",")[0]?.trim() ?? autho
     margin: 2.857rem 0 0;
     padding: 0;
     list-style: none;
+  }
+  .c-np-res__card[hidden] {
+    display: none;
   }
   .c-np-res__card {
     flex: 0 1 calc((100% - 5.714rem) / 3);
@@ -316,6 +369,160 @@ const nameOf = (author: string): string => author.split(",")[0]?.trim() ?? autho
     width: 0.82rem;
     height: 1.24rem;
   }
+  /* Search bar (lead 2026-10-30 screenshot): full width, 1px border, 8px
+     radius, the il-icons magnifier, uppercase tracked placeholder (the
+     eyebrow's tracking), brand squares on two corners (the eyebrow's). */
+  .c-blog-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.857rem;
+    margin: 0 0 3.214rem; /* ~45px to the grid. TODO: DS */
+    padding: 0 1.143rem;
+    min-height: 3.143rem;
+    border: var(--border-default);
+    border-radius: 8px;
+    background: var(--color-white);
+    scroll-margin-top: 8rem; /* clears the sticky nav on page change */
+    transition: border-color var(--duration-hover) var(--ease-smooth);
+  }
+  .c-blog-search[hidden] {
+    display: none;
+  }
+  .c-blog-search:focus-within {
+    border-color: var(--color-accent);
+  }
+  .c-blog-search::before,
+  .c-blog-search::after {
+    content: "";
+    position: absolute;
+    width: 0.625rem;
+    height: 0.625rem;
+    background: var(--color-white);
+    border: 0.5px solid var(--color-gray);
+    border-radius: 1.5px;
+  }
+  .c-blog-search::before {
+    top: -0.3125rem;
+    left: -0.3125rem;
+  }
+  .c-blog-search::after {
+    right: -0.3125rem;
+    bottom: -0.3125rem;
+  }
+  .c-blog-search__icon {
+    flex: 0 0 auto;
+    width: 1.857rem;
+    height: 1.857rem;
+  }
+  .c-blog-search__input {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0.857rem 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-heading);
+    font-family: var(--font-body);
+    font-size: var(--fs-p);
+    letter-spacing: 0.064em;
+    outline: none;
+    appearance: none;
+  }
+  .c-blog-search__input::placeholder {
+    color: var(--color-text);
+    opacity: 1;
+    text-transform: uppercase;
+  }
+  .c-blog-search__input::-webkit-search-cancel-button {
+    cursor: pointer;
+  }
+  .c-blog-empty {
+    margin: 0;
+    color: var(--color-text);
+    text-align: center;
+  }
+  .c-blog-empty[hidden] {
+    display: none;
+  }
+  /* Pagination (lead 2026-10-30 screenshot): thin arrows, 44px bordered
+     squares, the current page on gray, "…" on the baseline. Page buttons are
+     built by the script, so their rules are `:global`. */
+  .c-blog-pager {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 5rem;
+  }
+  .c-blog-pager[hidden] {
+    display: none;
+  }
+  .c-blog-pager__pages {
+    display: flex;
+    align-items: center;
+    gap: 0.714rem;
+  }
+  .c-blog-pager :global(.c-blog-pager__page),
+  .c-blog-pager__arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-text);
+    font-family: var(--font-body);
+    cursor: pointer;
+  }
+  .c-blog-pager :global(.c-blog-pager__page) {
+    width: 3.143rem;
+    height: 3.143rem;
+    border: var(--border-default);
+    border-radius: 8px;
+    background: var(--color-white);
+    transition:
+      border-color var(--duration-hover) var(--ease-smooth),
+      background-color var(--duration-hover) var(--ease-smooth);
+  }
+  .c-blog-pager :global(.c-blog-pager__page:hover) {
+    border-color: var(--color-gray);
+  }
+  .c-blog-pager :global(.c-blog-pager__page.is-active) {
+    background: var(--color-gray-light);
+    cursor: default;
+  }
+  .c-blog-pager :global(.c-blog-pager__gap) {
+    align-self: flex-end;
+    color: var(--color-text);
+    line-height: 1;
+  }
+  .c-blog-pager__arrow {
+    width: 2.286rem;
+    height: 2.286rem;
+    transition: transform var(--duration-hover) var(--ease-smooth);
+  }
+  .c-blog-pager__arrow.is-prev {
+    transform: scaleX(-1);
+  }
+  .c-blog-pager__arrow:not(:disabled):hover {
+    transform: translateX(0.214rem);
+  }
+  .c-blog-pager__arrow.is-prev:not(:disabled):hover {
+    transform: scaleX(-1) translateX(0.214rem);
+  }
+  .c-blog-pager__arrow:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+  .c-blog-pager__arrow :global(svg) {
+    width: 1.714rem;
+    height: 1.714rem;
+  }
+  .c-blog-pager :global(.c-blog-pager__page:focus-visible),
+  .c-blog-pager__arrow:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
   @media (max-width: 991px) {
     .c-np-res__card {
       flex-basis: 100%;
@@ -326,6 +533,20 @@ const nameOf = (author: string): string => author.split(",")[0]?.trim() ?? autho
     .c-np-res.is-heading-hidden :global(.c-container) {
       padding-top: 5rem;
       padding-bottom: 5rem;
+    }
+    .c-blog-search {
+      min-height: 4.889rem;
+    }
+    .c-blog-search__icon {
+      width: 2.667rem;
+      height: 2.667rem;
+    }
+    .c-blog-pager :global(.c-blog-pager__page) {
+      width: 4.889rem;
+      height: 4.889rem;
+    }
+    .c-blog-pager {
+      gap: 1rem;
     }
   }
 </style>

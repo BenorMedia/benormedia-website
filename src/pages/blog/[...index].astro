@@ -4,7 +4,8 @@
  * this mode as the Resources cards, three per row, newest first.
  *
  * A rest route so it can build nothing: /blog exists only when at least one
- * post is built (in production, a released post). While every post shown is
+ * post is built (in production, a released post). Keyword search above the
+ * grid and 12 cards per page below it (`searchable`). While every post shown is
  * a draft (previews), the page is noindex and stays out of the sitemap
  * (`sitemapInfo`). No draft banner: importing it here splits its styles into
  * a chunk Astro inlines on every article page (check-new-pages check 9).
@@ -45,5 +46,5 @@ const cards = posts.map(cardOf);
   {blogIndexJsonLd({ name: copy.blog.indexName, description: PAGE_META.blog.description }, posts).map((data) => <JsonLd data={data} />)}
   <PageHero eyebrow={copy.blog.indexName} title={"Articles on B2B websites,\nSEO and AI search."} accent="SEO and AI search." />
   {/* TODO: COPY — section heading (visually hidden; keeps the outline h1 → h2). */}
-  <NpBlogResources cards={cards} shots={shots} heading="All articles" limit={cards.length} headingHidden still />
+  <NpBlogResources cards={cards} shots={shots} heading="All articles" limit={cards.length} headingHidden still searchable />
 </BaseLayout>
