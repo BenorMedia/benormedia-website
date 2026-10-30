@@ -8,6 +8,9 @@
  * Growth 8, Rebrands 4. ≤991: one column (desktop card layout); ≤767: the
  * mobile cards (copy on top, artwork below it).
  *
+ * The whole card is the link ("Learn more" stretched over it). Hover gets
+ * the site's card hover (lift, accent border, shadow; lead 2026-10-30).
+ *
  * Hover / focus (pointer devices ≥768) = the hover frame: "Learn more"
  * opens under the copy and each card runs its motion:
  *   1. Websites: the small shapes drift slowly towards the shield icon;
@@ -404,12 +407,27 @@ const CARDS: Card[] = [
     /* 1 while the card shows its hover / in-view state, else 0. */
     --on: 0;
     position: relative;
+    /* Own stacking context: the artwork sits under the copy at z -1. */
+    isolation: isolate;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     border: var(--border-default);
     border-radius: 8px;
     background: var(--color-white);
+    transition:
+      transform var(--duration-hover) var(--ease-smooth),
+      border-color var(--duration-hover) var(--ease-smooth),
+      box-shadow var(--duration-hover) var(--ease-smooth);
+  }
+  /* The site's card hover (ClientCard, lead 2026-09-30): lift, accent
+     border, c-button's hover shadow. Pointer devices only. */
+  @media (hover: hover) and (min-width: 768px) {
+    .c-services__card:hover {
+      transform: translateY(-3%);
+      border-color: var(--color-accent);
+      box-shadow: 0 0 20px #2223;
+    }
   }
   .c-services__card.is-websites,
   .c-services__card.is-support {
@@ -446,9 +464,8 @@ const CARDS: Card[] = [
   /* --- Copy ------------------------------------------------------------- */
   /* As wide as its lines: Figma's body boxes are a little wider than the
      padded text frame, so a fixed frame width would wrap them early. */
+  /* Not positioned, so the "Learn more" hit area (::after) spans the card. */
   .c-services__copy {
-    position: relative;
-    z-index: 1;
     width: fit-content;
     max-width: 100%;
     padding: calc(40 * var(--u));
@@ -546,10 +563,11 @@ const CARDS: Card[] = [
   .c-services__media {
     position: absolute;
     inset: 0;
+    z-index: -1;
     pointer-events: none;
   }
   .c-services__media.is-front {
-    z-index: 2;
+    z-index: 1;
   }
 
   .c-services__art {
@@ -633,7 +651,7 @@ const CARDS: Card[] = [
   }
 
   .c-services__art.is-drift > img {
-    animation: c-services-drift 20s ease-in-out infinite alternate paused;
+    animation: c-services-drift 14s ease-in-out infinite alternate paused;
   }
   .c-services__card:is(.is-active, :has(:focus-visible)) .c-services__art.is-drift > img {
     animation-play-state: running;

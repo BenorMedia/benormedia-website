@@ -14,6 +14,10 @@
  * service hero. Its badge circles rotate via
  * `src/scripts/animations/cta-badges.ts` (initialized from BaseLayout).
  *
+ * Background (Figma 4097:6836, lead 2026-10-30): the shared `CtaShapes`
+ * (the Services shapes stream on an endless loop + a progressive blur in the
+ * middle). It replaced the line vector and its scroll motion.
+ *
  * Eyebrow needs an on-dark override — the default eyebrow has a gray
  * border + dark text that are unreadable on the gradient. Overridden
  * scoped to `.c-cta` here; flagged in DECISIONS as a possible DS gap.
@@ -23,6 +27,7 @@ import type { CtaBanner as CtaBannerData } from "../../lib/sanity/types";
 import Eyebrow from "../ui/Eyebrow.astro";
 import Container from "../ui/Container.astro";
 import CtaActions from "../ui/CtaActions.astro";
+import CtaShapes from "../ui/CtaShapes.astro";
 import { getCtaBadgeUrlsCached } from "../../lib/sanity/site";
 
 interface Props {
@@ -60,20 +65,13 @@ const badgePool = await getCtaBadgeUrlsCached();
 <section class="c-cta-section" aria-labelledby="cta-banner-title">
   <Container>
   <div class="c-cta">
+    <CtaShapes />
     <div class="c-cta__inner">
       <Eyebrow variant="default" class="c-cta__eyebrow">GET IN TOUCH</Eyebrow>
       <h2 id="cta-banner-title" class="c-text_xl c-cta__title">{cta.title}</h2>
 
       <CtaActions buttons={buttons} badges={badgePool} trustedText={trustedText} />
     </div>
-
-    <img
-      src="/images/cta-banner-vector.svg"
-      alt=""
-      aria-hidden="true"
-      class="c-cta__vector"
-      data-cta-vector
-    />
   </div>
   </Container>
 </section>
@@ -86,18 +84,20 @@ const badgePool = await getCtaBadgeUrlsCached();
     padding-top: 0;
   }
 
+  /* Figma 4097:6836 in Figma px (1/19.2 rem, as in CtaShapes). */
   .c-cta {
+    --u: calc(1rem / 19.2);
     position: relative;
     overflow: hidden;
     border-radius: 0.455rem;
     background: linear-gradient(290deg, var(--color-blue-light) 8.49%, var(--color-blue) 91.51%);
     color: var(--color-white);
     display: flex;
-    padding: 5rem 2.625rem 0 2.625rem;
+    min-height: calc(636.18 * var(--u));
+    padding: calc(60 * var(--u)) calc(44 * var(--u)) calc(100 * var(--u));
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 0.875rem;
     align-self: stretch;
   }
   .c-cta__inner {
@@ -107,40 +107,28 @@ const badgePool = await getCtaBadgeUrlsCached();
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 1.5rem;
+    gap: calc(28 * var(--u));
   }
   .c-cta__title {
     color: var(--color-white);
-    max-width: 60%;
-  }
-  /* Decorative vector — scroll motion in cta-vector.ts */
-  .c-cta__vector {
-    position: relative;
-    z-index: 0;
-    width: min(60rem, 90%);
-    height: auto;
-    pointer-events: none;
-    display: block;
+    max-width: calc(700 * var(--u));
   }
 
   /* --- Eyebrow on-dark override -----------------------------------------
-     TODO: DS eyebrow on-dark variant — default eyebrow uses --color-gray border
-     + --color-text; unreadable on gradient. Scoped override until DS confirms. */
+     TODO: DS eyebrow on-dark variant. Figma 4097:6836: white border and
+     text, white squares with a faint gray border. */
   .c-cta :global(.c-eyebrow.is-default) {
-    border-color: rgba(255, 255, 255, 0.4);
+    border-color: var(--color-white);
     color: var(--color-white);
   }
   .c-cta :global(.c-eyebrow.is-default::before),
   .c-cta :global(.c-eyebrow.is-default::after) {
-    background: rgba(255, 255, 255, 0.9);
-    border-color: rgba(255, 255, 255, 0.6);
+    background: var(--color-white);
+    border-color: color-mix(in srgb, var(--color-gray) 30%, transparent);
   }
 
-  @media (max-width: 991px) {
-    .c-cta { padding: 4rem 2rem 0; }
-  }
   @media (max-width: 767px) {
-    .c-cta { padding: 3rem 1.25rem 0; }
+    .c-cta { min-height: 0; padding: 5rem 1.25rem; }
     .c-cta__inner { gap: 1.25rem; }
     .c-cta__title { max-width: 100%; }
   }
