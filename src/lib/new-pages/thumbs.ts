@@ -742,24 +742,9 @@ export const THUMBS: Record<string, ThumbEntry> = {
   "astro-cms": t(ThImage, { src: `${IMG}/astro-cms.webp`, w: 1084, h: 720 }),
   "copilot-seo": t(ThImage, { src: `${IMG}/copilot-seo.webp`, w: 1084, h: 720 }),
   // Blog wave 4, batch 2 (lead 2026-10-26).
-  // The page types for programmatic SEO.
-  "programmatic-seo-webflow": t(ThIconWall, {
-    icon: "cms",
-    labels: ["Integration pages", "Use case pages", "Comparison pages", "Template libraries", "City pages"],
-  }),
   // OpenAI's crawlers, the answer, and how it is measured.
   "how-to-rank-in-chatgpt": t(ThOrbit, {
     icons: ["ai", "research", "shieldLock", "chartSearch", "pencilDoc", "crmCard", "reporting", "analytics"],
-  }),
-  // The two features, fan-out and where they are measured.
-  "optimize-for-ai-overviews": t(ThIconWall, {
-    icon: "chartSearch",
-    labels: ["AI Overviews", "AI Mode", "Query fan-out", "Search Console", "GA4"],
-  }),
-  // The standard formats, the evidence and the answer library.
-  "security-questionnaire": t(ThIconWall, {
-    icon: "shieldLock",
-    labels: ["SIG", "CAIQ", "HECVAT", "SOC 2 report", "Answer library"],
   }),
   // What marketers edit alone, and what still needs a developer.
   "headless-cms-visual-editor": t(ThIconWall, {
@@ -776,6 +761,9 @@ export const THUMBS: Record<string, ThumbEntry> = {
   "webflow-cms-api": t(ThImage, { src: `${IMG}/webflow-cms-api.webp`, w: 1084, h: 720 }),
   "cybersecurity-content-marketing": t(ThImage, { src: `${IMG}/cybersecurity-content-marketing.webp`, w: 1084, h: 720 }),
   "aeo-specialist": t(ThImage, { src: `${IMG}/aeo-specialist.webp`, w: 1084, h: 720 }),
+  "optimize-for-ai-overviews": t(ThImage, { src: `${IMG}/optimize-for-ai-overviews.webp`, w: 1084, h: 720 }),
+  "programmatic-seo-webflow": t(ThImage, { src: `${IMG}/programmatic-seo-webflow.webp`, w: 1084, h: 720 }),
+  "security-questionnaire": t(ThImage, { src: `${IMG}/security-questionnaire.webp`, w: 1084, h: 720 }),
   // The lead's image (2026-10-28): the Webflow W and the Source slash on
   // glass, cubes and spheres rising from the bottom behind them. The
   // shapes the image cuts off at its edges use a whole shape of their kind.
