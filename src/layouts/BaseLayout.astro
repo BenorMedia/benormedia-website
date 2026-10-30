@@ -222,8 +222,12 @@ if (siteSettings) {
   <body class={bodyClass}>
     {loadGtm && <Fragment set:html={gtmBody} />}
     <Nav siteSettings={siteSettings} />
-    <main><slot /></main>
-    {showCtaBanner && <CtaBanner siteSettings={siteSettings} />}
+    <main>
+      <slot />
+      {showCtaBanner && <CtaBanner siteSettings={siteSettings} />}
+      {/* Sections that follow the CTA banner, e.g. Resources (lead 2026-10-30). */}
+      <slot name="after-cta" />
+    </main>
     <Footer siteSettings={siteSettings} />
     <ContactModal siteSettings={siteSettings} />
     <script>

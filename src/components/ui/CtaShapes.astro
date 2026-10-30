@@ -3,111 +3,118 @@
  * CtaShapes — background of the gradient CTA banners (`CtaBanner`,
  * `NpCtaBand`; Figma 4097:6836, lead 2026-10-30).
  *
- * Two copies of the Services "Custom Websites" shapes stream, pointing at
- * the middle, flowing in on an endless loop (the cards' drift, never
- * stopping). Each stream is drawn twice, half a loop apart: a copy fades
- * in, drifts in, fades out while the other fades in, then waits hidden, so
- * one copy shows at a time and the loop never jumps. Over them, Figma's progressive blur: strongest in the middle, none
- * at the edges, so the copy stays readable.
+ * Figma's two copies of the Services "Custom Websites" shapes stream, cut
+ * into their shapes (`stream-shapes.ts`): each one flows from beyond the
+ * banner's edge to its middle on an endless loop, as on the Services card
+ * and the blog's ThImageConverge thumbnails. A second set runs half a loop
+ * behind so the sides never empty out. Figma's middle blur is drawn on the
+ * shapes themselves (lead 2026-10-30: a blur layer over the banner looked
+ * dirty): each one blurs and fades as it nears the copy, so the gradient
+ * behind the copy stays clean. Phones: fade only, no blur (cheaper).
  *
  * Positions in Figma px (`--u` = 1/19.2 rem: the 1680px Figma banner fills
  * the container), from the banner's center. The parent must be
  * `position: relative; overflow: hidden`, with its content above
- * (`z-index: 1`). Reduced motion: one still copy of each stream.
+ * (`z-index: 1`). Reduced motion: one set, still, where Figma has it.
  */
-const SRC = "/images/home/services/websites-shapes.webp";
-const STREAMS = [
-  { x: -338.08, y: -209.71, r: 29.57, flip: false },
-  { x: 322.97, y: 192.09, r: -145.52, flip: true },
+import { streamPaths, type ShapePath, type StreamBox } from "./stream-shapes";
+
+const STREAMS: StreamBox[] = [
+  { x: -338.08, y: -209.71, w: 1208.111, h: 1171.346, r: 29.57 },
+  { x: 322.97, y: 192.09, w: 1208.111, h: 1171.346, r: -145.52, flip: true },
 ];
+/* Starts beyond the desktop banner's sides and a phone banner's top /
+   bottom. TODO: DS motion: speed (Figma px / s) tuned by eye; the Services
+   card's speed at the banner's scale. */
+const BOUNDS = { x0: -840, y0: -480, x1: 840, y1: 480 };
+const SPEED = 28;
+const sets = [0, 0.5].map((phase) => streamPaths(STREAMS, { x: 0, y: 0 }, BOUNDS, SPEED, phase));
+
+const style = (p: ShapePath) =>
+  [
+    `--x:${p.x}`, `--y:${p.y}`, `--w:${p.w}`, `--h:${p.h}`, `--r:${p.r}deg`, `--fy:${p.flip ? -1 : 1}`,
+    `--sx:${p.sx}`, `--sy:${p.sy}`, `--ex:${p.ex}`, `--ey:${p.ey}`,
+    `animation-duration:${p.dur}s`, `animation-delay:${p.delay}s`,
+  ].join(";");
 ---
 
 <div class="c-cta-shapes" aria-hidden="true">
-  {STREAMS.map((s) => (
-    <span class="c-cta-shapes__stream" style={`--x:${s.x};--y:${s.y};--r:${s.r}deg;--fy:${s.flip ? -1 : 1}`}>
-      <img src={SRC} alt="" loading="lazy" decoding="async" />
-      <img class="is-late" src={SRC} alt="" loading="lazy" decoding="async" />
-    </span>
-  ))}
-  <span class="c-cta-shapes__blur"></span>
+  {sets.map((set, i) =>
+    set.map((p) => (
+      <img class:list={["c-cta-shapes__shape", { "is-late": i === 1 }]} style={style(p)} src={p.src} alt="" loading="lazy" decoding="async" />
+    )),
+  )}
 </div>
 
 <style>
   .c-cta-shapes {
     --u: calc(1rem / 19.2);
-    /* TODO: DS motion: no spec. About the cards' drift speed at the
-       banner's scale (the stream is drawn twice as large). */
-    --c-cta-flow: 120;
-    --c-cta-period: 16s;
     position: absolute;
     inset: 0;
     z-index: 0;
     pointer-events: none;
   }
 
-  .c-cta-shapes__stream {
+  .c-cta-shapes__shape {
     position: absolute;
     left: calc(50% + var(--x) * var(--u));
     top: calc(50% + var(--y) * var(--u));
-    width: calc(1208.111 * var(--u));
-    height: calc(1171.346 * var(--u));
-    overflow: hidden;
-    transform: translate(-50%, -50%) rotate(var(--r)) scaleY(var(--fy));
-  }
-  /* Figma crop: the stream half of the image. */
-  .c-cta-shapes__stream img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 228.54%;
-    height: 100%;
+    width: calc(var(--w) * var(--u));
+    height: calc(var(--h) * var(--u));
     max-width: none;
-    animation: c-cta-flow var(--c-cta-period) linear infinite;
+    transform: translate(-50%, -50%) rotate(var(--r)) scaleY(var(--fy));
+    animation-name: c-cta-converge;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
   }
-  .c-cta-shapes__stream img.is-late {
-    opacity: 0;
-    animation-delay: calc(var(--c-cta-period) / -2);
-  }
-  /* Visible 0–62.5% (fade 12.5% each end); the other copy takes over at 50%. */
-  @keyframes c-cta-flow {
-    0% {
-      translate: 0 0;
+
+  /* Off-stage → the middle: sharp on the sides, blurred and gone by the
+     copy (TODO: DS: blur size and stops tuned by eye). */
+  @keyframes c-cta-converge {
+    from {
+      translate: calc(var(--sx) * var(--u)) calc(var(--sy) * var(--u));
+      filter: blur(0);
+    }
+    50% {
+      filter: blur(0);
+      opacity: 1;
+    }
+    90% {
       opacity: 0;
     }
-    12.5%,
+    to {
+      translate: calc(var(--ex) * var(--u)) calc(var(--ey) * var(--u));
+      filter: blur(14px);
+      opacity: 0;
+    }
+  }
+  @keyframes c-cta-converge-fade {
+    from {
+      translate: calc(var(--sx) * var(--u)) calc(var(--sy) * var(--u));
+    }
     50% {
       opacity: 1;
     }
-    62.5%,
-    100% {
-      translate: calc(var(--c-cta-flow) * var(--u)) 0;
+    90%,
+    to {
       opacity: 0;
     }
+    to {
+      translate: calc(var(--ex) * var(--u)) calc(var(--ey) * var(--u));
+    }
   }
-
-  /* Progressive blur (Figma's glass panel gradient stops; the mask only
-     reads alpha, any opaque color works). */
-  .c-cta-shapes__blur {
-    position: absolute;
-    inset: 0;
-    -webkit-backdrop-filter: blur(30px);
-    backdrop-filter: blur(30px);
-    -webkit-mask-image: linear-gradient(96.65deg, transparent 26.25%, var(--color-white) 50.83%, transparent 72.11%);
-    mask-image: linear-gradient(96.65deg, transparent 26.25%, var(--color-white) 50.83%, transparent 72.11%);
-  }
-
-  /* No mobile design: the copy covers most of the banner, so the blur
-     covers its middle half. */
   @media (max-width: 767px) {
-    .c-cta-shapes__blur {
-      -webkit-mask-image: linear-gradient(96.65deg, transparent 5%, var(--color-white) 30%, var(--color-white) 70%, transparent 95%);
-      mask-image: linear-gradient(96.65deg, transparent 5%, var(--color-white) 30%, var(--color-white) 70%, transparent 95%);
+    .c-cta-shapes__shape {
+      animation-name: c-cta-converge-fade;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .c-cta-shapes__stream img {
+    .c-cta-shapes__shape {
       animation: none;
+    }
+    .c-cta-shapes__shape.is-late {
+      display: none;
     }
   }
 </style>
