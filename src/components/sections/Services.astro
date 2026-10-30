@@ -421,9 +421,22 @@ const CARDS: Card[] = [
   }
 
   /* --- Card ----------------------------------------------------------- */
+  /* Registered so Chromium delays its discrete transition (see --play). */
+  @property --play {
+    syntax: "running | paused";
+    inherits: true;
+    initial-value: paused;
+  }
   .c-services__card {
     /* 1 while the card shows its hover / in-view state, else 0. */
     --on: 0;
+    /* Hover intent (lead 2026-10-30): the motion starts this long after the
+       card turns on (a pointer just passing over starts nothing) and stops
+       at once. TODO: DS motion, tuned by eye. */
+    --intent: 0ms;
+    /* The shapes' play state, switched after the same delay: a discrete
+       transition on this property (below). */
+    --play: paused;
     position: relative;
     /* Own stacking context: the artwork sits under the copy at z -1. */
     isolation: isolate;
@@ -436,7 +449,9 @@ const CARDS: Card[] = [
     transition:
       transform var(--duration-hover) var(--ease-smooth),
       border-color var(--duration-hover) var(--ease-smooth),
-      box-shadow var(--duration-hover) var(--ease-smooth);
+      box-shadow var(--duration-hover) var(--ease-smooth),
+      --play 0s var(--intent);
+    transition-behavior: allow-discrete;
   }
   /* The site's card hover (ClientCard, lead 2026-09-30): lift, accent
      border, c-button's hover shadow. Pointer devices only. */
@@ -461,10 +476,14 @@ const CARDS: Card[] = [
   .c-services__card.is-active,
   .c-services__card:has(:focus-visible) {
     --on: 1;
+    --intent: 200ms;
+    --play: running;
   }
   @media (hover: hover) and (min-width: 768px) {
     .c-services__card:hover {
       --on: 1;
+      --intent: 200ms;
+      --play: running;
     }
   }
   /* Touch, no JS: the end state. */
@@ -517,6 +536,7 @@ const CARDS: Card[] = [
     transition:
       height var(--duration-hover) var(--ease-smooth),
       opacity var(--duration-hover) var(--ease-smooth);
+    transition-delay: var(--intent);
   }
   @media (hover: none), (max-width: 767px) {
     .c-services__more-row {
@@ -675,7 +695,8 @@ const CARDS: Card[] = [
     --sy: var(--d-sy);
     --ex: var(--d-ex);
     --ey: var(--d-ey);
-    animation: c-services-converge calc(var(--d-dur) * 1s) linear calc(var(--d-delay) * 1s) infinite paused;
+    animation: c-services-converge calc(var(--d-dur) * 1s) linear calc(var(--d-delay) * 1s) infinite;
+    animation-play-state: var(--play);
   }
   @media (max-width: 767px) {
     .c-services__art.is-shape {
@@ -685,14 +706,6 @@ const CARDS: Card[] = [
       --ey: var(--m-ey);
       animation-duration: calc(var(--m-dur) * 1s);
       animation-delay: calc(var(--m-delay) * 1s);
-    }
-  }
-  .c-services__card:is(.is-active, :has(:focus-visible)) .c-services__art.is-shape {
-    animation-play-state: running;
-  }
-  @media (hover: hover) and (min-width: 768px) {
-    .c-services__card:hover .c-services__art.is-shape {
-      animation-play-state: running;
     }
   }
   @keyframes c-services-converge {
@@ -718,7 +731,7 @@ const CARDS: Card[] = [
     transition:
       opacity var(--duration-hover) var(--ease-smooth),
       translate var(--duration-hover) var(--ease-smooth);
-    transition-delay: calc(var(--i) * var(--c-services-stagger));
+    transition-delay: calc(var(--intent) + var(--i) * var(--c-services-stagger));
   }
 
   /* 3 + 4. Bars and cube columns rise in turn (each a clipped copy of the
@@ -727,7 +740,7 @@ const CARDS: Card[] = [
     clip-path: inset(0 max(0%, calc(var(--clip-r) - 0.4%)) 0 var(--clip-l));
     translate: 0 calc(var(--on) * var(--rise) * -1 * var(--u));
     transition: translate var(--duration-hover) var(--ease-smooth);
-    transition-delay: calc(var(--i) * var(--c-services-stagger));
+    transition-delay: calc(var(--intent) + var(--i) * var(--c-services-stagger));
   }
   .c-services__art.is-bar { --rise: 40; }
   .c-services__art.is-cube { --rise: 12; }
@@ -743,7 +756,7 @@ const CARDS: Card[] = [
     transition:
       opacity var(--duration-hover) var(--ease-smooth),
       translate var(--duration-hover) var(--c-services-bounce);
-    transition-delay: calc(2 * var(--c-services-stagger) + var(--i) * var(--c-services-stagger));
+    transition-delay: calc(var(--intent) + 2 * var(--c-services-stagger) + var(--i) * var(--c-services-stagger));
   }
 
   @media (prefers-reduced-motion: reduce) {

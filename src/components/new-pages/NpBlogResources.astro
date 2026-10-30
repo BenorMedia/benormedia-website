@@ -537,6 +537,10 @@ const nameOf = (author: string): string => author.split(",")[0]?.trim() ?? autho
     .c-blog-search {
       min-height: 4.889rem;
     }
+    /* 16.2px: iOS zooms into any field under 16px on focus (lead 2026-10-30). */
+    .c-blog-search__input {
+      font-size: 1.8rem;
+    }
     .c-blog-search__icon {
       width: 2.667rem;
       height: 2.667rem;

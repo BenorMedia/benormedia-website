@@ -29,9 +29,13 @@ const STREAMS: StreamBox[] = [
 const BOUNDS = { x0: -840, y0: -480, x1: 840, y1: 480 };
 const SPEED = 19.6; // 30% slower than the first pass (28), lead 2026-10-30
 // 30% fewer shapes (lead 2026-10-30): 3 of every 10 dropped, a different 3
-// in each set, so both streams thin out evenly.
+// in each set, so both streams thin out evenly. Phones drop 30% more of
+// what is left (2 more of every 10, lead 2026-10-30): `is-wide-only`.
 const sets = [0, 0.5].map((phase, set) =>
-  streamPaths(STREAMS, { x: 0, y: 0 }, BOUNDS, SPEED, phase).filter((_, i) => ![1, 4, 7].includes((i + set * 5) % 10)),
+  streamPaths(STREAMS, { x: 0, y: 0 }, BOUNDS, SPEED, phase)
+    .map((path, i) => ({ path, slot: (i + set * 5) % 10 }))
+    .filter(({ slot }) => ![1, 4, 7].includes(slot))
+    .map(({ path, slot }) => ({ path, wideOnly: slot === 0 || slot === 5 })),
 );
 
 const style = (p: ShapePath) =>
@@ -44,8 +48,15 @@ const style = (p: ShapePath) =>
 
 <div class="c-cta-shapes" aria-hidden="true">
   {sets.map((set, i) =>
-    set.map((p) => (
-      <img class:list={["c-cta-shapes__shape", { "is-late": i === 1 }]} style={style(p)} src={p.src} alt="" loading="lazy" decoding="async" />
+    set.map(({ path, wideOnly }) => (
+      <img
+        class:list={["c-cta-shapes__shape", { "is-late": i === 1, "is-wide-only": wideOnly }]}
+        style={style(path)}
+        src={path.src}
+        alt=""
+        loading="lazy"
+        decoding="async"
+      />
     )),
   )}
 </div>
@@ -110,6 +121,9 @@ const style = (p: ShapePath) =>
   @media (max-width: 767px) {
     .c-cta-shapes__shape {
       animation-name: c-cta-converge-fade;
+    }
+    .c-cta-shapes__shape.is-wide-only {
+      display: none;
     }
   }
 
