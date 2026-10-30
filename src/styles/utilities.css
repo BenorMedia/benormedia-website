@@ -27,3 +27,6 @@
 .cc-mt_64 { margin-top: 4rem; }
 .cc-mb_16 { margin-bottom: 1rem; }
 .cc-mb_32 { margin-bottom: 2rem; }
+
+/* Padding utilities */
+.cc-padding_bottom-0 { padding-bottom: 0; }
