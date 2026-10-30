@@ -27,7 +27,7 @@ const STREAMS: StreamBox[] = [
    bottom. TODO: DS motion: speed (Figma px / s) tuned by eye; the Services
    card's speed at the banner's scale. */
 const BOUNDS = { x0: -840, y0: -480, x1: 840, y1: 480 };
-const SPEED = 28;
+const SPEED = 19.6; // 30% slower than the first pass (28), lead 2026-10-30
 const sets = [0, 0.5].map((phase) => streamPaths(STREAMS, { x: 0, y: 0 }, BOUNDS, SPEED, phase));
 
 const style = (p: ShapePath) =>
