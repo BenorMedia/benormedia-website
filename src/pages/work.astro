@@ -6,12 +6,15 @@
  * SEO lives in code (lead, 2026-09-29: there will be no `workPage` document;
  * the `workPage` schema type still exists and is not read here).
  *
+ * Hero: `ClientOrbitHero`, the `/case-studies` orbit of client icons (lead
+ * 2026-10-31), fed by the same `getAllClients()` list (Studio order).
+ *
  * BaseLayout owns Nav, CtaBanner, Footer and ContactModal.
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getAllClients, getTestimonials } from "../lib/sanity/queries";
 import { PAGE_META } from "../lib/content/seo";
-import PageHero from "../components/sections/PageHero.astro";
+import ClientOrbitHero from "../components/sections/ClientOrbitHero.astro";
 import WorkListing from "../components/sections/WorkListing.astro";
 import Testimonials from "../components/sections/Testimonials.astro";
 
@@ -27,11 +30,13 @@ const heroDescription =
 ---
 
 <BaseLayout title={PAGE_META.work.title} description={PAGE_META.work.description}>
-  <PageHero
+  <ClientOrbitHero
     eyebrow="Our Work"
     title={"Websites\nwe've launched."}
     accent="launched."
     description={heroDescription}
+    clients={clients}
+    titleClass="c-text_xxl"
     class="c-work-hero"
   />
   <WorkListing clients={clients} />
