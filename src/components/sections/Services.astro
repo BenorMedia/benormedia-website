@@ -583,7 +583,8 @@ const CARDS: Card[] = [
   @media (max-width: 767px) {
     .c-services__copy {
       width: 100%;
-      padding: calc(40 * var(--u)) calc(40 * var(--u)) calc(200 * var(--u));
+      /* 24u = 20px at the 9px root */
+      padding: calc(24 * var(--u)) calc(24 * var(--u)) calc(200 * var(--u));
     }
     .c-services__card .c-services__title {
       max-width: calc(342 * var(--u));
