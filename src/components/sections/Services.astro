@@ -242,25 +242,25 @@ interface Card {
 const CARDS: Card[] = [
   {
     key: "websites",
-    title: "Custom Websites\n& Migrations.",
+    title: "Custom websites\n& migrations.",
     body: "Scalable, high-converting, and SEO/AEO optimized websites built using the right technologies for your business.",
     href: "/custom-websites-migrations",
   },
   {
     key: "support",
-    title: "Ongoing Design and\nDevelopment Support.",
+    title: "Ongoing design and\ndevelopment support.",
     body: "The strategy, design, development, and support needed to keep your website improving and scaling.",
     href: "/ongoing-website-support",
   },
   {
     key: "growth",
-    title: "Website Growth\n(SEO/GEO + CRO).",
+    title: "Website growth\n(SEO/GEO + CRO).",
     body: "Drive revenue to your website through SEO, AEO, content strategy, and ongoing CRO improvements.",
     href: "/growth",
   },
   {
     key: "rebrand",
-    title: "Full Rebrands.",
+    title: "Full rebrands.",
     body: "Positioning, messaging, and brand identity leveraged across your new website and all your marketing assets.",
   },
 ];
@@ -270,7 +270,7 @@ const CARDS: Card[] = [
   <Container>
     <SectionHeader
       eyebrow="Services"
-      title="A site your team can run, and growth that keeps pipeline coming."
+      title="A website your team can run, and growth that keeps pipeline coming."
     />
 
     <div class="c-services__grid">
@@ -387,10 +387,11 @@ const CARDS: Card[] = [
     }
   }
 
-  /* Breaks after "growth" as in Figma (that line is ≈64rem; with "that",
-     ≈71rem); narrower screens wrap on their own. */
+  /* Two even lines on desktop, breaking after "and" (lead 2026-11-01);
+     balanced so narrower screens wrap evenly too. */
   .c-services :global(.c-section-header__title) {
     max-width: 67rem;
+    text-wrap: balance;
   }
 
   .c-services__grid {
