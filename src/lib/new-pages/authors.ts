@@ -51,6 +51,22 @@ export const AUTHORS: readonly Author[] = [
     linkedin: "https://www.linkedin.com/in/david-garay19/",
     knowsAbout: ["Webflow development", "UX design", "UI design", "Website redesign planning", "Conversion rate optimization"],
   },
+  {
+    // Lead 2026-11-02: title, LinkedIn and headshot from the lead; bio
+    // drafted by Claude at the lead's request (role and topics only).
+    slug: "emily-gaitan",
+    name: "Emily Gaitan",
+    jobTitle: "Senior Web Designer, BenorMedia",
+    photo: { src: "/images/new-pages/authors/emily-gaitan.png", w: 258, h: 258 },
+    description: "Emily Gaitan is a Senior Web Designer at BenorMedia. Read Emily's articles on SaaS website redesigns, phased rollouts and protecting SEO through a relaunch.",
+    bio: [
+      "Emily Gaitan is a Senior Web Designer at BenorMedia, a Webflow agency based in Barcelona that designs, builds and grows websites for B2B SaaS and tech companies.",
+      "Emily designs client websites from the first concepts to the finished pages: layouts, visual systems and page templates that keep a site consistent as it grows, and that marketing teams can extend on their own after launch.",
+      "On the BenorMedia blog, Emily writes about redesigning SaaS websites: when to roll out a new site in phases instead of one big launch, which pages to move first, and how to protect search traffic between releases.",
+    ],
+    linkedin: "https://www.linkedin.com/in/emilygaitan/",
+    knowsAbout: ["Web design", "UI design", "B2B SaaS website design", "Website redesign planning"],
+  },
 ];
 
 const nameOf = (author: string): string => author.split(",")[0]?.trim() ?? "";

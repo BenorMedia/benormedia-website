@@ -128,6 +128,7 @@ const LASTMOD = {
   '/authors/sergio-gancedo': '2026-10-17',
   '/guides': '2026-10-17',
   '/authors/david-garay': '2026-10-17',
+  '/authors/emily-gaitan': '2026-11-02',
 };
 
 // New pages (content-pack/content/*.md, docs/new-pages.md): draft pages stay

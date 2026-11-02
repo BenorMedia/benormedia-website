@@ -10,7 +10,7 @@ title: "SaaS Website Redesign in Phases: When It Beats a Relaunch"
 description: "When to redesign a SaaS website section by section instead of in one launch, how to sequence phases, share one domain, and protect SEO between releases."
 h1: "SaaS website redesign in phases: when a section-by-section rollout beats one big launch, and how to run it"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Emily Gaitan, Senior Web Designer"
 publishedAt: 2026-10-27
 updatedAt: 2026-10-27
 reviewEvery: 90 days
