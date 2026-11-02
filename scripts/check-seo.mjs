@@ -93,6 +93,7 @@ const PAGES = {
   '/authors/sergio-gancedo': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'sergio gancedo' },
   '/authors/david-garay': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'david garay' },
   '/authors/emily-gaitan': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'emily gaitan' },
+  '/authors/santiago-lopez': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'santiago lopez' },
 };
 const NOINDEX_PAGES = ['/testimonials', '/cookie-policy']; // must stay out of the sitemap
 

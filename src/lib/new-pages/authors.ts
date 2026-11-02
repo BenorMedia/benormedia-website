@@ -67,6 +67,22 @@ export const AUTHORS: readonly Author[] = [
     linkedin: "https://www.linkedin.com/in/emilygaitan/",
     knowsAbout: ["Web design", "UI design", "B2B SaaS website design", "Website redesign planning"],
   },
+  {
+    // Lead 2026-11-02: title, LinkedIn and headshot from the lead (custom
+    // development too); bio drafted by Claude, role only. No articles yet.
+    slug: "santiago-lopez",
+    name: "Santiago Lopez",
+    jobTitle: "Senior Webflow Developer, BenorMedia",
+    photo: { src: "/images/new-pages/authors/santiago-lopez.png", w: 258, h: 258 },
+    description: "Santiago Lopez is a Senior Webflow Developer at BenorMedia, building Webflow websites and custom code for B2B SaaS and tech companies.",
+    bio: [
+      "Santiago Lopez is a Senior Webflow Developer at BenorMedia, a Webflow agency based in Barcelona that designs, builds and grows websites for B2B SaaS and tech companies.",
+      "He turns approved designs into production Webflow sites: responsive layouts, CMS Collections that marketing teams can manage on their own, interactions and the technical details that keep pages fast and easy to crawl.",
+      "When a project needs more than Webflow offers out of the box, he also works in custom code, from custom components and integrations to builds outside Webflow.",
+    ],
+    linkedin: "https://www.linkedin.com/in/santiagolopez22/",
+    knowsAbout: ["Webflow development", "Custom web development", "Webflow CMS", "Front-end development"],
+  },
 ];
 
 const nameOf = (author: string): string => author.split(",")[0]?.trim() ?? "";

@@ -77,14 +77,17 @@ const cards = articles.map(cardOf);
       <hr class="c-np-author-hero__rule" />
     </Container>
   </header>
-  <NpBlogResources
-    cards={cards}
-    shots={shots}
-    eyebrow={copy.author.articlesEyebrow}
-    heading={fill(copy.author.articlesHeading, { name: author.name })}
-    limit={cards.length}
-    still
-  />
+  {/* An author with no articles yet gets no empty "Articles" section. */}
+  {cards.length > 0 && (
+    <NpBlogResources
+      cards={cards}
+      shots={shots}
+      eyebrow={copy.author.articlesEyebrow}
+      heading={fill(copy.author.articlesHeading, { name: author.name })}
+      limit={cards.length}
+      still
+    />
+  )}
 </BaseLayout>
 
 <style>
