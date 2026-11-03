@@ -9,7 +9,7 @@
  * Release = set `DRAFT = false` with the lead's sign-off, once every
  * `marker` below is resolved (each one prints on the page while it is set).
  *
- * Markers are the content kit's: `[VERIFY: ...]` and `[PERSON: ...]`. Never
+ * Markers are the content kit's (`[VERIFY: ...]`). Never
  * resolve one with a guess; the lead answers them (DECISIONS → About).
  */
 import { AUTHORS, authorPath, type Author } from "../new-pages/authors";
@@ -97,14 +97,15 @@ export interface TeamMember {
   /** Role, from `authors.ts` (the lead's team titles). */
   role: string;
   href: string;
-  photo: Author["photo"];
+  /** Card photo (lead 2026-11-03), 396 × 438, the ring lines included. */
+  photo: string;
 }
 
-// Figma order for the first four cards, then the three newer members.
+// Order of the lead's "all team (names and position)" screenshot (2026-11-03).
 const TEAM_ORDER = [
   "sergio-gancedo",
-  "santiago-lopez",
   "emily-gaitan",
+  "santiago-lopez",
   "david-garay",
   "paula-allievi",
   "ismael-aoussi",
@@ -117,12 +118,10 @@ export const ABOUT_TEAM = {
   title: "Our team.",
   members: TEAM_ORDER.flatMap((slug) => {
     const a = AUTHORS.find((x) => x.slug === slug);
-    return a ? [{ name: a.name, role: roleOf(a), href: authorPath(a), photo: a.photo }] : [];
+    return a ? [{ name: a.name, role: roleOf(a), href: authorPath(a), photo: `/images/about/team/${a.slug}.webp` }] : [];
   }) satisfies TeamMember[],
   /** Team members, for the Organization `employee` list. */
   authors: TEAM_ORDER.flatMap((slug) => AUTHORS.find((x) => x.slug === slug) ?? []),
-  marker:
-    "[PERSON: card photos. Figma has one placeholder portrait on every card; the author headshots (round) stand in. Send a card photo per person.]",
   join: {
     title: "Want to join the team?",
     body: "We're always happy to meet designers and developers. Send us your work!",

@@ -9,9 +9,8 @@
  * Hover: the site's card hover (lift, accent border, shadow, as Services),
  * and the arrow turns -15° in the brand gradient (Figma's hover card).
  *
- * Photos: Figma has one placeholder portrait on every card. Until the lead
- * sends a card photo per person, the round author headshot stands in,
- * centred in the photo area (TODO: ASSET).
+ * Photos: the lead's card photos (2026-11-03, `/images/about/team/`), the
+ * ring lines drawn in; transparent, so the card's glow shows through.
  *
  * Art in Figma px (`--u`, as Services): the blue glow behind every card,
  * a second small glow on the 2nd and 4th columns, and on the join card the
@@ -29,10 +28,9 @@ interface Props {
   title: string;
   members: readonly TeamMember[];
   join: { title: string; body: string; button: string };
-  marker?: string | undefined;
 }
 
-const { eyebrow, title, members, join, marker } = Astro.props;
+const { eyebrow, title, members, join } = Astro.props;
 
 const SVC = "/images/home/services";
 
@@ -77,7 +75,6 @@ const ARROW = `<svg viewBox="0 0 62.4928 63.1552" width="62.4928" height="63.155
 <section class="c-about-team">
   <Container>
     <SectionHeader eyebrow={eyebrow} title={title} />
-    {marker && <mark class="c-about-marker c-paragraph_s">{marker}</mark>}
 
     {/* The hover arrow's gradient (Figma paint0_linear_0_440). */}
     <svg class="c-about-team__defs" width="0" height="0" aria-hidden="true" focusable="false">
@@ -99,7 +96,7 @@ const ARROW = `<svg viewBox="0 0 62.4928 63.1552" width="62.4928" height="63.155
             )}
           </div>
           <div class="c-about-team__photo">
-            <img src={m.photo.src} width={m.photo.w} height={m.photo.h} alt="" loading="lazy" decoding="async" />
+            <img src={m.photo} width="396" height="438" alt={m.name} loading="lazy" decoding="async" />
           </div>
           <div class="c-about-team__body">
             <h3 class="c-about-team__name c-text_m">
@@ -137,10 +134,6 @@ const ARROW = `<svg viewBox="0 0 62.4928 63.1552" width="62.4928" height="63.155
   .c-about-team {
     --u: calc(1rem / 19.2);
     background: var(--color-white);
-  }
-
-  .c-about-team :global(.c-about-marker) {
-    margin-top: 2rem;
   }
 
   .c-about-team__defs {
@@ -205,16 +198,15 @@ const ARROW = `<svg viewBox="0 0 62.4928 63.1552" width="62.4928" height="63.155
   }
 
   .c-about-team__photo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     height: calc(437.66 * var(--u));
   }
-  /* Stand-in: the round author headshot (TODO: ASSET, card photos). */
   .c-about-team__photo img {
-    width: calc(240 * var(--u));
-    height: auto;
-    max-width: 70%;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    object-position: 50% 0%;
   }
 
   .c-about-team__body {

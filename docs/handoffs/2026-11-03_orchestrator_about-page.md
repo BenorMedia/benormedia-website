@@ -29,3 +29,8 @@ Date: 2026-11-03 · Author: orchestrator (Claude Code) · Branch: `feat/about-pa
 ## TODO markers added
 - `TODO: DS` — mobile/tablet layouts, stamp font and shadow
 - `TODO: ASSET` — team card photos
+
+## Update (same day)
+- Team cards use the lead's card photos (`public/images/about/team/`), in the order of the lead's team screenshot; the `[PERSON]` marker is gone.
+- Footer Webflow badge replaced with the lead's "Premium Partner" badge (`public/images/webflow-premium-partner.png`).
+- Animations: the lead says they are described in Figma comments. Comments can't be read through the Figma connector or the Plugin API (no annotations, no motion data, no canvas notes next to the frame). Waiting for the comment text.
