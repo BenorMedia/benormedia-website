@@ -770,12 +770,19 @@ const resourceLinks = [
     width: 1.143rem;
     height: 1.177rem;
   }
-  .c-nav__res-card:hover .c-nav__res-arrow,
-  .c-nav__res-card:has(.c-nav__res-more:focus-visible) .c-nav__res-arrow,
   .c-nav__res-all:hover .c-nav__res-arrow,
   .c-nav__res-all:focus-visible .c-nav__res-arrow {
     transform: rotate(-30.963deg);
     color: var(--color-accent);
+  }
+  /* Article cards: 20% smaller, and the arrow stays dark (lead 2026-11-03). */
+  .c-nav__res-card .c-nav__res-arrow :global(svg) {
+    width: 0.914rem;
+    height: 0.942rem;
+  }
+  .c-nav__res-card:hover .c-nav__res-arrow,
+  .c-nav__res-card:has(.c-nav__res-more:focus-visible) .c-nav__res-arrow {
+    transform: rotate(-30.963deg);
   }
   /* The three links under the cards, side by side (same gap as the cards). */
   .c-nav__res-links {

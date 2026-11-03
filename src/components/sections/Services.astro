@@ -609,8 +609,8 @@ const header = isAbout
     position: absolute;
     inset: 0;
   }
-  /* The site's arrow, as wide as the old one; on the card's hover it turns
-     -30.963° in accent, as on every card (lead 2026-11-03). */
+  /* The site's arrow, 20% under the old one's width; on the card's hover it
+     turns -30.963° and stays dark (lead 2026-11-03). */
   .c-services__arrow {
     display: inline-flex;
     align-items: center;
@@ -622,17 +622,15 @@ const header = isAbout
       color var(--duration-hover) var(--ease-smooth);
   }
   .c-services__arrow :global(svg) {
-    width: calc(15.64 * var(--u));
-    height: calc(16.1 * var(--u));
+    width: calc(12.51 * var(--u));
+    height: calc(12.88 * var(--u));
   }
   .c-services__card:has(.c-services__more:focus-visible) .c-services__arrow {
     transform: rotate(-30.963deg);
-    color: var(--color-accent);
   }
   @media (hover: hover) and (min-width: 768px) {
     .c-services__card:hover .c-services__arrow {
       transform: rotate(-30.963deg);
-      color: var(--color-accent);
     }
   }
 
