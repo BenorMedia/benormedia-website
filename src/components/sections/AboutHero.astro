@@ -1,17 +1,23 @@
 ---
 /**
  * AboutHero — /about hero (Figma 4145:9675): eyebrow, `<h1>` and two
- * paragraphs on the left, a column of six photos on the right, clipped at
+ * paragraphs on the left, two columns of photos on the right, clipped at
  * the top and bottom of the section.
  *
  * Copy: `lib/content/about.ts`. Sizes in Figma px (`--u` = one Figma px:
  * 1/19.2 rem, so the 1680px Figma grid fills the container, as Services).
- * Photo column: three rows of two 420 × 534 tiles; three of them show a
- * shorter photo at the top or bottom of the tile (Figma's stagger). Each
- * photo keeps Figma's crop with `object-position`.
+ * Photos: two columns of three 420 × 534 tiles; three tiles show a shorter
+ * photo at the top or bottom (Figma's stagger). Each photo keeps Figma's
+ * crop with `object-position`.
  *
- * ≤991 (no tablet or mobile design, TODO: DS): the column moves under the
- * copy and shows its first row only.
+ * Motion (lead 2026-11-03, Figma comment): an endless loop, slow and
+ * subtle; the left column moves up, the right one down. Each column holds
+ * its tiles twice and moves by one set (50%), CSS only. Paused while the
+ * hero is off screen (script below); without JS it keeps running. Reduced
+ * motion: still, at Figma's frame.
+ *
+ * ≤991 (no tablet or mobile design, TODO: DS): the photos move under the
+ * copy in a window one tile tall, still looping.
  *
  * `marker`: the open photo question, printed under the copy while the page
  * is a draft (see about.ts).
@@ -40,23 +46,27 @@ interface Tile {
   align: "start" | "end";
   pos: string;
 }
-const ROWS: Tile[][] = [
-  [
-    { src: `${IMG}/hero-1.webp`, w: 840, h: 1076, box: 534, align: "start", pos: "50% 50%" },
-    { src: `${IMG}/hero-2.webp`, w: 960, h: 540, box: 359, align: "end", pos: "50% 50%" },
-  ],
-  [
-    { src: `${IMG}/hero-3.webp`, w: 673, h: 1200, box: 534, align: "start", pos: "50% 86%" },
-    { src: `${IMG}/hero-4.webp`, w: 687, h: 1031, box: 320, align: "start", pos: "50% 0%" },
-  ],
-  [
-    { src: `${IMG}/hero-5.webp`, w: 904, h: 1200, box: 534, align: "start", pos: "50% 68%" },
-    { src: `${IMG}/hero-6.webp`, w: 980, h: 653, box: 420, align: "end", pos: "73% 50%" },
-  ],
+const COLUMNS: { dir: "up" | "down"; tiles: Tile[] }[] = [
+  {
+    dir: "up",
+    tiles: [
+      { src: `${IMG}/hero-1.webp`, w: 840, h: 1076, box: 534, align: "start", pos: "50% 50%" },
+      { src: `${IMG}/hero-3.webp`, w: 673, h: 1200, box: 534, align: "start", pos: "50% 86%" },
+      { src: `${IMG}/hero-5.webp`, w: 904, h: 1200, box: 534, align: "start", pos: "50% 68%" },
+    ],
+  },
+  {
+    dir: "down",
+    tiles: [
+      { src: `${IMG}/hero-2.webp`, w: 960, h: 540, box: 359, align: "end", pos: "50% 50%" },
+      { src: `${IMG}/hero-4.webp`, w: 687, h: 1031, box: 320, align: "start", pos: "50% 0%" },
+      { src: `${IMG}/hero-6.webp`, w: 980, h: 653, box: 420, align: "end", pos: "73% 50%" },
+    ],
+  },
 ];
 ---
 
-<section class="c-about-hero">
+<section class="c-about-hero" data-about-hero>
   <Container>
     <div class="c-about-hero__body">
       <div class="c-about-hero__copy">
@@ -69,28 +79,42 @@ const ROWS: Tile[][] = [
       </div>
 
       <div class="c-about-hero__photos" aria-hidden="true">
-        {ROWS.map((row, r) => (
-          <div class="c-about-hero__row">
-            {row.map((t) => (
-              <div class:list={["c-about-hero__tile", `is-${t.align}`]}>
-                <img
-                  class="c-about-hero__img"
-                  style={`--box:${t.box};object-position:${t.pos}`}
-                  src={t.src}
-                  width={t.w}
-                  height={t.h}
-                  alt=""
-                  loading={r === 0 ? "eager" : "lazy"}
-                  decoding="async"
-                />
-              </div>
-            ))}
+        {COLUMNS.map((col) => (
+          <div class="c-about-hero__col">
+            <div class:list={["c-about-hero__track", `is-${col.dir}`]}>
+              {[0, 1].map((set) =>
+                col.tiles.map((t) => (
+                  <div class:list={["c-about-hero__tile", `is-${t.align}`]}>
+                    <img
+                      class="c-about-hero__img"
+                      style={`--box:${t.box};object-position:${t.pos}`}
+                      src={t.src}
+                      width={t.w}
+                      height={t.h}
+                      alt=""
+                      loading={set === 0 ? "eager" : "lazy"}
+                      decoding="async"
+                    />
+                  </div>
+                )),
+              )}
+            </div>
           </div>
         ))}
       </div>
     </div>
   </Container>
 </section>
+
+<script>
+  // Pause the photo loop while the hero is off screen. Without JS it keeps running.
+  document.querySelectorAll<HTMLElement>("[data-about-hero]").forEach((hero) => {
+    const observer = new IntersectionObserver(([entry]) => {
+      hero.classList.toggle("is-paused", !entry?.isIntersecting);
+    });
+    observer.observe(hero);
+  });
+</script>
 
 <style>
   .c-about-hero {
@@ -132,27 +156,54 @@ const ROWS: Tile[][] = [
     margin-top: 1.5em;
   }
 
-  /* Photo column: centred on the copy, 28px in from the grid's right edge
+  /* Photos: centred on the copy, 28px in from the grid's right edge
      (Figma: right 148 of the 1920 frame), overflowing the section. */
   .c-about-hero__photos {
+    /* One loop = one set of three tiles; TODO: DS motion, tuned slow. */
+    --c-about-hero-speed: 90s;
     position: absolute;
     top: 50%;
     right: calc(28 * var(--u));
     display: flex;
-    flex-direction: column;
     gap: calc(16 * var(--u));
+    height: calc(3 * 550 * var(--u));
     transform: translateY(-50%);
     pointer-events: none;
   }
-  .c-about-hero__row {
+  .c-about-hero__col {
+    width: calc(420 * var(--u));
+  }
+  /* Each tile carries the 16px gap below it, so one set is exactly 50%. */
+  .c-about-hero__track {
     display: flex;
-    gap: calc(16 * var(--u));
+    flex-direction: column;
+    animation: c-about-hero-up var(--c-about-hero-speed) linear infinite;
+  }
+  .c-about-hero__track.is-down {
+    animation-name: c-about-hero-down;
+  }
+  .c-about-hero.is-paused .c-about-hero__track {
+    animation-play-state: paused;
+  }
+  @keyframes c-about-hero-up {
+    from { transform: translateY(0); }
+    to { transform: translateY(-50%); }
+  }
+  @keyframes c-about-hero-down {
+    from { transform: translateY(-50%); }
+    to { transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .c-about-hero__track {
+      animation: none;
+    }
   }
   .c-about-hero__tile {
     display: flex;
     flex-direction: column;
-    width: calc(420 * var(--u));
+    flex: none;
     height: calc(534 * var(--u));
+    margin-bottom: calc(16 * var(--u));
   }
   .c-about-hero__tile.is-end {
     justify-content: flex-end;
@@ -175,20 +226,23 @@ const ROWS: Tile[][] = [
     .c-about-hero__copy {
       max-width: none;
     }
+    /* A window one tile tall (420 + 16 + 420 wide, 534 high). */
     .c-about-hero__photos {
-      position: static;
+      position: relative;
+      top: auto;
+      right: auto;
+      height: auto;
+      aspect-ratio: 856 / 534;
       margin-top: 3rem;
+      overflow: hidden;
       transform: none;
     }
-    .c-about-hero__row {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    .c-about-hero__row + .c-about-hero__row {
-      display: none;
+    .c-about-hero__col {
+      flex: 1;
+      width: auto;
+      min-width: 0;
     }
     .c-about-hero__tile {
-      width: auto;
       height: auto;
       aspect-ratio: 420 / 534;
     }

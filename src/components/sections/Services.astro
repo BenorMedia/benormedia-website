@@ -38,11 +38,13 @@
  * lead to confirm, see the PR). Copy and titles are Figma's, not Sanity's.
  *
  * `variant="about"`: the /about "BenorMedia at a glance" cards (Figma
- * 4145:14236), the same grid and artwork in the neutral frame with the
- * About copy (`lib/content/about.ts`). Static: no links, no "Learn more",
- * no hover or in-view motion. Two swaps: the 2020 shield in the Websites
- * glass tile, and the tilted partner badge (in a glass tile) for the Growth
- * bars. The Rebrands stars show from the start, as in that frame.
+ * 4145:14236), the same grid, artwork and hover / in-view states as here
+ * (lead 2026-11-03, Figma comment), with the About copy
+ * (`lib/content/about.ts`). Not links, so no "Learn more" row. Two swaps:
+ * the 2020 shield in the Websites glass tile, and the lead's tilted
+ * partner badge for the Growth bars (it rises like a cube column on
+ * hover). The Rebrands stars are in place from the start, as in that
+ * frame, and rise with the cubes.
  */
 import Container from "../ui/Container.astro";
 import SectionHeader from "../ui/SectionHeader.astro";
@@ -247,13 +249,14 @@ const rebrandStars: Art[] = [
 }));
 
 // About: Figma 4175:16089 (the 2020 shield, 194.832 × 221.184, turned 5°
-// in the same glass tile) and 4178:16284 (the partner badge, 604.8 ×
-// 126.773, in a glass tile turned -6.91°, centred 308.88 in from the card's
-// right edge, 217.5 down).
+// in the same glass tile) and 4178:16284 (the partner badge in its tilted
+// glass tile: the lead's export, 1421 × 531 = 2× Figma's 710.357 × 265.214
+// bounds, centred 308.88 in from the card's right edge, 217.5 down).
 const aboutBadge: Art = {
   src: "/images/about/facts-partner.webp",
-  d: { ax: 100, x: -308.88, ay: 0, y: 217.5, w: 693.36, h: 183.13, r: -6.91 },
-  m: { ax: 50, x: 0, ay: 100, y: -95, w: 416.02, h: 109.88, r: -6.91 },
+  d: { ax: 100, x: -308.88, ay: 0, y: 217.5, w: 710.357, h: 265.214 },
+  m: { ax: 50, x: 0, ay: 100, y: -95, w: 426.21, h: 159.13 },
+  vars: { i: 0, "clip-l": "0%", "clip-r": "0%" },
 };
 
 interface Card {
@@ -297,13 +300,13 @@ const header = isAbout
   : { eyebrow: "Services", title: "A website your team can run, and growth that keeps pipeline coming." };
 ---
 
-<section class:list={["c-services", { "is-static": isAbout }]} data-c-services={isAbout ? undefined : ""}>
+<section class:list={["c-services", { "is-about": isAbout }]} data-c-services>
   <Container>
     <SectionHeader eyebrow={header.eyebrow} title={header.title} />
 
     <div class="c-services__grid">
       {CARDS.map((card) => (
-        <article class:list={["c-services__card", `is-${card.key}`]} data-c-services-card={isAbout ? undefined : ""}>
+        <article class:list={["c-services__card", `is-${card.key}`]} data-c-services-card>
           <div class="c-services__media" aria-hidden="true">
             {card.key === "websites" && (
               <>
@@ -321,11 +324,9 @@ const header = isAbout
 
             {card.key === "support" && (
               <>
-                {!isAbout && (
-                  <span class:list={artClass(supportRevealBack, "is-reveal")} style={artStyle(supportRevealBack)}>
-                    <img src={supportRevealBack.src} alt="" loading="lazy" decoding="async" />
-                  </span>
-                )}
+                <span class:list={artClass(supportRevealBack, "is-reveal")} style={artStyle(supportRevealBack)}>
+                  <img src={supportRevealBack.src} alt="" loading="lazy" decoding="async" />
+                </span>
                 {supportBase.map((a) => (
                   <span class:list={artClass(a)} style={artStyle(a)}>
                     <img src={a.src} alt="" loading="lazy" decoding="async" />
@@ -339,7 +340,7 @@ const header = isAbout
                 <img class:list={artClass(blobB)} style={artStyle(blobB)} src={blobB.src} alt="" />
                 <img class:list={artClass(blobA(undefined))} style={artStyle(blobA(undefined))} src={`${IMG}/blob-a.svg`} alt="" />
                 {isAbout ? (
-                  <span class:list={artClass(aboutBadge, "c-services__glass", "is-badge")} style={artStyle(aboutBadge)}>
+                  <span class:list={artClass(aboutBadge, "is-rise", "is-badge")} style={artStyle(aboutBadge)}>
                     <img src={aboutBadge.src} alt="" loading="lazy" decoding="async" />
                   </span>
                 ) : growthBars.map((a) => (
@@ -383,7 +384,7 @@ const header = isAbout
           </div>
 
           {/* Artwork drawn over the copy (Figma layer order). */}
-          {card.key === "support" && !isAbout && (
+          {card.key === "support" && (
             <div class="c-services__media is-front" aria-hidden="true">
               {supportRevealFront.map((a) => (
                 <span class:list={artClass(a, "is-reveal")} style={artStyle(a)}>
@@ -530,21 +531,6 @@ const header = isAbout
     }
   }
 
-  /* About: the neutral frame everywhere, no hover. */
-  .c-services.is-static .c-services__card {
-    --on: 0;
-    --play: paused;
-  }
-  @media (hover: hover) and (min-width: 768px) {
-    .c-services.is-static .c-services__card:hover {
-      --on: 0;
-      --play: paused;
-      transform: none;
-      border-color: var(--color-border);
-      box-shadow: none;
-    }
-  }
-
   .c-services__card:has(.c-services__more:focus-visible) {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
@@ -578,8 +564,8 @@ const header = isAbout
     /* Wider than Figma's 334 so the longer copy runs to three lines (lead 2026-11-01). */
     .c-services__card.is-rebrand .c-services__body { max-width: calc(380 * var(--u)); }
     /* About: Figma's 415.32 and 330.56 boxes. */
-    .c-services.is-static .c-services__card.is-growth .c-services__body { max-width: calc(420 * var(--u)); }
-    .c-services.is-static .c-services__card.is-rebrand .c-services__body { max-width: calc(336 * var(--u)); }
+    .c-services.is-about .c-services__card.is-growth .c-services__body { max-width: calc(420 * var(--u)); }
+    .c-services.is-about .c-services__card.is-rebrand .c-services__body { max-width: calc(336 * var(--u)); }
   }
 
   /* "Learn more": a fixed-height row that opens with the card state, so the
@@ -744,16 +730,6 @@ const header = isAbout
     width: 100%;
     object-fit: cover;
   }
-  /* About: the partner badge in its glass tile (Figma padding 28.179 /
-     44.281 of 693.36, in % so it scales with the tile). */
-  .c-services__glass.is-badge {
-    padding: 4.064% 6.386%;
-    border-radius: 16px;
-  }
-  .c-services__glass.is-badge > img {
-    width: 100%;
-    height: 100%;
-  }
   @media (max-width: 767px) {
     .c-services__glass {
       border-radius: 8px;
@@ -825,9 +801,11 @@ const header = isAbout
   }
   .c-services__art.is-bar { --rise: 40; }
   .c-services__art.is-cube { --rise: 12; }
+  .c-services__art.is-badge { --rise: 24; }
   @media (max-width: 767px) {
     .c-services__art.is-bar { --rise: 28; }
     .c-services__art.is-cube { --rise: 8; }
+    .c-services__art.is-badge { --rise: 16; }
   }
 
   /* 4. Stars come up from below with one bounce, after the cubes start. */
@@ -840,10 +818,17 @@ const header = isAbout
     transition-delay: calc(var(--intent) + 2 * var(--c-services-stagger) + var(--i) * var(--c-services-stagger));
   }
 
-  /* About: the stars are in place from the start. */
-  .c-services.is-static .c-services__art.is-star {
+  /* About: the stars are in place from the start and rise with the cubes. */
+  .c-services.is-about .c-services__art.is-star {
     opacity: 1;
-    translate: none;
+    translate: 0 calc(var(--on) * -12 * var(--u));
+    transition: translate var(--duration-hover) var(--ease-smooth);
+    transition-delay: calc(var(--intent) + var(--i) * var(--c-services-stagger));
+  }
+  @media (max-width: 767px) {
+    .c-services.is-about .c-services__art.is-star {
+      translate: 0 calc(var(--on) * -8 * var(--u));
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

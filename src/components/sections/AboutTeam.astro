@@ -6,8 +6,8 @@
  *
  * Members come from `authors.ts` (names and the lead's team titles), each
  * card linking to the member's author page (the whole card is the link).
- * Hover: the site's card hover (lift, accent border, shadow, as Services),
- * and the arrow turns -15° in the brand gradient (Figma's hover card).
+ * Hover (lead 2026-11-03: "same as all the other cards"): ClientCard's,
+ * the lift, accent border and shadow, the arrow turning -30.963° in accent.
  *
  * Photos: the lead's card photos (2026-11-03, `/images/about/team/`), the
  * ring lines drawn in; transparent, so the card's glow shows through.
@@ -68,23 +68,13 @@ const JOIN_PEOPLE: Piece = {
   src: `${SVC}/support-people.webp`, x: 198.75, y: 543.04, w: 434.08, h: 446.09, crop: [141.54, 137.73, -21.01, -22.3],
 };
 
-// Figma's "→" (Frame 2147215979), drawn in currentColor or the gradient.
+// Figma's "→" (Frame 2147215979), drawn in currentColor.
 const ARROW = `<svg viewBox="0 0 62.4928 63.1552" width="62.4928" height="63.1552" fill="none" aria-hidden="true" focusable="false"><path d="M20 30.4544H38.6624C36.1568 28.3232 31.6064 24.032 28.784 21.4688L30.1664 20L42.4928 31.4624V31.5488L30.1664 43.1552L28.784 41.6576C31.6352 39.0368 36.128 34.8608 38.6624 32.5568H20V30.4544Z"/></svg>`;
 ---
 
 <section class="c-about-team">
   <Container>
     <SectionHeader eyebrow={eyebrow} title={title} />
-
-    {/* The hover arrow's gradient (Figma paint0_linear_0_440). */}
-    <svg class="c-about-team__defs" width="0" height="0" aria-hidden="true" focusable="false">
-      <defs>
-        <linearGradient id="c-about-team-arrow" x1="20" y1="22.9909" x2="45.2401" y2="30.0326" gradientUnits="userSpaceOnUse">
-          <stop offset="0" class="c-about-team__stop-a" />
-          <stop offset="1" class="c-about-team__stop-b" />
-        </linearGradient>
-      </defs>
-    </svg>
 
     <div class="c-about-team__grid">
       {members.map((m, i) => (
@@ -136,18 +126,6 @@ const ARROW = `<svg viewBox="0 0 62.4928 63.1552" width="62.4928" height="63.155
     background: var(--color-white);
   }
 
-  .c-about-team__defs {
-    position: absolute;
-    width: 0;
-    height: 0;
-  }
-  .c-about-team__stop-a {
-    stop-color: var(--color-blue);
-  }
-  .c-about-team__stop-b {
-    stop-color: var(--color-blue-light);
-  }
-
   .c-about-team__grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -183,8 +161,7 @@ const ARROW = `<svg viewBox="0 0 62.4928 63.1552" width="62.4928" height="63.155
       border-color var(--duration-hover) var(--ease-smooth),
       box-shadow var(--duration-hover) var(--ease-smooth);
   }
-  /* The site's card hover (ClientCard, Services). Member cards only: the
-     join card is not a link. */
+  /* ClientCard's hover. Member cards only: the join card is not a link. */
   @media (hover: hover) and (min-width: 768px) {
     .c-about-team__card:not(.is-join):hover {
       transform: translateY(-3%);
@@ -250,7 +227,9 @@ const ARROW = `<svg viewBox="0 0 62.4928 63.1552" width="62.4928" height="63.155
     width: calc(62.49 * var(--u));
     height: calc(63.16 * var(--u));
     color: var(--color-text);
-    transition: transform var(--duration-hover) var(--ease-smooth);
+    transition:
+      transform var(--duration-hover) var(--ease-smooth),
+      color var(--duration-hover) var(--ease-smooth);
   }
   .c-about-team__arrow :global(svg) {
     display: block;
@@ -261,11 +240,9 @@ const ARROW = `<svg viewBox="0 0 62.4928 63.1552" width="62.4928" height="63.155
     fill: currentColor;
   }
   @media (hover: hover) and (min-width: 768px) {
-    .c-about-team__card:hover .c-about-team__arrow {
-      transform: rotate(-15deg);
-    }
-    .c-about-team__card:hover .c-about-team__arrow :global(path) {
-      fill: url(#c-about-team-arrow);
+    .c-about-team__card:not(.is-join):hover .c-about-team__arrow {
+      transform: rotate(-30.963deg);
+      color: var(--color-accent);
     }
   }
 
