@@ -10,7 +10,7 @@ title: "B2B Marketing Attribution Without a Tool | BenorMedia"
 description: "B2B marketing attribution without an attribution tool: a UTM naming convention, a self-reported source field, CRM source fields, and a monthly report."
 h1: "B2B marketing attribution without an attribution tool: UTMs, self-reported source, and CRM fields"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-19
 updatedAt: 2026-10-19
 reviewEvery: none

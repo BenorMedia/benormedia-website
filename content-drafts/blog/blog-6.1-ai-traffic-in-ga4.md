@@ -10,7 +10,7 @@ title: "How to Track ChatGPT and AI Traffic in GA4 | BenorMedia"
 description: "GA4 now has an AI Assistant channel. How to find ChatGPT, Perplexity, Claude, and Copilot visits, fill the gaps with a custom channel group, and read them."
 h1: "How to track ChatGPT traffic in GA4, plus Perplexity, Claude, and Copilot"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-17
 updatedAt: 2026-10-22
 reviewEvery: none

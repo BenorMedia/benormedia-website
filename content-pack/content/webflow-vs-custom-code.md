@@ -13,7 +13,7 @@ h1: "Webflow vs custom code: when to move off Webflow, and when to stay"
 primaryKeyword: webflow vs custom code
 secondaryKeywords: [webflow export code, webflow code export, webflow to react, webflow vs react, webflow to nextjs, webflow alternatives, is webflow worth it, webflow headless cms, webflow cms api, headless cms migration]
 targetCountry: US
-author: "Sergio Gancedo, Managing Director, BenorMedia"
+author: "Sergio Gancedo, General Manager, BenorMedia"
 publishedAt: 2026-10-12
 updatedAt: 2026-10-12
 reviewEvery: 30

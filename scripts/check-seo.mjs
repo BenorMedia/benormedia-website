@@ -94,6 +94,9 @@ const PAGES = {
   '/authors/david-garay': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'david garay' },
   '/authors/emily-gaitan': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'emily gaitan' },
   '/authors/santiago-lopez': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'santiago lopez' },
+  '/authors/paula-allievi': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'paula allievi' },
+  '/authors/ismael-aoussi': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'ismael aoussi' },
+  '/authors/mauricio-guerra': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'mauricio guerra' },
 };
 const NOINDEX_PAGES = ['/testimonials', '/cookie-policy']; // must stay out of the sitemap
 

@@ -10,7 +10,7 @@ title: "Headless CMS Comparison for Marketing Sites | BenorMedia"
 description: "A headless CMS comparison for B2B SaaS marketing sites: visual editing, preview, scheduling, localization, roles, hosting, and pricing drivers in six CMSs."
 h1: "Headless CMS comparison for B2B marketing sites: the criteria that matter, not a ranking"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-23
 updatedAt: 2026-10-23
 reviewEvery: none

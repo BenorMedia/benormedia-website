@@ -10,7 +10,7 @@ title: "Webflow Editor Shutdown: How Teams Edit Now | BenorMedia"
 description: "Webflow's legacy Editor shut down on August 4, 2026. How marketing teams edit now: content editor roles, seats, publishing rights, and a handover checklist."
 h1: "Webflow Editor shutdown: how marketing teams edit a Webflow site now"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-23
 updatedAt: 2026-10-23
 reviewEvery: none

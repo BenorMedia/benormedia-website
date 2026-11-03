@@ -10,7 +10,7 @@ title: "SaaS Technical SEO: First 12 Audit Checks | BenorMedia"
 description: "SaaS technical SEO, in order: the first 12 checks of an audit, from robots.txt and indexing to rendering, Core Web Vitals, and structured data."
 h1: "SaaS technical SEO: the first 12 checks of an audit, in order"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-18
 updatedAt: 2026-10-18
 reviewEvery: none

@@ -10,7 +10,7 @@ title: "Headless CMS Visual Editor: What Marketers Can Edit"
 description: "What a headless CMS visual editor does, which CMSs offer one, what marketers can change without a developer, and what a developer must set up first."
 h1: "Headless CMS visual editor: what marketers can edit without a developer, and what still needs one"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-26
 updatedAt: 2026-10-26
 reviewEvery: 90 days

@@ -10,7 +10,7 @@ title: "Webflow Security After PHP2Shell: What Changes | BenorMedia"
 description: "What the October 2026 PHP2Shell flaws mean for WordPress and PHP sites, what Webflow security covers for you, and the work your team still owns."
 h1: "Webflow security after PHP2Shell: what a hosted site takes off your patch list"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-21
 updatedAt: 2026-10-21
 reviewEvery: 14 days

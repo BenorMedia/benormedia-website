@@ -10,7 +10,7 @@ title: "GPC Signal: How a B2B Website Should Honor It | BenorMedia"
 description: "What the GPC signal is, which state laws make Global Privacy Control binding, whether B2B sites are exempt, and how to honor and test it on your website."
 h1: "GPC signal: what Global Privacy Control means for a B2B marketing site, and how to honor it"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-26
 updatedAt: 2026-10-26
 reviewEvery: 60 days

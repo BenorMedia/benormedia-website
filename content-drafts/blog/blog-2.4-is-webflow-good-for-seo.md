@@ -10,7 +10,7 @@ title: "Is Webflow Good for SEO? What It Handles | BenorMedia"
 description: "Is Webflow good for SEO? What the platform handles out of the box, the settings you still own, and where Webflow sites usually lose rankings."
 h1: "Is Webflow good for SEO? What the platform handles and what you still own"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-17
 updatedAt: 2026-10-17
 reviewEvery: none

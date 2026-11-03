@@ -10,7 +10,7 @@ title: "Security Questionnaire Guide for B2B SaaS | BenorMedia"
 description: "What a security questionnaire is, the standard formats such as SIG and CAIQ, what buyers ask, and how B2B SaaS teams can answer faster and accurately."
 h1: "Security questionnaires: what buyers ask, the standard formats, and how B2B SaaS teams answer them"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-26
 updatedAt: 2026-10-26
 reviewEvery: 90 days

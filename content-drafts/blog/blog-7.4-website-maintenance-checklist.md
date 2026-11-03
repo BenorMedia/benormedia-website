@@ -10,7 +10,7 @@ title: "Website Maintenance Checklist for B2B SaaS | BenorMedia"
 description: "Website maintenance checklist for B2B SaaS: what to check monthly, quarterly, and yearly, who owns each task, and what changes on headless and WordPress sites."
 h1: "Website maintenance checklist for a B2B SaaS site: monthly, quarterly, and yearly"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-19
 updatedAt: 2026-10-19
 reviewEvery: 30 days

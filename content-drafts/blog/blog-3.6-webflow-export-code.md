@@ -10,7 +10,7 @@ title: "Webflow Code Export: What Breaks When You Leave | BenorMedia"
 description: "What Webflow's code export includes, what stops working when a site leaves Webflow, and how to replace forms, site search, and CMS content before launch."
 h1: "Webflow export code: what happens to forms, search, and CMS content when a site leaves Webflow"
 lang: en-US
-author: "David Garay, Webflow Developer and UX/UI Designer"
+author: "David Garay, Web Developer and Designer"
 publishedAt: 2026-10-22
 updatedAt: 2026-10-22
 reviewEvery: 90 days

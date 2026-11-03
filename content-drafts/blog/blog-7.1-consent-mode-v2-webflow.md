@@ -10,7 +10,7 @@ title: "Consent Mode v2 on Webflow: Setup and Testing | BenorMedia"
 description: "How to set up Google Consent Mode v2 on a Webflow site, test it with Tag Assistant, and avoid the mistakes that lose data, including the June 2026 change."
 h1: "Consent Mode v2 on a Webflow site: setup, testing, and the mistakes that lose data"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-18
 updatedAt: 2026-10-18
 reviewEvery: none

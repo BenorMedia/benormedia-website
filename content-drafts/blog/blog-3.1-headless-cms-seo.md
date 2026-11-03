@@ -10,7 +10,7 @@ title: "Headless CMS SEO: What Changes and What Breaks | BenorMedia"
 description: "What a headless CMS changes for SEO on an Astro or Next.js build: rendering, metadata, redirects, sitemaps, and previews, plus checks to run before launch."
 h1: "Headless CMS SEO: what changes, what breaks, and what to check before launch"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-17
 updatedAt: 2026-10-17
 reviewEvery: none

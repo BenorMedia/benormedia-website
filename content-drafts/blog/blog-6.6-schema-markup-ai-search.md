@@ -10,7 +10,7 @@ title: "Schema Markup for AI Search: The Evidence | BenorMedia"
 description: "Does schema markup help AI search? A review of Google's guidance, Microsoft's position, and six studies, plus the structured data worth keeping."
 h1: "Schema markup for AI search: what the evidence says, and what to implement anyway"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-19
 updatedAt: 2026-10-19
 reviewEvery: 30 days

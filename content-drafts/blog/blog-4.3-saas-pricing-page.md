@@ -10,7 +10,7 @@ title: "SaaS Pricing Page Decisions for B2B Teams | BenorMedia"
 description: "How to choose what a B2B SaaS pricing page shows: published prices, a starting price, usage rates, or cost drivers, with public examples and a checklist."
 h1: "SaaS pricing page decisions: publish prices, show a starting price, or explain cost drivers"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-19
 updatedAt: 2026-10-19
 reviewEvery: none

@@ -10,7 +10,7 @@ title: "Programmatic SEO on Webflow Without Thin Pages | BenorMedia"
 description: "How to do programmatic SEO on Webflow: CMS item and API limits, the data model, CSV or API imports, and how to stay clear of Google's spam policies."
 h1: "Webflow programmatic SEO: CMS limits, setup, and how to avoid thin pages"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-26
 updatedAt: 2026-10-26
 reviewEvery: 30 days

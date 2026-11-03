@@ -10,7 +10,7 @@ title: "Webflow Redirects: CSV, Wildcards, and Limits | BenorMedia"
 description: "How Webflow redirects work at scale: what a CSV import overwrites, wildcard and capture group syntax, the rule limit, redirect chains, and a test routine."
 h1: "Webflow redirects at scale: CSV import, wildcards, limits, chains, and testing"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-26
 updatedAt: 2026-10-26
 reviewEvery: 90 days

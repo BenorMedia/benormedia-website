@@ -10,7 +10,7 @@ title: "Website Redesign SEO Checklist for B2B SaaS | BenorMedia"
 description: "An SEO checklist for a B2B SaaS website redesign: what to freeze, how to build the redirect map, what to test at launch, and what to watch for 90 days."
 h1: "Website redesign SEO: a checklist for B2B SaaS teams, from the URL map to day 90"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-17
 updatedAt: 2026-10-17
 reviewEvery: none

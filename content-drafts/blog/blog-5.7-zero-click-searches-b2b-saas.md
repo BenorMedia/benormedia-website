@@ -10,7 +10,7 @@ title: "Zero-Click Searches: What B2B SaaS Should Track | BenorMedia"
 description: "SparkToro estimates two in three US Google searches end without a click. Here is what B2B SaaS teams should track instead, from impressions to demo requests."
 h1: "Zero-click searches: what B2B SaaS teams should measure when fewer people click"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-19
 updatedAt: 2026-10-19
 reviewEvery: 30 days

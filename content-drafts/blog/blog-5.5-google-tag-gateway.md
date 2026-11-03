@@ -10,7 +10,7 @@ title: "Google Tag Gateway on Webflow: Setup and Checks | BenorMedia"
 description: "What Google tag gateway does, how to turn it on for a Webflow site, how to check it works, and where consent mode and server-side tagging still matter."
 h1: "Google tag gateway on Webflow: what it does, how to set it up, and what to check"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-26
 updatedAt: 2026-10-26
 reviewEvery: 30 days

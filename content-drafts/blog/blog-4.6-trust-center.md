@@ -10,7 +10,7 @@ title: "Trust Center vs Trust Page: What to Publish | BenorMedia"
 description: "What a trust center is, how it differs from a trust page, and which security documents a B2B SaaS company should publish, gate, or leave out."
 h1: "Trust center or trust page? What to publish for buyer security reviews"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-26
 updatedAt: 2026-10-26
 reviewEvery: 90 days

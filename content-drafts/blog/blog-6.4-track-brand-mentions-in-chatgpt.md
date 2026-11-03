@@ -10,7 +10,7 @@ title: "How to Track Brand Mentions in ChatGPT by Hand | BenorMedia"
 description: "How to track brand mentions in ChatGPT and other AI assistants by hand: a 30-prompt set, a clean way to run it, a scoring sheet, and what it can't tell you."
 h1: "How to track brand mentions in ChatGPT by hand: a 30-prompt method"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-18
 updatedAt: 2026-10-18
 reviewEvery: none

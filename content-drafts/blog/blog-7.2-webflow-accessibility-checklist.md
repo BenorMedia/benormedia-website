@@ -10,7 +10,7 @@ title: "Webflow Accessibility Checklist for WCAG 2.2 AA | BenorMedia"
 description: "A Webflow accessibility checklist for WCAG 2.2 AA: what designers, developers, and content editors each fix, and how to test with Webflow's own tools."
 h1: "Webflow accessibility checklist for WCAG 2.2 AA: what designers and developers each fix"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-18
 updatedAt: 2026-10-18
 reviewEvery: none

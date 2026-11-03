@@ -10,7 +10,7 @@ title: "European Accessibility Act for SaaS Websites | BenorMedia"
 description: "Does the European Accessibility Act apply to your SaaS marketing site? Scope, B2B and US companies, what compliance requires, and what to do now."
 h1: "Does the European Accessibility Act apply to your SaaS marketing site?"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-19
 updatedAt: 2026-10-19
 reviewEvery: none

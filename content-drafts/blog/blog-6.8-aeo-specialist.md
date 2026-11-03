@@ -10,7 +10,7 @@ title: "AEO Specialist or In-House Team: Who Should Own AEO?"
 description: "What an AEO specialist does, which AEO work a B2B SaaS team can keep in-house, the roles a program needs, and when a specialist or consultant pays off."
 h1: "AEO specialist or in-house team: what the role covers and who should own AEO at a B2B SaaS company"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-27
 updatedAt: 2026-10-27
 reviewEvery: 90 days

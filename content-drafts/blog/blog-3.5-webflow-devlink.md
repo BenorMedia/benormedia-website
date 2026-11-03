@@ -10,7 +10,7 @@ title: "Webflow DevLink, Code Components, and Cloud | BenorMedia"
 description: "Webflow DevLink in 2026: React code components, DevLink Export, and Webflow Cloud. What each does, plan limits, SEO effects, and when hybrid beats a rebuild."
 h1: "Webflow DevLink, code components, and Webflow Cloud: when adding React beats a rebuild"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-24
 updatedAt: 2026-10-24
 reviewEvery: none

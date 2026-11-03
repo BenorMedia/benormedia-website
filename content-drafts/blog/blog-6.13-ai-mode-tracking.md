@@ -10,7 +10,7 @@ title: "AI Mode Tracking: How to Track Visibility in Google AI Mode"
 description: "How to track visibility in Google AI Mode: what Search Console shows and hides, how AI Mode rank tracking works, and a monthly method for B2B SaaS teams."
 h1: "AI Mode tracking: what Search Console shows, what it hides, and how to track Google AI Mode yourself"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-26
 updatedAt: 2026-10-26
 reviewEvery: 30 days

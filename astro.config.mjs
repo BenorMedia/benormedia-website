@@ -125,11 +125,14 @@ const LASTMOD = {
   '/work': '2026-10-06',
   '/privacy-policy': '2026-10-05',
   '/terms-conditions': '2026-10-05',
-  '/authors/sergio-gancedo': '2026-10-17',
+  '/authors/sergio-gancedo': '2026-11-03',
   '/guides': '2026-10-17',
-  '/authors/david-garay': '2026-10-17',
+  '/authors/david-garay': '2026-11-03',
   '/authors/emily-gaitan': '2026-11-02',
   '/authors/santiago-lopez': '2026-11-02',
+  '/authors/paula-allievi': '2026-11-03',
+  '/authors/ismael-aoussi': '2026-11-03',
+  '/authors/mauricio-guerra': '2026-11-03',
 };
 
 // New pages (content-pack/content/*.md, docs/new-pages.md): draft pages stay

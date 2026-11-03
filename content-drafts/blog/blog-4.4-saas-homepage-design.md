@@ -10,7 +10,7 @@ title: "SaaS Homepage Design: Sections in Order for B2B | BenorMedia"
 description: "SaaS homepage design for B2B: the sections to include and their order, how to write the hero and CTA, six real homepages compared, and the technical checks."
 h1: "SaaS homepage design: a section-by-section structure for B2B companies"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-20
 updatedAt: 2026-10-20
 reviewEvery: 30 days

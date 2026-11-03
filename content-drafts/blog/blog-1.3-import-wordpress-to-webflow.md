@@ -10,7 +10,7 @@ title: "How to Import WordPress Posts into Webflow CMS | BenorMedia"
 description: "How to import WordPress blog posts into the Webflow CMS: export the XML, convert it to CSV, map fields, and fix rich text, images, and internal links."
 h1: "How to import WordPress blog posts into the Webflow CMS, step by step"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-17
 updatedAt: 2026-10-17
 reviewEvery: none

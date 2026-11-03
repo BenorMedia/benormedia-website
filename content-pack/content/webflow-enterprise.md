@@ -12,7 +12,7 @@ h1: "Webflow Enterprise: security, governance, and what to check before you comm
 primaryKeyword: webflow enterprise
 secondaryKeywords: [webflow enterprise plan, webflow for enterprise]
 targetCountry: US
-author: "Sergio Gancedo, Managing Director, BenorMedia"
+author: "Sergio Gancedo, General Manager, BenorMedia"
 publishedAt: 2026-10-07
 updatedAt: 2026-10-12
 reviewEvery: 30

@@ -10,7 +10,7 @@ title: "What Is Webflow Source? Access, Pricing, and Demo Notes"
 description: "What Webflow Source is, how it differs from Webflow, what it will cost, how to get access, and what the first live demo of the research preview showed."
 h1: "What is Webflow Source? What Source by Webflow does, what it will cost, and what the first live demo showed"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-28
 updatedAt: 2026-10-28
 reviewEvery: 14 days

@@ -10,7 +10,7 @@ title: "Website Launch Checklist for B2B Sites | BenorMedia"
 description: "A website launch checklist for B2B teams: redirects, forms, analytics, consent, accessibility, and indexing checks for the week before and after launch."
 h1: "Website launch checklist: the launch-week checks for a B2B website"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-17
 updatedAt: 2026-10-17
 reviewEvery: none

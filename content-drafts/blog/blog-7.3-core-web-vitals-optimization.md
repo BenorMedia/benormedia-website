@@ -10,7 +10,7 @@ title: "Core Web Vitals Optimization: Webflow and Astro | BenorMedia"
 description: "Core Web Vitals optimization for Webflow and Astro: how third-party scripts hurt LCP, INP, and CLS, how to find them, and the rules that keep them in check."
 h1: "Core Web Vitals optimization on Webflow and Astro: the third-party script problem"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-20
 updatedAt: 2026-10-20
 reviewEvery: 30 days

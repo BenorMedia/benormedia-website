@@ -10,7 +10,7 @@ title: "How to Rank in ChatGPT: A Guide for B2B SaaS | BenorMedia"
 description: "How to rank in ChatGPT: what OpenAI's crawlers need, which pages and brand mentions ChatGPT cites, and how a B2B SaaS team can measure progress."
 h1: "How to rank in ChatGPT: how its search picks sources, and what B2B SaaS teams can control"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-26
 updatedAt: 2026-10-26
 reviewEvery: 30 days

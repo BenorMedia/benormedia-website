@@ -12,7 +12,7 @@ h1: "How to migrate from WordPress to Webflow without losing SEO"
 primaryKeyword: wordpress to webflow migration
 secondaryKeywords: [wordpress to webflow, migrate wordpress to webflow, how to migrate wordpress to webflow]
 targetCountry: US
-author: "Sergio Gancedo, Managing Director, BenorMedia"
+author: "Sergio Gancedo, General Manager, BenorMedia"
 publishedAt: 2026-10-07
 updatedAt: 2026-10-25
 reviewEvery: 30
@@ -271,4 +271,4 @@ A migration is a recommendation, not a reflex. If none of these situations appli
 
 ## How do we know this?
 
-This guide comes from the 30+ WordPress to Webflow migrations we've planned and run over the last six years, most recently Surfe's. Where Google or Webflow documents a step, we link to it. Sergio Gancedo, Managing Director, wrote it. Santiago Lopez, our Senior Webflow Developer and QA specialist, ran QA on Surfe's migration with Sergio and the Surfe team. Because we run these migrations for clients, we have an interest in the topic, and the guide says where staying on WordPress is the better answer.
+This guide comes from the 30+ WordPress to Webflow migrations we've planned and run over the last six years, most recently Surfe's. Where Google or Webflow documents a step, we link to it. Sergio Gancedo, General Manager, wrote it. Santiago Lopez, our Senior Webflow Developer and QA specialist, ran QA on Surfe's migration with Sergio and the Surfe team. Because we run these migrations for clients, we have an interest in the topic, and the guide says where staying on WordPress is the better answer.

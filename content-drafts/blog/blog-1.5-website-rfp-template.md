@@ -10,7 +10,7 @@ title: "Website RFP Template for B2B SaaS Redesigns | BenorMedia"
 description: "A website RFP template for B2B SaaS redesigns: the sections agencies need to scope and price, the requirements most RFPs miss, and a one-page brief."
 h1: "Website RFP template for a B2B SaaS redesign: what to include, what to leave out"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-19
 updatedAt: 2026-10-19
 reviewEvery: none

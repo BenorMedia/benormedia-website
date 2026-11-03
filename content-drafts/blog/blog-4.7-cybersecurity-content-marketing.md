@@ -10,7 +10,7 @@ title: "Cybersecurity Content Marketing for CISOs and Engineers"
 description: "How to write cybersecurity content for CISOs and security engineers at once: formats, two-layer pages, proof, and how buyers find it in AI answers."
 h1: "Cybersecurity content marketing: how to write for CISOs and security engineers on the same site"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-27
 updatedAt: 2026-10-27
 reviewEvery: 90 days

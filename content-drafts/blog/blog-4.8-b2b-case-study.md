@@ -10,7 +10,7 @@ title: "B2B Case Study Template Sales Will Actually Use | BenorMedia"
 description: "A B2B case study sales will use shows a buyer like the prospect, a measured result, and approved proof. Get the template, client checklist, and approval steps."
 h1: "B2B case study: a template and proof that sales teams will use"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-19
 updatedAt: 2026-10-19
 reviewEvery: 30 days

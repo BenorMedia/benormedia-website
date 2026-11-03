@@ -10,7 +10,7 @@ title: "Copilot SEO: How to Get Cited in Microsoft Copilot"
 description: "How Microsoft Copilot picks sources, what Bing's AI Performance report and new Topics Portfolio show, and what B2B SaaS teams should change on their pages."
 h1: "Copilot SEO: how to get cited in Microsoft Copilot, and how to measure it in Bing's AI Performance report"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-26
 updatedAt: 2026-10-26
 reviewEvery: 30 days

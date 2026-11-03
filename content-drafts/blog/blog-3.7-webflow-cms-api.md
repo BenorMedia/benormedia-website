@@ -10,7 +10,7 @@ title: "Webflow CMS API: Using Webflow as a Headless CMS"
 description: "Serve Webflow CMS content to Next.js, Astro, or an app with the Data API and the cached Content Delivery API: limits, previews, webhooks, and trade-offs."
 h1: "Webflow CMS API: when Webflow works as a headless CMS, and where it stops"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-27
 updatedAt: 2026-10-27
 reviewEvery: 90 days

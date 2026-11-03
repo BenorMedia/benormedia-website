@@ -10,7 +10,7 @@ title: "Webflow Salesforce Integration for B2B Forms | BenorMedia"
 description: "Webflow Salesforce integration for B2B: five ways to connect Webflow forms to Salesforce or HubSpot, the documented limits that drop leads, and a test list."
 h1: "Webflow Salesforce integration: connecting Webflow forms to Salesforce or HubSpot without losing leads"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-20
 updatedAt: 2026-10-20
 reviewEvery: 30 days

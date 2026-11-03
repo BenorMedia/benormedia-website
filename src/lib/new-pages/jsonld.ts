@@ -32,7 +32,7 @@ function authorLd(page: NpPage): Ld {
   const role = comma >= 0 ? text.slice(comma + 1).trim() : "";
   const jobTitle = role === ENTITY.name ? "" : role;
   const a = findAuthor(text);
-  const profile = a ? { "@id": authorId(a), url: abs(authorPath(a)), sameAs: [a.linkedin] } : {};
+  const profile = a ? { "@id": authorId(a), url: abs(authorPath(a)), ...(a.linkedin ? { sameAs: [a.linkedin] } : {}) } : {};
   return { "@type": "Person", ...profile, name, ...(jobTitle ? { jobTitle } : {}), worksFor: { ...PROVIDER_LD } };
 }
 
@@ -60,7 +60,7 @@ export function authorPageJsonLd(a: Author, articles: readonly NpPage[]): Ld[] {
         ...(a.jobTitle.includes(",") ? { jobTitle: a.jobTitle.split(",")[0]?.trim() } : {}),
         description: a.bio[0],
         worksFor: { ...PROVIDER_LD },
-        sameAs: [a.linkedin],
+        ...(a.linkedin ? { sameAs: [a.linkedin] } : {}),
         knowsAbout: a.knowsAbout,
       },
       hasPart: articles.map((p) => ({ "@type": "Article", "@id": `${abs(p.url)}#article`, headline: p.h1, url: abs(p.url) })),

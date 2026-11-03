@@ -61,14 +61,16 @@ const cards = articles.map(cardOf);
             <h1 class="c-np-author-hero__name c-text_xl">{author.name}</h1>
             <p class="c-np-author-hero__role c-paragraph_m">{author.jobTitle}</p>
           </div>
-          <a
-            class="c-np-author-hero__social"
-            href={author.linkedin}
-            target="_blank"
-            rel="noopener me"
-            aria-label={fill(copy.author.social, { name: author.name })}
-            set:html={SHARE_LINKEDIN}
-          />
+          {author.linkedin && (
+            <a
+              class="c-np-author-hero__social"
+              href={author.linkedin}
+              target="_blank"
+              rel="noopener me"
+              aria-label={fill(copy.author.social, { name: author.name })}
+              set:html={SHARE_LINKEDIN}
+            />
+          )}
         </div>
         <div class="c-np-author-hero__bio">
           {author.bio.map((p) => <p class="c-paragraph_m">{p}</p>)}

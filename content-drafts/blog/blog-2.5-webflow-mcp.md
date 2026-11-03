@@ -10,7 +10,7 @@ title: "Webflow MCP: What to Allow on a Marketing Site | BenorMedia"
 description: "The Webflow MCP server lets AI tools edit, publish, and delete on your site. What each action does, what to allow or block, and a review policy that works."
 h1: "Webflow MCP on a live marketing site: what AI tools can change, and what we would allow"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-23
 updatedAt: 2026-10-23
 reviewEvery: none
