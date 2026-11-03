@@ -76,6 +76,70 @@ export function authorPageJsonLd(a: Author, articles: readonly NpPage[]): Ld[] {
   ];
 }
 
+/** /about (SEO spec, lead 2026-11-03): one graph with the AboutPage, its
+ *  breadcrumb, the Organization (the Home node's `@id` and shared facts, plus
+ *  founder, foundingDate and the team as `employee`) and one Person per
+ *  member, on the author pages' `@id`s so nothing is duplicated. */
+export function aboutPageJsonLd(
+  meta: { title: string; description: string; orgDescription: string; foundingDate: string },
+  team: readonly Author[],
+  founder: Author | undefined,
+): Ld {
+  const url = abs("/about");
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "AboutPage",
+        "@id": `${url}#webpage`,
+        url,
+        name: meta.title,
+        description: meta.description,
+        inLanguage: "en",
+        isPartOf: { "@id": WEBSITE_ID },
+        about: { "@id": ORG_ID },
+        mainEntity: { "@id": ORG_ID },
+        breadcrumb: { "@id": `${url}#breadcrumb` },
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${url}#breadcrumb`,
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
+          { "@type": "ListItem", position: 2, name: "About", item: url },
+        ],
+      },
+      {
+        "@type": "Organization",
+        "@id": ORG_ID,
+        name: ENTITY.name,
+        alternateName: ENTITY.alternateName,
+        url: abs("/"),
+        logo: { "@type": "ImageObject", url: abs("/apple-touch-icon.png"), width: 180, height: 180 },
+        email: ENTITY.email,
+        description: meta.orgDescription,
+        foundingDate: meta.foundingDate,
+        ...(founder ? { founder: { "@id": authorId(founder) } } : {}),
+        address: { "@type": "PostalAddress", ...ENTITY.address },
+        areaServed: AREA_SERVED_LD,
+        knowsAbout: ENTITY.knowsAbout,
+        sameAs: ENTITY.sameAs,
+        employee: team.map((a) => ({ "@id": authorId(a) })),
+      },
+      ...team.map((a) => ({
+        "@type": "Person",
+        "@id": authorId(a),
+        name: a.name,
+        jobTitle: a.jobTitle.split(",")[0]?.trim(),
+        url: abs(authorPath(a)),
+        image: abs(a.photo.src),
+        worksFor: { "@id": ORG_ID },
+        ...(a.linkedin ? { sameAs: [a.linkedin] } : {}),
+      })),
+    ],
+  };
+}
+
 /** An article index (/blog, /guides): a CollectionPage whose main entity
  *  lists the articles built in this mode (newest first), each pointing at its
  *  Article `@id`, and the breadcrumb. `dateModified` = the latest

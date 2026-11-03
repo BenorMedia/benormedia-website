@@ -36,11 +36,26 @@
  * Links: the Websites, Support and Growth service pages. Full Rebrands has
  * no page yet, so its "Learn more" opens the contact modal (TODO: COPY —
  * lead to confirm, see the PR). Copy and titles are Figma's, not Sanity's.
+ *
+ * `variant="about"`: the /about "BenorMedia at a glance" cards (Figma
+ * 4145:14236), the same grid and artwork in the neutral frame with the
+ * About copy (`lib/content/about.ts`). Static: no links, no "Learn more",
+ * no hover or in-view motion. Two swaps: the 2020 shield in the Websites
+ * glass tile, and the tilted partner badge (in a glass tile) for the Growth
+ * bars. The Rebrands stars show from the start, as in that frame.
  */
 import Container from "../ui/Container.astro";
 import SectionHeader from "../ui/SectionHeader.astro";
 import { ARROW_RIGHT } from "../new-pages/blog-icons";
 import { streamPaths, type StreamBox } from "../ui/stream-shapes";
+import { ABOUT_FACTS, DRAFT } from "../../lib/content/about";
+
+interface Props {
+  variant?: "home" | "about";
+}
+
+const { variant = "home" } = Astro.props;
+const isAbout = variant === "about";
 
 const IMG = "/images/home/services";
 
@@ -231,6 +246,16 @@ const rebrandStars: Art[] = [
   vars: { i },
 }));
 
+// About: Figma 4175:16089 (the 2020 shield, 194.832 × 221.184, turned 5°
+// in the same glass tile) and 4178:16284 (the partner badge, 604.8 ×
+// 126.773, in a glass tile turned -6.91°, centred 308.88 in from the card's
+// right edge, 217.5 down).
+const aboutBadge: Art = {
+  src: "/images/about/facts-partner.webp",
+  d: { ax: 100, x: -308.88, ay: 0, y: 217.5, w: 693.36, h: 183.13, r: -6.91 },
+  m: { ax: 50, x: 0, ay: 100, y: -95, w: 416.02, h: 109.88, r: -6.91 },
+};
+
 interface Card {
   key: "websites" | "support" | "growth" | "rebrand";
   /** `\n` = Figma's line break. */
@@ -238,8 +263,10 @@ interface Card {
   body: string;
   /** Service page; none = "Learn more" opens the contact modal. */
   href?: string;
+  /** About: an open content question, printed under the body (draft only). */
+  marker?: string | undefined;
 }
-const CARDS: Card[] = [
+const HOME_CARDS: Card[] = [
   {
     key: "websites",
     title: "Custom websites\n& migrations.",
@@ -264,18 +291,19 @@ const CARDS: Card[] = [
     body: "Positioning, messaging, and brand identity leveraged across your new website and all your marketing assets.",
   },
 ];
+const CARDS: Card[] = isAbout ? ABOUT_FACTS.cards : HOME_CARDS;
+const header = isAbout
+  ? { eyebrow: ABOUT_FACTS.eyebrow, title: ABOUT_FACTS.title }
+  : { eyebrow: "Services", title: "A website your team can run, and growth that keeps pipeline coming." };
 ---
 
-<section class="c-services" data-c-services>
+<section class:list={["c-services", { "is-static": isAbout }]} data-c-services={isAbout ? undefined : ""}>
   <Container>
-    <SectionHeader
-      eyebrow="Services"
-      title="A website your team can run, and growth that keeps pipeline coming."
-    />
+    <SectionHeader eyebrow={header.eyebrow} title={header.title} />
 
     <div class="c-services__grid">
       {CARDS.map((card) => (
-        <article class:list={["c-services__card", `is-${card.key}`]} data-c-services-card>
+        <article class:list={["c-services__card", `is-${card.key}`]} data-c-services-card={isAbout ? undefined : ""}>
           <div class="c-services__media" aria-hidden="true">
             {card.key === "websites" && (
               <>
@@ -284,8 +312,8 @@ const CARDS: Card[] = [
                   <img class:list={artClass(a, "is-shape")} style={artStyle(a)} src={a.src} alt="" loading="lazy" decoding="async" />
                 ))}
                 <span class:list={artClass(websitesGlass, "c-services__glass")} style={artStyle(websitesGlass)}>
-                  <span class="c-services__glass-icon">
-                    <img src={websitesGlass.src} alt="" loading="lazy" decoding="async" />
+                  <span class:list={["c-services__glass-icon", { "is-2020": isAbout }]}>
+                    <img src={isAbout ? "/images/about/facts-2020.webp" : websitesGlass.src} alt="" loading="lazy" decoding="async" />
                   </span>
                 </span>
               </>
@@ -293,9 +321,11 @@ const CARDS: Card[] = [
 
             {card.key === "support" && (
               <>
-                <span class:list={artClass(supportRevealBack, "is-reveal")} style={artStyle(supportRevealBack)}>
-                  <img src={supportRevealBack.src} alt="" loading="lazy" decoding="async" />
-                </span>
+                {!isAbout && (
+                  <span class:list={artClass(supportRevealBack, "is-reveal")} style={artStyle(supportRevealBack)}>
+                    <img src={supportRevealBack.src} alt="" loading="lazy" decoding="async" />
+                  </span>
+                )}
                 {supportBase.map((a) => (
                   <span class:list={artClass(a)} style={artStyle(a)}>
                     <img src={a.src} alt="" loading="lazy" decoding="async" />
@@ -308,7 +338,11 @@ const CARDS: Card[] = [
               <>
                 <img class:list={artClass(blobB)} style={artStyle(blobB)} src={blobB.src} alt="" />
                 <img class:list={artClass(blobA(undefined))} style={artStyle(blobA(undefined))} src={`${IMG}/blob-a.svg`} alt="" />
-                {growthBars.map((a) => (
+                {isAbout ? (
+                  <span class:list={artClass(aboutBadge, "c-services__glass", "is-badge")} style={artStyle(aboutBadge)}>
+                    <img src={aboutBadge.src} alt="" loading="lazy" decoding="async" />
+                  </span>
+                ) : growthBars.map((a) => (
                   <span class:list={artClass(a, "is-rise", "is-bar")} style={artStyle(a)}>
                     <img src={a.src} alt="" loading="lazy" decoding="async" />
                   </span>
@@ -332,7 +366,8 @@ const CARDS: Card[] = [
           <div class="c-services__copy">
             <h3 class="c-services__title c-text_m">{card.title}</h3>
             <p class="c-services__body c-paragraph">{card.body}</p>
-            <div class="c-services__more-row">
+            {DRAFT && card.marker && <mark class="c-about-marker c-paragraph_s">{card.marker}</mark>}
+            {!isAbout && <div class="c-services__more-row">
               {card.href ? (
                 <a class="c-services__more" href={card.href} aria-label={`Learn more about ${card.title.replace("\n", " ")}`}>
                   Learn more
@@ -344,11 +379,11 @@ const CARDS: Card[] = [
                   <span class="c-services__arrow" set:html={ARROW_RIGHT} />
                 </button>
               )}
-            </div>
+            </div>}
           </div>
 
           {/* Artwork drawn over the copy (Figma layer order). */}
-          {card.key === "support" && (
+          {card.key === "support" && !isAbout && (
             <div class="c-services__media is-front" aria-hidden="true">
               {supportRevealFront.map((a) => (
                 <span class:list={artClass(a, "is-reveal")} style={artStyle(a)}>
@@ -495,6 +530,21 @@ const CARDS: Card[] = [
     }
   }
 
+  /* About: the neutral frame everywhere, no hover. */
+  .c-services.is-static .c-services__card {
+    --on: 0;
+    --play: paused;
+  }
+  @media (hover: hover) and (min-width: 768px) {
+    .c-services.is-static .c-services__card:hover {
+      --on: 0;
+      --play: paused;
+      transform: none;
+      border-color: var(--color-border);
+      box-shadow: none;
+    }
+  }
+
   .c-services__card:has(.c-services__more:focus-visible) {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
@@ -527,6 +577,9 @@ const CARDS: Card[] = [
     .c-services__card.is-growth .c-services__body { max-width: calc(336 * var(--u)); }
     /* Wider than Figma's 334 so the longer copy runs to three lines (lead 2026-11-01). */
     .c-services__card.is-rebrand .c-services__body { max-width: calc(380 * var(--u)); }
+    /* About: Figma's 415.32 and 330.56 boxes. */
+    .c-services.is-static .c-services__card.is-growth .c-services__body { max-width: calc(420 * var(--u)); }
+    .c-services.is-static .c-services__card.is-rebrand .c-services__body { max-width: calc(336 * var(--u)); }
   }
 
   /* "Learn more": a fixed-height row that opens with the card state, so the
@@ -681,6 +734,26 @@ const CARDS: Card[] = [
     height: 100%;
     max-width: none;
   }
+  /* About: the 2020 shield fills its box (Figma 194.832 × 221.184). */
+  .c-services__glass-icon.is-2020 {
+    width: calc(194.832 * var(--u));
+    height: calc(221.184 * var(--u));
+  }
+  .c-services__glass-icon.is-2020 img {
+    left: 0;
+    width: 100%;
+    object-fit: cover;
+  }
+  /* About: the partner badge in its glass tile (Figma padding 28.179 /
+     44.281 of 693.36, in % so it scales with the tile). */
+  .c-services__glass.is-badge {
+    padding: 4.064% 6.386%;
+    border-radius: 16px;
+  }
+  .c-services__glass.is-badge > img {
+    width: 100%;
+    height: 100%;
+  }
   @media (max-width: 767px) {
     .c-services__glass {
       border-radius: 8px;
@@ -689,6 +762,10 @@ const CARDS: Card[] = [
     .c-services__glass-icon {
       width: calc(108.374 * var(--u));
       height: calc(124.038 * var(--u));
+    }
+    .c-services__glass-icon.is-2020 {
+      width: calc(116.66 * var(--u));
+      height: calc(132.44 * var(--u));
     }
   }
 
@@ -761,6 +838,12 @@ const CARDS: Card[] = [
       opacity var(--duration-hover) var(--ease-smooth),
       translate var(--duration-hover) var(--c-services-bounce);
     transition-delay: calc(var(--intent) + 2 * var(--c-services-stagger) + var(--i) * var(--c-services-stagger));
+  }
+
+  /* About: the stars are in place from the start. */
+  .c-services.is-static .c-services__art.is-star {
+    opacity: 1;
+    translate: none;
   }
 
   @media (prefers-reduced-motion: reduce) {

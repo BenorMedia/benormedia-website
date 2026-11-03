@@ -97,6 +97,8 @@ const PAGES = {
   '/authors/paula-allievi': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'paula allievi' },
   '/authors/ismael-aoussi': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'ismael aoussi' },
   '/authors/mauricio-guerra': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'mauricio guerra' },
+  // Draft until the lead's sign-off (src/lib/content/about.ts): built in previews only.
+  '/about': { expected: ['AboutPage', 'BreadcrumbList', 'Organization', 'Person'], keyword: 'webflow agency' },
 };
 const NOINDEX_PAGES = ['/testimonials', '/cookie-policy']; // must stay out of the sitemap
 

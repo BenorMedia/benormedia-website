@@ -636,3 +636,36 @@ Without adding to your team." with "website moving." marked Gradient (published 
 - **`/blog` index design** — no Figma frame; built from the hero and Resources cards. Send the frame if there is one. Cards have no search or category filter (SITEMAP) because the posts have no category. (2026-10-15)
 - **Code block style** — no monospace font or code style in the DS: `.c-np-code` (`new-pages.css`) uses `--color-gray-light`, the table border and an 8px radius, font `ui-monospace` stack marked `TODO: DS`. (2026-10-15)
 - **Related live pages on posts** — `related` entries that are Sanity pages (`/growth`, `/ongoing-website-support`, `/custom-websites-migrations`) get no Resources card, as on the guides (cards are pack pages only). (2026-10-15)
+
+## About
+
+### Decisions
+
+| Date | Decision | Reason | Status |
+|---|---|---|---|
+| 2026-11-03 | `/about` built from Figma 4145:9660 (replaces the old frame, PR #71): hero (copy + six-photo column) → Our mission (ring card with eleven client tiles) → BenorMedia at a glance (`Services` with `variant="about"`: same grid and art, neutral frame, no links or motion, the 2020 shield in the Websites glass tile and the partner badge for the Growth bars) → How we work (Barcelona stamp, edge-to-edge photos) → Our team (the seven `authors.ts` members linking to their author pages, then the join card opening the contact modal) → site CTA + footer. Copy word for word in `src/lib/content/about.ts`; new sections `AboutHero`, `AboutMission`, `AboutHowWeWork`, `AboutTeam`; assets in `public/images/about/` | Lead: "build /about" with the SEO spec | Proposed |
+| 2026-11-03 | `/about` is a draft (`DRAFT = true` in about.ts): built in previews and dev only (rest route `about/[...about].astro`, `includeDrafts()` from the new-pages loader), noindex, out of the sitemap (astro.config filter), open questions printed on the page as `[VERIFY]` / `[PERSON]` markers. Release: lead sign-off, markers resolved, `DRAFT = false`, drop `about` from the sitemap filter, add LASTMOD and the `public/llms.txt` line, request indexing | CLAUDE.md content rule: nothing publishes without sign-off | Proposed |
+| 2026-11-03 | `/about` JSON-LD from the SEO spec, one `@graph`: AboutPage, BreadcrumbList, Organization (Home's `@id`; shared facts from `entity.ts`: areaServed, knowsAbout, logo; the spec's description, foundingDate 2020, founder, `employee` = the seven members) and one Person per member on the author pages' `@id`s (`/authors/<slug>#person`, the spec's own "reuse @ids" note) with the `authors.ts` titles, url, image and LinkedIn `sameAs`. Left out: the spec's `numberOfEmployees: 4` (seven on the page) | Spec + lead's team titles ("everywhere") | Proposed |
+| 2026-11-03 | Team names and titles on `/about` follow `authors.ts` (lead 2026-11-03: "Lopez", "Gaitan", screenshot titles), not Figma's (López, Gaitán; Founder & Director, Senior Web Developer, Senior Web & Marketing Designer, Web Developer & Designer) nor the SEO spec's | Lead: "Everywhere" | Lead |
+| 2026-11-03 | Team cards hover = the site's card hover (lift, accent border, shadow, as Services) plus Figma's arrow turn (-15°, brand gradient); Figma's hover card has a blue border and a 0 4 30 shadow | One card hover site-wide (lead 2026-10-30) | Proposed |
+
+### Open questions
+
+#### Content
+- **Partner tier** — the facts card title "Webflow Premium Partner" and its badge ("Premium Partner", Figma also hides an "Enterprise" chip under a white box) contradict the card's own body, the footer and the house style ("Webflow Professional Partner" only). Built as in Figma with a `[VERIFY]` marker. (2026-11-03)
+- **How we work photos** — Figma names the four photos as another agency's office ("DesignMe office lounge in Gdansk", a DesignMe cap on a shelf). Built with them behind a `[VERIFY]` marker; BenorMedia photos needed, or the lead's OK to use these. (2026-11-03)
+- **Hero photos** — the six photos read as placeholders (a city skyline, Barcelona, an office, a stock portrait, a desk, the W hotel). Built as in Figma with a `[VERIFY]` marker. (2026-11-03)
+- **Team card photos** — Figma has one placeholder portrait on every card. The round author headshots stand in, centred in the photo area (`TODO: ASSET`); a card photo per person is needed. (2026-11-03)
+- **numberOfEmployees** — the SEO spec says 4, the page shows seven people. Left out of the Organization until the lead gives the number. (2026-11-03)
+- **Figma comments** — the Figma connector has no comments tool, so the frame's comments were not read. (2026-11-03)
+
+#### Design team
+- **About tablet and mobile** — no designs. Built meanwhile: ≤991 the hero photo column moves under the copy (first row only), team grid two columns; ≤767 one column, Mission tiles hidden (they cover the copy at that size, the rings stay). (2026-11-03)
+- **Stamp font** — "Barcelona, Spain." on the stamp is SF Pro in Figma; body font used, `TODO: DS`. Stamp shadow (0 6.24 24.96, black 12%) has no token. (2026-11-03)
+- **Internal links to /about** — neither the nav nor the footer in the frame links to /about. Nothing links to it yet; where should it go? (2026-11-03)
+
+#### Needs lead OK
+- **/about page build** — see Decisions 2026-11-03.
+- **/about draft guard** — see Decisions 2026-11-03.
+- **/about JSON-LD** — see Decisions 2026-11-03.
+- **Team card hover** — see Decisions 2026-11-03.

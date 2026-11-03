@@ -1,0 +1,199 @@
+---
+/**
+ * AboutHero — /about hero (Figma 4145:9675): eyebrow, `<h1>` and two
+ * paragraphs on the left, a column of six photos on the right, clipped at
+ * the top and bottom of the section.
+ *
+ * Copy: `lib/content/about.ts`. Sizes in Figma px (`--u` = one Figma px:
+ * 1/19.2 rem, so the 1680px Figma grid fills the container, as Services).
+ * Photo column: three rows of two 420 × 534 tiles; three of them show a
+ * shorter photo at the top or bottom of the tile (Figma's stagger). Each
+ * photo keeps Figma's crop with `object-position`.
+ *
+ * ≤991 (no tablet or mobile design, TODO: DS): the column moves under the
+ * copy and shows its first row only.
+ *
+ * `marker`: the open photo question, printed under the copy while the page
+ * is a draft (see about.ts).
+ */
+import Container from "../ui/Container.astro";
+import Eyebrow from "../ui/Eyebrow.astro";
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  paragraphs: readonly string[];
+  marker?: string | undefined;
+}
+
+const { eyebrow, title, paragraphs, marker } = Astro.props;
+
+const IMG = "/images/about";
+
+/** One tile: photo box height (Figma px; 534 = the full tile), where it
+ *  sits in the tile, and Figma's crop as an object-position. */
+interface Tile {
+  src: string;
+  w: number;
+  h: number;
+  box: number;
+  align: "start" | "end";
+  pos: string;
+}
+const ROWS: Tile[][] = [
+  [
+    { src: `${IMG}/hero-1.webp`, w: 840, h: 1076, box: 534, align: "start", pos: "50% 50%" },
+    { src: `${IMG}/hero-2.webp`, w: 960, h: 540, box: 359, align: "end", pos: "50% 50%" },
+  ],
+  [
+    { src: `${IMG}/hero-3.webp`, w: 673, h: 1200, box: 534, align: "start", pos: "50% 86%" },
+    { src: `${IMG}/hero-4.webp`, w: 687, h: 1031, box: 320, align: "start", pos: "50% 0%" },
+  ],
+  [
+    { src: `${IMG}/hero-5.webp`, w: 904, h: 1200, box: 534, align: "start", pos: "50% 68%" },
+    { src: `${IMG}/hero-6.webp`, w: 980, h: 653, box: 420, align: "end", pos: "73% 50%" },
+  ],
+];
+---
+
+<section class="c-about-hero">
+  <Container>
+    <div class="c-about-hero__body">
+      <div class="c-about-hero__copy">
+        <Eyebrow>{eyebrow}</Eyebrow>
+        <h1 class="c-about-hero__title c-text_xxl">{title}</h1>
+        <div class="c-about-hero__text c-paragraph_m">
+          {paragraphs.map((p) => <p>{p}</p>)}
+        </div>
+        {marker && <mark class="c-about-marker c-paragraph_s">{marker}</mark>}
+      </div>
+
+      <div class="c-about-hero__photos" aria-hidden="true">
+        {ROWS.map((row, r) => (
+          <div class="c-about-hero__row">
+            {row.map((t) => (
+              <div class:list={["c-about-hero__tile", `is-${t.align}`]}>
+                <img
+                  class="c-about-hero__img"
+                  style={`--box:${t.box};object-position:${t.pos}`}
+                  src={t.src}
+                  width={t.w}
+                  height={t.h}
+                  alt=""
+                  loading={r === 0 ? "eager" : "lazy"}
+                  decoding="async"
+                />
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .c-about-hero {
+    /* One Figma px (see the header comment). */
+    --u: calc(1rem / 19.2);
+    position: relative;
+    overflow: hidden;
+    background: var(--color-white);
+  }
+
+  .c-about-hero__body {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: calc(629 * var(--u));
+  }
+
+  .c-about-hero__copy {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: calc(20 * var(--u));
+    max-width: calc(662.49 * var(--u));
+  }
+  .c-about-hero__title {
+    margin: 0;
+  }
+  /* Figma: 10px under the title; an empty line between the paragraphs. */
+  .c-about-hero__text {
+    margin-top: calc(-10 * var(--u));
+    color: var(--color-text);
+  }
+  .c-about-hero__text p {
+    margin: 0;
+  }
+  .c-about-hero__text p + p {
+    margin-top: 1.5em;
+  }
+
+  /* Photo column: centred on the copy, 28px in from the grid's right edge
+     (Figma: right 148 of the 1920 frame), overflowing the section. */
+  .c-about-hero__photos {
+    position: absolute;
+    top: 50%;
+    right: calc(28 * var(--u));
+    display: flex;
+    flex-direction: column;
+    gap: calc(16 * var(--u));
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+  .c-about-hero__row {
+    display: flex;
+    gap: calc(16 * var(--u));
+  }
+  .c-about-hero__tile {
+    display: flex;
+    flex-direction: column;
+    width: calc(420 * var(--u));
+    height: calc(534 * var(--u));
+  }
+  .c-about-hero__tile.is-end {
+    justify-content: flex-end;
+  }
+  .c-about-hero__img {
+    display: block;
+    width: 100%;
+    height: calc(var(--box) * var(--u));
+    max-width: none;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+
+  @media (max-width: 991px) {
+    .c-about-hero__body {
+      flex-direction: column;
+      align-items: stretch;
+      min-height: 0;
+    }
+    .c-about-hero__copy {
+      max-width: none;
+    }
+    .c-about-hero__photos {
+      position: static;
+      margin-top: 3rem;
+      transform: none;
+    }
+    .c-about-hero__row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .c-about-hero__row + .c-about-hero__row {
+      display: none;
+    }
+    .c-about-hero__tile {
+      width: auto;
+      height: auto;
+      aspect-ratio: 420 / 534;
+    }
+    .c-about-hero__img {
+      height: calc(var(--box) / 534 * 100%);
+    }
+  }
+</style>

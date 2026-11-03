@@ -1,0 +1,161 @@
+---
+/**
+ * AboutHowWeWork — /about "A small senior team, by design." (Figma
+ * 4145:9808): a full-width rule with the Barcelona stamp on it, the centred
+ * header, then the photos edge to edge: one wide photo over a row of three.
+ *
+ * The stamp is Figma's photo (serrated edge included); its "Barcelona,
+ * Spain." line is HTML, not baked into the image. Figma sets it in SF Pro,
+ * which the DS doesn't have: body font (TODO: DS).
+ * Photos keep Figma's crops (`object-position`) and aspect ratios, so the
+ * section scales with the viewport rather than the container.
+ *
+ * `marker`: the open photo question, printed while the page is a draft.
+ */
+import Container from "../ui/Container.astro";
+import SectionHeader from "../ui/SectionHeader.astro";
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  body: string;
+  stamp: string;
+  marker?: string | undefined;
+}
+
+const { eyebrow, title, body, stamp, marker } = Astro.props;
+
+const IMG = "/images/about";
+const ROW = [
+  { src: `${IMG}/office-2.webp`, w: 800, h: 534, pos: "50% 50%" },
+  { src: `${IMG}/office-3.webp`, w: 687, h: 1030, pos: "50% 50%" },
+  { src: `${IMG}/office-4.webp`, w: 687, h: 1030, pos: "50% 69%" },
+];
+---
+
+<section class="c-about-how">
+  <div class="c-about-how__rule" aria-hidden="true">
+    <span class="c-about-how__stamp">
+      <img src={`${IMG}/barcelona-stamp.webp`} width="400" height="400" alt="" loading="lazy" decoding="async" />
+      <span class="c-about-how__stamp-text">{stamp}</span>
+    </span>
+  </div>
+
+  <Container class="c-about-how__head">
+    <SectionHeader eyebrow={eyebrow} title={title} description={body} />
+    {marker && <mark class="c-about-marker c-paragraph_s">{marker}</mark>}
+  </Container>
+
+  <div class="c-about-how__photos" aria-hidden="true">
+    <img class="c-about-how__wide" src={`${IMG}/office-1.webp`} width="1024" height="801" alt="" loading="lazy" decoding="async" />
+    <div class="c-about-how__row">
+      {ROW.map((p) => (
+        <img src={p.src} width={p.w} height={p.h} style={`object-position:${p.pos}`} alt="" loading="lazy" decoding="async" />
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .c-about-how {
+    --u: calc(1rem / 19.2);
+    padding: 6rem 0;
+    background: var(--color-white);
+  }
+  @media (max-width: 767px) {
+    .c-about-how {
+      padding: 5rem 0;
+    }
+  }
+
+  /* Figma: a 123.5px band, the rule through its middle, the stamp centred
+     on it (8° turn, 199.68 × 193.44). Figma inset the rule 5px each side. */
+  .c-about-how__rule {
+    position: relative;
+    height: calc(123.5 * var(--u));
+    margin: 0 calc(5 * var(--u));
+  }
+  .c-about-how__rule::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    border-top: var(--border-default);
+  }
+  .c-about-how__stamp {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: calc(199.68 * var(--u));
+    height: calc(193.44 * var(--u));
+    overflow: hidden;
+    transform: translate(-50%, -50%) rotate(8deg);
+    /* TODO: DS — Figma's drop shadow (0 6.24 24.96, black 12%), no token. */
+    box-shadow: 0 calc(6.24 * var(--u)) calc(24.96 * var(--u)) color-mix(in srgb, var(--color-heading) 12%, transparent);
+  }
+  .c-about-how__stamp img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+  }
+  .c-about-how__stamp-text {
+    position: absolute;
+    left: calc(32.95 * var(--u));
+    top: calc(109.66 * var(--u));
+    width: calc(111.05 * var(--u));
+    color: var(--color-white);
+    font-family: var(--font-body); /* TODO: DS — Figma: SF Pro */
+    font-size: calc(22.71 * var(--u));
+    line-height: 1;
+    transform: rotate(-5.68deg);
+  }
+
+  .c-about-how :global(.c-about-how__head) {
+    padding-top: calc(60 * var(--u));
+    padding-bottom: calc(60 * var(--u));
+  }
+  .c-about-how :global(.c-section-header__title) {
+    color: var(--color-black-secondary);
+  }
+  .c-about-how :global(.c-section-header__description) {
+    max-width: calc(790 * var(--u));
+    margin-inline: auto;
+  }
+
+  .c-about-how__photos {
+    display: flex;
+    flex-direction: column;
+    gap: calc(20 * var(--u));
+  }
+  .c-about-how__photos img {
+    display: block;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    object-fit: cover;
+  }
+  .c-about-how__wide {
+    aspect-ratio: 1920 / 955;
+  }
+  .c-about-how__row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: calc(20 * var(--u));
+  }
+  .c-about-how__row img {
+    aspect-ratio: 626.67 / 740.78;
+  }
+
+  @media (max-width: 767px) {
+    .c-about-how :global(.c-about-how__head) {
+      padding-top: 3rem;
+      padding-bottom: 3rem;
+    }
+    .c-about-how :global(.c-section-header__description) {
+      max-width: none;
+    }
+  }
+</style>

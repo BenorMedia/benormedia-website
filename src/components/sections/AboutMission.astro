@@ -1,0 +1,161 @@
+---
+/**
+ * AboutMission — /about "Our mission." (Figma 4145:14333): a bordered glass
+ * card with the centred header over three rings and eleven client icon
+ * tiles, faded to white towards the edges.
+ *
+ * Art in Figma px (`--u` = one Figma px, as Services): Figma's 1679.84 ×
+ * 1648.34 frame, centred on the card 32.73px low; rings, tiles and the
+ * white radial fade placed inside it. The card clips it.
+ * Tiles: Figma's icon tiles with their background colours, exported as one
+ * image each (`/images/about/mission/`); the border and radius are CSS.
+ *
+ * ≤767 (no mobile design, TODO: DS): the rings are drawn at 60% so they
+ * still frame the copy, and the tiles are hidden (they would cover it).
+ */
+import Container from "../ui/Container.astro";
+import SectionHeader from "../ui/SectionHeader.astro";
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  body: string;
+}
+
+const { eyebrow, title, body } = Astro.props;
+
+const IMG = "/images/about";
+
+/** Tile top-left inside the art frame (Figma px) and rotation. */
+const TILES: { x: number; y: number; r?: number }[] = [
+  { x: 174.19, y: 703.43 },
+  { x: 217.61, y: 1041.31 },
+  { x: 397.05, y: 923.91 },
+  { x: 1233.16, y: 964 },
+  { x: 1447.91, y: 668.12 },
+  { x: 1609.46, y: 979.5, r: -0.36 },
+  { x: 1176.53, y: 507.8 },
+  { x: 446.12, y: 523.35, r: 179.55 },
+  { x: 47.96, y: 482 },
+  { x: 0.24, y: 901.96 },
+  { x: 801.47, y: 352.19 },
+];
+---
+
+<section class="c-about-mission">
+  <Container>
+    <div class="c-about-mission__card">
+      <div class="c-about-mission__art" aria-hidden="true">
+        <img class="c-about-mission__rings" src={`${IMG}/mission-circles.svg`} width="1647.48" height="1647.48" alt="" loading="lazy" decoding="async" />
+        {TILES.map((t, i) => (
+          <img
+            class="c-about-mission__tile"
+            style={`--x:${t.x};--y:${t.y};--r:${t.r ?? 0}deg`}
+            src={`${IMG}/mission/t${String(i + 1).padStart(2, "0")}.webp`}
+            width="160"
+            height="160"
+            alt=""
+            loading="lazy"
+            decoding="async"
+          />
+        ))}
+        <span class="c-about-mission__fade"></span>
+      </div>
+      <SectionHeader eyebrow={eyebrow} title={title} description={body} class="c-about-mission__header" />
+    </div>
+  </Container>
+</section>
+
+<style>
+  .c-about-mission {
+    --u: calc(1rem / 19.2);
+    background: var(--color-white);
+  }
+
+  .c-about-mission__card {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(563 * var(--u));
+    padding: calc(100 * var(--u)) calc(34 * var(--u)) calc(120 * var(--u));
+    border: var(--border-default);
+    border-radius: 14px;
+    background: var(--color-surface-glass);
+    backdrop-filter: blur(10px);
+  }
+
+  .c-about-mission__art {
+    --a: var(--u);
+    position: absolute;
+    top: calc(50% + 32.73 * var(--a));
+    left: 50%;
+    width: calc(1679.84 * var(--a));
+    height: calc(1648.34 * var(--a));
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .c-about-mission__rings {
+    position: absolute;
+    left: calc(32.04 * var(--a));
+    top: calc(0.33 * var(--a));
+    width: calc(1647.48 * var(--a));
+    height: calc(1647.48 * var(--a));
+    max-width: none;
+  }
+  .c-about-mission__tile {
+    position: absolute;
+    left: calc(var(--x) * var(--a));
+    top: calc(var(--y) * var(--a));
+    width: calc(80.174 * var(--a));
+    height: calc(80.174 * var(--a));
+    max-width: none;
+    border: var(--border-default);
+    border-radius: 8px;
+    transform: rotate(var(--r));
+  }
+  /* Figma "Rectangle 34624333": clear in the middle, white at the edges. */
+  .c-about-mission__fade {
+    position: absolute;
+    left: calc(-79.19 * var(--a));
+    top: calc(50% - 43.59 * var(--a));
+    width: calc(1838.22 * var(--a));
+    height: calc(777.31 * var(--a));
+    transform: translateY(-50%);
+    background: radial-gradient(
+      calc(1454.7 * var(--a)) calc(615.13 * var(--a)) at 50% 50%,
+      transparent 38.37%,
+      var(--color-white) 78.66%
+    );
+  }
+
+  .c-about-mission__card :global(.c-section-header) {
+    position: relative;
+  }
+  .c-about-mission__card :global(.c-section-header__title) {
+    color: var(--color-black-secondary);
+  }
+  /* Figma's 563.82 box, a few px wider so Acumin breaks on Figma's lines. */
+  .c-about-mission__card :global(.c-section-header__description) {
+    max-width: calc(570 * var(--u));
+  }
+
+  @media (max-width: 767px) {
+    .c-about-mission__card {
+      min-height: 0;
+      padding: 7rem 2rem;
+    }
+    .c-about-mission__art {
+      --a: calc(var(--u) * 0.6);
+    }
+    /* At this size the tiles land on the copy: rings only. */
+    .c-about-mission__tile {
+      display: none;
+    }
+    .c-about-mission__card :global(.c-section-header__description) {
+      max-width: none;
+    }
+  }
+</style>

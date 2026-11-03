@@ -248,6 +248,10 @@ function currentMode(): ReturnType<typeof resolveMode> & { isDev: boolean } {
   return { ...resolveMode(env, isDev), isDev };
 }
 
+/** True where drafts are built (previews, `astro dev`, `PAGES_INCLUDE_DRAFTS=1`;
+ *  never production). Also used by `/about` while its `DRAFT` is set. */
+export const includeDrafts = (): boolean => currentMode().includeDrafts;
+
 /** Runs the pack's checker CLI; a FAIL stops the build with its lines. */
 function gate(files: string[], release: boolean): void {
   if (files.length === 0) return; // the CLI exits 2 with no files
