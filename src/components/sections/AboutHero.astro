@@ -36,12 +36,14 @@ const { eyebrow, title, paragraphs, marker } = Astro.props;
 
 const IMG = "/images/about";
 
-/** One tile: photo box height (Figma px; 534 = the full tile), where it
- *  sits in the tile, and Figma's crop as an object-position. */
+/** One tile: its height (Figma px, default 534), the photo box height
+ *  (= the tile height for a full tile), where the box sits in the tile, and
+ *  Figma's crop as an object-position. */
 interface Tile {
   src: string;
   w: number;
   h: number;
+  tile?: number;
   box: number;
   align: "start" | "end";
   pos: string;
@@ -59,7 +61,9 @@ const COLUMNS: { dir: "up" | "down"; tiles: Tile[] }[] = [
     dir: "down",
     tiles: [
       { src: `${IMG}/hero-2.webp`, w: 960, h: 540, box: 359, align: "end", pos: "50% 50%" },
-      { src: `${IMG}/hero-4.webp`, w: 840, h: 1261, box: 320, align: "start", pos: "50% 0%" }, // lead 2026-11-03
+      // Lead 2026-11-03: the whole portrait, uncut (420 × 630, the photo's own
+      // proportions; Figma cut it to a 320px box).
+      { src: `${IMG}/hero-4.webp`, w: 840, h: 1261, tile: 630, box: 630, align: "start", pos: "50% 50%" },
       { src: `${IMG}/hero-6.webp`, w: 980, h: 653, box: 420, align: "end", pos: "73% 50%" },
     ],
   },
@@ -84,7 +88,7 @@ const COLUMNS: { dir: "up" | "down"; tiles: Tile[] }[] = [
             <div class:list={["c-about-hero__track", `is-${col.dir}`]}>
               {[0, 1].map((set) =>
                 col.tiles.map((t) => (
-                  <div class:list={["c-about-hero__tile", `is-${t.align}`]}>
+                  <div class:list={["c-about-hero__tile", `is-${t.align}`]} style={`--tile:${t.tile ?? 534}`}>
                     <img
                       class="c-about-hero__img"
                       style={`--box:${t.box};object-position:${t.pos}`}
@@ -202,7 +206,7 @@ const COLUMNS: { dir: "up" | "down"; tiles: Tile[] }[] = [
     display: flex;
     flex-direction: column;
     flex: none;
-    height: calc(534 * var(--u));
+    height: calc(var(--tile) * var(--u));
     margin-bottom: calc(16 * var(--u));
   }
   .c-about-hero__tile.is-end {
@@ -244,10 +248,10 @@ const COLUMNS: { dir: "up" | "down"; tiles: Tile[] }[] = [
     }
     .c-about-hero__tile {
       height: auto;
-      aspect-ratio: 420 / 534;
+      aspect-ratio: 420 / var(--tile);
     }
     .c-about-hero__img {
-      height: calc(var(--box) / 534 * 100%);
+      height: calc(var(--box) / var(--tile) * 100%);
     }
   }
 </style>
