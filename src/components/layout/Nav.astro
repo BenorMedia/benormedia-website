@@ -754,16 +754,28 @@ const resourceLinks = [
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
+  /* The site's arrow (ClientCard's size); on hover it turns -30.963° in
+     accent, as on every card (lead 2026-11-03). */
   .c-nav__res-arrow {
     display: inline-flex;
     width: 1.714rem;
     height: 1.714rem;
     align-items: center;
     justify-content: center;
+    transition:
+      transform var(--duration-hover) var(--ease-smooth),
+      color var(--duration-hover) var(--ease-smooth);
   }
   .c-nav__res-arrow :global(svg) {
-    width: 0.82rem;
-    height: 1.24rem;
+    width: 1.143rem;
+    height: 1.177rem;
+  }
+  .c-nav__res-card:hover .c-nav__res-arrow,
+  .c-nav__res-card:has(.c-nav__res-more:focus-visible) .c-nav__res-arrow,
+  .c-nav__res-all:hover .c-nav__res-arrow,
+  .c-nav__res-all:focus-visible .c-nav__res-arrow {
+    transform: rotate(-30.963deg);
+    color: var(--color-accent);
   }
   /* The three links under the cards, side by side (same gap as the cards). */
   .c-nav__res-links {
@@ -776,7 +788,8 @@ const resourceLinks = [
     display: flex;
     align-items: center;
     gap: 1.429rem;
-    padding: 0.96rem 1.5rem 0.96rem 1.429rem;
+    /* 30% less than the old "See all resources" row (lead 2026-11-03). */
+    padding: 0.672rem 1.05rem 0.672rem 1rem;
     border: var(--border-default);
     border-radius: 8px;
     color: var(--color-black-secondary);

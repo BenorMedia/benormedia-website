@@ -65,7 +65,7 @@ export const ABOUT_FACTS = {
     {
       key: "websites",
       title: "Founded in 2020",
-      body: "Sergio Gancedo founded BenorMedia in 2020. Today our team designs, builds and supports websites for funded B2B companies, mostly Series A to C.",
+      body: "Sergio Gancedo founded BenorMedia in 2020. Since then, we have been working on hundreds of different website projects helping companies of all sizes and industries grow.", // lead 2026-11-03
     },
     {
       key: "support",
