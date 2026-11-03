@@ -15,9 +15,11 @@
  *   toggle for touch and keyboard; Esc closes and restores focus; outside
  *   click and focus leaving the dropdown close it. Opening one closes the
  *   other.
- * - Resources (lead 2026-10-28, Figma 3995:8355): two featured blog posts and
- *   two featured guides as cards (each article's card thumbnail, title,
- *   Learn more; hover = the /blog cards'), then "See all resources".
+ * - Resources (lead 2026-10-28, Figma 3995:8355; links lead 2026-11-03): two
+ *   featured blog posts and two featured guides as cards (each article's
+ *   card thumbnail, title, Learn more; hover = the /blog cards'), then a row
+ *   of three links: See all articles, See all guides, About us (the last one
+ *   only where /about is built).
  * - Mobile (≤767): hamburger opens full-height off-canvas panel (a modal
  *   dialog). While open: body scroll is locked, the rest of the page is
  *   `inert`, focus moves to the close button. Close via X, Esc, backdrop or
@@ -31,6 +33,7 @@ import { loadPages, type NpPage } from "../../lib/new-pages/loader";
 import { THUMBS } from "../../lib/new-pages/thumbs";
 import { withPeriod } from "../../lib/new-pages/html";
 import { ARROW_RIGHT } from "../new-pages/blog-icons";
+import { aboutBuilt } from "../../lib/content/about";
 
 interface Props {
   siteSettings?: SiteSettings | null | undefined;
@@ -61,16 +64,22 @@ const primaryLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   { label: "Testimonials", href: "/testimonials", hidden: true },
 ];
 
-// Resources: featured articles chosen by the lead (2026-10-28), by URL.
+// Resources: featured articles chosen by the lead (2026-11-03, was
+// 2026-10-28), by URL: blog posts on the left, guides on the right.
 const pages = loadPages();
 const featured = (urls: readonly string[]): NpPage[] =>
   urls.map((url) => pages.find((p) => p.url === url)).filter((p): p is NpPage => p !== undefined);
 const resourceGroups = [
-  { id: "nav-res-blog", pages: featured(["/blog/import-wordpress-to-webflow", "/blog/track-brand-mentions-in-chatgpt"]) },
+  { id: "nav-res-blog", pages: featured(["/blog/aeo-specialist", "/blog/webflow-cms-api"]) },
   { id: "nav-res-guides", pages: featured(["/guides/wordpress-to-webflow-migration", "/guides/webflow-enterprise"]) },
 ];
-// No /resources page yet: the blog index. TODO: lead to confirm the target.
-const allResources = { label: "See all resources", href: "/blog" };
+// The row under the cards (lead 2026-11-03; replaces "See all resources").
+// Icons: the lead's 3D icons.
+const resourceLinks = [
+  { label: "See all articles", href: "/blog", icon: { src: "/images/nav/all-articles.webp", w: 107, h: 153 } },
+  { label: "See all guides", href: "/guides", icon: { src: "/images/nav/all-guides.webp", w: 166, h: 161 } },
+  ...(aboutBuilt() ? [{ label: "About us", href: "/about", icon: { src: "/images/nav/about-us.webp", w: 157, h: 154 } }] : []),
+];
 ---
 
 <header class="c-nav">
@@ -166,13 +175,17 @@ const allResources = { label: "See all resources", href: "/blog" };
                 </div>
               ))}
             </div>
-            <a class="c-nav__res-all" href={allResources.href}>
-              <span class="c-nav__icon-box is-large">
-                <img src="/images/new-pages/thumbs/art/object-lightbulb.webp" alt="" width="230" height="253" loading="lazy" decoding="async" />
-              </span>
-              <span class="c-nav__res-all-label c-text_m">{allResources.label}</span>
-              <span class="c-nav__res-arrow" set:html={ARROW_RIGHT} />
-            </a>
+            <div class="c-nav__res-links" style={`--n:${resourceLinks.length}`}>
+              {resourceLinks.map((link) => (
+                <a class="c-nav__res-all" href={link.href}>
+                  <span class="c-nav__icon-box is-large">
+                    <img src={link.icon.src} alt="" width={link.icon.w} height={link.icon.h} loading="lazy" decoding="async" />
+                  </span>
+                  <span class="c-nav__res-all-label c-text_m">{link.label}</span>
+                  <span class="c-nav__res-arrow" set:html={ARROW_RIGHT} />
+                </a>
+              ))}
+            </div>
           </div>
         </li>
       </ul>
@@ -235,7 +248,9 @@ const allResources = { label: "See all resources", href: "/blog" };
           {resourceGroups.flatMap((group) => group.pages).map((page) => (
             <li><a href={page.url} class="c-nav__mobile-sublink">{withPeriod(page.h1)}</a></li>
           ))}
-          <li><a href={allResources.href} class="c-nav__mobile-sublink">{allResources.label}</a></li>
+          {resourceLinks.map((link) => (
+            <li><a href={link.href} class="c-nav__mobile-sublink">{link.label}</a></li>
+          ))}
         </ul>
       </li>
     </ul>
@@ -750,7 +765,13 @@ const allResources = { label: "See all resources", href: "/blog" };
     width: 0.82rem;
     height: 1.24rem;
   }
-  /* "See all resources": a bordered row; hover = the cards' thumbnail. */
+  /* The three links under the cards, side by side (same gap as the cards). */
+  .c-nav__res-links {
+    display: grid;
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+  /* Each link: a bordered row; hover = the cards' thumbnail. */
   .c-nav__res-all {
     display: flex;
     align-items: center;

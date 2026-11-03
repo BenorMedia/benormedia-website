@@ -34,3 +34,10 @@ Date: 2026-11-03 · Author: orchestrator (Claude Code) · Branch: `feat/about-pa
 - Team cards use the lead's card photos (`public/images/about/team/`), in the order of the lead's team screenshot; the `[PERSON]` marker is gone.
 - Footer Webflow badge replaced with the lead's "Premium Partner" badge (`public/images/webflow-premium-partner.png`).
 - Animations: the lead says they are described in Figma comments. Comments can't be read through the Figma connector or the Plugin API (no annotations, no motion data, no canvas notes next to the frame). Waiting for the comment text.
+
+## Update 2 (same day)
+- Motion from the lead's Figma comments: hero photo columns loop (left up, right down), Mission tiles orbit like the /work hero, facts cards get Home's Services hover/in-view states, team cards get ClientCard's hover.
+- Stamp and facts badge replaced with the lead's full exports.
+- "Webflow Premium Partner" everywhere (copy, meta, llms.txt, rules, checker).
+- "About us" link in the footer ABOUT column and the Resources menu (only where /about is built); Resources menu rebuilt per the lead's screenshot.
+- Checked with real hovers in headless Chrome (DevTools protocol) at 1440, and at 390 (no horizontal overflow).

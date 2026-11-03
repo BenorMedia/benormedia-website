@@ -13,8 +13,12 @@
  * resolve one with a guess; the lead answers them (DECISIONS → About).
  */
 import { AUTHORS, authorPath, type Author } from "../new-pages/authors";
+import { includeDrafts } from "../new-pages/loader";
 
 export const DRAFT = true;
+/** Whether this build has /about: the route and every link to it (footer,
+ *  Resources menu) follow it, so production never links to a missing page. */
+export const aboutBuilt = (): boolean => !DRAFT || includeDrafts();
 export const publishedAt = "2026-11-03";
 export const updatedAt = "2026-11-03";
 
@@ -22,10 +26,10 @@ export const updatedAt = "2026-11-03";
 export const ABOUT_META = {
   title: "About BenorMedia: B2B Webflow Agency Since 2020",
   description:
-    "BenorMedia is a B2B Webflow agency and Webflow Professional Partner. 100+ sites launched since 2020 for SaaS, fintech and AI companies like Surfe and Unit21.",
+    "BenorMedia is a B2B Webflow agency and Webflow Premium Partner. 100+ sites launched since 2020 for SaaS, fintech and AI companies like Surfe and Unit21.",
   /** Organization `description` on this page (SEO spec). */
   orgDescription:
-    "B2B Webflow agency and Webflow Professional Partner that designs, builds and grows websites for SaaS, fintech, cybersecurity and AI companies.",
+    "B2B Webflow agency and Webflow Premium Partner that designs, builds and grows websites for SaaS, fintech, cybersecurity and AI companies.",
   foundingDate: "2020",
 };
 
@@ -33,7 +37,7 @@ export const ABOUT_HERO = {
   eyebrow: "About us",
   title: "About BenorMedia",
   paragraphs: [
-    "BenorMedia is a B2B Webflow agency and Webflow Professional Partner that designs, builds and grows websites for SaaS, fintech, cybersecurity and AI companies, among many others. Since 2020 we have launched 100+ sites for companies like Surfe, Puzzle, Unit21 and Sublime Security, which together have raised over $700M.",
+    "BenorMedia is a B2B Webflow agency and Webflow Premium Partner that designs, builds and grows websites for SaaS, fintech, cybersecurity and AI companies, among many others. Since 2020 we have launched 100+ sites for companies like Surfe, Puzzle, Unit21 and Sublime Security, which together have raised over $700M.",
     "We're a senior in-house team based in Barcelona, Spain, working remotely with clients in the US, UK and Europe.",
   ],
   marker:
@@ -71,9 +75,7 @@ export const ABOUT_FACTS = {
     {
       key: "growth",
       title: "Webflow Premium Partner",
-      body: "Most of our sites run on Webflow, and Webflow lists us as a Professional Partner. When a project needs more, we build it custom.",
-      marker:
-        "[VERIFY: the title and the badge say \"Premium Partner\"; the body, the footer and the house style say \"Webflow Professional Partner\". Which tier is right?]",
+      body: "Most of our sites run on Webflow, and Webflow lists us as a Premium Partner. When a project needs more, we build it custom.",
     },
     {
       key: "rebrand",

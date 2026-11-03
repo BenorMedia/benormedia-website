@@ -20,12 +20,11 @@ import AboutMission from "../../components/sections/AboutMission.astro";
 import Services from "../../components/sections/Services.astro";
 import AboutHowWeWork from "../../components/sections/AboutHowWeWork.astro";
 import AboutTeam from "../../components/sections/AboutTeam.astro";
-import { ABOUT_HERO, ABOUT_HOW, ABOUT_META, ABOUT_MISSION, ABOUT_TEAM, DRAFT } from "../../lib/content/about";
+import { ABOUT_HERO, ABOUT_HOW, ABOUT_META, ABOUT_MISSION, ABOUT_TEAM, DRAFT, aboutBuilt } from "../../lib/content/about";
 import { aboutPageJsonLd } from "../../lib/new-pages/jsonld";
-import { includeDrafts } from "../../lib/new-pages/loader";
 
 export function getStaticPaths() {
-  return DRAFT && !includeDrafts() ? [] : [{ params: { about: undefined } }];
+  return aboutBuilt() ? [{ params: { about: undefined } }] : [];
 }
 
 const founder = ABOUT_TEAM.authors.find((a) => a.slug === "sergio-gancedo");
