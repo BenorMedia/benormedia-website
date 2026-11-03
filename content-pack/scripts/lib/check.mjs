@@ -62,8 +62,9 @@ const COMPETITOR_DOMAINS = [
 
 // Always fail. [regex, reason]. Applied to the visible text (markers removed, REPLACE text included).
 const BANNED = [
-  [/Enterprise Partner/gi, 'never "Enterprise Partner": BenorMedia is a Webflow Professional Partner'],
-  [/Official Webflow Partner/gi, 'use "Webflow Professional Partner"'],
+  [/Enterprise Partner/gi, 'never "Enterprise Partner": BenorMedia is a Webflow Premium Partner'],
+  [/Official Webflow Partner/gi, 'use "Webflow Premium Partner"'],
+  [/Professional Partner/gi, 'the tier is now "Webflow Premium Partner" (Sergio, 2026-11-03)'],
   [/\bBenor Media\b(?!\s+(?:LLC|SLU)\b)/g, 'the brand is spelled "BenorMedia" (legal names stay as written)'],
   [/\bBenor-Media\b/g, 'the brand is spelled "BenorMedia"'],
 ];

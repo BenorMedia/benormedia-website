@@ -44,8 +44,8 @@ faq:
     a: "Yes, through Webflow's Localize add-on, which as of October 2026 translates pages and CMS content and adds hreflang tags to the generated sitemap. The build process includes a multi-language CMS and localization workflows."
   - q: What response times do you offer after launch?
     a: "Ongoing support includes SLA-backed response times, from a 48-hour standard response to 6-hour critical bug fixes, and a priority SLA is available for mission-critical sites. Confirm the exact times and the hours they cover in your contract."
-  - q: Is a Webflow Professional Partner the same as Webflow Enterprise?
-    a: "No. Webflow Enterprise is Webflow's plan for larger organizations, and your site and Workspace run on it. An agency's partner status describes its relationship with Webflow and is a separate matter. BenorMedia is a Webflow Professional Partner."
+  - q: Is a Webflow Premium Partner the same as Webflow Enterprise?
+    a: "No. Webflow Enterprise is Webflow's plan for larger organizations, and your site and Workspace run on it. An agency's partner status describes its relationship with Webflow and is a separate matter. BenorMedia is a Webflow Premium Partner."
   - q: Can you work through enterprise procurement and sign a master services agreement?
     a: "Yes. We sign a master services agreement and a data processing agreement, and we work through your procurement process, from vendor onboarding to security questionnaires. Whichever agency you choose, ask which documents it signs, which legal entity signs them, and how long each takes. Send your security questionnaire early so the answers arrive before design is final."
 related: [/custom-websites-migrations, webflow-enterprise, how-to-choose-a-webflow-agency, b2b-saas-web-design]
@@ -187,6 +187,6 @@ BenorMedia fits an enterprise team whose website is a marketing and content syst
 
 - **The website is mainly a product application** with logged-in features.
 - The site must handle protected health information, because Webflow says it is not HIPAA compliant by default.
-- Your procurement requires a specific Webflow partner status. BenorMedia is a Webflow Professional Partner, so check that before you shortlist it.
+- Your procurement requires a specific Webflow partner status. BenorMedia is a Webflow Premium Partner, so check that before you shortlist it.
 - You need the agency team to work inside your office. We work with clients through a dashboard, Slack, or email from Barcelona.
 - Your procurement requires an audited certification held by the agency itself. Ask us what we can provide before you shortlist us.

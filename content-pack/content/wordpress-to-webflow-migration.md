@@ -119,7 +119,7 @@ editorNotes:
   - "This is the long, sourced how-to. The short commercial page is webflow-migration. Check that the two do not repeat each other."
   - "Every fact comes from Google Search Central or Webflow's help center, read on 2026-10-06. Recheck the Webflow menu names and limits on release day."
   - "The section on whether a move is the right call states a position. Confirm or edit it."
-  - "All partner wording uses Webflow Professional Partner. See G2 in the facts sheet before release."
+  - "All partner wording uses Webflow Premium Partner. See G2 in the facts sheet before release."
   - "Experience edits applied 2026-10-25 from the lead's brief (Surfe case study, four phases, 30+ migrations, plugin install counts as shown on WordPress.org on 2026-10-24). Surfe and Romain Ginestou approved the case study, the quote, and the images. The quote uses the trimmed version of Romain's message."
   - "2026-10-26 (lead): the case study is its own H2, 'A real-life example: Surfe.com', before the lessons; Romain's quote is removed, and the Sources section is hidden (hideSources: true; the list stays for the facts checks)."
 visuals:

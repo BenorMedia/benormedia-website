@@ -80,7 +80,7 @@ author: "[PERSON #G1: name and role of the person who owns the final edit | defa
 
 Fail (never on a page):
 
-- "Enterprise Partner", "Official Webflow Partner". BenorMedia's partner wording is "Webflow Professional Partner" (Sergio, 2026-10-06; see the open question G2 in `FACTS-REGISTRY.md`). Never write a tier name Sergio has not confirmed.
+- "Enterprise Partner", "Official Webflow Partner". BenorMedia's partner wording is "Webflow Premium Partner" (Sergio, 2026-11-03; was "Webflow Professional Partner", see G2 in `FACTS-REGISTRY.md`). Never write a tier name Sergio has not confirmed.
 - "Benor Media" with a space. The brand is "BenorMedia". Legal names stay as written ("Benor Media LLC", "Benor Media SLU").
 - Prices: any currency amount, such as $500, EUR 2,000 or 3,000 USD. Link to `/pricing` instead. Exemptions: amounts in millions or billions (a client's funding as listed on `/work`, "$66.5M"), and, on a page with `thirdPartyPrices: true`, a third-party vendor's published price with its source and as-of date.
 - The names of other agencies, and links to their sites. The check holds a list.
@@ -137,7 +137,7 @@ Language: US English unless the front matter says `lang: en-GB`, `de-DE` or `es-
 4. **Lists.** Steps are an ordered list. A list has at most 8 items. Each item is a full thought, not a fragment.
 5. **Short paragraphs.** At most 4 sentences or about 90 words.
 6. **One idea per H2, two levels deep at most.** H2 and H3 only. The H1 comes from the front matter.
-7. **Sourced.** Every outside fact is paraphrased, linked to its primary source and dated. A section near the end says how the guide was written and checked, and discloses that BenorMedia is a Webflow Professional Partner with an interest in the topic.
+7. **Sourced.** Every outside fact is paraphrased, linked to its primary source and dated. A section near the end says how the guide was written and checked, and discloses that BenorMedia is a Webflow Premium Partner with an interest in the topic.
 8. **Soft call to action only.** The template adds one closing block. The body links to the companion commercial page once.
 9. **No padding.** Word counts in section 10 are ranges, not targets. A shorter page that answers everything beats a longer one that does not.
 10. **Every page earns its own reason to exist.** Pages that look alike (industry pages, comparisons) must differ in substance, not only in the noun.

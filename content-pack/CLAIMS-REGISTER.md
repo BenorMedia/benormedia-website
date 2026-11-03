@@ -156,7 +156,7 @@ Which of these projects were migrations, redesigns or new builds, what BenorMedi
 
 ## S. Stated by Sergio (tier S)
 
-- **S1. Partner wording.** "Webflow Professional Partner" is the only wording, confirmed 2026-10-06. Never "Enterprise Partner". The enterprise page cannot claim any enterprise tier. (An open check on this wording is in `FACTS-REGISTRY.md` as G2.)
+- **S1. Partner wording.** "Webflow Premium Partner" is the only wording (Sergio, 2026-11-03; "Webflow Professional Partner" until then, confirmed 2026-10-06). Never "Enterprise Partner". The enterprise page cannot claim any enterprise tier. (An open check on this wording is in `FACTS-REGISTRY.md` as G2.)
 - **S2. JOOR.** A direct client of BenorMedia for more than 3 years, listed on /work (Fashion, $107.5M raised). Sergio confirmed on 2026-10-06 that JOOR can be named on the enterprise page. Anything about what was built for JOOR is tier C.
 - **S3. Drafting rule.** Claude drafts, a person owns the facts and the final edit, nothing publishes without sign-off (2026-10-06). The AEO program sold to clients keeps its own content rule (no AI drafting).
 - **S4. The six client-facing steps of the AEO program** (Sergio's own sales copy, no tool names). Use the step names and meaning as written; do not add promises.

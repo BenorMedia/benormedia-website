@@ -131,7 +131,7 @@ editorNotes:
   - "This is the long, sourced guide. The short commercial page is b2b-saas-web-design. Check that the two do not repeat each other."
   - "The Webflow roles table is the part competitors leave out. It rests on Webflow's help center as of October 2026. Confirm the Marketer role and the seat types still match."
   - "The redesign, refresh or rebuild section states a position. Confirm or edit it."
-  - "Partner wording stays Webflow Professional Partner (G2)."
+  - "Partner wording stays Webflow Premium Partner (G2)."
 visuals:
   - after: Which pages does a B2B SaaS website need?
     type: diagram

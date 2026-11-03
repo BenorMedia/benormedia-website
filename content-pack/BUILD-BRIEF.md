@@ -358,7 +358,7 @@ Anything not in this table must come from a content file. Do not write other tex
 | Second hero button, `service` pages | `See Pricing`, links to `/pricing` |
 | Second hero button, `industry` and `regional` pages | `See Our Work`, links to `/work` |
 | Buttons in the closing band (commercial) | The same two buttons again |
-| Proof strip, four items in this order | `100+ launches`, `6+ years of experience`, `$700M+ raised by our clients`, `Webflow Professional Partner`. Not "6+ years as a Webflow Professional Partner" (CLAIMS-REGISTER X2) |
+| Proof strip, four items in this order | `100+ launches`, `6+ years of experience`, `$700M+ raised by our clients`, `Webflow Premium Partner`. Not "6+ years as a Webflow Premium Partner" (CLAIMS-REGISTER X2) |
 | Testimonials | The live testimonial's own text. CLAIMS-REGISTER A8 is a transcription of it. If the two differ by more than punctuation or spacing, use the live text and report the difference. Show result tiles only if the live component has them |
 | Related block label | `Related pages` |
 | Related link text | A slug: the `label` of that page in `data/plan.json`, or the page's `h1` if it has no label. A live path: its live navigation name. `/custom-websites-migrations` is `Custom Websites & Migrations`, `/growth` is `Growth (SEO/GEO + CRO)`, `/ongoing-website-support` is `Ongoing Website Support`, `/pricing` is `Pricing`, `/work` is `Work` and `/` is `Home` (CLAIMS-REGISTER A1). For any other live path, use that page's H1 from the baseline build and list it in the report |

@@ -122,7 +122,7 @@ Meta descriptions, `Service` fields and Open Graph settings are in each content 
 2. **Tiers.** The tiers from the pilot still apply, and the content files already sort every claim: tier A in "Already on benormedia.com", tier B in "Sources", tier C in "Statements a person must confirm" (open ones carry markers). Reuse a tier A claim only if Discovery finds it on the live site today.
 3. **Markers.** The content files use `[FACT NEEDED: ...]`, `[VERIFY: ...]` and `[PERSON: ...]` as before, plus two for the case study: `[QUOTE: ...]` for a testimonial waiting for the client's approval, and `[RESULT NEEDED: ...]` for a measured result. They stay visible in the preview and in the data files, never in comments. `scripts/check-draft.mjs` lists them and blocks the release while any remain (Appendix A extends it to the two new markers).
 4. **Wording.** Same list as the pilot:
-   - "Webflow Professional Partner" is the only partner wording. Never "Enterprise Partner", never "Official Webflow Partner".
+   - "Webflow Premium Partner" is the only partner wording. Never "Enterprise Partner", never "Official Webflow Partner".
    - The brand is "BenorMedia", one word.
    - No prices, ranges, tiers or discounts. Plans are named and linked to `/pricing`. The JOOR page writes "120 billion dollars" in words on purpose, so the price check doesn't trip on a fact about JOOR; keep it that way.
    - No promises, no internal tool names (Ahrefs, Surfer, Trakkr, Screaming Frog), no other agencies named, nothing copied from competitor pages.
@@ -146,7 +146,7 @@ Report:
 - the `PAGES` map in `scripts/check-seo.mjs`, including how it uses the `keyword` field; the `LASTMOD` map in `astro.config.*`; and the shape of the lines in `public/llms.txt`;
 - the tier A claims the content files reuse, quoted exactly from the live pages with their URLs, and any that no longer appear.
 
-**STOP and ask** if `/webflow-migration` is not on the base branch, if `scripts/check-draft.mjs` is missing, if a `DRAFT` page is left out of production builds (the previews wouldn't show the new pages), if a tier A claim is no longer on the live site, or if the live site contradicts "Webflow Professional Partner".
+**STOP and ask** if `/webflow-migration` is not on the base branch, if `scripts/check-draft.mjs` is missing, if a `DRAFT` page is left out of production builds (the previews wouldn't show the new pages), if a tier A claim is no longer on the live site, or if the live site contradicts "Webflow Premium Partner".
 
 ## Part 1: four service pages (branch `seo/next-pages`)
 

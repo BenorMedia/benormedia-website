@@ -1,6 +1,6 @@
 # BenorMedia
 
-> BenorMedia is a Webflow agency for B2B SaaS and tech companies. We design and build high-converting Webflow websites, then grow them with SEO, AEO/GEO and CRO. Webflow Professional Partner, 6+ years, 100+ clients. Office: Barcelona, Spain. Contact: info@benor.media
+> BenorMedia is a Webflow agency for B2B SaaS and tech companies. We design and build high-converting Webflow websites, then grow them with SEO, AEO/GEO and CRO. Webflow Premium Partner, 6+ years, 100+ clients. Office: Barcelona, Spain. Contact: info@benor.media
 
 ## Services
 
@@ -11,7 +11,7 @@
 - [B2B Web Design Agency for SaaS](https://www.benormedia.com/b2b-saas-web-design): B2B web design for SaaS. BenorMedia builds Webflow sites that explain the product, support demo requests, and stay easy for marketing to update.
 - [Webflow Enterprise Agency](https://www.benormedia.com/webflow-enterprise-agency): Webflow enterprise agency for B2B teams. Multi-language builds, security audits, access controls, and a dedicated team after launch.
 - [Website Redesign Services for B2B & SaaS](https://www.benormedia.com/website-redesign): Website redesign services for B2B and SaaS teams. We keep the pages that rank and convert, rebuild the rest, and launch on Webflow or custom code.
-- [Webflow SEO Agency: SEO & AEO for B2B](https://www.benormedia.com/webflow-seo-agency): Webflow SEO services from a Webflow Professional Partner: technical fixes, CMS structure and content that get B2B sites found on Google and in AI answers.
+- [Webflow SEO Agency: SEO & AEO for B2B](https://www.benormedia.com/webflow-seo-agency): Webflow SEO services from a Webflow Premium Partner: technical fixes, CMS structure and content that get B2B sites found on Google and in AI answers.
 - [Cybersecurity Website Design Agency](https://www.benormedia.com/cybersecurity-web-design): Website design for cybersecurity companies: proof-first messaging, technical depth for engineers, trust centers for procurement, and sites your team can run.
 - [AEO & GEO Agency for B2B SaaS](https://www.benormedia.com/aeo-agency): AEO and GEO services for B2B SaaS. We track the questions your buyers ask ChatGPT, Perplexity, Gemini and Google AI, then fix what keeps you out of the answers.
 - [Headless CMS Agency: Next.js & Astro Development](https://www.benormedia.com/headless-cms-agency): Headless CMS agency for B2B SaaS. We build Next.js and Astro sites your marketers can edit, and plan moves off Webflow or WordPress around your search traffic.

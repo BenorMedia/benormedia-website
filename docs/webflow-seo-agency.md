@@ -9,7 +9,7 @@ Status: DRAFT v2, written 9 Oct 2026 for BenorMedia (v1 drafted, then revised af
 | URL | `/webflow-seo-agency` |
 | Canonical | `https://www.benormedia.com/webflow-seo-agency` |
 | Title tag | `Webflow SEO Agency: SEO & AEO for B2B \| BenorMedia` (50 characters) |
-| Meta description | `Webflow SEO services from a Webflow Professional Partner: technical fixes, CMS structure and content that get B2B sites found on Google and in AI answers.` (154 characters) |
+| Meta description | `Webflow SEO services from a Webflow Premium Partner: technical fixes, CMS structure and content that get B2B sites found on Google and in AI answers.` (154 characters) |
 | H1 | `Webflow SEO and AEO for B2B teams, measured in pipeline.` |
 | Primary keyword | webflow seo agency |
 | Secondary keywords | webflow seo services, webflow seo company, webflow seo expert, webflow aeo, webflow seo |
@@ -26,7 +26,7 @@ Status: DRAFT v2, written 9 Oct 2026 for BenorMedia (v1 drafted, then revised af
 - Eyebrow: Webflow SEO & AEO
 - H1: Webflow SEO and AEO for B2B teams, measured in pipeline.
 - Lead: A Webflow SEO agency should fix what the platform leaves to you, then build what helps your pages rank and get quoted. Our Webflow SEO services for B2B and SaaS teams cover the technical setup, the pages your buyers search for, and how often Google, ChatGPT and Perplexity send people to you.
-- Proof line: 6+ years as a Webflow Professional Partner, and 100+ launches.
+- Proof line: 6+ years as a Webflow Premium Partner, and 100+ launches.
 - Buttons: "Get in Touch" · "See Pricing" → `/pricing`
 
 ### 2. Logo strip

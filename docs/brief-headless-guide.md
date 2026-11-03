@@ -81,7 +81,7 @@ They catch two kinds of searchers: teams wondering whether to leave Webflow, and
 | Page | Main terms (US volume, KD where known) | What makes it worth citing |
 |---|---|---|
 | `/guides/webflow-vs-custom-code` | webflow alternatives (900), webflow export code (150), webflow cms api (150, 0), webflow to react (80), webflow export to react (80), webflow vs react (50), is webflow worth it (50, traffic potential 600), webflow vs custom code (30), webflow headless cms (30, 0), headless cms migration (200), webflow price increase (100, 20) | A decision table, what Webflow's code export leaves out (from Webflow's docs), the three middle paths, the security trade-off with dated CVEs, Google's site-move steps, and when to stay |
-| `/headless-cms-agency` | headless cms development (600, 5; mostly informational results), headless cms agency (400, 0), headless cms development company (300, 1), nextjs development company (300, 6), headless web development (250, 0), custom website development agency (250, 16), next js development agency (200, 6), headless website development (200, 3), headless cms migration (200), sanity agency (150, 4), custom coded website (150, 0) | A Webflow Professional Partner that builds both ways and says when headless isn't worth it |
+| `/headless-cms-agency` | headless cms development (600, 5; mostly informational results), headless cms agency (400, 0), headless cms development company (300, 1), nextjs development company (300, 6), headless web development (250, 0), custom website development agency (250, 16), next js development agency (200, 6), headless website development (200, 3), headless cms migration (200), sanity agency (150, 4), custom coded website (150, 0) | A Webflow Premium Partner that builds both ways and says when headless isn't worth it |
 
 Measured by: positions for these terms once they are in Ahrefs Rank Tracker, Search Console clicks and impressions per page, and mentions for the prompts in "Verification" in the Surfer AI Tracker (project 12538) and Trakkr. No ranking or revenue promise goes on the pages, in the copy or in your report.
 
@@ -140,7 +140,7 @@ Meta descriptions, the `Article` and `Service` fields and Open Graph settings ar
 2. **Tiers.** Each content file sorts its claims: tier A in "Already on benormedia.com", tier B in "Sources (tier B)", tier C in "Statements a person must confirm" (open ones are review-sheet rows; neither page has markers now). Reuse a tier A claim only if Discovery finds it on the live site today.
 3. **Markers.** `[FACT NEEDED: ...]`, `[VERIFY: ...]`, `[PERSON: ...]`, `[QUOTE: ...]` and `[RESULT NEEDED: ...]` stay visible in the preview and in the data files, never in comments. `scripts/check-draft.mjs` lists them and blocks the release while any remain. Since 2026-10-10 neither page carries one, so `check-draft.mjs` should list none; if the person adds a marker during review, it blocks the release as usual.
 4. **Wording.** Same list as before:
-   - "Webflow Professional Partner" is the only partner wording. Never "Enterprise Partner", never "Official Webflow Partner".
+   - "Webflow Premium Partner" is the only partner wording. Never "Enterprise Partner", never "Official Webflow Partner".
    - The brand is "BenorMedia", one word.
    - No BenorMedia prices, ranges, tiers or discounts. Plans are named and linked to `/pricing`. The guide writes Vellum's saving as "30,000 dollars" on purpose, so the price check doesn't trip on a third-party figure; keep it that way.
    - No promises, no internal tool names (Ahrefs, Surfer, Trakkr, Screaming Frog), no other agencies named, nothing copied from competitor pages. CMS vendors, hosts and frameworks (Contentful, Strapi, Sanity, Storyblok, Payload, Next.js, Astro, Nuxt, SvelteKit, Vercel, Netlify, Cloudflare, Framer, WordPress) are named on purpose. The guide's "October 2026 crawl" is BenorMedia's own crawl of its site; don't name the tool behind it.
@@ -172,7 +172,7 @@ Report:
 - the `PAGES` map in `scripts/check-seo.mjs` (including how it uses the `keyword` field), the `LASTMOD` map in `astro.config.*`, and the shape of the lines in `public/llms.txt`;
 - the tier A claims the content files reuse, quoted exactly from the live pages with their URLs, and any that no longer appear.
 
-**STOP and ask** if the guides' content lives in Sanity and a new guide can't be added without Sanity credentials. Don't ask for a token in the chat and don't commit one. Sergio decides whether to create the document himself or to build the guide as a data file. If he creates it in Sanity, it stays an unpublished draft until the release; STOP again and agree with him how the preview, the marker check and the release step work for it before Task 3. Also STOP and ask if `scripts/check-draft.mjs` is missing, if a `DRAFT` page is left out of production builds (the previews wouldn't show the new pages), if a tier A claim is no longer on the live site, or if the live site contradicts "Webflow Professional Partner".
+**STOP and ask** if the guides' content lives in Sanity and a new guide can't be added without Sanity credentials. Don't ask for a token in the chat and don't commit one. Sergio decides whether to create the document himself or to build the guide as a data file. If he creates it in Sanity, it stays an unpublished draft until the release; STOP again and agree with him how the preview, the marker check and the release step work for it before Task 3. Also STOP and ask if `scripts/check-draft.mjs` is missing, if a `DRAFT` page is left out of production builds (the previews wouldn't show the new pages), if a tier A claim is no longer on the live site, or if the live site contradicts "Webflow Premium Partner".
 
 ## Tasks (branch `seo/headless-guide`)
 
@@ -369,7 +369,7 @@ How to use: go to the rows marked `open`. For each, write the fact in "Your answ
 
 | # | Section | Sentence, table cell or figure on the page | Tier | Source, or who confirms | Your answer | Date | Status |
 |---|---|---|---|---|---|---|---|
-| 1 | Hero | "Webflow Professional Partner for 6+ years" | A | benormedia.com home page |  | <date> | ok |
+| 1 | Hero | "Webflow Premium Partner for 6+ years" | A | benormedia.com home page |  | <date> | ok |
 | 2 | Section 8 (guide) | "Only paid Workspace plans can export; Site plans can't." | B | Webflow Help, "How do I export my Webflow site code?" (URL) |  | <date> | ok |
 | 3 | Section 5 (service page) | "Then we check every page by hand" | C | Sergio, facts sheet item S3 |  |  | open |
 | 4 | Section 8 (service page) | "We watch the advisories and apply security and dependency updates as part of ongoing support." | C | Sergio, facts sheet item S4 | Yes, answered in the facts sheet | 2026-10-10 | confirmed |

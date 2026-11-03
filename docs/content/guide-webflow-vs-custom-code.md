@@ -207,7 +207,7 @@ Status: DRAFT v3. Written 9 Oct 2026 for BenorMedia (v1 drafted, v2 revised afte
 > Component: the same section on `/guides/webflow-enterprise` (one paragraph).
 
 - H2: How was this guide written and checked?
-- Body: This guide draws on BenorMedia's Webflow projects and on building our own site in Astro and Sanity. We checked every outside fact against its source on October 12, 2026: Webflow's help center and developer docs, Google Search Central, the Next.js, Astro, Sanity, Storyblok and Payload docs, and the public migration data and write-ups listed below. We recheck it every 30 days. One disclosure: BenorMedia earns money on both sides of this decision. We're a Webflow Professional Partner, and we also build [custom-coded sites on a headless CMS](/headless-cms-agency).
+- Body: This guide draws on BenorMedia's Webflow projects and on building our own site in Astro and Sanity. We checked every outside fact against its source on October 12, 2026: Webflow's help center and developer docs, Google Search Central, the Next.js, Astro, Sanity, Storyblok and Payload docs, and the public migration data and write-ups listed below. We recheck it every 30 days. One disclosure: BenorMedia earns money on both sides of this decision. We're a Webflow Premium Partner, and we also build [custom-coded sites on a headless CMS](/headless-cms-agency).
 
 ### 15. Sources
 > Component: the numbered sources list from the live guides. Each entry links its title.
