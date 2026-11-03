@@ -81,6 +81,7 @@
 
 ## Company
 
+- [About BenorMedia](https://www.benormedia.com/about): B2B Webflow agency and Webflow Premium Partner. 100+ sites launched since 2020 for SaaS, fintech and AI companies, built by a senior in-house team in Barcelona.
 - [Our work](https://www.benormedia.com/work): Webflow websites designed and built for B2B SaaS, professional services and agencies.
 - [Pricing](https://www.benormedia.com/pricing): Monthly design and development, AEO/GEO growth plans, or one-off projects.
 

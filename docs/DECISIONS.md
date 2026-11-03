@@ -655,14 +655,15 @@ Without adding to your team." with "website moving." marked Gradient (published 
 | 2026-11-03 | Resources menu (lead's screenshot): featured blog posts /blog/aeo-specialist and /blog/webflow-cms-api on the left, guides /guides/wordpress-to-webflow-migration and /guides/webflow-enterprise on the right, each with its own card thumbnail (the lead's mockup shows the thumbnails in other places); "See all resources" replaced by a row of three: See all articles (/blog), See all guides (/guides), About us (/about), with the lead's 3D icons (`/images/nav/`). Mobile menu lists the same links | Lead | Lead |
 | 2026-11-03 | One arrow site-wide: the /about team card arrow (Figma's "→", the glyph ClientCard and ClientList already use) replaces the stroked arrows: `ARROW_RIGHT` and `TOC_ARROW` (`blog-icons.ts`: Resources menu, Services "Learn more", blog cards, blog pager, article sidebar) and the "View All 100+ Projects" button icon. On every card or link hover the arrow turns -30.963° in accent (ClientCard's). Exception (lead, same day): the blog card arrows (`.c-np-res__arrow`), the Resources menu article cards and the Services "Learn more" are 20% smaller and stay dark on hover (they still turn). The service pages' gradient down arrow under the problem section is a different icon and stays. Resources menu links: 30% less padding | Lead | Lead |
 | 2026-11-03 | /about: "Founded in 2020" card copy from the lead ("Since then, we have been working on hundreds of different website projects…"); the hero's portrait photo replaced with the lead's (`hero-4.webp`, 840 × 1261), shown whole in a 420 × 630 tile (Figma cut it to a 320px box; lead: "still cut off") | Lead | Lead |
+| 2026-11-03 | /about released (lead: "push all the updates live", "Release with these photos"): `DRAFT = false`, markers removed, in the sitemap (LASTMOD 2026-11-03) and `public/llms.txt` (Company), no page-level noindex; the footer and Resources "About us" links now show in production too. Deploy and the Search Console indexing request are the lead's | Lead | Lead |
 | 2026-11-03 | "About us" link (→ /about) first in the footer ABOUT column and in the Resources menu, shown only where /about is built (`aboutBuilt()` in about.ts: previews and dev while `DRAFT`), so production never links to a missing page | Lead | Lead |
 
 ### Open questions
 
 #### Content
 - ~~**Partner tier**~~ — RESOLVED 2026-11-03: "Webflow Premium Partner" everywhere (see Decisions). Before: the facts card title "Webflow Premium Partner" and its badge ("Premium Partner", Figma also hides an "Enterprise" chip under a white box) contradict the card's own body, the footer and the house style ("Webflow Professional Partner" only). Built as in Figma with a `[VERIFY]` marker. (2026-11-03)
-- **How we work photos** — Figma names the four photos as another agency's office ("DesignMe office lounge in Gdansk", a DesignMe cap on a shelf). Built with them behind a `[VERIFY]` marker; BenorMedia photos needed, or the lead's OK to use these. (2026-11-03)
-- **Hero photos** — the six photos read as placeholders (a city skyline, Barcelona, an office, a stock portrait, a desk, the W hotel). Built as in Figma with a `[VERIFY]` marker. (2026-11-03)
+- ~~**How we work photos**~~ — RESOLVED 2026-11-03: the lead confirmed the photos as they are ("Release with these photos"). Before: Figma names the four photos as another agency's office ("DesignMe office lounge in Gdansk", a DesignMe cap on a shelf). Built with them behind a `[VERIFY]` marker; BenorMedia photos needed, or the lead's OK to use these. (2026-11-03)
+- ~~**Hero photos**~~ — RESOLVED 2026-11-03: kept as they are (lead, "Release with these photos"). Before: the six photos read as placeholders (a city skyline, Barcelona, an office, a stock portrait, a desk, the W hotel). Built as in Figma with a `[VERIFY]` marker. (2026-11-03)
 - ~~**Team card photos**~~ — RESOLVED 2026-11-03: the lead's seven card photos (`/images/about/team/`), order from the lead's team screenshot (see Decisions).
 - **numberOfEmployees** — the SEO spec says 4, the page shows seven people. Left out of the Organization until the lead gives the number. (2026-11-03)
 - ~~**Figma comments (animations)**~~ — RESOLVED 2026-11-03: the lead pasted them; built (see Decisions). Neither the Figma connector nor the Plugin API can read comments.
@@ -675,5 +676,4 @@ Without adding to your team." with "website moving." marked Gradient (published 
 
 #### Needs lead OK
 - **/about page build** — see Decisions 2026-11-03.
-- **/about draft guard** — see Decisions 2026-11-03.
 - **/about JSON-LD** — see Decisions 2026-11-03.

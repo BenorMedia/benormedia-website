@@ -41,3 +41,7 @@ Date: 2026-11-03 · Author: orchestrator (Claude Code) · Branch: `feat/about-pa
 - "Webflow Premium Partner" everywhere (copy, meta, llms.txt, rules, checker).
 - "About us" link in the footer ABOUT column and the Resources menu (only where /about is built); Resources menu rebuilt per the lead's screenshot.
 - Checked with real hovers in headless Chrome (DevTools protocol) at 1440, and at 390 (no horizontal overflow).
+
+## Release (same day)
+- /about released on the branch: `DRAFT = false`, markers removed, sitemap + LASTMOD, llms.txt line. Lead confirmed the photos as they are.
+- Still for the lead: merge PR #105 into `dev`, release `dev` to `main` (production), request indexing for /about in Search Console.

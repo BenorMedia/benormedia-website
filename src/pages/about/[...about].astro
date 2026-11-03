@@ -30,7 +30,7 @@ export function getStaticPaths() {
 const founder = ABOUT_TEAM.authors.find((a) => a.slug === "sergio-gancedo");
 const ld = aboutPageJsonLd(ABOUT_META, ABOUT_TEAM.authors, founder);
 // Markers print only while the page is a draft.
-const m = (marker: string): string | undefined => (DRAFT ? marker : undefined);
+const m = (marker: string | undefined): string | undefined => (DRAFT ? marker : undefined);
 ---
 
 <BaseLayout title={ABOUT_META.title} description={ABOUT_META.description} titleTemplate={false} noIndex={DRAFT}>

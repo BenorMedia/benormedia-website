@@ -133,6 +133,7 @@ const LASTMOD = {
   '/authors/paula-allievi': '2026-11-03',
   '/authors/ismael-aoussi': '2026-11-03',
   '/authors/mauricio-guerra': '2026-11-03',
+  '/about': '2026-11-03',
 };
 
 // New pages (content-pack/content/*.md, docs/new-pages.md): draft pages stay
@@ -164,12 +165,11 @@ export default defineConfig({
     // and so are the noindex pages: /cookie-policy (placeholder) and
     // /testimonials while testimonials are off (lead 2026-09-30; drop them
     // from this list when they go live). Privacy Policy + Terms are
-    // indexable since 2026-10-05, so they are listed. /about is a draft
-    // (src/lib/content/about.ts `DRAFT`): drop it from this list, and add it
-    // to LASTMOD, in its release commit.
+    // indexable since 2026-10-05, so they are listed. /about is listed since
+    // its release (2026-11-03).
     sitemap({
       filter: (page) =>
-        !/\/(dev|studio)(\/|$)|\/404$|^\/(cookie-policy|testimonials|about)\/?$/.test(
+        !/\/(dev|studio)(\/|$)|\/404$|^\/(cookie-policy|testimonials)\/?$/.test(
           new URL(page).pathname,
         ) && !NEW_PAGES.draftPaths.has(new URL(page).pathname.replace(/\/$/, '')),
       serialize(item) {

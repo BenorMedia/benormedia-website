@@ -4,10 +4,9 @@
  * switch. Section components take their copy from here; nothing visible is
  * written in the components.
  *
- * `DRAFT = true`: the page is built in previews and `astro dev` only (never
- * in a production build), carries `noindex` and stays out of the sitemap.
- * Release = set `DRAFT = false` with the lead's sign-off, once every
- * `marker` below is resolved (each one prints on the page while it is set).
+ * Released 2026-11-03 (lead: "Release with these photos"). `DRAFT = true`
+ * would build the page in previews and `astro dev` only, with `noindex`,
+ * out of the sitemap, and print any `marker` below on the page.
  *
  * Markers are the content kit's (`[VERIFY: ...]`). Never
  * resolve one with a guess; the lead answers them (DECISIONS → About).
@@ -15,7 +14,7 @@
 import { AUTHORS, authorPath, type Author } from "../new-pages/authors";
 import { includeDrafts } from "../new-pages/loader";
 
-export const DRAFT = true;
+export const DRAFT = false;
 /** Whether this build has /about: the route and every link to it (footer,
  *  Resources menu) follow it, so production never links to a missing page. */
 export const aboutBuilt = (): boolean => !DRAFT || includeDrafts();
@@ -40,8 +39,8 @@ export const ABOUT_HERO = {
     "BenorMedia is a B2B Webflow agency and Webflow Premium Partner that designs, builds and grows websites for SaaS, fintech, cybersecurity and AI companies, among many others. Since 2020 we have launched 100+ sites for companies like Surfe, Puzzle, Unit21 and Sublime Security, which together have raised over $700M.",
     "We're a senior in-house team based in Barcelona, Spain, working remotely with clients in the US, UK and Europe.",
   ],
-  marker:
-    "[VERIFY: the six hero photos are Figma's placeholders (a city skyline, Barcelona, an office, a stock portrait, a person at a desk, the W Barcelona hotel). Real BenorMedia photos, or keep these?]",
+  /** Draft only: an open question printed under the copy. */
+  marker: undefined as string | undefined,
 };
 
 export const ABOUT_MISSION = {
@@ -90,8 +89,8 @@ export const ABOUT_HOW = {
   title: "A small senior team, by design.",
   body: "Every project is designed and built by our own staff, never outsourced. You talk to the people doing the work, and they ship to you directly.",
   stamp: "Barcelona, Spain.",
-  marker:
-    "[VERIFY: Figma names these four photos as another agency's office (\"DesignMe office lounge in Gdansk\", a DesignMe cap on the shelf). Send BenorMedia photos, or confirm we may use these.]",
+  /** Draft only: an open question printed under the header. */
+  marker: undefined as string | undefined,
 };
 
 export interface TeamMember {
