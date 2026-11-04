@@ -42,3 +42,44 @@ Date: 2026-11-04 · Author: astro agent · Branch: `feat/work-case-study-templat
 ## TODO markers added
 - `TODO: DS` — `CaseHero` (frame fill, address colour, logo chip), `CaseFigure` (border, caption colour), `CaseTable` (header fill), `CaseStack` (glass tile, on-dark chip, card text, logo tile), `CaseTimeline` (glass tile), `CaseCta` (on-dark eyebrow), `CaseStats` (50px numbers), `CaseQuote` (Medium names); `TODO: DS mobile` in every component's header
 - `TODO: COPY` — `entries/surfe.ts`: SEO title / meta, results caption, FAQ, related heading "Lorem ipsum dolor sit", related card numbers
+
+---
+
+## Follow-up 2026-11-04: fidelity pass + hero video
+
+### What I did
+- **Fidelity pass** against `docs/refs/Case-study-template.png` at a 1920 window (the site caps at the 1440 container, so the reference is compared at x0.729, the `--u` scale). Section heights now match the reference within a few px (hero 631/631, stats 141/140, at a glance 535/544, challenge 1114/1117, what we did 1758/1749, results 957/992, team 783/784, CTA 378/377, TOC box 448/456); stack is +31 (font fallback, below).
+  - Type at the design's sizes: `--cs-fs-*` page variables scale the closest tokens from 768 up (H1 60, H2 38, H3/names 30, stats 50, quote 25.9, lead 25, body 20, small 18, xs 15); phones keep the tokens.
+  - Eyebrows and tags in hero and body at Figma's 15px; logo chip at 24/10 padding; crumbs 15px with 8px gaps.
+  - TOC sidebar restyled on this page to 4225:11907 (13.5px items, 42.4px pitch, 50/32/32 box, 15px tab).
+  - Hero: browser address 13.2px, button 20px with 16/30/14 padding.
+  - Stats: labels 250px wide, 18px.
+  - Table: Figma rows (18px, 10/16 padding, 40px column gaps, 250/72/200 columns, #F7F7F7 header); phones size columns freely and scroll.
+  - Quote: photo 51.8px, name 20 / role 18.
+  - Stack: logo tiles 44px.
+  - Timeline: glass tiles fixed (they shrank to a strip next to the card edge), blue dashed line.
+  - Takeaways: check icon re-exported at 4x (32px).
+  - Inline CTA: Figma padding and button size.
+  - "What we did" intro removed: hidden layer in Figma (4225:12236), not in the reference.
+- **Hero video + cursor follow:** entry `client.id: "client-surfe"`; the page fetches `websiteVideo` + `websiteVideoPoster` with `getClientsByIds` at build and falls back to the screenshot. New shared scripts `src/scripts/ui/client-video.ts` (Featured Work's logic) and `src/scripts/ui/cursor-follow.ts`.
+
+### Files changed
+- New: `src/scripts/ui/client-video.ts`, `src/scripts/ui/cursor-follow.ts`
+- Changed: `src/pages/work/[slug].astro`, every `src/components/case-studies/*.astro` with text, `src/lib/case-studies/{types.ts,entries/surfe.ts}`, `src/assets/case-studies/shared/check.png`, `docs/DECISIONS.md`
+
+### Checks
+- [x] `pnpm run build`, `pnpm run check` (0/0/0), `pnpm run lint` clean
+- [x] Drafts build with `PUBLIC_SITE_URL`: `check-seo` 10/10 ok on `/work/surfe`; only the production-only robots line fails site-wide
+- [x] 1920 side by side per section; 1440 and 390 re-checked: no horizontal overflow at 390
+- [x] Cursor follow tested with synthetic pointer events: hidden at rest, follows with easing, fades on leave, keyboard focus at Figma's spot; video plays on screen (`preload="none"`)
+
+### Deliberate differences kept
+- **Line breaks** differ where Acumin text runs wider. The site never loads the Adobe Fonts kit, so body text is the system fallback: stat labels, the HubSpot chip under its logo, takeaway cards (+20px). The H1 glyphs match within ~4%; its wrap differs by one word.
+- **Site container:** 7.5rem side padding (Figma 120px = 6.25rem at this scale), for alignment with nav and footer.
+- **About source note** left out (the reference shows it); Sergio's title; "surfe.com" in the frame (Figma "yoursite.com").
+- **Shared components kept as they are:** the CTA badge (`CtaActions`) and the final CtaBanner + footer (newer than the Figma instances), and Acumin Medium shown at 400 (kit has 400/700).
+- **Team photos** come from /about (Figma has a placeholder).
+- **Video crop:** the video is 16:9 in Figma's 1069x611 box (`object-fit: cover`, top).
+
+### Requests
+- @ui: switch `ClientCard.astro`'s inline video script to `src/scripts/ui/client-video.ts`; load the Adobe Fonts kit (site-wide, needs the kit ID).
