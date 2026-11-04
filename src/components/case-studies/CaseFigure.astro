@@ -11,11 +11,14 @@
  * blurred glow (CSS), the client's faded swatches, the two browsers
  * (exports clipped to the frame, shadow included), the connector lines
  * (unrotated vectors, turned here as in Figma), the round badge, then the
- * BEFORE / After labels in HTML, so no text is baked in. Layers are
+ * BEFORE / AFTER labels in HTML, so no text is baked in. The After label
+ * is the same accent chip as "GOAL 01" (`Tag` accent, lead 2026-11-04:
+ * the gray-text version in Figma was a design slip). Layers are
  * decorative (`alt=""`); `image.alt` names the whole (`role="img"`).
  */
 import { Image } from "astro:assets";
 import Eyebrow from "../ui/Eyebrow.astro";
+import Tag from "../ui/Tag.astro";
 import type { CsFigure } from "../../lib/case-studies/types";
 
 interface Props {
@@ -51,7 +54,7 @@ const browserSizes = "(max-width: 991px) 40vw, 330px";
         <Image src={compare.badge} alt="" widths={[200, 396]} sizes="(max-width: 991px) 18vw, 150px" class="c-case-figure__layer is-badge" />
       )}
       <Eyebrow class="c-case-figure__chip is-before">{compare.chips.before}</Eyebrow>
-      <span class="c-case-figure__chip is-after">{compare.chips.after}</span>
+      <Tag variant="accent" class="c-case-figure__chip is-after">{compare.chips.after}</Tag>
     </div>
   ) : (
     <div class="c-case-figure__frame">
@@ -160,38 +163,30 @@ const browserSizes = "(max-width: 991px) 40vw, 330px";
     position: absolute;
     z-index: 1;
     top: 2.855%; /* 13.42 */
-    text-transform: none;
   }
   .c-case-figure :global(.c-case-figure__chip.is-before) {
     left: 8.987%; /* 109.64 */
   }
-  .c-case-figure__chip.is-after {
+  /* Accent Tag as "GOAL 01" (CaseGoals): opaque fill so the browser
+     behind doesn't show through, and the same corner squares. */
+  .c-case-figure :global(.c-case-figure__chip.is-after) {
     left: 83.197%; /* 1015 */
-    display: inline-flex;
-    align-items: center;
-    padding: 0.5em 1.05em;
-    border: 0.5px solid var(--color-blue);
-    border-radius: 3px;
-    background: color-mix(in srgb, var(--color-blue) 10%, var(--color-white));
-    color: var(--color-text);
-    font-size: 0.9375rem;
-    line-height: normal;
-    letter-spacing: 0.064em;
+    background: color-mix(in srgb, var(--color-accent) 8%, var(--color-white));
   }
-  .c-case-figure__chip.is-after::before,
-  .c-case-figure__chip.is-after::after {
+  .c-case-figure :global(.c-case-figure__chip.is-after)::before,
+  .c-case-figure :global(.c-case-figure__chip.is-after)::after {
     content: "";
     position: absolute;
     top: 50%;
     width: 0.625rem;
     height: 0.625rem;
     border: 0.5px solid var(--color-blue);
-    border-radius: 1.5px;
-    background: color-mix(in srgb, var(--color-blue) 5%, var(--color-white));
+    border-radius: 2.25px;
+    background: color-mix(in srgb, var(--color-blue) 10%, var(--color-white));
     transform: translateY(-50%);
   }
-  .c-case-figure__chip.is-after::before { left: -0.344rem; }
-  .c-case-figure__chip.is-after::after { right: -0.344rem; }
+  .c-case-figure :global(.c-case-figure__chip.is-after)::before { left: -0.344rem; }
+  .c-case-figure :global(.c-case-figure__chip.is-after)::after { right: -0.344rem; }
   .c-case-figure__caption {
     margin: 0;
     color: var(--color-text); /* Figma Grey 400 #848484, TODO: DS */
@@ -201,11 +196,10 @@ const browserSizes = "(max-width: 991px) 40vw, 330px";
   }
   /* TODO: DS mobile — the composition scales; labels shrink with it. */
   @media (max-width: 767px) {
-    .c-case-figure :global(.c-case-figure__chip),
-    .c-case-figure__chip.is-after {
+    .c-case-figure :global(.c-case-figure__chip) {
       font-size: 0.9rem;
     }
     .c-case-figure :global(.c-case-figure__chip.is-before) { left: 4%; }
-    .c-case-figure__chip.is-after { left: auto; right: 4%; }
+    .c-case-figure :global(.c-case-figure__chip.is-after) { left: auto; right: 4%; }
   }
 </style>
