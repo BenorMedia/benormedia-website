@@ -33,7 +33,6 @@ import type { CaseStudy } from "../types";
 
 import logo from "../../../assets/case-studies/surfe/surfe-logo.png";
 import homepage from "../../../assets/case-studies/surfe/surfe-homepage.jpg";
-import cardCover from "../../../assets/case-studies/surfe/card-cover.png";
 import factClient from "../../../assets/case-studies/surfe/fact-client.png";
 import factIndustry from "../../../assets/case-studies/surfe/fact-industry.png";
 import factOffices from "../../../assets/case-studies/surfe/fact-offices.png";
@@ -385,13 +384,11 @@ export const CASE_STUDY: CaseStudy = {
   },
   related: {
     eyebrow: "Case studies",
-    heading: "Lorem ipsum dolor sit", // TODO: COPY (Figma placeholder, lead 2026-11-04)
+    heading: "More case studies", // lead 2026-11-04 (Figma: "Lorem ipsum dolor sit")
     cardTag: "Case study",
-    published: "Published on",
     more: "Learn more",
   },
   card: {
-    cover: { src: cardCover, alt: "" },
     // TODO: COPY: Figma's card stats are "XXX / Lorem ipsum"; the hero stats stand in.
     stats: [
       { value: "33 to 86", label: "Lighthouse mobile" },

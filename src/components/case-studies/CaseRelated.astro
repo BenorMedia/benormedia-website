@@ -1,33 +1,45 @@
 ---
 /**
  * CaseRelated — other case studies under the body (Figma 4225:12803
- * "WhyItWorks"): eyebrow, heading and up to three cards (cover with the
- * client's logo, "Case study" and published date tags, the case study's
- * H1, two numbers, "Learn more"). Renders nothing when there are no other
- * case studies (Surfe is the only one, lead 2026-11-04).
+ * "WhyItWorks", card 4225:12812): eyebrow, heading and up to three cards.
  *
- * Not checked against Figma in a browser yet: no second entry exists.
+ * Cards = every client flagged as a case study in Sanity except this page's
+ * (built in the page, lead 2026-11-04). A card whose case study has an entry
+ * shows its H1 and card stats and links to it; one still without an entry
+ * shows `[FACT NEEDED]` markers and "Learn more" as plain text (no links to
+ * pages that don't exist yet).
+ *
+ * Cover (243px): built in HTML, not an export, so any client works: Deep Sea
+ * 900 fill (closest token, TODO: DS), Figma's radial glow, the client's
+ * Sanity logo in white inside a 0.6px framed box with 12px corner squares.
+ * The published date is in the file but hidden in the design: not shown.
  * ≤991: one column (`TODO: DS mobile`).
  */
-import CaseDecor from "./CaseDecor.astro";
 import Eyebrow from "../ui/Eyebrow.astro";
 import Tag from "../ui/Tag.astro";
-import type { CaseStudy } from "../../lib/case-studies/types";
-import { caseStudyPath } from "../../lib/case-studies";
+import glow from "../../assets/case-studies/shared/related-glow.svg";
+import arrow from "../../assets/case-studies/shared/team-arrow.svg";
+
+export interface RelatedCard {
+  name: string;
+  /** Client logo URL (Sanity), shown white on the cover. */
+  logo?: string | undefined;
+  title: string;
+  stats: readonly { value: string; label: string }[];
+  /** Only when the case study page exists. */
+  href?: string | undefined;
+}
 
 interface Props {
   eyebrow: string;
   heading: string;
   cardTag: string;
-  published: string;
   more: string;
-  items: readonly CaseStudy[];
+  cards: readonly RelatedCard[];
 }
 
-const { eyebrow, heading, cardTag, published, more, items } = Astro.props;
-const shown = items.slice(0, 3);
-const fmt = (iso: string): string =>
-  new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "2-digit", timeZone: "UTC" });
+const { eyebrow, heading, cardTag, more, cards } = Astro.props;
+const shown = cards.slice(0, 3);
 ---
 
 {shown.length > 0 && (
@@ -38,26 +50,42 @@ const fmt = (iso: string): string =>
         <h2 id="case-related-title" class="c-text_xl c-case-related__title">{heading}</h2>
       </header>
       <ul class="c-case-related__list">
-        {shown.map((c) => (
+        {shown.map((card) => (
           <li class="c-case-related__card">
-            <CaseDecor src={c.card.cover.src} width={540} class="c-case-related__cover" />
+            <div class="c-case-related__cover" aria-hidden="true">
+              <img class="c-case-related__glow" src={glow.src} alt="" width="545" height="545" loading="lazy" decoding="async" />
+              <span class="c-case-related__frame">
+                {card.logo ? (
+                  <img class="c-case-related__logo" src={card.logo} alt="" loading="lazy" decoding="async" />
+                ) : (
+                  <span class="c-text_l c-case-related__logo-text">{card.name}</span>
+                )}
+              </span>
+            </div>
             <div class="c-case-related__body">
-              <div class="c-case-related__tags">
-                <Tag variant="accent">{cardTag}</Tag>
-                <Eyebrow>{published} <time datetime={c.publishedAt}>{fmt(c.publishedAt)}</time></Eyebrow>
+              <Tag variant="accent">{cardTag}</Tag>
+              <div class="c-case-related__main">
+                <h3 class="c-text_m c-case-related__name">{card.title}</h3>
+                <dl class="c-case-related__stats">
+                  {card.stats.map((st) => (
+                    <div class="c-case-related__stat">
+                      <dt class="c-case-related__stat-label">{st.label}</dt>
+                      <dd class="c-text_m c-case-related__stat-value">{st.value}</dd>
+                    </div>
+                  ))}
+                </dl>
               </div>
-              <h3 class="c-text_m c-case-related__name">{c.hero.h1}</h3>
-              <dl class="c-case-related__stats">
-                {c.card.stats.map((s) => (
-                  <div class="c-case-related__stat">
-                    <dt class="c-case-related__stat-label">{s.label}</dt>
-                    <dd class="c-text_m c-case-related__stat-value">{s.value}</dd>
-                  </div>
-                ))}
-              </dl>
-              <a class="c-paragraph_m c-case-related__more" href={caseStudyPath(c)} aria-label={`${more}: ${c.hero.h1}`}>
-                {more} <span aria-hidden="true">→</span>
-              </a>
+              {card.href ? (
+                <a class="c-case-related__more" href={card.href} aria-label={`${more}: ${card.name}`}>
+                  {more}
+                  <img src={arrow.src} alt="" width="24" height="24" aria-hidden="true" />
+                </a>
+              ) : (
+                <span class="c-case-related__more is-disabled">
+                  {more}
+                  <img src={arrow.src} alt="" width="24" height="24" aria-hidden="true" />
+                </span>
+              )}
             </div>
           </li>
         ))}
@@ -85,17 +113,20 @@ const fmt = (iso: string): string =>
   }
   .c-case-related__title {
     margin: 0;
-    color: var(--color-black-secondary);
+    color: var(--color-heading);
   }
+  /* Three columns as in Figma; fewer cards stay at that width, centred. */
   .c-case-related__list {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: calc(40 * var(--u));
     margin: 0;
     padding: 0;
     list-style: none;
   }
   .c-case-related__card {
+    flex: 0 0 calc((100% - 2 * 40 * var(--u)) / 3);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -103,34 +134,88 @@ const fmt = (iso: string): string =>
     border-radius: 8px;
     background: var(--color-white);
   }
-  .c-case-related :global(.c-case-related__cover) {
-    display: block;
-    width: 100%;
-    height: auto;
+  /* Cover: 243px, Deep Sea 900 #001F3D (TODO: DS), glow 544.82 centred. */
+  .c-case-related__cover {
+    position: relative;
+    display: grid;
+    place-items: center;
+    height: calc(243 * var(--u));
+    overflow: hidden;
     border-bottom: var(--border-default);
+    /* TODO: DS — Figma Deep Sea 900 #001F3D has no token; closest dark. */
+    background: var(--color-heading);
+  }
+  .c-case-related__glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: calc(544.82 * var(--u));
+    height: auto;
+    max-width: none;
+    transform: translate(-50%, -50%);
+  }
+  /* Logo box: 38.4px padding, 0.6px gray border, 3.6px radius, 12px white
+     corner squares centred on both edges. */
+  .c-case-related__frame {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: calc(38.4 * var(--u));
+    border: 0.6px solid var(--color-gray);
+    border-radius: 3.6px;
+  }
+  .c-case-related__frame::before,
+  .c-case-related__frame::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: calc(12 * var(--u));
+    height: calc(12 * var(--u));
+    border: 0.6px solid var(--color-gray);
+    border-radius: 1.8px;
+    background: var(--color-white);
+    transform: translateY(-50%);
+  }
+  .c-case-related__frame::before { left: calc(-6.6 * var(--u)); }
+  .c-case-related__frame::after { right: calc(-7.19 * var(--u)); }
+  .c-case-related__logo {
+    display: block;
+    width: auto;
+    max-width: calc(154.21 * var(--u));
+    height: calc(48 * var(--u));
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+  }
+  .c-case-related__logo-text {
+    color: var(--color-white);
+    line-height: 1;
   }
   .c-case-related__body {
     display: flex;
+    flex: 1;
     flex-direction: column;
     align-items: flex-start;
     gap: calc(32 * var(--u));
     padding: calc(24 * var(--u));
   }
-  .c-case-related__tags {
+  .c-case-related__main {
     display: flex;
-    flex-wrap: wrap;
-    gap: calc(16 * var(--u));
+    flex-direction: column;
+    gap: calc(24 * var(--u));
+    width: 100%;
   }
   .c-case-related__name {
     margin: 0;
     color: var(--color-black-secondary);
-    line-height: 1.5;
     font-size: var(--cs-fs-h3);
+    line-height: 1.5;
   }
+  /* Stats: 0.5px top rule, 16px above, 40px apart; value Brulia 30 in
+     Blue 500 #6275F6 over a bordered 10.5px uppercase label. */
   .c-case-related__stats {
     display: flex;
+    flex-wrap: wrap;
     gap: calc(40 * var(--u));
-    width: 100%;
     margin: 0;
     padding-top: calc(16 * var(--u));
     border-top: 0.5px solid var(--color-gray);
@@ -145,29 +230,51 @@ const fmt = (iso: string): string =>
     margin: 0;
     color: var(--color-blue);
     font-size: var(--cs-fs-h3);
+    line-height: 1.5;
+    text-align: center;
   }
   .c-case-related__stat-label {
-    padding: 0.35em 0.9em;
+    min-width: calc(94.63 * var(--u));
+    padding: calc(3.675 * var(--u)) calc(9.45 * var(--u));
     border: var(--border-default);
     border-radius: 3px;
     color: var(--color-text);
-    font-size: var(--fs-p-s);
-    letter-spacing: 0.064em;
+    font-size: calc(10.5 * var(--u));
+    line-height: 1.5;
+    letter-spacing: 0.0728em;
+    text-align: center;
     text-transform: uppercase;
   }
+  /* "Learn more": Text Button 20px, 24px arrow, 8px gap. */
   .c-case-related__more {
     display: inline-flex;
-    gap: 0.5em;
+    align-items: center;
+    gap: calc(8 * var(--u));
+    margin-top: auto;
+    padding-block: calc(8 * var(--u));
     color: var(--color-black-secondary);
+    font-size: var(--cs-fs-body);
+    line-height: 1.5;
     text-decoration: none;
   }
-  .c-case-related__more:hover {
-    color: var(--color-accent);
+  .c-case-related__more img {
+    width: calc(24 * var(--u));
+    height: calc(24 * var(--u));
+    transition: transform var(--duration-hover) var(--ease-smooth);
+  }
+  a.c-case-related__more:hover img,
+  a.c-case-related__more:focus-visible img {
+    transform: translateX(0.25rem);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .c-case-related__more img { transition: none; }
   }
   @media (max-width: 991px) {
-    .c-case-related__list { grid-template-columns: minmax(0, 1fr); }
+    .c-case-related__card { flex-basis: 100%; }
   }
   @media (max-width: 767px) {
     .c-case-related__inner { padding: 6rem 2rem; }
+    .c-case-related__cover { height: 18rem; }
+    .c-case-related__stat-label { font-size: 1rem; }
   }
 </style>

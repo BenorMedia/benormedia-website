@@ -117,16 +117,28 @@ const GLOWS = [
     width: calc(169.75 * var(--u));
     height: auto;
   }
-  /* White chip on the gradient (CtaBanner's on-dark eyebrow, TODO: DS). */
-  .c-case-stack :global(.c-case-stack__core-chip) {
+  /* White chip on the gradient (Figma 4225:12584): white 0.5px border,
+     Text XS with no tracking; corners 10px, white border, 10% white fill
+     with a 2px backdrop blur, centred on both edges (−5.5px). Selectors
+     out-rank the shared Eyebrow's white / gray squares (lead 2026-11-04). */
+  .c-case-stack__core :global(.c-eyebrow.c-case-stack__core-chip) {
     position: relative;
     border-color: var(--color-white);
     color: var(--color-white);
+    letter-spacing: 0;
   }
-  .c-case-stack :global(.c-case-stack__core-chip)::before,
-  .c-case-stack :global(.c-case-stack__core-chip)::after {
+  .c-case-stack__core :global(.c-eyebrow.c-case-stack__core-chip)::before,
+  .c-case-stack__core :global(.c-eyebrow.c-case-stack__core-chip)::after {
     border-color: var(--color-white);
+    border-radius: 1.5px;
     background: color-mix(in srgb, var(--color-white) 10%, transparent);
+    backdrop-filter: blur(2px);
+  }
+  .c-case-stack__core :global(.c-eyebrow.c-case-stack__core-chip)::before {
+    left: calc(-5.5 * var(--u));
+  }
+  .c-case-stack__core :global(.c-eyebrow.c-case-stack__core-chip)::after {
+    right: calc(-5.5 * var(--u));
   }
   .c-case-stack__core-name {
     position: relative;

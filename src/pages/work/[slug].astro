@@ -32,14 +32,14 @@ import CaseTeam from "../../components/case-studies/CaseTeam.astro";
 import CaseTakeaways from "../../components/case-studies/CaseTakeaways.astro";
 import CaseCta from "../../components/case-studies/CaseCta.astro";
 import CaseFaq from "../../components/case-studies/CaseFaq.astro";
-import CaseRelated from "../../components/case-studies/CaseRelated.astro";
+import CaseRelated, { type RelatedCard } from "../../components/case-studies/CaseRelated.astro";
 import { builtCaseStudies, caseStudyPath } from "../../lib/case-studies";
 import type { CaseStudy } from "../../lib/case-studies/types";
 import { caseStudyJsonLd } from "../../lib/new-pages/jsonld";
 import { escapeHtml, Slugger } from "../../lib/new-pages/html";
 import { SITE } from "../../lib/content/entity";
 import { getCtaBadgeUrlsCached } from "../../lib/sanity/site";
-import { getClientsByIds } from "../../lib/sanity/queries";
+import { getAllClients, getClientsByIds } from "../../lib/sanity/queries";
 import { urlFor, type Source } from "../../lib/sanity/image";
 
 export function getStaticPaths() {
@@ -104,7 +104,28 @@ const crumbs = [
   { label: c.client.name },
 ];
 
-const related = builtCaseStudies().filter((x) => x.slug !== c.slug);
+// Other case studies = every client flagged in Sanity except this one, in
+// the Studio order (lead 2026-11-04). With an entry: its H1, card stats and
+// link; without: markers and no link until its page exists.
+const builtBySlug = new Map(builtCaseStudies().map((x): [string, CaseStudy] => [x.slug, x]));
+const otherIds = (await getAllClients())
+  .filter((cl) => cl.caseStudySlug && cl.caseStudySlug !== c.slug)
+  .map((cl) => cl._id);
+const relatedCards: RelatedCard[] = (otherIds.length > 0 ? await getClientsByIds(otherIds) : []).map((cl) => {
+  const entry = cl.caseStudySlug ? builtBySlug.get(cl.caseStudySlug) : undefined;
+  return {
+    name: cl.name,
+    logo: cl.logo?.asset ? urlFor(cl.logo as Source).height(96).auto("format").url() : undefined,
+    title: entry ? entry.hero.h1 : `[FACT NEEDED: ${cl.name} case study title]`,
+    stats: entry
+      ? entry.card.stats
+      : [
+          { value: "[FACT NEEDED]", label: "[FACT NEEDED]" },
+          { value: "[FACT NEEDED]", label: "[FACT NEEDED]" },
+        ],
+    href: entry ? caseStudyPath(entry) : undefined,
+  };
+});
 
 const ld = caseStudyJsonLd({
   path,
@@ -223,9 +244,8 @@ const ld = caseStudyJsonLd({
     eyebrow={c.related.eyebrow}
     heading={c.related.heading}
     cardTag={c.related.cardTag}
-    published={c.related.published}
     more={c.related.more}
-    items={related}
+    cards={relatedCards}
   />
 </BaseLayout>
 

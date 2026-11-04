@@ -172,7 +172,7 @@ export interface CaseStudy {
   /** Visible FAQ and FAQPage JSON-LD (one array). Empty → no section. */
   faq: { heading: string; items: readonly CsFaqItem[] };
   /** Other case studies. Renders nothing when there are none. */
-  related: { eyebrow: string; heading: string; cardTag: string; published: string; more: string };
+  related: { eyebrow: string; heading: string; cardTag: string; more: string };
   /** Card in other case studies' "related" row. */
-  card: { cover: CsImage; stats: readonly [CsStat, CsStat] };
+  card: { stats: readonly [CsStat, CsStat] };
 }
