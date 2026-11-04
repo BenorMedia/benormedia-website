@@ -68,20 +68,20 @@ const testimonial = await getContactTestimonialCached();
         <legend class="c-contact-modal__label">Engagement Budget*</legend>
         <div class="c-contact-modal__budget-options">
           <label class="c-contact-modal__budget-option">
-            <input type="radio" name="budget" value="<5000" required />
-            <span>&lt;5000</span>
+            <input type="radio" name="budget" value="<10000" required />
+            <span>&lt;10000</span>
           </label>
           <label class="c-contact-modal__budget-option">
-            <input type="radio" name="budget" value="5000-15000" />
-            <span>5,000 - 15,000</span>
+            <input type="radio" name="budget" value="10000-20000" />
+            <span>10,000 - 20,000</span>
           </label>
           <label class="c-contact-modal__budget-option">
-            <input type="radio" name="budget" value="15000-30000" />
-            <span>15,000 - 30,000</span>
+            <input type="radio" name="budget" value="20000-40000" />
+            <span>20,000 - 40,000</span>
           </label>
           <label class="c-contact-modal__budget-option">
-            <input type="radio" name="budget" value="30000+" />
-            <span>30,000+</span>
+            <input type="radio" name="budget" value="40000+" />
+            <span>40,000+</span>
           </label>
         </div>
       </fieldset>
@@ -439,14 +439,16 @@ const testimonial = await getContactTestimonialCached();
     .c-contact-modal__row {
       grid-template-columns: 1fr;
     }
-    /* Lead 2026-10-05: subtitle 1.3rem; every field 1.7rem. */
+    /* Lead 2026-10-05: subtitle 1.3rem; every field 1.8rem (was 1.7rem,
+       lead 2026-10-30): 16.2px at the 9px root, since iOS zooms into any
+       field under 16px on focus. */
     .c-contact-modal__subtitle {
       font-size: 1.3rem;
     }
     .c-contact-modal__field input[type="text"],
     .c-contact-modal__field input[type="email"],
     .c-contact-modal__field textarea {
-      font-size: 1.7rem;
+      font-size: 1.8rem;
     }
   }
 </style>

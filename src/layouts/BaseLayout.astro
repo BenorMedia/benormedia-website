@@ -222,22 +222,28 @@ if (siteSettings) {
   <body class={bodyClass}>
     {loadGtm && <Fragment set:html={gtmBody} />}
     <Nav siteSettings={siteSettings} />
-    <main><slot /></main>
-    {showCtaBanner && <CtaBanner siteSettings={siteSettings} />}
+    <main>
+      <slot />
+      {showCtaBanner && <CtaBanner siteSettings={siteSettings} />}
+      {/* Sections that follow the CTA banner, e.g. Resources (lead 2026-10-30). */}
+      <slot name="after-cta" />
+    </main>
     <Footer siteSettings={siteSettings} />
     <ContactModal siteSettings={siteSettings} />
     <script>
       // Animations — one file per animation in src/scripts/animations/.
       import { initNavMotion } from "../scripts/animations/nav-motion";
       import { initCtaBadges } from "../scripts/animations/cta-badges";
-      import { initCtaVector } from "../scripts/animations/cta-vector";
       import { initFooterWordmark } from "../scripts/animations/footer-wordmark";
       import { initHeroPhysics } from "../scripts/animations/hero-physics";
+      import { initTechDiagram } from "../scripts/animations/tech-diagram";
+      import { initServicesCards } from "../scripts/animations/services-cards";
       initNavMotion();
       initHeroPhysics();
       initCtaBadges();
-      initCtaVector();
       initFooterWordmark();
+      initTechDiagram();
+      initServicesCards();
     </script>
   </body>
 </html>

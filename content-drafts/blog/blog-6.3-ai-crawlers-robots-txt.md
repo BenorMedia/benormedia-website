@@ -10,7 +10,7 @@ title: "GPTBot and AI Crawlers: Which to Allow | BenorMedia"
 description: "GPTBot trains models, while OAI-SearchBot puts you in ChatGPT answers. Which AI crawlers a B2B SaaS site should allow in robots.txt, vendor by vendor."
 h1: "GPTBot, ClaudeBot, and other AI crawlers: which to allow in robots.txt"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-17
 updatedAt: 2026-10-17
 reviewEvery: none

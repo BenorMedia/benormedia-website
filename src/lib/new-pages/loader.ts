@@ -56,7 +56,11 @@ interface FrontMatter {
   takeaways?: string[];
   related?: string[];
   sources?: { label?: string; url?: string; accessed?: string }[];
-  visuals?: { after?: string; side?: string; type?: string; brief?: string; alt?: string }[];
+  /** Articles: keep `sources` in the file but print no Sources section (lead 2026-10-26). */
+  hideSources?: boolean;
+  /** Articles: how many lead paragraphs the hero shows; the rest open the body (lead 2026-10-28). */
+  heroLead?: number;
+  visuals?: { after?: string; side?: string; place?: string; type?: string; brief?: string; alt?: string }[];
   process?: { section?: string; imagesFrom?: string };
 }
 
@@ -75,6 +79,8 @@ export interface Visual {
   n: number;
   type: string;
   side: "left" | "right";
+  /** Articles: under the section's first paragraph ("top") or after the section (default). */
+  place: "top" | "end";
   brief: string;
   alt: string;
 }
@@ -97,6 +103,8 @@ export interface NpPage {
   h1: string;
   eyebrowHtml: string;
   lead: string[];
+  /** Lead paragraphs past `heroLead`, printed at body size above the first H2. */
+  intro: string[];
   sections: PageSection[];
   faqHeading: string;
   faqHeadingHtml: string;
@@ -117,10 +125,87 @@ export interface NpPage {
   /** Article read time, minutes (body + FAQ at 230 words a minute). */
   readMinutes: number;
   /** Related pack pages built in this mode (articles' Resources cards). */
-  relatedCards: { href: string; title: string; description: string; family: Family; data: Record<string, string> }[];
+  relatedCards: Card[];
   gaps: Gap[];
   /** A section rendered with the live service `ServiceProcess` tabs (front matter `process`). */
   process: PageProcess | undefined;
+}
+
+/** A card in the Resources grid (articles' related pages, /blog, /guides,
+ *  author pages). `publishedAt` and `author` only for articles. */
+export interface Card {
+  slug?: string;
+  href: string;
+  title: string;
+  description: string;
+  family: Family;
+  data: Record<string, string>;
+  publishedAt?: string;
+  author?: string;
+}
+
+/** The card for a built article page (guide or blog post). */
+export function cardOf(p: NpPage): Card {
+  return {
+    slug: p.slug,
+    href: p.url,
+    title: p.h1,
+    description: p.description,
+    family: p.family,
+    data: p.draft ? { "data-draft-target": p.slug } : {},
+    publishedAt: p.publishedAt,
+    ...(p.author.hasGap || !p.author.text ? {} : { author: p.author.text }),
+  };
+}
+
+/** Fewest cards in an article's Resources section (lead 2026-10-19). */
+const MIN_RESOURCES = 3;
+
+const internalHrefs = (page: NpPage): Set<string> =>
+  new Set([...page.sections.map((x) => x.html).join("").matchAll(/href="(\/[^"#?]*)"/g)].map((m) => m[1] ?? ""));
+
+/**
+ * Tops up each guide's and blog post's related cards to `MIN_RESOURCES`
+ * with the most relevant pages built in this mode (lead 2026-10-19): the
+ * page's own `related` cards first, then articles and services ranked by a
+ * shared category (+3), a link between the two pages (+2 each way), a
+ * service the body links to (+2), shared related pages (+1 each), and
+ * newest first on ties. Drafts only appear where drafts are built.
+ */
+function fillResources(pages: NpPage[]): void {
+  const categories = copy.categories as Record<string, string>;
+  const info = new Map(
+    pages.map((p) => [p.slug, { links: internalHrefs(p), related: new Set(p.related.map((r) => r.href).filter((h): h is string => !!h)) }]),
+  );
+  for (const page of pages) {
+    if (page.family === "commercial" || page.relatedCards.length >= MIN_RESOURCES) continue;
+    const mine = info.get(page.slug);
+    if (!mine) continue;
+    const taken = new Set(page.relatedCards.map((c) => c.href));
+    const scored = pages
+      .filter((c) => c.slug !== page.slug && !taken.has(c.url))
+      .map((c) => {
+        const theirs = info.get(c.slug);
+        let score = 0;
+        if (c.family !== "commercial" && categories[c.slug] && categories[c.slug] === categories[page.slug]) score += 3;
+        if (mine.links.has(c.url)) score += 2;
+        if (theirs?.links.has(page.url)) score += 2;
+        if (c.family === "commercial" && mine.related.has(c.url)) score += 2;
+        for (const r of mine.related) if (theirs?.related.has(r)) score += 1;
+        return { c, score };
+      })
+      .filter((x) => x.score > 0)
+      .sort((a, b) => b.score - a.score || b.c.publishedAt.localeCompare(a.c.publishedAt) || a.c.slug.localeCompare(b.c.slug));
+    for (const { c } of scored) {
+      if (page.relatedCards.length >= MIN_RESOURCES) break;
+      const card = cardOf(c);
+      page.relatedCards.push(
+        c.family === "commercial"
+          ? { slug: c.slug, href: card.href, title: card.title, description: card.description, family: card.family, data: card.data }
+          : card,
+      );
+    }
+  }
 }
 
 export interface PageProcess {
@@ -162,6 +247,10 @@ function currentMode(): ReturnType<typeof resolveMode> & { isDev: boolean } {
   const env = { ...process.env, PUBLIC_SITE_ENV: typeof siteEnv === "string" ? siteEnv : process.env["PUBLIC_SITE_ENV"] };
   return { ...resolveMode(env, isDev), isDev };
 }
+
+/** True where drafts are built (previews, `astro dev`, `PAGES_INCLUDE_DRAFTS=1`;
+ *  never production). Also used by `/about` while its `DRAFT` is set. */
+export const includeDrafts = (): boolean => currentMode().includeDrafts;
 
 /** Runs the pack's checker CLI; a FAIL stops the build with its lines. */
 function gate(files: string[], release: boolean): void {
@@ -249,8 +338,10 @@ export function loadPages(): NpPage[] {
   blogGate(blogFiles);
   const blogBuilt = blogFiles.filter(({ parsed }) => (parsed.data as FrontMatter).draft === false || mode.includeDrafts);
 
+  // Every linkable page by slug: the pack pages and the blog posts (so a
+  // post can link to another post; drafts follow the draft rules).
   const pack = new Map(
-    files.map(({ parsed }) => {
+    [...files.map((f) => ({ ...f, family: undefined as Family | undefined })), ...blogFiles.map((f) => ({ ...f, family: "blog" as Family }))].map(({ parsed, family }) => {
       const d = parsed.data as FrontMatter;
       return [
         String(d.slug),
@@ -260,6 +351,9 @@ export function loadPages(): NpPage[] {
           h1: String(d.h1 ?? ""),
           description: String(d.description ?? ""),
           pageType: String(d.pageType ?? ""),
+          publishedAt: String(d.publishedAt ?? ""),
+          author: String(d.author ?? ""),
+          family,
         },
       ] as const;
     }),
@@ -302,6 +396,8 @@ export function loadPages(): NpPage[] {
     );
   }
 
+  fillResources(pages);
+
   cache = { key, pages };
   return pages;
 }
@@ -335,11 +431,14 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
   const text = (value: unknown): string => gaps.toHtml(escapeHtml(gaps.tokenize(String(value ?? ""))));
 
   // Home page text classes (lead 2026-10-07): commercial sections, and the
-  // article body in the blog article template (Figma 3142:1617991).
+  // article body in the blog article template (Figma 3142:1617991). Article
+  // paragraphs and list items (guides and blog posts) are `c-paragraph_ms`
+  // (lead 2026-10-23).
   const classes =
     family === "commercial"
       ? { lead: "c-paragraph_m", firstP: "c-paragraph_m", p: "c-paragraph", li: "c-paragraph" }
-      : { lead: "c-paragraph_m", p: "c-paragraph", li: "c-paragraph" };
+      : { lead: "c-paragraph_m", p: "c-paragraph_ms", li: "c-paragraph_ms" };
+  const heroLead = typeof d.heroLead === "number" ? d.heroLead : undefined;
   const rendered = renderBody(gaps.tokenize(body), {
     links,
     slugger,
@@ -368,6 +467,7 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
       n,
       type: String(v.type ?? "diagram"),
       side: v.side === "left" ? "left" : "right",
+      place: v.place === "top" ? "top" : "end",
       brief: String(v.brief ?? ""),
       alt: String(v.alt ?? ""),
     };
@@ -410,7 +510,10 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
     description: String(d.description ?? ""),
     h1: String(d.h1 ?? ""),
     eyebrowHtml: text(d.eyebrow),
-    lead: rendered.lead,
+    lead: rendered.lead.slice(0, heroLead),
+    intro: rendered.lead
+      .slice(heroLead)
+      .map((h) => h.replace(`class="${classes.lead}"`, `class="${classes.p}"`).replace('data-np-src="lead"', 'data-np-src="p"')),
     sections,
     faqHeading,
     faqHeadingHtml,
@@ -435,7 +538,7 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
     updatedAt: String(d.updatedAt ?? ""),
     reviewEvery: String(d.reviewEvery ?? ""),
     takeaways: (d.takeaways ?? []).map((t) => text(t)),
-    sources: (d.sources ?? []).map((s) => ({
+    sources: (d.hideSources === true ? [] : (d.sources ?? [])).map((s) => ({
       labelHtml: text(s.label),
       url: String(s.url ?? ""),
       accessed: String(s.accessed ?? ""),
@@ -454,9 +557,21 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
       const p = s ? ctx.pack.get(s) : undefined;
       if (!s || !p || s === slug) return [];
       if (p.draft && !ctx.includeDrafts) return [];
-      const fam = (FAMILY as Record<string, Family>)[p.pageType ?? ""];
+      const fam = p.family ?? (FAMILY as Record<string, Family>)[p.pageType ?? ""];
       if (!fam) return [];
-      return [{ href: p.url, title: p.h1, description: p.description ?? "", family: fam, data: p.draft ? { "data-draft-target": s } : {} }];
+      const article = fam !== "commercial";
+      return [
+        {
+          slug: s,
+          href: p.url,
+          title: p.h1,
+          description: p.description ?? "",
+          family: fam,
+          data: p.draft ? { "data-draft-target": s } : {},
+          ...(article && p.publishedAt ? { publishedAt: p.publishedAt } : {}),
+          ...(article && p.author ? { author: p.author } : {}),
+        },
+      ];
     }),
     gaps: gaps.unique(),
   };

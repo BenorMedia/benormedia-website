@@ -47,7 +47,7 @@ const PROVIDER = { '@type': 'Organization', '@id': ORG_ID, name: 'BenorMedia', u
 const AREA_SERVED = ['United States', 'Canada', 'United Kingdom', 'Germany', 'Denmark', 'Spain'].map((name) => ({ '@type': 'Country', name }));
 const AUDIENCE = { '@type': 'BusinessAudience', audienceType: 'B2B SaaS and tech companies' };
 const LIVE_NAMES = { '/custom-websites-migrations': 'Custom Websites & Migrations', '/growth': 'Growth (SEO/GEO + CRO)', '/ongoing-website-support': 'Ongoing Website Support', '/pricing': 'Pricing', '/work': 'Work', '/': 'Home' };
-const PROOF_STRIP = '100+ launches · 6+ years of experience · $700M+ raised by our clients · Webflow Professional Partner';
+const PROOF_STRIP = '100+ launches · 6+ years of experience · $700M+ raised by our clients · Webflow Premium Partner';
 // Tier A8: the two testimonials on the live site, word for word, with the result tiles shown next to them.
 const TESTIMONIALS = {
   surfe: {

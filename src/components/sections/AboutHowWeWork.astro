@@ -1,0 +1,139 @@
+---
+/**
+ * AboutHowWeWork — /about "A small senior team, by design." (Figma
+ * 4145:9808): a full-width rule with the Barcelona stamp on it, the centred
+ * header, then the photos edge to edge: one wide photo over a row of three.
+ *
+ * The stamp is the lead's export (2026-11-03): photo, serrated edge, the
+ * 8° turn, the drop shadow and the "Barcelona, Spain." line in one image,
+ * 550 × 539 = 2× the stamp's bounds with its shadow (≈ 275 × 269.5). The
+ * line is the image's alt text.
+ * Photos keep Figma's crops (`object-position`) and aspect ratios, so the
+ * section scales with the viewport rather than the container.
+ *
+ * `marker`: the open photo question, printed while the page is a draft.
+ */
+import Container from "../ui/Container.astro";
+import SectionHeader from "../ui/SectionHeader.astro";
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  body: string;
+  stamp: string;
+  marker?: string | undefined;
+}
+
+const { eyebrow, title, body, stamp, marker } = Astro.props;
+
+const IMG = "/images/about";
+const ROW = [
+  { src: `${IMG}/office-2.webp`, w: 800, h: 534, pos: "50% 50%" },
+  { src: `${IMG}/office-3.webp`, w: 687, h: 1030, pos: "50% 50%" },
+  { src: `${IMG}/office-4.webp`, w: 687, h: 1030, pos: "50% 69%" },
+];
+---
+
+<section class="c-about-how">
+  <div class="c-about-how__rule">
+    <img class="c-about-how__stamp" src={`${IMG}/barcelona-stamp.webp`} width="550" height="539" alt={stamp} loading="lazy" decoding="async" />
+  </div>
+
+  <Container class="c-about-how__head">
+    <SectionHeader eyebrow={eyebrow} title={title} description={body} />
+    {marker && <mark class="c-about-marker c-paragraph_s">{marker}</mark>}
+  </Container>
+
+  <div class="c-about-how__photos" aria-hidden="true">
+    <img class="c-about-how__wide" src={`${IMG}/office-1.webp`} width="1024" height="801" alt="" loading="lazy" decoding="async" />
+    <div class="c-about-how__row">
+      {ROW.map((p) => (
+        <img src={p.src} width={p.w} height={p.h} style={`object-position:${p.pos}`} alt="" loading="lazy" decoding="async" />
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .c-about-how {
+    --u: calc(1rem / 19.2);
+    padding: 6rem 0;
+    background: var(--color-white);
+  }
+  @media (max-width: 767px) {
+    .c-about-how {
+      padding: 5rem 0;
+    }
+  }
+
+  /* Figma: a 123.5px band, the rule through its middle, the stamp centred
+     on it. Figma inset the rule 5px each side. */
+  .c-about-how__rule {
+    position: relative;
+    height: calc(123.5 * var(--u));
+    margin: 0 calc(5 * var(--u));
+  }
+  .c-about-how__rule::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    border-top: var(--border-default);
+  }
+  .c-about-how__stamp {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: calc(275 * var(--u));
+    height: auto;
+    max-width: none;
+    transform: translate(-50%, -50%);
+  }
+
+  .c-about-how :global(.c-about-how__head) {
+    padding-top: calc(60 * var(--u));
+    padding-bottom: calc(60 * var(--u));
+  }
+  .c-about-how :global(.c-section-header__title) {
+    color: var(--color-black-secondary);
+  }
+  .c-about-how :global(.c-section-header__description) {
+    max-width: calc(790 * var(--u));
+    margin-inline: auto;
+  }
+
+  .c-about-how__photos {
+    display: flex;
+    flex-direction: column;
+    gap: calc(20 * var(--u));
+  }
+  .c-about-how__photos img {
+    display: block;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    object-fit: cover;
+  }
+  .c-about-how__wide {
+    aspect-ratio: 1920 / 955;
+  }
+  .c-about-how__row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: calc(20 * var(--u));
+  }
+  .c-about-how__row img {
+    aspect-ratio: 626.67 / 740.78;
+  }
+
+  @media (max-width: 767px) {
+    .c-about-how :global(.c-about-how__head) {
+      padding-top: 3rem;
+      padding-bottom: 3rem;
+    }
+    .c-about-how :global(.c-section-header__description) {
+      max-width: none;
+    }
+  }
+</style>

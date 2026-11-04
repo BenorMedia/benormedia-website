@@ -1,0 +1,257 @@
+---
+/**
+ * AboutHero — /about hero (Figma 4145:9675): eyebrow, `<h1>` and two
+ * paragraphs on the left, two columns of photos on the right, clipped at
+ * the top and bottom of the section.
+ *
+ * Copy: `lib/content/about.ts`. Sizes in Figma px (`--u` = one Figma px:
+ * 1/19.2 rem, so the 1680px Figma grid fills the container, as Services).
+ * Photos: two columns of three 420 × 534 tiles; three tiles show a shorter
+ * photo at the top or bottom (Figma's stagger). Each photo keeps Figma's
+ * crop with `object-position`.
+ *
+ * Motion (lead 2026-11-03, Figma comment): an endless loop, slow and
+ * subtle; the left column moves up, the right one down. Each column holds
+ * its tiles twice and moves by one set (50%), CSS only. Paused while the
+ * hero is off screen (script below); without JS it keeps running. Reduced
+ * motion: still, at Figma's frame.
+ *
+ * ≤991 (no tablet or mobile design, TODO: DS): the photos move under the
+ * copy in a window one tile tall, still looping.
+ *
+ * `marker`: the open photo question, printed under the copy while the page
+ * is a draft (see about.ts).
+ */
+import Container from "../ui/Container.astro";
+import Eyebrow from "../ui/Eyebrow.astro";
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  paragraphs: readonly string[];
+  marker?: string | undefined;
+}
+
+const { eyebrow, title, paragraphs, marker } = Astro.props;
+
+const IMG = "/images/about";
+
+/** One tile: its height (Figma px, default 534), the photo box height
+ *  (= the tile height for a full tile), where the box sits in the tile, and
+ *  Figma's crop as an object-position. */
+interface Tile {
+  src: string;
+  w: number;
+  h: number;
+  tile?: number;
+  box: number;
+  align: "start" | "end";
+  pos: string;
+}
+const COLUMNS: { dir: "up" | "down"; tiles: Tile[] }[] = [
+  {
+    dir: "up",
+    tiles: [
+      { src: `${IMG}/hero-1.webp`, w: 840, h: 1076, box: 534, align: "start", pos: "50% 50%" },
+      { src: `${IMG}/hero-3.webp`, w: 673, h: 1200, box: 534, align: "start", pos: "50% 86%" },
+      { src: `${IMG}/hero-5.webp`, w: 904, h: 1200, box: 534, align: "start", pos: "50% 68%" },
+    ],
+  },
+  {
+    dir: "down",
+    tiles: [
+      { src: `${IMG}/hero-2.webp`, w: 960, h: 540, box: 359, align: "end", pos: "50% 50%" },
+      // Lead 2026-11-03: the whole portrait, uncut (420 × 630, the photo's own
+      // proportions; Figma cut it to a 320px box).
+      { src: `${IMG}/hero-4.webp`, w: 840, h: 1261, tile: 630, box: 630, align: "start", pos: "50% 50%" },
+      { src: `${IMG}/hero-6.webp`, w: 980, h: 653, box: 420, align: "end", pos: "73% 50%" },
+    ],
+  },
+];
+---
+
+<section class="c-about-hero" data-about-hero>
+  <Container>
+    <div class="c-about-hero__body">
+      <div class="c-about-hero__copy">
+        <Eyebrow>{eyebrow}</Eyebrow>
+        <h1 class="c-about-hero__title c-text_xxl">{title}</h1>
+        <div class="c-about-hero__text c-paragraph_m">
+          {paragraphs.map((p) => <p>{p}</p>)}
+        </div>
+        {marker && <mark class="c-about-marker c-paragraph_s">{marker}</mark>}
+      </div>
+
+      <div class="c-about-hero__photos" aria-hidden="true">
+        {COLUMNS.map((col) => (
+          <div class="c-about-hero__col">
+            <div class:list={["c-about-hero__track", `is-${col.dir}`]}>
+              {[0, 1].map((set) =>
+                col.tiles.map((t) => (
+                  <div class:list={["c-about-hero__tile", `is-${t.align}`]} style={`--tile:${t.tile ?? 534}`}>
+                    <img
+                      class="c-about-hero__img"
+                      style={`--box:${t.box};object-position:${t.pos}`}
+                      src={t.src}
+                      width={t.w}
+                      height={t.h}
+                      alt=""
+                      loading={set === 0 ? "eager" : "lazy"}
+                      decoding="async"
+                    />
+                  </div>
+                )),
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </Container>
+</section>
+
+<script>
+  // Pause the photo loop while the hero is off screen. Without JS it keeps running.
+  document.querySelectorAll<HTMLElement>("[data-about-hero]").forEach((hero) => {
+    const observer = new IntersectionObserver(([entry]) => {
+      hero.classList.toggle("is-paused", !entry?.isIntersecting);
+    });
+    observer.observe(hero);
+  });
+</script>
+
+<style>
+  .c-about-hero {
+    /* One Figma px (see the header comment). */
+    --u: calc(1rem / 19.2);
+    position: relative;
+    overflow: hidden;
+    background: var(--color-white);
+  }
+
+  .c-about-hero__body {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: calc(629 * var(--u));
+  }
+
+  .c-about-hero__copy {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: calc(20 * var(--u));
+    max-width: calc(662.49 * var(--u));
+  }
+  .c-about-hero__title {
+    margin: 0;
+  }
+  /* Figma: 10px under the title; an empty line between the paragraphs. */
+  .c-about-hero__text {
+    margin-top: calc(-10 * var(--u));
+    color: var(--color-text);
+  }
+  .c-about-hero__text p {
+    margin: 0;
+  }
+  .c-about-hero__text p + p {
+    margin-top: 1.5em;
+  }
+
+  /* Photos: centred on the copy, 28px in from the grid's right edge
+     (Figma: right 148 of the 1920 frame), overflowing the section. */
+  .c-about-hero__photos {
+    /* One loop = one set of three tiles; TODO: DS motion, tuned slow. */
+    --c-about-hero-speed: 90s;
+    position: absolute;
+    top: 50%;
+    right: calc(28 * var(--u));
+    display: flex;
+    gap: calc(16 * var(--u));
+    height: calc(3 * 550 * var(--u));
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+  .c-about-hero__col {
+    width: calc(420 * var(--u));
+  }
+  /* Each tile carries the 16px gap below it, so one set is exactly 50%. */
+  .c-about-hero__track {
+    display: flex;
+    flex-direction: column;
+    animation: c-about-hero-up var(--c-about-hero-speed) linear infinite;
+  }
+  .c-about-hero__track.is-down {
+    animation-name: c-about-hero-down;
+  }
+  .c-about-hero.is-paused .c-about-hero__track {
+    animation-play-state: paused;
+  }
+  @keyframes c-about-hero-up {
+    from { transform: translateY(0); }
+    to { transform: translateY(-50%); }
+  }
+  @keyframes c-about-hero-down {
+    from { transform: translateY(-50%); }
+    to { transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .c-about-hero__track {
+      animation: none;
+    }
+  }
+  .c-about-hero__tile {
+    display: flex;
+    flex-direction: column;
+    flex: none;
+    height: calc(var(--tile) * var(--u));
+    margin-bottom: calc(16 * var(--u));
+  }
+  .c-about-hero__tile.is-end {
+    justify-content: flex-end;
+  }
+  .c-about-hero__img {
+    display: block;
+    width: 100%;
+    height: calc(var(--box) * var(--u));
+    max-width: none;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+
+  @media (max-width: 991px) {
+    .c-about-hero__body {
+      flex-direction: column;
+      align-items: stretch;
+      min-height: 0;
+    }
+    .c-about-hero__copy {
+      max-width: none;
+    }
+    /* A window one tile tall (420 + 16 + 420 wide, 534 high). */
+    .c-about-hero__photos {
+      position: relative;
+      top: auto;
+      right: auto;
+      height: auto;
+      aspect-ratio: 856 / 534;
+      margin-top: 3rem;
+      overflow: hidden;
+      transform: none;
+    }
+    .c-about-hero__col {
+      flex: 1;
+      width: auto;
+      min-width: 0;
+    }
+    .c-about-hero__tile {
+      height: auto;
+      aspect-ratio: 420 / var(--tile);
+    }
+    .c-about-hero__img {
+      height: calc(var(--box) / var(--tile) * 100%);
+    }
+  }
+</style>

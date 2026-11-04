@@ -12,6 +12,11 @@
  *   page as usual. The drag starts only after a press-and-hold (HOLD_MS
  *   without moving more than HOLD_SLOP); while a tile is held, page scroll
  *   is blocked (non-passive `touchmove`). Mouse and pen grab at once.
+ * - Tiles also avoid a moving cursor (lead 2026-10-23): every tile within
+ *   AVOID_RADIUS of a mouse or pen pointer is pushed straight away from it,
+ *   strongest at the pointer and fading to nothing at the radius. The push
+ *   scales with pointer speed and dies out when the pointer stops, so a
+ *   resting cursor can still reach and grab a tile. Off while a tile is held.
  * - Bounds = the whole `.c-hero` card (ground + side walls; no ceiling, a
  *   tile thrown up falls back in). Walls and tile size follow resizes (tiles
  *   are rem-sized, so they scale with the fluid root).
@@ -50,6 +55,13 @@ const DRAG_DAMPING = 0.1;
 /* Touch press-and-hold before a drag starts. TODO: DS — tuned by eye. */
 const HOLD_MS = 250;
 const HOLD_SLOP = 10; // px of finger movement that turns the press into a scroll
+/* Cursor avoidance. TODO: DS — tuned by eye. Radius in tile sizes; strength
+   is the push at the pointer at full speed, as a multiple of the tile's
+   weight; full speed in px/ms; decay is the speed kept per engine step. */
+const AVOID_RADIUS = 2.2;
+const AVOID_STRENGTH = 8;
+const AVOID_SPEED = 1;
+const AVOID_DECAY = 0.85;
 
 type Tile = { el: HTMLElement; body: MatterTypes.Body };
 
@@ -258,10 +270,58 @@ async function start(root: HTMLElement): Promise<void> {
     el.addEventListener("contextmenu", (event) => event.preventDefault());
   });
 
+  // --- Cursor avoidance ------------------------------------------------------
+  // Last mouse/pen position in viewport coordinates, read every step, so the
+  // push follows the hero when the page scrolls under a still pointer.
+  let pointer: { clientX: number; clientY: number; time: number } | null = null;
+  let pointerSpeed = 0; // px/ms, decays every step
+
+  window.addEventListener(
+    "pointermove",
+    (event) => {
+      if (event.pointerType === "touch") return;
+      const { clientX, clientY, timeStamp: time } = event;
+      if (pointer && time > pointer.time) {
+        const speed = Math.hypot(clientX - pointer.clientX, clientY - pointer.clientY) / (time - pointer.time);
+        pointerSpeed = Math.max(pointerSpeed, speed);
+      }
+      pointer = { clientX, clientY, time };
+    },
+    { passive: true },
+  );
+  // Pointer left the window.
+  document.addEventListener("pointerout", (event) => {
+    if (!event.relatedTarget) pointer = null;
+  });
+
+  const avoidPointer = (): void => {
+    const factor = Math.min(1, pointerSpeed / AVOID_SPEED);
+    pointerSpeed *= AVOID_DECAY;
+    if (!pointer || drag || factor < 0.01) return;
+    const rect = root.getBoundingClientRect();
+    const px = pointer.clientX - rect.left;
+    const py = pointer.clientY - rect.top;
+    if (px < 0 || px > width || py < 0 || py > height) return;
+
+    const reach = size * AVOID_RADIUS;
+    tiles.forEach(({ body }) => {
+      const dx = body.position.x - px;
+      const dy = body.position.y - py;
+      const distance = Math.hypot(dx, dy);
+      if (distance >= reach) return;
+      // Pointer right on the tile's center: push it up.
+      const [nx, ny] = distance > 0.001 ? [dx / distance, dy / distance] : [0, -1];
+      const push = body.mass * engine.gravity.scale * AVOID_STRENGTH * factor * (1 - distance / reach);
+      Sleeping.set(body, false);
+      Body.applyForce(body, body.position, { x: nx * push, y: ny * push });
+    });
+  };
+
   // --- Loop ---------------------------------------------------------------------
   Events.on(engine, "beforeUpdate", () => {
     // A held tile never falls asleep.
     if (drag?.constraint.bodyB) Sleeping.set(drag.constraint.bodyB, false);
+    avoidPointer();
   });
   Events.on(engine, "afterUpdate", () => {
     // Settled pile, nothing held: the DOM is already up to date.

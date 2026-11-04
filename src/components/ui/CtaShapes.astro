@@ -1,0 +1,138 @@
+---
+/**
+ * CtaShapes — background of the gradient CTA banners (`CtaBanner`,
+ * `NpCtaBand`; Figma 4097:6836, lead 2026-10-30).
+ *
+ * Figma's two copies of the Services "Custom Websites" shapes stream, cut
+ * into their shapes (`stream-shapes.ts`): each one flows from beyond the
+ * banner's edge to its middle on an endless loop, as on the Services card
+ * and the blog's ThImageConverge thumbnails. A second set runs half a loop
+ * behind so the sides never empty out. Figma's middle blur is drawn on the
+ * shapes themselves (lead 2026-10-30: a blur layer over the banner looked
+ * dirty): each one blurs and fades as it nears the copy, so the gradient
+ * behind the copy stays clean. Phones: fade only, no blur (cheaper).
+ *
+ * Positions in Figma px (`--u` = 1/19.2 rem: the 1680px Figma banner fills
+ * the container), from the banner's center. The parent must be
+ * `position: relative; overflow: hidden`, with its content above
+ * (`z-index: 1`). Reduced motion: one set, still, where Figma has it.
+ */
+import { streamPaths, type ShapePath, type StreamBox } from "./stream-shapes";
+
+const STREAMS: StreamBox[] = [
+  { x: -338.08, y: -209.71, w: 1208.111, h: 1171.346, r: 29.57 },
+  { x: 322.97, y: 192.09, w: 1208.111, h: 1171.346, r: -145.52, flip: true },
+];
+/* Starts beyond the desktop banner's sides and a phone banner's top /
+   bottom. TODO: DS motion: speed (Figma px / s) tuned by eye; the Services
+   card's speed at the banner's scale. */
+const BOUNDS = { x0: -840, y0: -480, x1: 840, y1: 480 };
+const SPEED = 19.6; // 30% slower than the first pass (28), lead 2026-10-30
+// 30% fewer shapes (lead 2026-10-30): 3 of every 10 dropped, a different 3
+// in each set, so both streams thin out evenly. Phones drop 30% more of
+// what is left (2 more of every 10, lead 2026-10-30): `is-wide-only`.
+const sets = [0, 0.5].map((phase, set) =>
+  streamPaths(STREAMS, { x: 0, y: 0 }, BOUNDS, SPEED, phase)
+    .map((path, i) => ({ path, slot: (i + set * 5) % 10 }))
+    .filter(({ slot }) => ![1, 4, 7].includes(slot))
+    .map(({ path, slot }) => ({ path, wideOnly: slot === 0 || slot === 5 })),
+);
+
+const style = (p: ShapePath) =>
+  [
+    `--x:${p.x}`, `--y:${p.y}`, `--w:${p.w}`, `--h:${p.h}`, `--r:${p.r}deg`, `--fy:${p.flip ? -1 : 1}`,
+    `--sx:${p.sx}`, `--sy:${p.sy}`, `--ex:${p.ex}`, `--ey:${p.ey}`,
+    `animation-duration:${p.dur}s`, `animation-delay:${p.delay}s`,
+  ].join(";");
+---
+
+<div class="c-cta-shapes" aria-hidden="true">
+  {sets.map((set, i) =>
+    set.map(({ path, wideOnly }) => (
+      <img
+        class:list={["c-cta-shapes__shape", { "is-late": i === 1, "is-wide-only": wideOnly }]}
+        style={style(path)}
+        src={path.src}
+        alt=""
+        loading="lazy"
+        decoding="async"
+      />
+    )),
+  )}
+</div>
+
+<style>
+  .c-cta-shapes {
+    --u: calc(1rem / 19.2);
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .c-cta-shapes__shape {
+    position: absolute;
+    left: calc(50% + var(--x) * var(--u));
+    top: calc(50% + var(--y) * var(--u));
+    width: calc(var(--w) * var(--u));
+    height: calc(var(--h) * var(--u));
+    max-width: none;
+    transform: translate(-50%, -50%) rotate(var(--r)) scaleY(var(--fy));
+    animation-name: c-cta-converge;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  /* Off-stage → the middle: sharp on the sides, blurred and gone by the
+     copy (TODO: DS: blur size and stops tuned by eye). */
+  @keyframes c-cta-converge {
+    from {
+      translate: calc(var(--sx) * var(--u)) calc(var(--sy) * var(--u));
+      filter: blur(0);
+    }
+    50% {
+      filter: blur(0);
+      opacity: 1;
+    }
+    90% {
+      opacity: 0;
+    }
+    to {
+      translate: calc(var(--ex) * var(--u)) calc(var(--ey) * var(--u));
+      filter: blur(14px);
+      opacity: 0;
+    }
+  }
+  @keyframes c-cta-converge-fade {
+    from {
+      translate: calc(var(--sx) * var(--u)) calc(var(--sy) * var(--u));
+    }
+    50% {
+      opacity: 1;
+    }
+    90%,
+    to {
+      opacity: 0;
+    }
+    to {
+      translate: calc(var(--ex) * var(--u)) calc(var(--ey) * var(--u));
+    }
+  }
+  @media (max-width: 767px) {
+    .c-cta-shapes__shape {
+      animation-name: c-cta-converge-fade;
+    }
+    .c-cta-shapes__shape.is-wide-only {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .c-cta-shapes__shape {
+      animation: none;
+    }
+    .c-cta-shapes__shape.is-late {
+      display: none;
+    }
+  }
+</style>

@@ -27,7 +27,7 @@ Facts sheet item S1 was answered on 10 Oct 2026: BenorMedia builds in any framew
 - Eyebrow: Headless CMS development
 - H1: Headless CMS agency for B2B SaaS: custom-coded sites your marketing team can still run.
 - Lead: We design and build custom-coded websites on a headless CMS, in Next.js, Astro or the framework your team already uses, for B2B SaaS teams whose site has outgrown its website builder. Marketers keep a visual editor with live preview, and engineers get a Git repository they can review and deploy like the product. Coding agents have made custom code cheaper to change, but a headless site still needs an owner, so we start by checking it's worth it. Moving from Webflow or WordPress? We plan the move around your search traffic.
-- Proof line: Webflow Professional Partner for 6+ years, so we recommend Webflow when it's enough. Our own site runs on Astro and Sanity.
+- Proof line: Webflow Premium Partner for 6+ years, so we recommend Webflow when it's enough. Our own site runs on Astro and Sanity.
 - Buttons: "Get in Touch" · "See Pricing" → `/pricing`
 
 ### 2. Logo strip

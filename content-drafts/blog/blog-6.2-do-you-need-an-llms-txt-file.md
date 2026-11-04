@@ -10,7 +10,7 @@ title: "Do You Need an llms.txt File? | BenorMedia"
 description: "What llms.txt is, whether Google, ChatGPT, Claude, or Perplexity use it, what a 137,000-domain study found, and how to add one in Webflow or on any site."
 h1: "Do you need an llms.txt file? What the documentation and the studies say"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-17
 updatedAt: 2026-10-17
 reviewEvery: none

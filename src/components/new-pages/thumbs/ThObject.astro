@@ -1,0 +1,44 @@
+---
+/**
+ * ThObject — card thumbnail (Figma 3736:10002): one large 3D object over a
+ * wireframe globe and a soft glow. Motion: the object floats (stronger
+ * motion: lead 2026-10-19).
+ */
+import "./th.css";
+import { TH_OBJECT, TH_SVG, type ThObjectName } from "./assets";
+
+interface Props {
+  object: ThObjectName;
+}
+
+const { object } = Astro.props;
+---
+
+<span class="np-th" aria-hidden="true" data-np-illustration>
+  <span class="np-th__stage">
+    <img class="np-th__art" style="--x: -68.9; --y: -159.9; --w: 681.9; --h: 681.9;" src={TH_SVG.orbitGlow.src} width={TH_SVG.orbitGlow.w} height={TH_SVG.orbitGlow.h} alt="" loading="lazy" decoding="async" />
+    <img class="np-th__art" style="--x: -365; --y: 166; --w: 1272; --h: 197;" src={TH_SVG.objectGrid.src} width={TH_SVG.objectGrid.w} height={TH_SVG.objectGrid.h} alt="" loading="lazy" decoding="async" />
+    <span class="np-th__art np-th-object" style="--x: 156.2; --y: 38.8; --w: 229.6; --h: 276.3;">
+      <img src={TH_OBJECT[object].src} width={TH_OBJECT[object].w} height={TH_OBJECT[object].h} alt="" loading="lazy" decoding="async" />
+    </span>
+  </span>
+</span>
+
+<style>
+  .np-th-object {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    animation: np-th-float 4.5s ease-in-out infinite;
+  }
+  .np-th-object img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center bottom;
+  }
+  @keyframes np-th-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(calc(-14 * var(--u))); }
+  }
+</style>

@@ -3,9 +3,8 @@
  * HomeHero — top-of-fold hero for the Home page.
  *
  * Static copy. Hero renders on the blue gradient with white type and
- * white / glass button variants. Two decorative line images (WebP, 1000w /
- * 1600w, exported from the 2640px PNGs; QA B1 2026-09-30) sit absolutely
- * inside `.c-hero__lines`, aria-hidden.
+ * white / glass button variants. The decorative line images
+ * (`.c-hero__lines`) were removed (lead 2026-10-30).
  *
  * Content stack (24px internal gap):
  *   - title sub-block (eyebrow row + h1 + subtitle, 24px gap). Eyebrow row:
@@ -35,7 +34,8 @@
  *
  * Physics pile (`.c-hero__physics`, lead 2026-09-30): one ClientIcon tile per
  * client with an icon (same tile as ClientList). hero-physics.ts (Matter.js)
- * drops them into the hero, where they can be dragged and thrown. Without JS
+ * drops them into the hero, where they can be dragged and thrown, and move out
+ * of a moving cursor's way. Without JS
  * or under reduced motion they render as a static wrapped row at the bottom.
  * Decorative (`aria-hidden`): the logos are in the LogoStrip below.
  * The content block stays above the tiles (lead 2026-09-30, Q2): on short
@@ -86,35 +86,6 @@ const BUTTONS: ButtonType[] = [
 ---
 
 <section class:list={["c-hero", content && "is-page"]}>
-  <div class="c-hero__lines" aria-hidden="true">
-    <img
-      class="c-hero__lines-img is-left"
-      src="/images/home/hero-lines-left.webp"
-      srcset="/images/home/hero-lines-left.webp 1000w, /images/home/hero-lines-left@1600.webp 1600w"
-      sizes="35vw"
-      width="1000"
-      height="1002"
-      alt=""
-      data-anim="hero-lines"
-      loading="eager"
-      fetchpriority="low"
-      decoding="async"
-    />
-    <img
-      class="c-hero__lines-img is-right"
-      src="/images/home/hero-lines-right.webp"
-      srcset="/images/home/hero-lines-right.webp 1000w, /images/home/hero-lines-right@1600.webp 1600w"
-      sizes="35vw"
-      width="1000"
-      height="1002"
-      alt=""
-      data-anim="hero-lines"
-      loading="eager"
-      fetchpriority="low"
-      decoding="async"
-    />
-  </div>
-
   <div class="c-hero__container">
     <div class="c-hero__block">
       {content ? (
@@ -142,7 +113,7 @@ const BUTTONS: ButtonType[] = [
             $700M+ RAISED BY OUR CLIENTS
           </Eyebrow>
           <Eyebrow variant="default" class="c-hero__eyebrow">
-            6+ YEARS AS A WEBFLOW PROFESSIONAL PARTNER
+            6+ YEARS AS A WEBFLOW PREMIUM PARTNER
           </Eyebrow>
         </div>
 
@@ -268,29 +239,6 @@ const BUTTONS: ButtonType[] = [
       padding-bottom: 4rem;
     }
   }
-
-  /* --- Decorative lines ------------------------------------------------- */
-  .c-hero__lines {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    pointer-events: none;
-    border-radius: inherit;
-  }
-  .c-hero__lines-img {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    height: auto;
-    margin-top: auto;
-    margin-bottom: auto;
-    width: 35%;
-    max-width: none;
-    display: block;
-    object-fit: cover;
-  }
-  .c-hero__lines-img.is-left { left: 0; }
-  .c-hero__lines-img.is-right { right: 0; }
 
   /* --- Container -------------------------------------------------------- */
   .c-hero__container {

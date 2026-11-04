@@ -1,12 +1,26 @@
 import { defineType, defineField } from 'sanity';
 import { orderRankField, orderRankOrdering } from '@sanity/orderable-document-list';
 
+const KEBAB_CASE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+/** "Darwin CX" → "darwin-cx". */
+const slugify = (input: string) =>
+  input
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 96);
+
 /**
  * Client — a customer showcased across the site.
  *
- * Not a routable document; no detail pages (see DECISIONS 2026-09-25).
  * Referenced from Home (featured work, work cards/list, logo strip) and
- * from the Work page.
+ * from the Work page. A client is routable only when it has a case study
+ * (`caseStudy` on + `slug`, SCHEMAS v0.10, lead 2026-11-04): its Work row
+ * gets a "Case study" tag, sorts first and links to `/work/<slug>`. Every
+ * other client stays without a detail page (DECISIONS 2026-09-25).
  *
  * `sector` (SCHEMAS v0.9, lead 2026-10-01): one of a fixed list; drives the
  * Work page filters.
@@ -27,6 +41,45 @@ export const client = defineType({
       title: 'Name',
       description: 'The client\'s company name.',
       type: 'string',
+    }),
+    defineField({
+      name: 'caseStudy',
+      title: 'Case study',
+      description:
+        'Turn on when this client has a case study. The Work page then shows a "Case study" tag on its row, lists it first and links the row to /work/<slug>.',
+      type: 'boolean',
+      initialValue: false,
+    }),
+    defineField({
+      name: 'slug',
+      title: 'Case study slug',
+      description:
+        'The case study URL, e.g. /work/surfe. Click "Generate" to fill it from the client name. Lowercase letters, numbers and dashes only. Changing it changes the page address, so avoid it once the page is live.',
+      type: 'slug',
+      hidden: ({ document }) => !document?.caseStudy,
+      options: {
+        source: 'name',
+        maxLength: 96,
+        slugify,
+      },
+      validation: (Rule) =>
+        Rule.custom(async (value, context) => {
+          const current = value?.current;
+          if (!current) {
+            return context.document?.caseStudy ? 'A case study needs a slug.' : true;
+          }
+          if (!KEBAB_CASE.test(current)) {
+            return 'Use lowercase letters, numbers and single dashes only, e.g. "surfe".';
+          }
+          const { document, getClient } = context;
+          const client = getClient({ apiVersion: '2026-09-25' });
+          const id = document?._id.replace(/^drafts\./, '');
+          const params = { draft: `drafts.${id}`, published: id, slug: current };
+          const query =
+            '!defined(*[_type == "client" && !(_id in [$draft, $published]) && slug.current == $slug][0]._id)';
+          const isUnique = await client.fetch(query, params);
+          return isUnique ? true : 'Another client already uses this slug.';
+        }),
     }),
     defineField({
       name: 'logo',

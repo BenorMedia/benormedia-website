@@ -13,7 +13,7 @@ h1: "Webflow vs custom code: when to move off Webflow, and when to stay"
 primaryKeyword: webflow vs custom code
 secondaryKeywords: [webflow export code, webflow code export, webflow to react, webflow vs react, webflow to nextjs, webflow alternatives, is webflow worth it, webflow headless cms, webflow cms api, headless cms migration]
 targetCountry: US
-author: "Sergio Gancedo, Managing Director, BenorMedia"
+author: "Sergio Gancedo, General Manager, BenorMedia"
 publishedAt: 2026-10-12
 updatedAt: 2026-10-12
 reviewEvery: 30
@@ -318,7 +318,7 @@ Once you're ready to move, treat it as a site move and follow Google's guidance.
 - **7. Launch.** Lower your DNS TTL to a few hours at least a week ahead, as Google suggests. Switch DNS, remove any noindex tags or robots blocks, submit the new sitemap and check key pages with URL Inspection in Search Console.
 - **8. Monitor.** Check crawl errors, indexing and rankings daily for the first weeks. If your URLs stayed the same, Googlebot often crawls less for a while after launch, which Google calls normal; if they changed, expect it to crawl more. Keep redirects for as long as possible, generally at least a year.
 
-The same checks apply in the other direction. Our [Webflow migration](page:webflow-migration) page covers moves onto Webflow, including from WordPress.
+The same checks apply in the other direction. Our [Webflow migration services](page:webflow-migration) page covers moves onto Webflow, including from WordPress.
 
 ## When is staying on Webflow the better call?
 
@@ -334,4 +334,4 @@ If you need more control, security reviews or governance inside Webflow, our [We
 
 ## How was this guide written and checked?
 
-This guide draws on BenorMedia's Webflow projects and on building our own site in Astro and Sanity. We checked every outside fact against its source on October 12, 2026: Webflow's help center and developer docs, Google Search Central, the Next.js, Astro, Sanity, Storyblok and Payload docs, and the public migration data and write-ups listed below. We recheck it every 30 days. One disclosure: BenorMedia earns money on both sides of this decision. We're a Webflow Professional Partner, and we also build [custom-coded sites on a headless CMS](page:headless-cms-agency).
+This guide draws on BenorMedia's Webflow projects and on building our own site in Astro and Sanity. We checked every outside fact against its source on October 12, 2026: Webflow's help center and developer docs, Google Search Central, the Next.js, Astro, Sanity, Storyblok and Payload docs, and the public migration data and write-ups listed below. We recheck it every 30 days. One disclosure: BenorMedia earns money on both sides of this decision. We're a Webflow Premium Partner, and we also build [custom-coded sites on a headless CMS](page:headless-cms-agency).

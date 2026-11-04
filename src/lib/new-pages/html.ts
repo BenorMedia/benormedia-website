@@ -33,6 +33,12 @@ export class Slugger {
   }
 }
 
+/** `2026-10-17` → `10/17/26` (card "Published on" tag, lead 2026-10-17). */
+export function formatShortDate(iso: string): string {
+  const [y = "", m = "", d = ""] = iso.split("-");
+  return `${m}/${d}/${y.slice(-2)}`;
+}
+
 /** `2026-10-06` → `October 6, 2026` (section 8). */
 export function formatDate(iso: string): string {
   const [y, m, d] = iso.split("-").map(Number);

@@ -6,9 +6,8 @@
  * run edge-to-edge across the viewport. Data: `getTestimonials()` in
  * `src/pages/index.astro`.
  *
- * Hidden on every page for now (lead 2026-09-30: production ships without
- * testimonials): the section renders with `hidden`, so remove that one
- * attribute to bring it back everywhere.
+ * Shown on every page that renders it (lead 2026-11-04; hidden from
+ * 2026-09-30 while production shipped without testimonials).
  */
 import Container from "../ui/Container.astro";
 import SectionHeader from "../ui/SectionHeader.astro";
@@ -23,12 +22,12 @@ const { testimonials } = Astro.props;
 ---
 
 {testimonials.length > 0 && (
-<section class="c-testimonials" hidden>
-  <Container>
+<section class="c-testimonials">
+  <Container class="cc-tp_0">
     <SectionHeader
       eyebrow="Testimonials"
       title="Hear from our clients."
-      description="What marketing leaders say after launch day, and months into working together."
+      description="What marketing leaders say after launch day, and years into working together."
       class="c-testimonials__header"
     />
 

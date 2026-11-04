@@ -1,0 +1,107 @@
+---
+/**
+ * ThIconWall — card thumbnail (Figma 3736:9553): one icon repeated in
+ * columns of tiles on both sides of a column of labeled chips, all cut by
+ * the card's edges. Motion: the columns glide up and down, alternating.
+ */
+import "./th.css";
+import { TH_ICON, type ThIcon } from "./assets";
+
+interface Props {
+  icon: ThIcon;
+  /** The center column's chips (five in the design). */
+  labels: readonly string[];
+}
+
+const { icon, labels } = Astro.props;
+const a = TH_ICON[icon];
+// Side columns: four, offset like the design (padding bottom / top).
+const SIDES = [
+  { side: "left", pad: "", dir: 1 },
+  { side: "left", pad: "is-pb", dir: -1 },
+  { side: "right", pad: "is-pt", dir: 1 },
+  { side: "right", pad: "is-pb", dir: -1 },
+] as const;
+const column = (pad: string, dir: number, i: number) => ({ pad, dir, i });
+const left = SIDES.filter((s) => s.side === "left").map((s, i) => column(s.pad, s.dir, i));
+const right = SIDES.filter((s) => s.side === "right").map((s, i) => column(s.pad, s.dir, i + 2));
+---
+
+<span class="np-th" aria-hidden="true" data-np-illustration>
+  <span class="np-th__stage np-th-wall">
+    <span class="np-th-wall__group">
+      {left.map((c) => (
+        <span class={["np-th-wall__col", c.pad].filter(Boolean).join(" ")} style={`--dir: ${c.dir}; --delay: ${c.i * -3}s;`}>
+          {[0, 1, 2, 3, 4].map(() => (
+            <span class="np-th-wall__cell"><span class="np-th-tile" style="--t: 54.6;"><img src={a.src} width={a.w} height={a.h} alt="" loading="lazy" decoding="async" /></span></span>
+          ))}
+        </span>
+      ))}
+    </span>
+    <span class="np-th-wall__col is-center" style="--dir: -1; --delay: -1.5s;">
+      {labels.slice(0, 5).map((label) => (
+        <span class="np-th-chip np-th-wall__chip">
+          <span class="np-th-tile" style="--t: 54.6;"><img src={a.src} width={a.w} height={a.h} alt="" loading="lazy" decoding="async" /></span>
+          <span>{label}</span>
+        </span>
+      ))}
+    </span>
+    <span class="np-th-wall__group">
+      {right.map((c) => (
+        <span class={["np-th-wall__col", c.pad].filter(Boolean).join(" ")} style={`--dir: ${c.dir}; --delay: ${c.i * -3}s;`}>
+          {[0, 1, 2, 3, 4].map(() => (
+            <span class="np-th-wall__cell"><span class="np-th-tile" style="--t: 54.6;"><img src={a.src} width={a.w} height={a.h} alt="" loading="lazy" decoding="async" /></span></span>
+          ))}
+        </span>
+      ))}
+    </span>
+  </span>
+</span>
+
+<style>
+  .np-th-wall {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(10.45 * var(--u));
+  }
+  .np-th-wall__group {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: calc(10.45 * var(--u));
+  }
+  .np-th-wall__col {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    gap: calc(10.45 * var(--u));
+    animation: np-th-glide 12s ease-in-out infinite alternate;
+    animation-delay: var(--delay);
+  }
+  .np-th-wall__col.is-pb {
+    padding-bottom: calc(52.25 * var(--u));
+  }
+  .np-th-wall__col.is-pt {
+    padding-top: calc(77 * var(--u));
+  }
+  .np-th-wall__col.is-center {
+    width: calc(280.3 * var(--u));
+  }
+  .np-th-wall__cell {
+    display: flex;
+    padding: calc(12.9 * var(--u)) calc(20.3 * var(--u));
+    border: calc(0.92 * var(--u)) solid var(--color-border);
+    border-radius: calc(7.4 * var(--u));
+    background: var(--color-white);
+  }
+  .np-th-wall__chip {
+    gap: calc(20.3 * var(--u));
+    padding: calc(12.9 * var(--u)) calc(20.3 * var(--u));
+    font-size: calc(18.4 * var(--u));
+  }
+  @keyframes np-th-glide {
+    from { transform: translateY(calc(var(--dir) * -24 * var(--u))); }
+    to { transform: translateY(calc(var(--dir) * 24 * var(--u))); }
+  }
+</style>

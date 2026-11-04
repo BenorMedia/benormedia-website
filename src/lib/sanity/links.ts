@@ -1,9 +1,10 @@
 /**
  * `link` object → href. Shared by every component that renders Sanity links
  * (CtaBanner today). Page singletons map by `_type` to their fixed route;
- * `post` → `/blog/<slug>`, `service` → `/<slug>`.
+ * `post` → `/blog/<slug>`, `service` → `/<slug>`. Client case studies →
+ * `/work/<slug>` (`caseStudyHref`).
  */
-import type { Link } from './types';
+import type { Client, Link } from './types';
 
 const PAGE_TYPE_TO_PATH: Record<string, string> = {
   homePage: '/',
@@ -12,6 +13,11 @@ const PAGE_TYPE_TO_PATH: Record<string, string> = {
   testimonialsPage: '/testimonials',
   blogPage: '/blog',
 };
+
+/** Case study page of a client, or `undefined` when it has none (SCHEMAS v0.10). */
+export function caseStudyHref(client: Pick<Client, 'caseStudySlug'>): string | undefined {
+  return client.caseStudySlug ? `/work/${client.caseStudySlug}` : undefined;
+}
 
 /**
  * `contact` links return `"#"`: they are rendered as buttons that open the

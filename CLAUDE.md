@@ -110,7 +110,7 @@ Everything below comes from the benormedia.com Claude Code kit. It governs the S
 
 ## benormedia.com (from the kit)
 
-The marketing site of BenorMedia, a Webflow Professional Partner agency in Barcelona. The site itself is built with Astro, keeps its content in Sanity and deploys on Vercel; Discovery in each brief confirms the details. Owner: Sergio Gancedo.
+The marketing site of BenorMedia, a Webflow Premium Partner agency in Barcelona. The site itself is built with Astro, keeps its content in Sanity and deploys on Vercel; Discovery in each brief confirms the details. Owner: Sergio Gancedo.
 
 ### The rule for content work
 
@@ -146,7 +146,7 @@ The slash commands in `.claude/skills/` start or continue each one: `/seo-headle
 
 ### House style for visible copy
 
-- "Webflow Professional Partner" is the only partner wording. Never "Enterprise Partner", "Official Webflow Partner" or "certified partner".
+- "Webflow Premium Partner" is the only partner wording (Sergio, 2026-11-03; was "Webflow Professional Partner"). Never "Enterprise Partner", "Official Webflow Partner" or "certified partner".
 - The brand is "BenorMedia", one word.
 - No BenorMedia prices, ranges, tiers or discounts. Name plans and link to `/pricing`. Third-party amounts are written in words, such as "30,000 dollars", so the price check doesn't trip.
 - No promises or guarantees, except in sentences that deny them.

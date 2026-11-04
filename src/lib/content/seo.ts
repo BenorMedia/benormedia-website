@@ -17,7 +17,7 @@ export const PAGE_META = {
   home: {
     title: "Webflow Agency for B2B SaaS Websites",
     description:
-      "BenorMedia builds high-converting, AEO-optimized Webflow websites for B2B SaaS and tech companies. Webflow Professional Partner, 6+ years, 100+ clients.",
+      "BenorMedia builds high-converting, AEO-optimized Webflow websites for B2B SaaS and tech companies. Webflow Premium Partner, 6+ years, 100+ clients.",
   },
   work: {
     title: "Our Work: Webflow Websites for B2B Brands",
@@ -39,14 +39,10 @@ export const PAGE_META = {
     description:
       "The BenorMedia blog for B2B SaaS marketing teams: Webflow, website redesigns, analytics, headless CMS SEO, and getting cited in ChatGPT and AI search.",
   },
-  // TODO: COPY: placeholders until the lead sends the index meta. Title =
-  // the Figma eyebrow; description = the Figma hero placeholder
-  // (`CASE_STUDY_COPY.indexHero.description`). The page is noindex only
-  // while no case study is published (src/pages/case-studies/index.astro).
-  caseStudies: {
-    title: "Case Studies",
+  guides: {
+    title: "Webflow, SEO & Migration Guides for B2B SaaS",
     description:
-      "Lorem ipsum dolor sit amet consectetur. Senectus nec gravida blandit et ultricies donec eu orci. Scelerisque lectus tristique iaculis duis.",
+      "In-depth BenorMedia guides for B2B SaaS teams: WordPress to Webflow migration, Webflow Enterprise, the pages a SaaS site needs, and Webflow vs custom code.",
   },
   notFound: {
     title: "Page Not Found",

@@ -12,7 +12,7 @@
  * items that hold a gap marker are left out. BreadcrumbList keeps only
  * released and live levels (`links.ts`), renumbered from 1.
  */
-import { AREA_SERVED_LD, ORG_ID, PROVIDER_LD, SITE, WEBSITE_ID } from "../content/entity";
+import { AREA_SERVED_LD, ENTITY, ORG_ID, PROVIDER_LD, SITE, WEBSITE_ID } from "../content/entity";
 import type { NpPage } from "./loader";
 import { authorId, authorPath, findAuthor, type Author } from "./authors";
 
@@ -28,9 +28,11 @@ function authorLd(page: NpPage): Ld {
   if (page.author.hasGap || !text || text === "BenorMedia team") return { ...PROVIDER_LD };
   const comma = text.indexOf(",");
   const name = comma >= 0 ? text.slice(0, comma).trim() : text;
-  const jobTitle = comma >= 0 ? text.slice(comma + 1).trim() : "";
+  // "Name, BenorMedia" names no job title: leave jobTitle out.
+  const role = comma >= 0 ? text.slice(comma + 1).trim() : "";
+  const jobTitle = role === ENTITY.name ? "" : role;
   const a = findAuthor(text);
-  const profile = a ? { "@id": authorId(a), url: abs(authorPath(a)), sameAs: [a.linkedin] } : {};
+  const profile = a ? { "@id": authorId(a), url: abs(authorPath(a)), ...(a.linkedin ? { sameAs: [a.linkedin] } : {}) } : {};
   return { "@type": "Person", ...profile, name, ...(jobTitle ? { jobTitle } : {}), worksFor: { ...PROVIDER_LD } };
 }
 
@@ -55,10 +57,10 @@ export function authorPageJsonLd(a: Author, articles: readonly NpPage[]): Ld[] {
         name: a.name,
         url,
         image: abs(a.photo.src),
-        jobTitle: a.jobTitle.split(",")[0]?.trim(),
+        ...(a.jobTitle.includes(",") ? { jobTitle: a.jobTitle.split(",")[0]?.trim() } : {}),
         description: a.bio[0],
         worksFor: { ...PROVIDER_LD },
-        sameAs: [a.linkedin],
+        ...(a.linkedin ? { sameAs: [a.linkedin] } : {}),
         knowsAbout: a.knowsAbout,
       },
       hasPart: articles.map((p) => ({ "@type": "Article", "@id": `${abs(p.url)}#article`, headline: p.h1, url: abs(p.url) })),
@@ -74,11 +76,76 @@ export function authorPageJsonLd(a: Author, articles: readonly NpPage[]): Ld[] {
   ];
 }
 
-/** The /blog index: a CollectionPage whose main entity lists the posts built
- *  in this mode (newest first), each pointing at its Article `@id`, and the
- *  breadcrumb. `dateModified` = the latest `updatedAt` of those posts. */
-export function blogIndexJsonLd(meta: { name: string; description: string }, posts: readonly NpPage[]): Ld[] {
-  const url = abs("/blog");
+/** /about (SEO spec, lead 2026-11-03): one graph with the AboutPage, its
+ *  breadcrumb, the Organization (the Home node's `@id` and shared facts, plus
+ *  founder, foundingDate and the team as `employee`) and one Person per
+ *  member, on the author pages' `@id`s so nothing is duplicated. */
+export function aboutPageJsonLd(
+  meta: { title: string; description: string; orgDescription: string; foundingDate: string },
+  team: readonly Author[],
+  founder: Author | undefined,
+): Ld {
+  const url = abs("/about");
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "AboutPage",
+        "@id": `${url}#webpage`,
+        url,
+        name: meta.title,
+        description: meta.description,
+        inLanguage: "en",
+        isPartOf: { "@id": WEBSITE_ID },
+        about: { "@id": ORG_ID },
+        mainEntity: { "@id": ORG_ID },
+        breadcrumb: { "@id": `${url}#breadcrumb` },
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${url}#breadcrumb`,
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
+          { "@type": "ListItem", position: 2, name: "About", item: url },
+        ],
+      },
+      {
+        "@type": "Organization",
+        "@id": ORG_ID,
+        name: ENTITY.name,
+        alternateName: ENTITY.alternateName,
+        url: abs("/"),
+        logo: { "@type": "ImageObject", url: abs("/apple-touch-icon.png"), width: 180, height: 180 },
+        email: ENTITY.email,
+        description: meta.orgDescription,
+        foundingDate: meta.foundingDate,
+        ...(founder ? { founder: { "@id": authorId(founder) } } : {}),
+        address: { "@type": "PostalAddress", ...ENTITY.address },
+        areaServed: AREA_SERVED_LD,
+        knowsAbout: ENTITY.knowsAbout,
+        sameAs: ENTITY.sameAs,
+        employee: team.map((a) => ({ "@id": authorId(a) })),
+      },
+      ...team.map((a) => ({
+        "@type": "Person",
+        "@id": authorId(a),
+        name: a.name,
+        jobTitle: a.jobTitle.split(",")[0]?.trim(),
+        url: abs(authorPath(a)),
+        image: abs(a.photo.src),
+        worksFor: { "@id": ORG_ID },
+        ...(a.linkedin ? { sameAs: [a.linkedin] } : {}),
+      })),
+    ],
+  };
+}
+
+/** An article index (/blog, /guides): a CollectionPage whose main entity
+ *  lists the articles built in this mode (newest first), each pointing at its
+ *  Article `@id`, and the breadcrumb. `dateModified` = the latest
+ *  `updatedAt` of those articles. */
+export function blogIndexJsonLd(meta: { name: string; description: string }, posts: readonly NpPage[], path = "/blog"): Ld[] {
+  const url = abs(path);
   const dates = posts.map((p) => p.updatedAt).filter(Boolean).sort();
   return [
     {
@@ -100,50 +167,6 @@ export function blogIndexJsonLd(meta: { name: string; description: string }, pos
           position: i + 1,
           item: { "@type": "Article", "@id": `${abs(p.url)}#article`, headline: p.h1, url: abs(p.url), datePublished: p.publishedAt },
         })),
-      },
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
-        { "@type": "ListItem", position: 2, name: meta.name, item: url },
-      ],
-    },
-  ];
-}
-
-/** `/case-studies`: the same CollectionPage + BreadcrumbList as `/blog`
- *  (lead 2026-10-21), listing the published case studies. */
-export function caseStudiesIndexJsonLd(
-  meta: { name: string; description: string },
-  cards: readonly { title: string; slug: string; publishedAt: string }[],
-): Ld[] {
-  const url = abs("/case-studies");
-  const dates = cards.map((c) => c.publishedAt).filter(Boolean).sort();
-  return [
-    {
-      "@context": "https://schema.org",
-      "@type": "CollectionPage",
-      "@id": `${url}#webpage`,
-      url,
-      name: meta.name,
-      description: meta.description,
-      inLanguage: "en-US",
-      isPartOf: { "@id": WEBSITE_ID },
-      publisher: { ...PROVIDER_LD },
-      ...(dates.length > 0 ? { dateModified: dates[dates.length - 1] } : {}),
-      mainEntity: {
-        "@type": "ItemList",
-        numberOfItems: cards.length,
-        itemListElement: cards.map((c, i) => {
-          const itemUrl = abs(`/case-studies/${c.slug}`);
-          return {
-            "@type": "ListItem",
-            position: i + 1,
-            item: { "@type": "Article", "@id": `${itemUrl}#article`, headline: c.title, url: itemUrl, datePublished: c.publishedAt },
-          };
-        }),
       },
     },
     {
@@ -220,51 +243,61 @@ export function pageJsonLd(page: NpPage): Ld[] {
   return out;
 }
 
-/** A case study (`/case-studies/<slug>`, Sanity `caseStudy`): an Article by
- *  and published by the Organization, `about` the client, and the
- *  breadcrumb (`NpCrumbs` prints none). No offers. `dateModified` and
- *  `image` (an absolute URL) are omitted when not given. */
-export function caseStudyJsonLd(cs: {
-  url: string;
+/** Case study (`/work/[slug]`, brief-next-pages Part 2 task 2.5): an
+ *  Article about the client, written and published by the shared
+ *  Organization, its breadcrumb (Home › Work › client) and, when the entry
+ *  has FAQ items, a FAQPage from the same array as the visible FAQ. */
+export function caseStudyJsonLd(c: {
+  path: string;
+  title: string;
   headline: string;
-  description?: string | undefined;
-  datePublished: string;
-  dateModified?: string | undefined;
-  image?: string | undefined;
-  client?: { name?: string | undefined; websiteUrl?: string | undefined } | null | undefined;
-  crumbs: readonly { name: string; url: string }[];
+  description: string;
+  publishedAt: string;
+  updatedAt: string;
+  image: string;
+  client: { name: string; url: string };
+  faq: readonly { question: string; answer: string }[];
 }): Ld[] {
-  const url = abs(cs.url);
-  const clientName = cs.client?.name?.trim();
-  const clientUrl = cs.client?.websiteUrl?.trim();
-  return [
+  const url = abs(c.path);
+  const out: Ld[] = [
     {
       "@context": "https://schema.org",
       "@type": "Article",
       "@id": `${url}#article`,
-      headline: cs.headline,
-      ...(cs.description ? { description: cs.description } : {}),
+      headline: c.headline,
+      name: c.title,
+      description: c.description,
       url,
       mainEntityOfPage: url,
       inLanguage: "en-US",
-      datePublished: cs.datePublished,
-      ...(cs.dateModified ? { dateModified: cs.dateModified } : {}),
-      ...(cs.image ? { image: cs.image } : {}),
+      image: c.image,
+      datePublished: c.publishedAt,
+      dateModified: c.updatedAt,
       author: { ...PROVIDER_LD },
-      publisher: { ...PROVIDER_LD },
-      ...(clientName
-        ? { about: { "@type": "Organization", name: clientName, ...(clientUrl ? { url: clientUrl } : {}) } }
-        : {}),
+      publisher: { ...PROVIDER_LD, "@id": ORG_ID },
+      about: { "@type": "Organization", name: c.client.name, url: c.client.url },
+      isPartOf: { "@id": WEBSITE_ID },
     },
     {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
-      itemListElement: cs.crumbs.map((item, i) => ({
-        "@type": "ListItem",
-        position: i + 1,
-        name: item.name,
-        item: abs(item.url),
-      })),
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
+        { "@type": "ListItem", position: 2, name: "Work", item: abs("/work") },
+        { "@type": "ListItem", position: 3, name: c.client.name, item: url },
+      ],
     },
   ];
+  if (c.faq.length > 0) {
+    out.push({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: c.faq.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: { "@type": "Answer", text: item.answer },
+      })),
+    });
+  }
+  return out;
 }

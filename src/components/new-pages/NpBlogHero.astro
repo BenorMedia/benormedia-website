@@ -12,11 +12,12 @@
 import Container from "../ui/Container.astro";
 import Eyebrow from "../ui/Eyebrow.astro";
 import copy from "../../lib/new-pages/copy.json";
-import { fill, formatDate } from "../../lib/new-pages/html";
+import { fill, formatDate, withPeriod } from "../../lib/new-pages/html";
 import type { NpPage } from "../../lib/new-pages/loader";
 import NpCrumbs from "./NpCrumbs.astro";
 import NpBlogAuthor from "./NpBlogAuthor.astro";
 import { HEROES } from "../../lib/new-pages/visuals";
+import { THUMBS } from "../../lib/new-pages/thumbs";
 
 interface Props {
   page: NpPage;
@@ -24,7 +25,11 @@ interface Props {
 }
 
 const { page, shots } = Astro.props;
-const hero = HEROES[page.slug];
+// The card thumbnail (animated, lead 2026-10-18), else the header
+// illustration, else the screenshot collage.
+const thumb = THUMBS[page.slug];
+const Thumb = thumb?.component as ((props: Record<string, unknown>) => unknown) | undefined;
+const hero = thumb ? undefined : HEROES[page.slug];
 const Hero = hero?.component;
 const tag =
   page.family === "blog"
@@ -53,11 +58,15 @@ const slots = [
             <span>{fill(copy.blog.readTime, { n: String(page.readMinutes) })}</span>
           </p>
         </div>
-        <h1 class="c-np-blog-hero__title c-text_xl" data-np-src="h1">{page.h1}</h1>
+        <h1 class="c-np-blog-hero__title c-text_xl" data-np-src="h1">{withPeriod(page.h1)}</h1>
         <div class="c-np-blog-hero__lead" set:html={page.lead.join("")} />
       </div>
       <div class="c-np-blog-hero__side">
-        {Hero ? (
+        {thumb && Thumb ? (
+          <div class="c-np-blog-hero__thumb" aria-hidden="true" data-np-illustration>
+            <Thumb {...thumb.props} />
+          </div>
+        ) : Hero ? (
           <div class="c-np-blog-hero__illustration" aria-hidden="true" data-np-illustration>
             <Hero {...hero.props} />
           </div>
@@ -141,6 +150,15 @@ const slots = [
     flex-direction: column;
     gap: 0.857rem;
     min-width: 0;
+  }
+  /* The card thumbnail (Figma 3736:7123) at its own 544 × 362 ratio. */
+  .c-np-blog-hero__thumb {
+    position: relative;
+    aspect-ratio: 544 / 362;
+    overflow: hidden;
+    border: var(--border-default);
+    border-radius: 8px;
+    background: var(--color-white);
   }
   /* Gradient card with the screenshot collage (Figma 3142:1618029). */
   .c-np-blog-hero__media {

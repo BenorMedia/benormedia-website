@@ -1,0 +1,62 @@
+---
+/**
+ * /about — About page, Figma 4145:9660 (lead 2026-11-03), with the SEO
+ * spec's meta and JSON-LD (AboutPage, BreadcrumbList, Organization, Person).
+ * Copy: `src/lib/content/about.ts`.
+ *
+ * Draft guard: while `DRAFT` is true the page is built only where drafts are
+ * (previews, `astro dev`, `PAGES_INCLUDE_DRAFTS=1`), carries noindex and
+ * stays out of the sitemap (astro.config.mjs). A rest route because a fixed
+ * `.astro` page can't be left out of a build; its only path is
+ * `{ about: undefined }` → `/about`.
+ *
+ * Order as Figma: hero → mission → facts (Services, variant "about") →
+ * how we work → team → site CTA banner + footer (BaseLayout).
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import JsonLd from "../../components/layout/JsonLd.astro";
+import AboutHero from "../../components/sections/AboutHero.astro";
+import AboutMission from "../../components/sections/AboutMission.astro";
+import Services from "../../components/sections/Services.astro";
+import AboutHowWeWork from "../../components/sections/AboutHowWeWork.astro";
+import AboutTeam from "../../components/sections/AboutTeam.astro";
+import { ABOUT_HERO, ABOUT_HOW, ABOUT_META, ABOUT_MISSION, ABOUT_TEAM, DRAFT, aboutBuilt } from "../../lib/content/about";
+import { aboutPageJsonLd } from "../../lib/new-pages/jsonld";
+
+export function getStaticPaths() {
+  return aboutBuilt() ? [{ params: { about: undefined } }] : [];
+}
+
+const founder = ABOUT_TEAM.authors.find((a) => a.slug === "sergio-gancedo");
+const ld = aboutPageJsonLd(ABOUT_META, ABOUT_TEAM.authors, founder);
+// Markers print only while the page is a draft.
+const m = (marker: string | undefined): string | undefined => (DRAFT ? marker : undefined);
+---
+
+<BaseLayout title={ABOUT_META.title} description={ABOUT_META.description} titleTemplate={false} noIndex={DRAFT}>
+  <JsonLd data={ld} />
+  <AboutHero eyebrow={ABOUT_HERO.eyebrow} title={ABOUT_HERO.title} paragraphs={ABOUT_HERO.paragraphs} marker={m(ABOUT_HERO.marker)} />
+  <AboutMission eyebrow={ABOUT_MISSION.eyebrow} title={ABOUT_MISSION.title} body={ABOUT_MISSION.body} />
+  <Services variant="about" />
+  <AboutHowWeWork eyebrow={ABOUT_HOW.eyebrow} title={ABOUT_HOW.title} body={ABOUT_HOW.body} stamp={ABOUT_HOW.stamp} marker={m(ABOUT_HOW.marker)} />
+  <AboutTeam eyebrow={ABOUT_TEAM.eyebrow} title={ABOUT_TEAM.title} members={ABOUT_TEAM.members} join={ABOUT_TEAM.join} />
+</BaseLayout>
+
+<style>
+  /* Draft markers (about.ts): an open content question, highlighted. */
+  :global(.c-about-marker) {
+    display: block;
+    max-width: 42rem;
+    margin: 1.5rem auto 0;
+    padding: 0.6em 0.9em;
+    border: 1px solid var(--color-accent);
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+    color: var(--color-accent);
+    text-align: left;
+  }
+  :global(.c-about-hero .c-about-marker),
+  :global(.c-services .c-about-marker) {
+    margin-left: 0;
+  }
+</style>

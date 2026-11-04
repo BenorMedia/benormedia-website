@@ -1,0 +1,27 @@
+---
+/**
+ * ThImage — card thumbnail from a finished image the lead supplies (lead
+ * 2026-10-26), at the cards' 544 × 362 ratio, filling the box. No motion.
+ */
+import "./th.css";
+
+interface Props {
+  src: string;
+  w: number;
+  h: number;
+}
+
+const { src, w, h } = Astro.props;
+---
+
+<span class="np-th" aria-hidden="true" data-np-illustration>
+  <img class="np-th-image" src={src} width={w} height={h} alt="" loading="lazy" decoding="async" />
+</span>
+
+<style>
+  .np-th-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>

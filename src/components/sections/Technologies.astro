@@ -2,13 +2,15 @@
 /**
  * Technologies — Home "Technologies" section.
  *
- * Section header + static diagram (tool categories → BenorMedia mark →
- * capabilities). Design-only for now: the animation spec is pending from
- * the design team; the image carries `data-anim="tech-diagram"` as the hook.
+ * Section header + diagram (tool categories → BenorMedia mark →
+ * capabilities). On desktop the image is rebuilt inline and animated
+ * (squares along the lines, looping capability rows): see
+ * src/scripts/animations/tech-diagram.ts, hooked on `data-anim="tech-diagram"`.
  *
  * `/images/home/technologies.svg` is an optimized copy of
  * `docs/refs/technologies-image.svg` (embedded bitmaps downscaled to WebP;
- * vectors untouched) — 20 MB → ~0.4 MB.
+ * vectors untouched) — 20 MB → ~0.4 MB. Its lines, squares and rows are
+ * grouped with `tech-` ids for the animation (same drawing).
  */
 import Container from "../ui/Container.astro";
 import SectionHeader from "../ui/SectionHeader.astro";
@@ -76,5 +78,46 @@ import SectionHeader from "../ui/SectionHeader.astro";
     display: block;
     width: 100%;
     height: auto;
+  }
+
+  /* Animated diagram (tech-diagram.ts, ≥768 only): built by JS, so the
+     classes are global. Same box as the image it replaces. */
+  .c-tech__diagram.is-replaced {
+    display: none;
+  }
+  .c-tech :global(.c-tech__live) {
+    position: relative;
+    overflow: hidden;
+    /* TODO: DS space between section header and content. */
+    margin-top: 3rem;
+  }
+  .c-tech :global(.c-tech__live > svg) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .c-tech :global(.c-tech__squares) {
+    position: absolute;
+    inset: 0;
+    will-change: transform;
+  }
+  .c-tech :global(.c-tech__live > .c-tech__row) {
+    position: absolute;
+    /* Wider than the box (row + its copy); base.css caps svg at 100%. */
+    max-width: none;
+    will-change: transform;
+    animation: c-tech-row var(--tech-duration) linear infinite;
+  }
+  .c-tech :global(.c-tech__row.is-reverse) {
+    animation-direction: reverse;
+  }
+  .c-tech :global(.c-tech__live.is-paused > .c-tech__row) {
+    animation-play-state: paused;
+  }
+
+  @keyframes c-tech-row {
+    to {
+      transform: translateX(var(--tech-shift));
+    }
   }
 </style>

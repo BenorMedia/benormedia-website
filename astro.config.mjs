@@ -8,7 +8,7 @@ import react from '@astrojs/react';
 import sanity from '@sanity/astro';
 import sitemap from '@astrojs/sitemap';
 import { sitemapInfo } from './src/lib/new-pages/registry.mjs';
-import { caseStudySitemapInfo } from './src/lib/sanity/case-study-sitemap.mjs';
+import { caseStudySitemapInfo } from './src/lib/case-studies/registry.mjs';
 
 /** @type {{ env: { NODE_ENV?: string }, cwd(): string, argv: string[] }} */
 const proc = /** @type {any} */ (globalThis).process;
@@ -126,29 +126,28 @@ const LASTMOD = {
   '/work': '2026-10-06',
   '/privacy-policy': '2026-10-05',
   '/terms-conditions': '2026-10-05',
-  '/authors/sergio-gancedo': '2026-10-15',
+  '/authors/sergio-gancedo': '2026-11-03',
+  '/guides': '2026-10-17',
+  '/authors/david-garay': '2026-11-03',
+  '/authors/emily-gaitan': '2026-11-02',
+  '/authors/santiago-lopez': '2026-11-02',
+  '/authors/paula-allievi': '2026-11-03',
+  '/authors/ismael-aoussi': '2026-11-03',
+  '/authors/mauricio-guerra': '2026-11-03',
+  '/about': '2026-11-03',
+  // Case studies (src/lib/case-studies/entries/*.ts): listed only once
+  // released (drafts are filtered below); set to the entry's `updatedAt`.
+  '/work/surfe': '2026-11-04',
+  '/work/joor': '2026-11-04',
+  '/work/darwincx': '2026-11-04',
 };
 
 // New pages (content-pack/content/*.md, docs/new-pages.md): draft pages stay
 // out of the sitemap (they are built in previews only); released pages take
 // `lastmod` from their front matter `updatedAt`, so nobody edits LASTMOD.
 const NEW_PAGES = sitemapInfo();
-
-const SANITY_API_VERSION = '2026-09-25';
-
-// Case studies (Sanity `caseStudy`, DECISIONS → Case studies 2026-10-20 and
-// 2026-10-21): `/case-studies` is listed only once an indexable (not
-// noindex) case study is published; detail pages (they exist only when
-// published) take `lastmod` = `publishedAt`, the index the newest indexable
-// one. Read from Sanity once per build/check. If Sanity can't be read (with
-// a project id set) the build/check STOPS on purpose, so wrong sitemap data
-// never deploys; `astro dev` only warns.
-const CASE_STUDIES = await caseStudySitemapInfo({
-  projectId,
-  dataset,
-  apiVersion: SANITY_API_VERSION,
-  failHard: !isDevServer,
-});
+// Draft case studies (`DRAFT = true` in their entry) stay out of the sitemap.
+const CASE_STUDY_DRAFTS = caseStudySitemapInfo().draftPaths;
 
 // https://astro.build/config
 export default defineConfig({
@@ -164,7 +163,7 @@ export default defineConfig({
     sanity({
       projectId,
       dataset,
-      apiVersion: SANITY_API_VERSION,
+      apiVersion: '2026-09-25',
       useCdn: false,
       studioBasePath: '/studio',
     }),
@@ -174,22 +173,17 @@ export default defineConfig({
     // and so are the noindex pages: /cookie-policy (placeholder) and
     // /testimonials while testimonials are off (lead 2026-09-30; drop them
     // from this list when they go live). Privacy Policy + Terms are
-    // indexable since 2026-10-05, so they are listed. `/case-studies` while
-    // no indexable case study is published (production builds don't emit it
-    // at all then), and case studies set to noindex.
+    // indexable since 2026-10-05, so they are listed. /about is listed since
+    // its release (2026-11-03).
     sitemap({
-      filter: (page) => {
-        const path = new URL(page).pathname.replace(/\/$/, '');
-        return (
-          !/\/(dev|studio)(\/|$)|\/404$|^\/(cookie-policy|testimonials)\/?$/.test(new URL(page).pathname) &&
-          !NEW_PAGES.draftPaths.has(path) &&
-          !(path === '/case-studies' && !CASE_STUDIES.hasPublished) &&
-          !CASE_STUDIES.noIndexPaths.has(path)
-        );
-      },
+      filter: (page) =>
+        !/\/(dev|studio)(\/|$)|\/404$|^\/(cookie-policy|testimonials)\/?$/.test(
+          new URL(page).pathname,
+        ) && !NEW_PAGES.draftPaths.has(new URL(page).pathname.replace(/\/$/, ''))
+        && !CASE_STUDY_DRAFTS.has(new URL(page).pathname.replace(/\/$/, '')),
       serialize(item) {
         const path = new URL(item.url).pathname.replace(/\/$/, '') || '/';
-        const lastmod = LASTMOD[path] ?? NEW_PAGES.lastmod[path] ?? CASE_STUDIES.lastmod[path];
+        const lastmod = LASTMOD[path] ?? NEW_PAGES.lastmod[path];
         if (lastmod) item.lastmod = lastmod;
         return item;
       },

@@ -1,0 +1,23 @@
+---
+/**
+ * CaseDecor — a decorative image (icons, shapes, glows), resized by
+ * astro:assets and written as a plain `<img alt="">`: `<Image alt="">`
+ * prints a bare `alt`, which `scripts/check-seo.mjs` reads as missing (the
+ * NpFitCards approach). `width` is the display width in CSS px; the file
+ * is served at twice that.
+ */
+import { getImage } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+interface Props {
+  src: ImageMetadata;
+  width: number;
+  class?: string;
+}
+
+const { src, width, class: className } = Astro.props;
+const img = await getImage({ src, width: Math.min(src.width, Math.round(width * 2)) });
+const height = Math.round((src.height / src.width) * width);
+---
+
+<img src={img.src} alt="" width={width} height={height} class={className} loading="lazy" decoding="async" aria-hidden="true" />

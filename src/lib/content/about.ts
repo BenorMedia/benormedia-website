@@ -1,0 +1,131 @@
+/**
+ * /about — every visible word of the page (Figma 4145:9660, lead
+ * 2026-11-03), word for word, plus the SEO spec's meta and the draft
+ * switch. Section components take their copy from here; nothing visible is
+ * written in the components.
+ *
+ * Released 2026-11-03 (lead: "Release with these photos"). `DRAFT = true`
+ * would build the page in previews and `astro dev` only, with `noindex`,
+ * out of the sitemap, and print any `marker` below on the page.
+ *
+ * Markers are the content kit's (`[VERIFY: ...]`). Never
+ * resolve one with a guess; the lead answers them (DECISIONS → About).
+ */
+import { AUTHORS, authorPath, type Author } from "../new-pages/authors";
+import { includeDrafts } from "../new-pages/loader";
+
+export const DRAFT = false;
+/** Whether this build has /about: the route and every link to it (footer,
+ *  Resources menu) follow it, so production never links to a missing page. */
+export const aboutBuilt = (): boolean => !DRAFT || includeDrafts();
+export const publishedAt = "2026-11-03";
+export const updatedAt = "2026-11-03";
+
+/** SEO spec (lead, about-page-seo.md): the full title tag, no template. */
+export const ABOUT_META = {
+  title: "About BenorMedia: B2B Webflow Agency Since 2020",
+  description:
+    "BenorMedia is a B2B Webflow agency and Webflow Premium Partner. 100+ sites launched since 2020 for SaaS, fintech and AI companies like Surfe and Unit21.",
+  /** Organization `description` on this page (SEO spec). */
+  orgDescription:
+    "B2B Webflow agency and Webflow Premium Partner that designs, builds and grows websites for SaaS, fintech, cybersecurity and AI companies.",
+  foundingDate: "2020",
+};
+
+export const ABOUT_HERO = {
+  eyebrow: "About us",
+  title: "About BenorMedia",
+  paragraphs: [
+    "BenorMedia is a B2B Webflow agency and Webflow Premium Partner that designs, builds and grows websites for SaaS, fintech, cybersecurity and AI companies, among many others. Since 2020 we have launched 100+ sites for companies like Surfe, Puzzle, Unit21 and Sublime Security, which together have raised over $700M.",
+    "We're a senior in-house team based in Barcelona, Spain, working remotely with clients in the US, UK and Europe.",
+  ],
+  /** Draft only: an open question printed under the copy. */
+  marker: undefined as string | undefined,
+};
+
+export const ABOUT_MISSION = {
+  eyebrow: "Mission",
+  title: "Our mission.",
+  body: "Help B2B companies grow through their web presence, starting with a website that brings in leads and keeps getting better long after launch. We're proud that many of our clients have kept growing with us for years.",
+};
+
+export interface AboutFact {
+  key: "websites" | "support" | "growth" | "rebrand";
+  title: string;
+  body: string;
+  marker?: string;
+}
+
+/** Facts cards, in the Home Services grid (`Services.astro` variant "about"). */
+export const ABOUT_FACTS = {
+  eyebrow: "Facts",
+  title: "BenorMedia at a glance",
+  cards: [
+    {
+      key: "websites",
+      title: "Founded in 2020",
+      body: "Sergio Gancedo founded BenorMedia in 2020. Since then, we have been working on hundreds of different website projects helping companies of all sizes and industries grow.", // lead 2026-11-03
+    },
+    {
+      key: "support",
+      title: "A global remote team",
+      body: "We're based in Barcelona and work remotely across time zones, with clients in the US, UK and Europe.",
+    },
+    {
+      key: "growth",
+      title: "Webflow Premium Partner",
+      body: "Most of our sites run on Webflow, and Webflow lists us as a Premium Partner. When a project needs more, we build it custom.",
+    },
+    {
+      key: "rebrand",
+      title: "100+ Sites launched",
+      body: "Mostly for B2B SaaS companies, from a first marketing site to a full rebuild with hundreds of CMS pages.",
+    },
+  ] satisfies AboutFact[],
+};
+
+export const ABOUT_HOW = {
+  eyebrow: "How we work",
+  title: "A small senior team, by design.",
+  body: "Every project is designed and built by our own staff, never outsourced. You talk to the people doing the work, and they ship to you directly.",
+  stamp: "Barcelona, Spain.",
+  /** Draft only: an open question printed under the header. */
+  marker: undefined as string | undefined,
+};
+
+export interface TeamMember {
+  name: string;
+  /** Role, from `authors.ts` (the lead's team titles). */
+  role: string;
+  href: string;
+  /** Card photo (lead 2026-11-03), 396 × 438, the ring lines included. */
+  photo: string;
+}
+
+// Order of the lead's "all team (names and position)" screenshot (2026-11-03).
+const TEAM_ORDER = [
+  "sergio-gancedo",
+  "emily-gaitan",
+  "santiago-lopez",
+  "david-garay",
+  "paula-allievi",
+  "ismael-aoussi",
+  "mauricio-guerra",
+];
+const roleOf = (a: Author): string => a.jobTitle.replace(/,\s*BenorMedia$/, "");
+
+export const ABOUT_TEAM = {
+  eyebrow: "Team",
+  title: "Our team.",
+  members: TEAM_ORDER.flatMap((slug) => {
+    const a = AUTHORS.find((x) => x.slug === slug);
+    return a ? [{ name: a.name, role: roleOf(a), href: authorPath(a), photo: `/images/about/team/${a.slug}.webp` }] : [];
+  }) satisfies TeamMember[],
+  /** Team members, for the Organization `employee` list. */
+  authors: TEAM_ORDER.flatMap((slug) => AUTHORS.find((x) => x.slug === slug) ?? []),
+  join: {
+    title: "Want to join the team?",
+    body: "We're always happy to meet designers and developers. Send us your work!",
+    button: "Get in Touch",
+  },
+};

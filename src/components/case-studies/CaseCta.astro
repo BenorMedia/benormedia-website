@@ -1,0 +1,95 @@
+---
+/**
+ * CaseCta — the call to action inside the case study body (Figma
+ * 4225:12746): CtaBanner's gradient card at the content column's width,
+ * with the shared `CtaShapes` background, an on-dark eyebrow, the entry's
+ * heading, one "Get in Touch" button (opens the contact modal) and the
+ * Trusted badge (`CtaActions`). The site's full-width CtaBanner still
+ * closes the page (BaseLayout), as in Figma.
+ *
+ * `badges`: the client badge pool, fetched by the page (no fetching in
+ * sections).
+ */
+import Eyebrow from "../ui/Eyebrow.astro";
+import CtaActions from "../ui/CtaActions.astro";
+import CtaShapes from "../ui/CtaShapes.astro";
+
+interface Props {
+  id: string;
+  eyebrow: string;
+  heading: string;
+  button: string;
+  trusted: string;
+  badges: readonly string[];
+}
+
+const { id, eyebrow, heading, button, trusted, badges } = Astro.props;
+---
+
+<section class="c-case-cta" id={id} aria-labelledby={`${id}-title`}>
+  <CtaShapes />
+  <div class="c-case-cta__inner">
+    <Eyebrow class="c-case-cta__eyebrow">{eyebrow}</Eyebrow>
+    <h2 id={`${id}-title`} class="c-text_l c-case-cta__title">{heading}</h2>
+    <CtaActions buttons={[{ variant: "white", link: { label: button, type: "contact" } }]} badges={badges} trustedText={trusted} />
+  </div>
+</section>
+
+<style>
+  .c-case-cta {
+    --u: calc(1rem / 19.2);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(517.83 * var(--u));
+    padding: calc(60 * var(--u)) calc(44 * var(--u));
+    overflow: hidden;
+    border-radius: 8px;
+    background: linear-gradient(290deg, var(--color-blue-light) 8.49%, var(--color-blue) 91.51%);
+    color: var(--color-white);
+    scroll-margin-top: calc(var(--c-nav-height, 0px) + 2rem);
+  }
+  .c-case-cta__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(28 * var(--u));
+    text-align: center;
+    max-width: calc(700 * var(--u));
+  }
+  .c-case-cta__title {
+    margin: 0;
+    color: var(--color-white);
+    line-height: 1.4;
+    font-size: var(--cs-fs-h2);
+  }
+  /* On-dark eyebrow, as CtaBanner (TODO: DS eyebrow on-dark variant). */
+  .c-case-cta :global(.c-eyebrow.is-default) {
+    border-color: var(--color-white);
+    color: var(--color-white);
+  }
+  .c-case-cta :global(.c-eyebrow.is-default::before),
+  .c-case-cta :global(.c-eyebrow.is-default::after) {
+    border-color: color-mix(in srgb, var(--color-gray) 30%, transparent);
+    background: var(--color-white);
+  }
+  /* Figma button: 20px text, 16 / 30 / 14 px padding (TODO: DS). */
+  @media (min-width: 768px) {
+    .c-case-cta :global(.c-cta__buttons .c-button) {
+      padding: calc(16 * var(--u)) calc(30 * var(--u)) calc(14 * var(--u));
+      font-size: var(--cs-fs-body);
+    }
+  }
+  /* Figma: one button at its own width, centred over the badge (desktop). */
+  .c-case-cta :global(.c-cta__buttons) {
+    justify-content: center;
+    grid-auto-columns: auto;
+  }
+  @media (max-width: 767px) {
+    .c-case-cta { min-height: 0; padding: 8rem 1.25rem; }
+    .c-case-cta__inner { gap: 1.6rem; }
+  }
+</style>

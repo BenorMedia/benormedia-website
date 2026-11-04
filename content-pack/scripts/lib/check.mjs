@@ -1,6 +1,7 @@
 // Analysis behind scripts/check-content.mjs and scripts/build-index.mjs. Dependency-free.
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { readContentFile } from './frontmatter.mjs';
 
 export const LIVE_PATHS = new Set([
@@ -8,6 +9,22 @@ export const LIVE_PATHS = new Set([
   '/privacy-policy', '/terms-conditions',
 ]);
 export const NOINDEX_PATHS = new Set(['/testimonials', '/cookie-policy']);
+
+// Released blog posts (content-drafts/blog/*.md with draft: false) are live
+// pages too, so guides can link to them (lead 2026-10-25).
+let blogPaths;
+export function releasedBlogPaths() {
+  if (blogPaths) return blogPaths;
+  blogPaths = new Set();
+  const dir = resolve(dirname(fileURLToPath(import.meta.url)), '../../../content-drafts/blog');
+  if (!existsSync(dir)) return blogPaths;
+  for (const f of readdirSync(dir).filter((n) => n.endsWith('.md'))) {
+    const s = readFileSync(join(dir, f), 'utf8');
+    const url = /^url:\s*(\S+)/m.exec(s)?.[1];
+    if (url && /^draft:\s*false\b/m.test(s)) blogPaths.add(url);
+  }
+  return blogPaths;
+}
 
 // Two families of page (decided by Sergio, 2026-10-07):
 //   article  = guide, comparison, data-study. Long and sourced. Shows a byline, dates and a recheck line, so `author` is required.
@@ -46,8 +63,9 @@ const COMPETITOR_DOMAINS = [
 
 // Always fail. [regex, reason]. Applied to the visible text (markers removed, REPLACE text included).
 const BANNED = [
-  [/Enterprise Partner/gi, 'never "Enterprise Partner": BenorMedia is a Webflow Professional Partner'],
-  [/Official Webflow Partner/gi, 'use "Webflow Professional Partner"'],
+  [/Enterprise Partner/gi, 'never "Enterprise Partner": BenorMedia is a Webflow Premium Partner'],
+  [/Official Webflow Partner/gi, 'use "Webflow Premium Partner"'],
+  [/Professional Partner/gi, 'the tier is now "Webflow Premium Partner" (Sergio, 2026-11-03)'],
   [/\bBenor Media\b(?!\s+(?:LLC|SLU)\b)/g, 'the brand is spelled "BenorMedia" (legal names stay as written)'],
   [/\bBenor-Media\b/g, 'the brand is spelled "BenorMedia"'],
 ];
@@ -477,7 +495,7 @@ export function analyze(path, ctx = {}) {
       const newUrls = ctx.known ? [...ctx.known.values()].filter((v) => v.type !== 'section' && v.url && !LIVE_PATHS.has(v.url)).map((v) => v.url) : [];
       if (NOINDEX_PATHS.has(p)) add('warn', 'link', l.line, `${p} is noindex today; do not link to it`);
       else if (newUrls.includes(p)) add('warn', 'link', l.line, `${p} is a new page: use page:slug so the link disappears until the page is released`);
-      else if (!LIVE_PATHS.has(p)) add('FAIL', 'link', l.line, `${href} is not a live page (live pages: ${[...LIVE_PATHS].join(', ')})`);
+      else if (!LIVE_PATHS.has(p) && !releasedBlogPaths().has(p)) add('FAIL', 'link', l.line, `${href} is not a live page (live pages: ${[...LIVE_PATHS].join(', ')})`);
     } else if (href.startsWith('https://')) {
       let host = '';
       try { host = new URL(href).hostname.replace(/^www\./, ''); } catch { add('FAIL', 'link', l.line, `bad URL ${href}`); continue; }

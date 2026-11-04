@@ -1,0 +1,246 @@
+---
+/**
+ * AboutMission — /about "Our mission." (Figma 4145:14333): a bordered glass
+ * card with the centred header over three rings and eleven client icon
+ * tiles, faded to white towards the edges.
+ *
+ * Art in Figma px (`--u` = one Figma px, as Services): Figma's 1679.84 ×
+ * 1648.34 frame, centred on the card 32.73px low; rings, tiles and the
+ * white radial fade placed inside it. The card clips it.
+ * Tiles: Figma's icon tiles with their background colours, exported as one
+ * image each (`/images/about/mission/`); the border and radius are CSS.
+ *
+ * Motion (lead 2026-11-03, Figma comment): the tiles orbit along their
+ * rings like the /work hero's (`ClientOrbitHero`): same speeds and
+ * directions (outer 200s clockwise, middle 160s anticlockwise, inner 120s
+ * clockwise), each ring a rotating square with its tiles on the edge
+ * turning the other way to stay upright. Start angles = Figma's positions.
+ * Paused off screen (script below); reduced motion: still, at Figma's frame.
+ *
+ * ≤767 (no mobile design, TODO: DS): the rings are drawn at 60% so they
+ * still frame the copy, and the tiles are hidden (they would cover it),
+ * as on the /work hero on phones.
+ */
+import Container from "../ui/Container.astro";
+import SectionHeader from "../ui/SectionHeader.astro";
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  body: string;
+}
+
+const { eyebrow, title, body } = Astro.props;
+
+const IMG = "/images/about";
+
+/** Rings (Figma "Circles": centre and radii in the art frame's px). */
+const CENTRE = { x: 855.78, y: 824.07 };
+const RINGS = [
+  { key: "outer", r: 823.74 },
+  { key: "middle", r: 649.14 },
+  { key: "inner", r: 450.57 },
+] as const;
+/** Each tile (t01…t11): its ring, Figma's angle on it (degrees clockwise
+ *  from 3 o'clock, measured from the tile's centre) and Figma's turn. */
+const TILES: { ring: (typeof RINGS)[number]["key"]; a: number; r?: number }[] = [
+  { ring: "middle", a: -172.84 },
+  { ring: "middle", a: 156.72 },
+  { ring: "inner", a: 161.52 },
+  { ring: "inner", a: 23.33 },
+  { ring: "middle", a: -10.39 },
+  { ring: "outer", a: 13.84, r: -0.36 },
+  { ring: "inner", a: -37.43 },
+  { ring: "inner", a: -144.81, r: 179.55 },
+  { ring: "outer", a: -158.53 },
+  { ring: "outer", a: 171.77 },
+  { ring: "inner", a: -91.89 },
+];
+const orbits = RINGS.map((ring) => ({
+  key: ring.key,
+  style: `--size:${2 * ring.r}`,
+  tiles: TILES.flatMap((t, i) => {
+    if (t.ring !== ring.key) return [];
+    const rad = (t.a * Math.PI) / 180;
+    return [{
+      src: `${IMG}/mission/t${String(i + 1).padStart(2, "0")}.webp`,
+      style: `--x:${(50 + 50 * Math.cos(rad)).toFixed(3)}%;--y:${(50 + 50 * Math.sin(rad)).toFixed(3)}%;--r:${t.r ?? 0}deg`,
+    }];
+  }),
+}));
+---
+
+<section class="c-about-mission" data-about-mission>
+  <Container>
+    <div class="c-about-mission__card">
+      <div class="c-about-mission__art" style={`--cx:${CENTRE.x};--cy:${CENTRE.y}`} aria-hidden="true">
+        <img class="c-about-mission__rings" src={`${IMG}/mission-circles.svg`} width="1647.48" height="1647.48" alt="" loading="lazy" decoding="async" />
+        {orbits.map((orbit) => (
+          <div class={`c-about-mission__orbit is-${orbit.key}`} style={orbit.style}>
+            {orbit.tiles.map((tile) => (
+              <span class="c-about-mission__tile" style={tile.style}>
+                <img src={tile.src} width="160" height="160" alt="" loading="lazy" decoding="async" />
+              </span>
+            ))}
+          </div>
+        ))}
+        <span class="c-about-mission__fade"></span>
+      </div>
+      <SectionHeader eyebrow={eyebrow} title={title} description={body} class="c-about-mission__header" />
+    </div>
+  </Container>
+</section>
+
+<script>
+  // Pause the orbit while the section is off screen. Without JS it keeps running.
+  document.querySelectorAll<HTMLElement>("[data-about-mission]").forEach((section) => {
+    const observer = new IntersectionObserver(([entry]) => {
+      section.classList.toggle("is-paused", !entry?.isIntersecting);
+    });
+    observer.observe(section);
+  });
+</script>
+
+<style>
+  .c-about-mission {
+    --u: calc(1rem / 19.2);
+    background: var(--color-white);
+  }
+
+  .c-about-mission__card {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(563 * var(--u));
+    padding: calc(100 * var(--u)) calc(34 * var(--u)) calc(120 * var(--u));
+    border: var(--border-default);
+    border-radius: 14px;
+    background: var(--color-surface-glass);
+    backdrop-filter: blur(10px);
+  }
+
+  .c-about-mission__art {
+    --a: var(--u);
+    position: absolute;
+    top: calc(50% + 32.73 * var(--a));
+    left: 50%;
+    width: calc(1679.84 * var(--a));
+    height: calc(1648.34 * var(--a));
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .c-about-mission__rings {
+    position: absolute;
+    left: calc(32.04 * var(--a));
+    top: calc(0.33 * var(--a));
+    width: calc(1647.48 * var(--a));
+    height: calc(1647.48 * var(--a));
+    max-width: none;
+  }
+  /* Orbit: a square on each ring, rotating; its tiles sit on the edge
+     circle and turn the other way (`translate` + `rotate`, as
+     ClientOrbitHero, so each tile turns about its own centre). */
+  .c-about-mission__orbit {
+    --turn: 1turn;
+    position: absolute;
+    left: calc(var(--cx) * var(--a));
+    top: calc(var(--cy) * var(--a));
+    width: calc(var(--size) * var(--a));
+    height: calc(var(--size) * var(--a));
+    translate: -50% -50%;
+    animation: c-about-mission-orbit var(--speed) linear infinite;
+  }
+  .c-about-mission__orbit.is-outer {
+    --speed: 200s;
+  }
+  .c-about-mission__orbit.is-middle {
+    --speed: 160s;
+    --turn: -1turn;
+  }
+  .c-about-mission__orbit.is-inner {
+    --speed: 120s;
+  }
+  .c-about-mission__tile {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: calc(80.174 * var(--a));
+    height: calc(80.174 * var(--a));
+    overflow: hidden;
+    translate: -50% -50%;
+    border: var(--border-default);
+    border-radius: 8px;
+    animation: c-about-mission-counter var(--speed) linear infinite;
+  }
+  .c-about-mission__tile img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    transform: rotate(var(--r));
+  }
+  .c-about-mission.is-paused :is(.c-about-mission__orbit, .c-about-mission__tile) {
+    animation-play-state: paused;
+  }
+  @keyframes c-about-mission-orbit {
+    to {
+      rotate: var(--turn);
+    }
+  }
+  @keyframes c-about-mission-counter {
+    to {
+      rotate: calc(var(--turn) * -1);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .c-about-mission__orbit,
+    .c-about-mission__tile {
+      animation: none;
+    }
+  }
+  /* Figma "Rectangle 34624333": clear in the middle, white at the edges. */
+  .c-about-mission__fade {
+    position: absolute;
+    left: calc(-79.19 * var(--a));
+    top: calc(50% - 43.59 * var(--a));
+    width: calc(1838.22 * var(--a));
+    height: calc(777.31 * var(--a));
+    transform: translateY(-50%);
+    background: radial-gradient(
+      calc(1454.7 * var(--a)) calc(615.13 * var(--a)) at 50% 50%,
+      transparent 38.37%,
+      var(--color-white) 78.66%
+    );
+  }
+
+  .c-about-mission__card :global(.c-section-header) {
+    position: relative;
+  }
+  .c-about-mission__card :global(.c-section-header__title) {
+    color: var(--color-black-secondary);
+  }
+  /* Figma's 563.82 box, a few px wider so Acumin breaks on Figma's lines. */
+  .c-about-mission__card :global(.c-section-header__description) {
+    max-width: calc(570 * var(--u));
+  }
+
+  @media (max-width: 767px) {
+    .c-about-mission__card {
+      min-height: 0;
+      padding: 7rem 2rem;
+    }
+    .c-about-mission__art {
+      --a: calc(var(--u) * 0.6);
+    }
+    /* At this size the tiles land on the copy: rings only. */
+    .c-about-mission__orbit {
+      display: none;
+    }
+    .c-about-mission__card :global(.c-section-header__description) {
+      max-width: none;
+    }
+  }
+</style>

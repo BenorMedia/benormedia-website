@@ -1,0 +1,20 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="544.82" height="544.82" viewBox="0 0 544.82 544.82" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Frame 2147224875">
+<g id="Ellipse 15138" opacity="0.1" filter="url(#filter0_f_0_5)">
+<circle cx="272.412" cy="272.419" r="98.2686" fill="#1355FF"/>
+</g>
+<mask id="stroke0_0_5" fill="white">
+<path d="M452.831 272.405C452.831 372.051 372.052 452.83 272.406 452.83C172.76 452.83 91.9805 372.051 91.9805 272.405C91.9805 172.759 172.76 91.9795 272.406 91.9795C372.052 91.9795 452.831 172.759 452.831 272.405Z"/>
+</mask>
+<path id="Ellipse 15139" d="M452.831 272.405C452.831 372.051 372.052 452.83 272.406 452.83C172.76 452.83 91.9805 372.051 91.9805 272.405C91.9805 172.759 172.76 91.9795 272.406 91.9795C372.052 91.9795 452.831 172.759 452.831 272.405Z" stroke-width="1.35" stroke="white" mask="url(#stroke0_0_5)"/>
+<path id="Ellipse 15141" d="M370.321 272.405C370.321 326.483 326.482 370.322 272.404 370.322C218.326 370.322 174.487 326.483 174.487 272.405C174.487 218.327 218.326 174.488 272.404 174.488C326.482 174.488 370.321 218.327 370.321 272.405Z" stroke-width="0.675" stroke="white"/>
+<path id="Ellipse 15140" d="M544.482 272.41C544.482 422.671 422.671 544.482 272.41 544.482C122.148 544.482 0.3375 422.671 0.3375 272.41C0.3375 122.148 122.148 0.3375 272.41 0.3375C422.671 0.3375 544.482 122.148 544.482 272.41Z" stroke-width="0.675" stroke="white"/>
+</g>
+<defs>
+<filter id="filter0_f_0_5" x="23.4174" y="23.4241" width="497.99" height="497.99" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="75.3631" result="effect1_foregroundBlur_0_5"/>
+</filter>
+</defs>
+</svg>

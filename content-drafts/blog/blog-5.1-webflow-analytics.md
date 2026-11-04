@@ -10,7 +10,7 @@ title: "Webflow Analytics: What to Set Up First | BenorMedia"
 description: "What Webflow Analyze, GA4, and Google Tag Manager each measure on a B2B SaaS site, the order to set them up, a starter event list, and the Google tag gateway."
 h1: "Webflow analytics for B2B SaaS: Analyze, GA4, Tag Manager, and what to set up first"
 lang: en-US
-author: "Sergio Gancedo, Managing Director"
+author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-17
 updatedAt: 2026-10-17
 reviewEvery: none

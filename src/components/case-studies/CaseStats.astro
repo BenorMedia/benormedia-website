@@ -1,0 +1,155 @@
+---
+/**
+ * CaseStats — the three headline numbers under the hero (Figma 4225:11882):
+ * one bordered box, dividers between the stats, a square on each side, and
+ * three floating 3D shapes (Figma exports, decorative). A `<dl>`: the label
+ * is the term, the number its value, shown number first.
+ *
+ * ≤767 (no mobile design, `TODO: DS mobile`): the stats stack, dividers
+ * turn horizontal.
+ */
+import CaseDecor from "./CaseDecor.astro";
+import type { CsStat } from "../../lib/case-studies/types";
+import shape1 from "../../assets/case-studies/surfe/stat-shape-1.png";
+import shape2 from "../../assets/case-studies/surfe/stat-shape-2.png";
+import shape3 from "../../assets/case-studies/surfe/stat-shape-3.png";
+
+interface Props {
+  stats: readonly [CsStat, CsStat, CsStat];
+}
+
+const { stats } = Astro.props;
+---
+
+<section class="c-case-stats" aria-label="Key results">
+  <div class="c-case-stats__box">
+    <CaseDecor src={shape1} width={80} class="c-case-stats__shape is-1" />
+    <CaseDecor src={shape2} width={60} class="c-case-stats__shape is-2" />
+    <CaseDecor src={shape3} width={90} class="c-case-stats__shape is-3" />
+    <dl class="c-case-stats__list">
+      {stats.map((s) => (
+        <div class="c-case-stats__item">
+          <dt class="c-paragraph c-case-stats__label">{s.label}</dt>
+          <dd class="c-text_xl c-case-stats__value">{s.value}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>
+
+<style>
+  .c-case-stats {
+    --u: calc(1rem / 19.2);
+    display: flex;
+    justify-content: center;
+    padding-inline: 7.5rem;
+    overflow: hidden;
+  }
+  .c-case-stats__box {
+    position: relative;
+    border: var(--border-default);
+    border-radius: 8px;
+  }
+  /* Side squares (Figma: 15px, centred on the left and right borders). */
+  .c-case-stats__box::before,
+  .c-case-stats__box::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: calc(15 * var(--u));
+    height: calc(15 * var(--u));
+    border: 0.75px solid var(--color-gray);
+    border-radius: 2.25px;
+    background: var(--color-white);
+    transform: translateY(-50%);
+  }
+  .c-case-stats__box::before { left: calc(-7.5 * var(--u)); }
+  .c-case-stats__box::after { right: calc(-7.5 * var(--u)); }
+
+  .c-case-stats__list {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    margin: 0;
+  }
+  .c-case-stats__item {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    align-items: center;
+    gap: calc(8 * var(--u));
+    width: calc(330 * var(--u));
+    padding: calc(24 * var(--u)) calc(40 * var(--u));
+    text-align: center;
+  }
+  /* Dividers: 24px gaps with a 158px line in the middle. */
+  .c-case-stats__item {
+    position: relative;
+  }
+  .c-case-stats__item + .c-case-stats__item {
+    margin-left: calc(48 * var(--u));
+  }
+  .c-case-stats__item + .c-case-stats__item::before {
+    content: "";
+    position: absolute;
+    top: calc(17 * var(--u));
+    bottom: calc(17 * var(--u));
+    left: calc(-24 * var(--u));
+    width: 1px;
+    background: var(--color-border);
+  }
+  /* Figma: Brulia 50px, between Text L and Text XL; c-text_xl (TODO: DS). */
+  .c-case-stats__value {
+    margin: 0;
+    color: var(--color-black-secondary);
+    line-height: 1.4;
+    white-space: nowrap;
+    font-size: var(--cs-fs-stat);
+  }
+  .c-case-stats__label {
+    color: var(--color-text);
+    max-width: calc(250 * var(--u));
+    font-size: var(--cs-fs-small);
+    line-height: 1.2;
+  }
+  /* Shapes: the parts Figma shows inside the section (exports). */
+  .c-case-stats :global(.c-case-stats__shape) {
+    position: absolute;
+    z-index: 0;
+    height: auto;
+    pointer-events: none;
+  }
+  .c-case-stats :global(.c-case-stats__shape.is-1) { top: 0; left: calc(7.5 * var(--u)); width: calc(79.3 * var(--u)); }
+  .c-case-stats :global(.c-case-stats__shape.is-2) { top: calc(18 * var(--u)); left: calc((378 + 185) * var(--u)); width: calc(59.3 * var(--u)); }
+  .c-case-stats :global(.c-case-stats__shape.is-3) { bottom: 0; left: calc(756 * var(--u)); width: calc(90 * var(--u)); }
+
+  @media (max-width: 767px) {
+    .c-case-stats {
+      padding-inline: 2rem;
+    }
+    .c-case-stats__box {
+      width: 100%;
+    }
+    .c-case-stats__list {
+      flex-direction: column;
+    }
+    .c-case-stats__item {
+      width: 100%;
+      padding: 2.5rem 2rem;
+    }
+    .c-case-stats__item + .c-case-stats__item {
+      margin-left: 0;
+    }
+    .c-case-stats__item + .c-case-stats__item::before {
+      top: 0;
+      bottom: auto;
+      left: 2rem;
+      right: 2rem;
+      width: auto;
+      height: 1px;
+    }
+    .c-case-stats :global(.c-case-stats__shape) {
+      display: none;
+    }
+  }
+</style>

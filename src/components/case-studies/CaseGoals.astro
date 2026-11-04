@@ -1,0 +1,96 @@
+---
+/**
+ * CaseGoals — "Goals agreed at kickoff" (Figma 4225:12063): the intro line,
+ * then five cards with a 3D icon, an accent chip ("GOAL 01", the accent
+ * tag with Figma's gradient side squares) and the goal.
+ * ≤991: wraps to rows of three; ≤767: two (`TODO: DS mobile`).
+ */
+import CaseDecor from "./CaseDecor.astro";
+import Tag from "../ui/Tag.astro";
+import type { CsGoal } from "../../lib/case-studies/types";
+
+interface Props {
+  intro: string;
+  goals: readonly CsGoal[];
+}
+
+const { intro, goals } = Astro.props;
+---
+
+<div class="c-case-goals">
+  <p class="c-paragraph_m c-case-text">{intro}</p>
+  <ul class="c-case-goals__list">
+    {goals.map((g) => (
+      <li class="c-case-goals__card">
+        <CaseDecor src={g.icon} width={64} class="c-case-goals__icon" />
+        <Tag variant="accent" class="c-case-goals__chip">{g.label}</Tag>
+        <p class="c-paragraph_m c-case-goals__text">{g.text}</p>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .c-case-goals {
+    --u: calc(1rem / 19.2);
+    display: flex;
+    flex-direction: column;
+    gap: calc(24 * var(--u));
+  }
+  .c-case-goals__list {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: calc(16 * var(--u));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .c-case-goals__card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: calc(20 * var(--u));
+    min-width: 0;
+    padding: calc(24 * var(--u));
+    border: var(--border-default);
+    border-radius: 8px;
+    background: var(--color-white);
+  }
+  .c-case-goals :global(.c-case-goals__icon) {
+    width: calc(64 * var(--u));
+    height: calc(64 * var(--u));
+  }
+  /* Figma: gradient-tinted squares with a blue border on both sides. */
+  .c-case-goals :global(.c-case-goals__chip) {
+    position: relative;
+    overflow: visible;
+  }
+  .c-case-goals :global(.c-case-goals__chip)::before,
+  .c-case-goals :global(.c-case-goals__chip)::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 0.625rem;
+    height: 0.625rem;
+    border: 0.5px solid var(--color-blue);
+    border-radius: 2.25px;
+    background: color-mix(in srgb, var(--color-blue) 10%, var(--color-white));
+    transform: translateY(-50%);
+  }
+  .c-case-goals :global(.c-case-goals__chip)::before { left: -0.344rem; }
+  .c-case-goals :global(.c-case-goals__chip)::after { right: -0.344rem; }
+  .c-case-goals__text {
+    margin: 0;
+    color: var(--color-text);
+    font-size: var(--cs-fs-body);
+    line-height: 1.5;
+  }
+  @media (max-width: 991px) {
+    .c-case-goals__list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (max-width: 767px) {
+    .c-case-goals__list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; }
+    .c-case-goals__card { padding: 1.8rem; gap: 1.4rem; }
+    .c-case-goals :global(.c-case-goals__icon) { width: 5rem; height: 5rem; }
+  }
+</style>

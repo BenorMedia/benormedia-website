@@ -78,7 +78,7 @@ editorNotes:
   - "Short commercial page in the outline format. The long, sourced version is the guide b2b-saas-website-pages: keep the two from repeating each other."
   - "Most valuable answers: how many B2B SaaS sites BenorMedia has built (B2B-1) and which clients approved a case study or a named result (G8). The page is accurate without them."
   - "Clients on the work page are called B2B teams, not SaaS, because the site does not say which are SaaS. Tell us which can be called SaaS and the page can say so."
-  - "The page states no price, timeline in weeks or result. Partner wording stays Webflow Professional Partner (G2)."
+  - "The page states no price, timeline in weeks or result. Partner wording stays Webflow Premium Partner (G2)."
 visuals:
   - after: The pages a SaaS buyer expects
     side: right

@@ -65,22 +65,13 @@ export const DIAGRAMS: Record<string, DiagramEntry> = {
     component: TimelineDiagram,
     props: { milestones: ["Audit", "Stakeholder sign-offs", "Component library build", "Launch"] },
   },
-  // Labels: brief ("benchmark, map URLs, rebuild, move content, redirect, test, launch, monitor"), the guide's eight numbered steps.
+  // Labels: brief ("map, design, build, launch and audit"), the guide's four phases (lead 2026-10-25).
   "wordpress-to-webflow-migration:1": {
     component: FlowDiagram,
     props: {
       numbered: true,
       columns: 4,
-      steps: [
-        { label: "Benchmark" },
-        { label: "Map URLs" },
-        { label: "Rebuild" },
-        { label: "Move content" },
-        { label: "Redirect" },
-        { label: "Test" },
-        { label: "Launch" },
-        { label: "Monitor" },
-      ],
+      steps: [{ label: "Map" }, { label: "Design" }, { label: "Build" }, { label: "Launch and audit" }],
     },
   },
   // Labels: brief groups and pages; page names as in the "Pages a B2B SaaS website needs" table.
@@ -1094,6 +1085,109 @@ export const HEROES: Record<string, DiagramEntry> = {
           items: [
             { icon: "person", label: "ChatGPT-User" },
             { icon: "person", label: "Claude-User" },
+          ],
+        },
+      ],
+    },
+  },
+  // Blog wave 2 (lead 2026-10-17).
+  // "Mapping WordPress post data to Webflow CMS fields".
+  "import-wordpress-to-webflow": {
+    component: IlHero,
+    props: {
+      from: {
+        tag: "WordPress",
+        items: [
+          { icon: "docPencil", label: "Content" },
+          { icon: "graphics", label: "Featured image" },
+          { icon: "person", label: "Author" },
+        ],
+      },
+      to: {
+        tag: "Webflow CMS",
+        items: [
+          { icon: "doc", label: "Rich text" },
+          { icon: "graphics", label: "Image field" },
+          { icon: "cms", label: "Reference field" },
+        ],
+      },
+    },
+  },
+  // "the week before launch, launch day, and the first week after".
+  "website-launch-checklist": {
+    component: IlColumns,
+    props: {
+      columns: [
+        {
+          tag: "Week before",
+          items: [
+            { icon: "api", label: "Redirect map" },
+            { icon: "funnel", label: "Forms" },
+          ],
+        },
+        {
+          tag: "Launch day",
+          items: [
+            { icon: "techSeo", label: "Robots and noindex" },
+            { icon: "chartSearch", label: "Sitemap" },
+          ],
+        },
+        {
+          tag: "First week",
+          items: [
+            { icon: "reporting", label: "Search Console" },
+            { icon: "analytics", label: "Key events" },
+          ],
+        },
+      ],
+    },
+  },
+  // "What the platform handles and what you still own".
+  "is-webflow-good-for-seo": {
+    component: IlHero,
+    props: {
+      from: {
+        tag: "Webflow handles",
+        items: [
+          { icon: "code", label: "HTML output" },
+          { icon: "chartSearch", label: "XML sitemap" },
+          { icon: "api", label: "301 redirects" },
+        ],
+      },
+      to: {
+        tag: "You still own",
+        items: [
+          { icon: "docPencil", label: "Content" },
+          { icon: "ux", label: "Internal links" },
+          { icon: "reporting", label: "Monitoring" },
+        ],
+      },
+    },
+  },
+  // Measurement first, then research, then the ranked fixes.
+  "cro-audit": {
+    component: IlColumns,
+    props: {
+      columns: [
+        {
+          tag: "Measurement",
+          items: [
+            { icon: "analytics", label: "Key events" },
+            { icon: "funnel", label: "Funnel analysis" },
+          ],
+        },
+        {
+          tag: "Research",
+          items: [
+            { icon: "person", label: "Usability tests" },
+            { icon: "flask", label: "Session recordings" },
+          ],
+        },
+        {
+          tag: "Fixes",
+          items: [
+            { icon: "reporting", label: "Prioritize fixes" },
+            { icon: "calendar", label: "One change at a time" },
           ],
         },
       ],

@@ -1,0 +1,71 @@
+---
+/**
+ * CaseTakeaways — "Key takeaways" (Figma 4225:12728): three bordered cards,
+ * each with the 3D check, a short title and a line. ≤767: one column.
+ */
+import CaseDecor from "./CaseDecor.astro";
+import type { CsTakeaway } from "../../lib/case-studies/types";
+import check from "../../assets/case-studies/shared/check.png";
+
+interface Props {
+  items: readonly CsTakeaway[];
+}
+
+const { items } = Astro.props;
+---
+
+<ul class="c-case-takeaways">
+  {items.map((t) => (
+    <li class="c-case-takeaways__card">
+      <CaseDecor src={check} width={32} class="c-case-takeaways__icon" />
+      <p class="c-paragraph_m c-case-takeaways__title">{t.title}</p>
+      <p class="c-paragraph_m c-case-takeaways__text">{t.text}</p>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .c-case-takeaways {
+    --u: calc(1rem / 19.2);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: calc(16 * var(--u));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .c-case-takeaways__card {
+    display: flex;
+    flex-direction: column;
+    gap: calc(8 * var(--u));
+    min-width: 0;
+    min-height: calc(240 * var(--u));
+    padding: calc(25 * var(--u));
+    border: var(--border-default);
+    border-radius: 8px;
+    background: var(--color-white);
+  }
+  .c-case-takeaways :global(.c-case-takeaways__icon) {
+    margin-bottom: calc(8 * var(--u));
+    width: calc(32 * var(--u));
+    height: calc(32 * var(--u));
+  }
+  .c-case-takeaways__title,
+  .c-case-takeaways__text {
+    margin: 0;
+    font-size: var(--cs-fs-body);
+    line-height: 1.5;
+  }
+  .c-case-takeaways__title {
+    color: var(--color-black-secondary);
+    font-size: var(--cs-fs-body);
+    line-height: 1.2;
+  }
+  .c-case-takeaways__text {
+    color: var(--color-text);
+  }
+  @media (max-width: 767px) {
+    .c-case-takeaways { grid-template-columns: minmax(0, 1fr); gap: 1.2rem; }
+    .c-case-takeaways__card { min-height: 0; padding: 2rem; }
+  }
+</style>
