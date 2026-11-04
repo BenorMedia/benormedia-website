@@ -19,6 +19,10 @@
  * the −50% point lands on a card edge and the loop has no jump. Repeats are
  * `aria-hidden`. No pause on hover (lead, 2026-09-29). Reduced motion → no
  * animation, rows scroll horizontally instead.
+ *
+ * Drag: rows can be dragged left and right (`src/scripts/ui/marquee-drag.ts`,
+ * lead 2026-11-04). Cards here keep the logo beside the author (`logoBeside`,
+ * lead 2026-11-04: there's room); the Testimonials grid puts it below.
  */
 import type { Testimonial } from "../../lib/sanity/types";
 import TestimonialCard from "./TestimonialCard.astro";
@@ -72,7 +76,7 @@ const rootClass = ["c-testimonial-marquee", className].filter(Boolean).join(" ")
         >
           {row.items.map(({ t, hidden }) => (
             <li class="c-testimonial-marquee__item" aria-hidden={hidden ? "true" : undefined}>
-              <TestimonialCard testimonial={t} repeat={hidden} />
+              <TestimonialCard testimonial={t} repeat={hidden} logoBeside />
             </li>
           ))}
         </ul>
@@ -80,6 +84,12 @@ const rootClass = ["c-testimonial-marquee", className].filter(Boolean).join(" ")
     ))}
   </div>
 )}
+
+<script>
+  import { initMarqueeDrag } from "../../scripts/ui/marquee-drag";
+
+  document.querySelectorAll<HTMLElement>(".c-testimonial-marquee").forEach(initMarqueeDrag);
+</script>
 
 <style>
   .c-testimonial-marquee {
@@ -92,6 +102,20 @@ const rootClass = ["c-testimonial-marquee", className].filter(Boolean).join(" ")
 
   .c-testimonial-marquee__row {
     display: flex;
+  }
+
+  /* Drag (marquee-drag.ts): horizontal drags move the row, vertical swipes
+     still scroll the page. Only while the loop runs. */
+  @media (prefers-reduced-motion: no-preference) {
+    .c-testimonial-marquee__row {
+      touch-action: pan-y;
+      cursor: grab;
+    }
+
+    .c-testimonial-marquee__row.is-dragging {
+      cursor: grabbing;
+      user-select: none;
+    }
   }
 
   .c-testimonial-marquee__track {
