@@ -113,7 +113,9 @@ export interface CaseStudy {
   updatedAt: string;
   /** `ogImage`: a 1200 x 630 file in `public/` (site path). */
   seo: { title: string; description: string; ogImage: string };
-  client: { name: string; url: string; logo: CsImage };
+  /** `id`: the Sanity `client` document; its `websiteVideo` (+ poster) is
+   *  the hero media when set, else `hero.screenshot`. */
+  client: { id: string; name: string; url: string; logo: CsImage };
   hero: {
     tag: string;
     h1: string;
@@ -135,7 +137,8 @@ export interface CaseStudy {
     goals: readonly CsGoal[];
     figure: CsFigure;
   };
-  work: { heading: string; intro: string; questions: readonly CsQuestion[] };
+  /** `intro`: optional (Surfe's is a hidden layer in Figma, 4225:12236). */
+  work: { heading: string; intro?: string | undefined; questions: readonly CsQuestion[] };
   results: { heading: string; paragraphs: readonly string[]; table: CsTable; figure: CsFigure };
   clientQuote: { heading: string; quote: CsQuote };
   stack: { heading: string; intro: string; core: CsStackCore; items: readonly CsStackItem[] };

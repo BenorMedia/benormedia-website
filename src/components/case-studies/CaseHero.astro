@@ -32,9 +32,11 @@ interface Props {
   address: string;
   liveLabel: string;
   liveUrl: string;
+  /** The client's website video (Sanity `websiteVideo`), else the screenshot. */
+  video?: { src: string; poster: string | undefined } | undefined;
 }
 
-const { crumbs, logo, tag, h1, intro, screenshot, address, liveLabel, liveUrl } = Astro.props;
+const { crumbs, logo, tag, h1, intro, screenshot, address, liveLabel, liveUrl, video } = Astro.props;
 ---
 
 <section class="c-case-hero" aria-labelledby="case-hero-title">
@@ -61,27 +63,53 @@ const { crumbs, logo, tag, h1, intro, screenshot, address, liveLabel, liveUrl } 
           </span>
           <span class="c-case-hero__address">{address}</span>
         </div>
-        <Image
-          src={screenshot.src}
-          alt={screenshot.alt}
-          widths={[760, 1100, 1520, 2200]}
-          sizes="(max-width: 991px) 100vw, 1100px"
-          class="c-case-hero__shot"
-          loading="eager"
-          fetchpriority="high"
-        />
-        <a class="c-button is-white c-case-hero__live" href={liveUrl} target="_blank" rel="noopener noreferrer">
-          <span class="c-button__text">{liveLabel}</span>
-          <span class="c-button__icon c-case-hero__live-icon" aria-hidden="true"><img src={arrow.src} alt="" width="16" height="16" /></span>
-          <span class="c-case-hero__sr"> (opens in a new tab)</span>
-        </a>
-        <img class="c-case-hero__pointer" src={pointer.src} alt="" width="19" height="23" aria-hidden="true" />
+        <div class="c-case-hero__screen" data-cursor-follow>
+          {video ? (
+            <video
+              class="c-case-hero__shot"
+              src={video.src}
+              poster={video.poster}
+              aria-label={screenshot.alt}
+              muted
+              loop
+              playsinline
+              preload="none"
+              data-client-video
+            />
+          ) : (
+            <Image
+              src={screenshot.src}
+              alt={screenshot.alt}
+              widths={[760, 1100, 1520, 2200]}
+              sizes="(max-width: 991px) 100vw, 1100px"
+              class="c-case-hero__shot"
+              loading="eager"
+              fetchpriority="high"
+            />
+          )}
+          <a class="c-button is-white c-case-hero__live" href={liveUrl} target="_blank" rel="noopener noreferrer" data-cursor-follow-target>
+            <span class="c-button__text">{liveLabel}</span>
+            <span class="c-button__icon c-case-hero__live-icon" aria-hidden="true"><img src={arrow.src} alt="" width="16" height="16" /></span>
+            <span class="c-case-hero__sr"> (opens in a new tab)</span>
+          </a>
+          <img class="c-case-hero__pointer" src={pointer.src} alt="" width="19" height="23" aria-hidden="true" />
+        </div>
       </div>
     </div>
   </div>
 </section>
 
+<script>
+  import { initClientVideos } from "../../scripts/ui/client-video";
+  import { initCursorFollow } from "../../scripts/ui/cursor-follow";
+
+  initClientVideos();
+  initCursorFollow();
+</script>
+
 <style>
+  /* Sizes in Figma px (`--u`); type sizes from the page's `--cs-fs-*`
+     (the design's sizes on the site's tokens, see the page). */
   .c-case-hero {
     --u: calc(1rem / 19.2);
     overflow: hidden;
@@ -103,40 +131,57 @@ const { crumbs, logo, tag, h1, intro, screenshot, address, liveLabel, liveUrl } 
     gap: calc(25 * var(--u));
     min-width: 0;
   }
+  /* Figma: Text XS 15px, #4A4A4A (closest token), 16px chevrons, 8px gaps. */
+  .c-case-hero :global(.c-np-crumbs__item) {
+    gap: calc(8 * var(--u));
+    font-size: var(--cs-fs-xs);
+    line-height: 1.5;
+  }
+  .c-case-hero :global(.c-np-crumbs__list) {
+    gap: calc(8 * var(--u));
+  }
+  .c-case-hero :global(.c-np-crumbs__chevron) {
+    width: calc(16 * var(--u));
+    height: calc(16 * var(--u));
+  }
   .c-case-hero__tags {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: calc(16 * var(--u));
   }
-  /* Logo chip: the default eyebrow box (Figma's thinner chip, TODO: DS). */
+  /* Logo chip (Figma 4225:11837): 24 / 10 px padding, 0.38px border, 7.6px
+     squares: the default eyebrow box at its own size (TODO: DS). */
   .c-case-hero :global(.c-case-hero__logo) {
-    padding: 0.6em 1.6em;
+    padding: calc(10 * var(--u)) calc(24 * var(--u));
   }
   .c-case-hero :global(.c-case-hero__logo-img) {
     display: block;
-    width: calc(56.54 * var(--u) * 1.4);
+    width: calc(56.54 * var(--u));
     height: auto;
   }
   .c-case-hero__title {
     margin: 0;
     color: var(--color-black-secondary);
+    font-size: var(--cs-fs-h1);
     line-height: 1.4;
   }
   .c-case-hero__intro {
-    max-width: calc(728 * var(--u));
+    max-width: calc(728.43 * var(--u));
     margin: calc(-15 * var(--u)) 0 0;
     color: var(--color-text);
+    font-size: var(--cs-fs-lead);
+    line-height: 1.5;
   }
 
-  /* Browser frame: 981 x 675 window onto the 1103 wide frame. */
+  /* Browser frame: a 981 x 675 window onto the 1103 wide frame (Figma cuts
+     it at the 1920 frame's edge). */
   .c-case-hero__media {
     flex: 0 0 calc(981 * var(--u));
     height: calc(675 * var(--u));
     overflow: hidden;
   }
   .c-case-hero__frame {
-    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -154,10 +199,11 @@ const { crumbs, logo, tag, h1, intro, screenshot, address, liveLabel, liveUrl } 
     width: 100%;
     height: calc(46 * var(--u));
   }
+  /* Dots at 2.72% / 5.54% / 8.37% of the bar, 16.78px. */
   .c-case-hero__dots {
     position: absolute;
     top: 50%;
-    left: calc(30 * var(--u));
+    left: 2.72%;
     display: flex;
     gap: calc(14.4 * var(--u));
     transform: translateY(-50%);
@@ -176,31 +222,84 @@ const { crumbs, logo, tag, h1, intro, screenshot, address, liveLabel, liveUrl } 
     border-radius: 30px;
     background: var(--color-white);
     color: var(--color-text); /* Figma #8A909E, TODO: DS */
-    font-size: var(--fs-p-s);
+    font-size: calc(13.19 * var(--u));
     line-height: 1;
   }
-  .c-case-hero :global(.c-case-hero__shot) {
-    display: block;
+  /* The site's media: 1069 x 611, 8px top corners. */
+  .c-case-hero__screen {
+    position: relative;
     width: calc(1069.24 * var(--u));
-    height: auto;
     aspect-ratio: 1069.24 / 611.1;
-    object-fit: cover;
-    object-position: top;
+    overflow: hidden;
     border-radius: 8px 8px 0 0;
   }
-  /* Figma: centred at +135 / -20.65 px from the frame's middle. */
+  .c-case-hero__screen :global(.c-case-hero__shot) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+  /* "Visit live site": Figma's spot (+135 / -20.65 px from the frame's
+     middle = 62.62% / 42.85% of the media), white button, 20px. Shown
+     there without JS, on touch and on keyboard focus. */
   .c-case-hero__live {
     position: absolute;
-    top: calc(50% - 20.65 * var(--u));
-    left: calc(50% + 135 * var(--u));
-    transform: translate(-50%, -50%);
+    top: 42.85%;
+    left: 62.62%;
+    z-index: 1;
+    padding: calc(16 * var(--u)) calc(30 * var(--u)) calc(14 * var(--u));
+    border-radius: 3px;
+    font-size: var(--cs-fs-body);
     white-space: nowrap;
+    transform: translate(-50%, -50%);
   }
   .c-case-hero__live-icon img {
     display: block;
-    width: 1em;
-    height: 1em;
+    width: calc(16 * var(--u));
+    height: calc(16 * var(--u));
     transform: rotate(180deg);
+  }
+  .c-case-hero__pointer {
+    position: absolute;
+    top: 47.76%;
+    left: 53.71%;
+    width: calc(20 * var(--u));
+    height: auto;
+    transform: translate(-50%, -50%) rotate(35.36deg);
+    pointer-events: none;
+  }
+  /* Hover devices (cursor-follow.ts): hidden until the pointer is over the
+     media, then centred on it; the drawn pointer goes (the real one is
+     there). */
+  .c-case-hero__screen.is-cursor-follow {
+    cursor: pointer;
+  }
+  .c-case-hero__screen.is-cursor-follow .c-case-hero__pointer {
+    display: none;
+  }
+  .c-case-hero__screen.is-cursor-follow .c-case-hero__live {
+    top: 0;
+    left: 0;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(var(--cf-x, 0), var(--cf-y, 0)) translate(-50%, -50%);
+    transition: opacity 0.3s var(--ease-smooth);
+  }
+  .c-case-hero__screen.is-cursor-follow.is-cursor-inside .c-case-hero__live {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .c-case-hero__screen.is-cursor-follow:not(.is-cursor-inside) .c-case-hero__live:focus-visible {
+    top: 42.85%;
+    left: 62.62%;
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .c-case-hero__screen.is-cursor-follow .c-case-hero__live {
+      transition: none;
+    }
   }
   /* Screen-reader only (no global utility yet; request in the handoff). */
   .c-case-hero__sr {
@@ -210,15 +309,6 @@ const { crumbs, logo, tag, h1, intro, screenshot, address, liveLabel, liveUrl } 
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;
-  }
-  .c-case-hero__pointer {
-    position: absolute;
-    top: calc(50% + 9.35 * var(--u));
-    left: calc(50% + 39.71 * var(--u));
-    width: calc(20 * var(--u));
-    height: auto;
-    transform: translate(-50%, -50%) rotate(35.36deg);
-    pointer-events: none;
   }
 
   @media (max-width: 991px) {
@@ -236,7 +326,7 @@ const { crumbs, logo, tag, h1, intro, screenshot, address, liveLabel, liveUrl } 
     .c-case-hero__frame {
       width: 100%;
     }
-    .c-case-hero :global(.c-case-hero__shot) {
+    .c-case-hero__screen {
       width: 96.9%;
     }
   }
@@ -247,9 +337,10 @@ const { crumbs, logo, tag, h1, intro, screenshot, address, liveLabel, liveUrl } 
     .c-case-hero__address {
       width: 40%;
       height: 2rem;
+      font-size: var(--fs-p-s);
     }
     .c-case-hero__live {
-      font-size: var(--fs-p);
+      padding: 0.8em 1.4em 0.7em;
     }
   }
 </style>

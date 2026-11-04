@@ -21,9 +21,9 @@
  *  - Browser frame address: "surfe.com" (Figma's hero frame says
  *    "yoursite.com", a template placeholder).
  *
- * Not changed, flagged for the lead: "optimisation" (UK spelling), "10-week
- * engagement ... two phases" vs "about three months" and three phases, the
- * redirect-map caption, Ahrefs named in Results, the summary's missing full
+ * Not shown: the "What we did" intro, a hidden layer in Figma.
+ *
+ * Not changed, flagged for the lead: the redirect-map caption, Ahrefs named in Results, the summary's missing full
  * stop, H2s without full stops.
  *
  * `DRAFT = true` (lead 2026-11-04): built in previews and `astro dev` only,
@@ -85,6 +85,7 @@ export const CASE_STUDY: CaseStudy = {
     ogImage: "/images/case-studies/surfe-og.jpg",
   },
   client: {
+    id: "client-surfe",
     name: "Surfe",
     url: "https://www.surfe.com",
     logo: { src: logo, alt: "Surfe" },
@@ -162,8 +163,9 @@ export const CASE_STUDY: CaseStudy = {
   },
   work: {
     heading: "What we did",
-    intro:
-      "We ran a structured 10-week engagement broken into two phases: strategic redesign followed by Webflow build and optimisation.",
+    // Figma's intro ("We ran a structured 10-week engagement ...", 4225:12236)
+    // is a hidden layer: not shown (lead reference export, 2026-11-04).
+    intro: undefined,
     questions: [
       {
         heading: "How do you move a large WordPress site to Webflow without breaking links?",
