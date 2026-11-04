@@ -280,6 +280,7 @@ export const TESTIMONIALS = /* groq */ `
   authorName,
   authorRole,
   "authorPhoto": authorPhoto${IMAGE},
+  "portrait": portrait${IMAGE},
   "companyLogo": companyLogo${IMAGE},
   kpis[]{ value, description },
   "client": *[_type == "client" && references(^._id)][0]{

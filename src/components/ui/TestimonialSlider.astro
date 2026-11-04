@@ -12,11 +12,13 @@
  * window (the old card collapses while the new one expands); at the window's
  * edge the whole row slides by one card instead. The loop is infinite, a
  * click on a portrait opens it, arrows / keyboard / swipe all work and the
- * row advances on its own until the visitor interacts.
+ * row advances on its own until the visitor interacts. Hovering a portrait
+ * widens it slightly (the open card gives up the space), as in the reference.
  * Logic: `src/scripts/ui/testimonial-slider.ts`.
  *
  * Data: `getTestimonials()` (Sanity `testimonial`). The role comes from
- * `authorRole` ("Role, Company"), the logo from the referencing client, then
+ * `authorRole` ("Role, Company"), the photo from `portrait` (transparent
+ * cut-out) or `authorPhoto`, the logo from the referencing client, then
  * the testimonial's own `companyLogo`, then the company name as text.
  * `highlights` are rendered bold.
  *
@@ -52,7 +54,12 @@ const PHOTO_WIDTHS = [480, 800, 1200];
 
 const items = testimonials.map((t, i) => {
   const { role, company } = splitAuthorRole(t.authorRole);
-  const photo = t.authorPhoto?.asset ? (t.authorPhoto as Source) : undefined;
+  // Transparent cut-out first (Figma), then the regular author photo.
+  const photo = t.portrait?.asset
+    ? (t.portrait as Source)
+    : t.authorPhoto?.asset
+      ? (t.authorPhoto as Source)
+      : undefined;
   const photoSrcset = photo
     ? PHOTO_WIDTHS.map(
         (w) => `${urlFor(photo).width(w).height(w).fit("crop").auto("format").url()} ${w}w`,
@@ -130,7 +137,7 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
                 class="c-ts__photo"
                 src={item.photoSrc}
                 srcset={item.photoSrcset}
-                sizes="(max-width: 767px) 420px, (max-width: 1439px) 47vw, 650px"
+                sizes="(max-width: 767px) 320px, (max-width: 1439px) 40vw, 560px"
                 alt=""
                 width="800"
                 height="800"
@@ -180,11 +187,14 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
     --ts-start-slot: 3;         /* slot of the active card on load (Figma state 1) */
     --ts-inactive-w: 8.135rem;  /* 156.19px */
     --ts-gap: 1.513rem;         /* 29.06px */
-    --ts-min-h: 60.54rem;       /* 1162.36px */
+    /* Figma 1162.36px (60.54rem), 30% shorter (lead 2026-11-04). */
+    --ts-min-h: 42.38rem;
     /* TODO: DS — no spec: the least photo height left under the longest quote. */
-    --ts-photo-min: 30rem;
-    --ts-photo-size: 46.17rem;  /* 886.48px square, bottom-aligned */
-    --ts-photo-overlap: 6.82rem; /* photo top above the content's bottom edge (131px) */
+    --ts-photo-min: 16rem;
+    /* Photo top above the content's bottom edge, under the frosted panel. */
+    --ts-photo-overlap: 4rem;
+    /* Hover on a portrait: +20% width, as the reference (10% → 12%). */
+    --ts-hover-grow: 1.627rem;
     /* TODO: DS motion — reference slider: 0.9s width transition. Ease = site token. */
     --ts-duration: 900ms;
     --ts-ease: var(--ease-smooth);
@@ -195,16 +205,11 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
     gap: 2.083rem;
   }
 
-  /* Tablet: fewer, still-narrow portraits; photo sized to the space under the
-     tallest quote so faces stay visible. */
+  /* Tablet: fewer, still-narrow portraits. */
   @media (max-width: 991px) {
     .c-ts {
       --ts-slots: 3;
       --ts-start-slot: 1;
-      --ts-photo-size: max(
-        var(--ts-active-w, 100%),
-        calc(var(--ts-h, 60rem) - var(--ts-content-h, 30rem) + var(--ts-photo-overlap))
-      );
     }
   }
 
@@ -216,9 +221,10 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
       /* TODO: DS mobile — no Figma mobile frame. */
       --ts-inactive-w: 4.5rem;
       --ts-gap: 1rem;
-      --ts-min-h: 60rem;
-      --ts-photo-min: 26rem;
-      --ts-photo-overlap: 4rem;
+      --ts-min-h: 42rem;
+      --ts-photo-min: 22rem;
+      --ts-photo-overlap: 3rem;
+      --ts-hover-grow: 0rem;
     }
   }
 
@@ -389,17 +395,26 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
     opacity: 1;
   }
 
-  /* --- Photo: same box and crop in both states; grayscale when inactive. -- */
+  /* --- Photo: same box and crop in both states; grayscale when inactive.
+     A bottom-aligned square (the cut-outs are square) that fills the space
+     under the tallest quote, its top tucked under the frosted panel by
+     --ts-photo-overlap, so every face shows whole whatever the quote length. */
   .c-ts__photo {
+    --ts-photo-s: calc(var(--ts-h, var(--ts-min-h)) - var(--ts-content-h, 0px) + var(--ts-photo-overlap));
     position: absolute;
     z-index: 1;
     left: 50%;
     bottom: 0;
-    width: var(--ts-photo-size);
-    height: var(--ts-photo-size);
+    width: var(--ts-photo-s);
+    height: var(--ts-photo-s);
     max-width: none;
-    object-fit: cover;
-    object-position: center top;
+    object-fit: contain;
+    object-position: center bottom;
+    /* Cut-outs end in hard vertical edges at the shoulders; on the open card
+       the square is narrower than the card, so fade its outer sides. On the
+       narrow portraits the fade sits outside the card. */
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
+            mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
     transform: translateX(-50%);
     filter: grayscale(1);
     transition: filter var(--ts-duration) var(--ts-ease);

@@ -170,6 +170,8 @@ export interface Testimonial extends SanityRef<'testimonial'> {
   authorName: string;
   authorRole?: string;
   authorPhoto?: SanityImage;
+  /** Transparent cut-out for the testimonial slider (TESTIMONIALS query only). */
+  portrait?: SanityImage | null;
   companyLogo?: SanityImage;
   kpis?: Kpi[];
   /** Client whose `testimonial` references this one (TESTIMONIALS query only). */

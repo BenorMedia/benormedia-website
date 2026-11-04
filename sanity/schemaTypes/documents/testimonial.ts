@@ -62,6 +62,14 @@ export const testimonial = defineType({
       ],
     }),
     defineField({
+      name: 'portrait',
+      title: 'Portrait (transparent)',
+      description:
+        'Cut-out headshot with a transparent background (PNG), head and shoulders, roughly square. Shown large in the testimonial slider; falls back to the author photo.',
+      type: 'image',
+      options: { hotspot: true },
+    }),
+    defineField({
       name: 'companyLogo',
       title: 'Company logo',
       description: 'The company\'s logo. SVG preferred so it stays sharp at any size.',

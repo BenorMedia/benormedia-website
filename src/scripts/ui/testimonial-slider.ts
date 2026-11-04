@@ -29,6 +29,9 @@
  * stops for good on the first interaction, and never runs with reduced
  * motion.
  *
+ * Hover (mouse): a visible portrait widens by `--ts-hover-grow` and the open
+ * card gives up the same width, with the same transition.
+ *
  * Returns a cleanup function.
  */
 
@@ -56,6 +59,8 @@ export function initTestimonialSlider(root: HTMLElement): () => void {
   let pitch = 0; // narrow card + gap
   let gap = 0;
   let activeWidth = 0;
+  let hoverGrow = 0; // px a hovered portrait widens by (--ts-hover-grow)
+  let hoverIndex = -1; // card under the mouse, -1 for none
   const offsets = new Array<number>(count).fill(0);
   let laidOut = false;
 
@@ -78,11 +83,28 @@ export function initTestimonialSlider(root: HTMLElement): () => void {
     return d;
   };
 
-  const xOf = (d: number): number => {
-    const anchor = slot * pitch;
-    if (d < 0) return anchor + d * pitch;
+  /** Offset of the hovered portrait, or 0 when none (or it's the open card / off-screen). */
+  const hoveredOffset = (): number => {
+    if (hoverIndex < 0 || hoverGrow === 0) return 0;
+    const d = offsetOf(hoverIndex);
+    return d >= -slot && d <= slots - 1 - slot ? d : 0;
+  };
+
+  /* A hovered portrait grows by `hoverGrow` and the open card shrinks by the
+     same amount, so the row keeps its edges: only the cards between the two
+     slide. */
+  const widthOf = (d: number, hovered: number): number => {
+    const grow = hovered === 0 ? 0 : hoverGrow;
+    if (d === 0) return activeWidth - grow;
+    return pitch - gap + (d === hovered ? grow : 0);
+  };
+
+  const xOf = (d: number, hovered: number): number => {
+    const grow = hovered === 0 ? 0 : hoverGrow;
+    const anchor = slot * pitch + (hovered < 0 ? grow : 0);
+    if (d < 0) return anchor + d * pitch - (hovered < 0 && d <= hovered ? grow : 0);
     if (d === 0) return anchor;
-    return anchor + activeWidth + gap + (d - 1) * pitch;
+    return anchor + activeWidth - grow + gap + (d - 1) * pitch + (hovered > 0 && d > hovered ? grow : 0);
   };
 
   // ---------------------------------------------------------------------------
@@ -103,12 +125,12 @@ export function initTestimonialSlider(root: HTMLElement): () => void {
     if (instant) root.classList.add("is-instant");
     wrapped.forEach((card) => card.classList.add("is-instant"));
 
+    const hovered = hoveredOffset();
     moves.forEach(({ card, d }) => {
-
       const isActive = d === 0;
       card.classList.toggle("is-active", isActive);
-      card.style.width = `${isActive ? activeWidth : pitch - gap}px`;
-      card.style.transform = `translate3d(${xOf(d)}px, 0, 0)`;
+      card.style.width = `${widthOf(d, hovered)}px`;
+      card.style.transform = `translate3d(${xOf(d, hovered)}px, 0, 0)`;
 
       // Only the open card is reachable by assistive tech; portraits are
       // previews (their content is also visibility: hidden).
@@ -132,6 +154,7 @@ export function initTestimonialSlider(root: HTMLElement): () => void {
     slots = Math.max(1, Math.round(Number(cssVar("--ts-slots")) || 1));
     gap = toPx(cssVar("--ts-gap"));
     pitch = toPx(cssVar("--ts-inactive-w")) + gap;
+    hoverGrow = toPx(cssVar("--ts-hover-grow"));
     activeWidth = Math.max(0, width - (slots - 1) * pitch);
 
     if (slot < 0) slot = Math.round(Number(cssVar("--ts-start-slot")) || 0);
@@ -256,6 +279,29 @@ export function initTestimonialSlider(root: HTMLElement): () => void {
   };
   viewport.addEventListener("pointerup", endDrag, { signal });
   viewport.addEventListener("pointercancel", endDrag, { signal });
+
+  // Hover a portrait (mouse only): it widens a little, like the reference.
+  const setHover = (index: number) => {
+    if (index === hoverIndex) return;
+    hoverIndex = index;
+    render(false);
+  };
+  cards.forEach((card, i) => {
+    card.addEventListener(
+      "pointerenter",
+      (event) => {
+        if (event.pointerType === "mouse" && !dragStart) setHover(i);
+      },
+      { signal },
+    );
+    card.addEventListener(
+      "pointerleave",
+      () => {
+        if (hoverIndex === i) setHover(-1);
+      },
+      { signal },
+    );
+  });
 
   // Click a portrait to open it where it stands.
   track.addEventListener(

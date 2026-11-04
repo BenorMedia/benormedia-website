@@ -103,6 +103,7 @@ Step list items show their number (01, 02…) next to the step preview (name · 
 | Author Name | `authorName` | string | required |
 | Author Role and Company | `authorRole` | string | e.g. "VP of Digital, Verifone" |
 | Author Photo | `authorPhoto` | image (hotspot) | alt auto = author name |
+| Portrait | `portrait` | image (hotspot) | optional; transparent PNG cut-out for the testimonial slider, falls back to `authorPhoto` |
 | Company Logo | `companyLogo` | image (SVG preferred) | alt auto from role/company |
 | KPIs | `kpis` | array of `kpi` objects | max 2 |
 
