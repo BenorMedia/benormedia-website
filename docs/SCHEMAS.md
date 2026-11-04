@@ -2,6 +2,9 @@
 
 Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) approved 2026-09-29. v0.7 (`client.orderRank`) requested by the lead 2026-09-29. v0.8 (`client.websiteVideo`) requested by the lead 2026-09-30. v0.9 (`client.sector`) requested by the lead 2026-10-01. v0.10 (`client.caseStudy` + `client.slug`) requested by the lead 2026-11-04.
 
+### Note on `caseStudy` (v1, PR #70)
+- The `caseStudy` document type (also numbered v0.10 on `dev`, 2026-10-20) stays in Studio but no page reads it since 2026-11-04: case studies are code entries at `/work/[slug]`. See DECISIONS → Work.
+
 ### v0.10 changes vs v0.9 (2026-11-04)
 - **`client.caseStudy`** (optional `boolean`, default off): the client has a case study.
 - **`client.slug`** (`slug` from `name`, kebab-case, unique among clients; shown and required only when `caseStudy` is on): the case study URL `/work/<slug>`.

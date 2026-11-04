@@ -1,5 +1,5 @@
 // Sanity schema types registry — flat list of every document, object and singleton.
-// See docs/SCHEMAS.md v0.6 for the contract.
+// See docs/SCHEMAS.md v0.10 for the contract.
 
 import { seo } from './objects/seo';
 import { link } from './objects/link';
@@ -18,6 +18,7 @@ import { testimonial } from './documents/testimonial';
 import { client } from './documents/client';
 import { post } from './documents/post';
 import { service } from './documents/service';
+import { caseStudy } from './documents/caseStudy';
 
 import { siteSettings } from './singletons/siteSettings';
 import { homePage } from './singletons/homePage';
@@ -46,6 +47,7 @@ export const schemaTypes = [
   client,
   post,
   service,
+  caseStudy,
 
   // Singletons (SEO-only per Lead decision 2026-09-25)
   siteSettings,
