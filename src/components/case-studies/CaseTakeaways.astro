@@ -46,17 +46,20 @@ const { items } = Astro.props;
     background: var(--color-white);
   }
   .c-case-takeaways :global(.c-case-takeaways__icon) {
-    width: calc(32 * var(--u) * 1.3);
-    height: calc(32 * var(--u) * 1.3);
     margin-bottom: calc(8 * var(--u));
+    width: calc(32 * var(--u));
+    height: calc(32 * var(--u));
   }
   .c-case-takeaways__title,
   .c-case-takeaways__text {
     margin: 0;
+    font-size: var(--cs-fs-body);
+    line-height: 1.5;
   }
   .c-case-takeaways__title {
     color: var(--color-black-secondary);
-    line-height: 1.3;
+    font-size: var(--cs-fs-body);
+    line-height: 1.2;
   }
   .c-case-takeaways__text {
     color: var(--color-text);

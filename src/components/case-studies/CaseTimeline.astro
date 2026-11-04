@@ -86,17 +86,19 @@ const { phases, milestone } = Astro.props;
   .c-case-timeline__milestone-label {
     color: var(--color-black-secondary);
     line-height: 1.2;
+    font-size: var(--cs-fs-body);
   }
   .c-case-timeline__milestone-date {
     color: var(--color-text);
     line-height: 1.5;
+    font-size: var(--cs-fs-body);
   }
   .c-case-timeline__line {
     position: absolute;
     bottom: calc(14.5 * var(--u));
     left: 0;
     right: 0;
-    border-top: 1px dashed var(--color-gray);
+    border-top: 1px dashed color-mix(in srgb, var(--color-blue) 70%, var(--color-white)); /* Figma blue dashes, TODO: DS */
   }
   .c-case-timeline__diamond {
     position: absolute;
@@ -160,6 +162,9 @@ const { phases, milestone } = Astro.props;
     top: calc((146 - 74.64) * var(--u));
     left: calc((198 + 116.24) * var(--u));
     display: flex;
+    /* Explicit width: near the card's right edge an absolute box would
+       shrink to the space left. */
+    width: calc((131.66 + 2 * 26.21) * var(--u));
     padding: calc(16.68 * var(--u)) calc(26.21 * var(--u));
     border: 0.7px solid var(--color-border);
     border-radius: 9.5px;
@@ -169,6 +174,7 @@ const { phases, milestone } = Astro.props;
     transform: translate(-50%, -50%);
   }
   .c-case-timeline :global(.c-case-timeline__icon) {
+    flex: none;
     width: calc(131.66 * var(--u));
     height: calc(131.66 * var(--u));
     object-fit: contain;
@@ -184,15 +190,20 @@ const { phases, milestone } = Astro.props;
   .c-case-timeline__dates,
   .c-case-timeline__text {
     margin: 0;
+    font-size: var(--cs-fs-body);
+    line-height: 1.5;
   }
   .c-case-timeline__title {
     color: var(--color-black-secondary);
     line-height: 1.2;
+    font-size: var(--cs-fs-body);
   }
   .c-case-timeline__dates {
     padding-bottom: calc(8 * var(--u));
     border-bottom: var(--border-default);
     color: var(--color-text);
+    font-size: var(--cs-fs-body);
+    line-height: 1.5;
   }
   .c-case-timeline__text {
     color: var(--color-text);

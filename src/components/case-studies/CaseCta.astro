@@ -43,7 +43,7 @@ const { id, eyebrow, heading, button, trusted, badges } = Astro.props;
     align-items: center;
     justify-content: center;
     min-height: calc(517.83 * var(--u));
-    padding: calc(100 * var(--u)) calc(44 * var(--u));
+    padding: calc(60 * var(--u)) calc(44 * var(--u));
     overflow: hidden;
     border-radius: 8px;
     background: linear-gradient(290deg, var(--color-blue-light) 8.49%, var(--color-blue) 91.51%);
@@ -57,13 +57,14 @@ const { id, eyebrow, heading, button, trusted, badges } = Astro.props;
     flex-direction: column;
     align-items: center;
     gap: calc(28 * var(--u));
-    max-width: calc(700 * var(--u) * 1.3);
     text-align: center;
+    max-width: calc(700 * var(--u));
   }
   .c-case-cta__title {
     margin: 0;
     color: var(--color-white);
     line-height: 1.4;
+    font-size: var(--cs-fs-h2);
   }
   /* On-dark eyebrow, as CtaBanner (TODO: DS eyebrow on-dark variant). */
   .c-case-cta :global(.c-eyebrow.is-default) {
@@ -74,6 +75,13 @@ const { id, eyebrow, heading, button, trusted, badges } = Astro.props;
   .c-case-cta :global(.c-eyebrow.is-default::after) {
     border-color: color-mix(in srgb, var(--color-gray) 30%, transparent);
     background: var(--color-white);
+  }
+  /* Figma button: 20px text, 16 / 30 / 14 px padding (TODO: DS). */
+  @media (min-width: 768px) {
+    .c-case-cta :global(.c-cta__buttons .c-button) {
+      padding: calc(16 * var(--u)) calc(30 * var(--u)) calc(14 * var(--u));
+      font-size: var(--cs-fs-body);
+    }
   }
   /* Figma: one button at its own width, centred over the badge (desktop). */
   .c-case-cta :global(.c-cta__buttons) {

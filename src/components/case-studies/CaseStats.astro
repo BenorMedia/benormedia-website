@@ -104,11 +104,13 @@ const { stats } = Astro.props;
     color: var(--color-black-secondary);
     line-height: 1.4;
     white-space: nowrap;
+    font-size: var(--cs-fs-stat);
   }
   .c-case-stats__label {
-    max-width: calc(250 * var(--u) * 1.3);
     color: var(--color-text);
-    line-height: 1.3;
+    max-width: calc(250 * var(--u));
+    font-size: var(--cs-fs-small);
+    line-height: 1.2;
   }
   /* Shapes: the parts Figma shows inside the section (exports). */
   .c-case-stats :global(.c-case-stats__shape) {

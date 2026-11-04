@@ -39,6 +39,8 @@ import { caseStudyJsonLd } from "../../lib/new-pages/jsonld";
 import { escapeHtml, Slugger } from "../../lib/new-pages/html";
 import { SITE } from "../../lib/content/entity";
 import { getCtaBadgeUrlsCached } from "../../lib/sanity/site";
+import { getClientsByIds } from "../../lib/sanity/queries";
+import { urlFor, type Source } from "../../lib/sanity/image";
 
 export function getStaticPaths() {
   return builtCaseStudies().map((c) => ({ params: { slug: c.slug }, props: { c } }));
@@ -50,7 +52,18 @@ interface Props {
 
 const { c } = Astro.props;
 const path = caseStudyPath(c);
-const badges = await getCtaBadgeUrlsCached();
+const [badges, [sanityClient]] = await Promise.all([getCtaBadgeUrlsCached(), getClientsByIds([c.client.id])]);
+// Hero media: the client's website video from Sanity (the Featured Work
+// one), poster at 1600 wide; without a video the entry's screenshot.
+const videoUrl = sanityClient?.websiteVideo?.asset?.url;
+const video = videoUrl
+  ? {
+      src: videoUrl,
+      poster: sanityClient?.websiteVideoPoster?.asset
+        ? urlFor(sanityClient.websiteVideoPoster as Source).width(1600).auto("format").url()
+        : undefined,
+    }
+  : undefined;
 
 // Section ids from their headings; the table of contents lists them in
 // page order (Figma: the H2s, the three H3s under "What we did", then
@@ -111,6 +124,7 @@ const ld = caseStudyJsonLd({
   description={c.seo.description}
   titleTemplate={false}
   noIndex={c.draft}
+  bodyClass="is-case-study"
   ogImage={c.seo.ogImage}
 >
   {ld.map((data) => <JsonLd data={data} />)}
@@ -125,6 +139,7 @@ const ld = caseStudyJsonLd({
     address={c.hero.address}
     liveLabel={c.hero.liveLabel}
     liveUrl={c.client.url}
+    video={video}
   />
   <CaseStats stats={c.stats} />
 
@@ -152,7 +167,7 @@ const ld = caseStudyJsonLd({
         </CaseSection>
 
         <CaseSection id={ids.work} heading={c.work.heading} class="c-case-body__work">
-          <p class="c-paragraph_m c-case-text">{c.work.intro}</p>
+          {c.work.intro && <p class="c-paragraph_m c-case-text">{c.work.intro}</p>}
           {c.work.questions.map((q, i) => (
             <div class="c-case-body__question" id={ids.questions[i]}>
               <h3 class="c-text_m c-case-body__h3">{q.heading}</h3>
@@ -213,6 +228,83 @@ const ld = caseStudyJsonLd({
 </BaseLayout>
 
 <style>
+  /* Type sizes (lead 2026-11-04: the design's sizes). The Figma frame is
+     1920 wide and the page's 1680 grid fills the container (`--u` = 1/19.2
+     rem), so a Figma px is `--u`. Each size scales the closest site token
+     to it from 768 up (TODO: DS: no class matches these sizes); phones
+     keep the plain tokens. */
+  :global(body.is-case-study) {
+    --cs-fs-h1: var(--fs-text-xl);
+    --cs-fs-h2: var(--fs-text-l);
+    --cs-fs-h3: var(--fs-text-m);
+    --cs-fs-stat: var(--fs-text-xl);
+    --cs-fs-quote: var(--fs-text-m);
+    --cs-fs-lead: var(--fs-p-l);
+    --cs-fs-body: var(--fs-p-m);
+    --cs-fs-small: var(--fs-p);
+    --cs-fs-xs: var(--fs-p-s);
+  }
+  @media (min-width: 768px) {
+    :global(body.is-case-study) {
+      --cs-fs-h1: calc(var(--fs-text-xl) * 0.8); /* Text XL 60 */
+      --cs-fs-h2: calc(var(--fs-text-l) * 0.846); /* Text L 38 */
+      --cs-fs-h3: calc(var(--fs-text-m) * 0.845); /* Text M 30 */
+      --cs-fs-stat: calc(var(--fs-text-xl) * 0.666); /* 50 */
+      --cs-fs-quote: calc(var(--fs-text-m) * 0.729); /* Brulia Text 25.9 */
+      --cs-fs-lead: calc(var(--fs-p-l) * 0.78); /* Paragraph M 25 */
+      --cs-fs-body: calc(var(--fs-p-m) * 0.8); /* Paragraph 20 */
+      --cs-fs-small: calc(var(--fs-p) * 0.9); /* Text S 18 */
+      --cs-fs-xs: calc(var(--fs-p-s) * 0.868); /* Text XS 15 */
+    }
+  }
+
+  /* Design-size chips and TOC (lead 2026-11-04, ref 4225:11810), 768 up:
+     eyebrows and tags at Figma's 15px (the DS eyebrow is 0.9375rem, larger
+     at this page's scale, TODO: DS); the shared blog sidebar at the case
+     study's spec (4225:11907: 50 / 32 / 32 box, 13.5px items 42px apart,
+     15px tab). Nav, footer and the site CTA banner keep the DS sizes. */
+  @media (min-width: 768px) {
+    :global(.c-case-hero .c-eyebrow),
+    :global(.c-case-hero .c-tag),
+    .c-case-body :global(.c-eyebrow),
+    .c-case-body :global(.c-tag) {
+      font-size: calc(15rem / 19.2);
+    }
+    .c-case-body :global(.c-np-sidebar__toc) {
+      padding: calc(50 * var(--u)) calc((32 + 14.4) * var(--u)) calc(32 * var(--u));
+    }
+    .c-case-body :global(.c-np-sidebar__title) {
+      left: calc(31 * var(--u));
+      font-size: calc(15rem / 19.2);
+    }
+    /* 42.4px pitch: the 21.6px arrow slot sets the row height. */
+    .c-case-body :global(.c-np-sidebar__list) {
+      gap: calc(20.8 * var(--u));
+    }
+    .c-case-body :global(.c-np-sidebar__arrow) {
+      height: calc(21.6 * var(--u));
+    }
+    .c-case-body :global(.c-np-sidebar__link) {
+      font-size: calc(13.5rem / 19.2);
+      letter-spacing: 0.064em;
+    }
+    .c-case-body :global(.c-np-sidebar__link.is-active .c-np-sidebar__arrow) {
+      width: calc(21.6 * var(--u));
+      margin-right: calc(9 * var(--u));
+    }
+    .c-case-body :global(.c-np-sidebar__share-label) {
+      font-size: var(--cs-fs-small);
+    }
+    .c-case-body :global(.c-np-sidebar__share-btn) {
+      width: calc(32 * var(--u));
+      height: calc(32 * var(--u));
+    }
+    .c-case-body :global(.c-np-sidebar__cta) {
+      padding-block: calc(16 * var(--u)) calc(14 * var(--u));
+      font-size: var(--cs-fs-body);
+    }
+  }
+
   /* Figma 4225:11904: 350 | 110 gap | 1220 in the 1680 grid (the blog
      article's columns); 80px above, 110 below. */
   .c-case-body {
@@ -250,7 +342,8 @@ const ld = caseStudyJsonLd({
   .c-case-body__h3 {
     margin: 0;
     color: var(--color-black-secondary);
-    line-height: 1.4;
+    font-size: var(--cs-fs-h3);
+    line-height: 1.5;
   }
   @media (max-width: 1199px) {
     .c-case-body__grid {
