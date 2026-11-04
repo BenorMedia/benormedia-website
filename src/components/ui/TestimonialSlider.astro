@@ -465,7 +465,8 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
     z-index: 3;
     display: flex;
     flex-direction: column;
-    gap: 1.615rem;
+    /* Quote → rule: Figma 31px, 20% less (lead 2026-11-04). */
+    gap: 1.292rem;
     padding: 2.083rem;
     border-bottom: var(--border-default);
     background: color-mix(in srgb, var(--color-white) 40%, transparent);
@@ -523,8 +524,9 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
     gap: 1.5rem;
     /* Rule above the author, inside the panel padding; space mirrors the
        panel's bottom padding (TODO: DS — from the lead's screenshot). */
-    margin-top: 0.7rem;
-    padding-top: 2.3rem;
+    /* 20% less than round 4 (lead 2026-11-04). */
+    margin-top: 0.56rem;
+    padding-top: 1.84rem;
     border-top: var(--border-default);
   }
 
@@ -539,6 +541,8 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
   .c-ts__name {
     margin: 0;
     color: var(--color-black-secondary);
+    /* Text L, 10% smaller (lead 2026-11-04). */
+    font-size: calc(var(--fs-text-l) * 0.9);
     line-height: 1; /* Figma: Text L, line-height 100% */
   }
 

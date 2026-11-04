@@ -32,6 +32,10 @@ import Testimonials from "../components/sections/Testimonials.astro";
 import ResourcesSection from "../components/sections/ResourcesSection.astro";
 
 const home = await getHome();
+
+/* Technologies section hidden on Home for now (lead 2026-11-04). Set to
+   true to bring it back; other pages are unaffected. */
+const SHOW_TECHNOLOGIES = false;
 const [heroClients, logoClients, featuredSource, workClients, workListClients, testimonials] = await Promise.all([
   getAllClientsWithIcon(),
   getAllClientsWithLogo(),
@@ -97,7 +101,7 @@ const homeLd = {
   <Services />
   <FeaturedWork clients={featuredClients} />
   <OurWork clients={workClients} listClients={workListClients} />
-  <Technologies />
+  {SHOW_TECHNOLOGIES && <Technologies />}
   <Testimonials testimonials={testimonials} />
   {/* Below the CTA banner (lead 2026-10-30). */}
   <ResourcesSection slot="after-cta" />
