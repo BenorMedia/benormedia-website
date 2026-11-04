@@ -2,7 +2,8 @@
 /**
  * TestimonialCard — quote on top, author row at the bottom.
  *
- * Author row: [ photo · name · role/company ] ........ [ client logo ]
+ * Author block: [ photo · name · role/company ], client logo right below it,
+ * left-aligned (lead, 2026-11-04; was right-aligned on the same row).
  * Logo = the client that references this testimonial; falls back to the
  * testimonial's own `companyLogo`, then to nothing.
  *
@@ -83,7 +84,9 @@ const rootClass = ["c-testimonial-card", className].filter(Boolean).join(" ");
     flex-shrink: 0;
     gap: 1.714rem; /* 24px */
     width: 34rem; /* 544px at 1/16 */
-    height: 23.03rem; /* 368.484px at 1/16 */
+    /* min-height, not height: long quotes plus the logo row under the
+       person would overflow a fixed card (lead, 2026-11-04). */
+    min-height: 23.03rem; /* 368.484px at 1/16 */
     padding: 2.714rem 2.429rem; /* 38px 34px */
     border-radius: 14px;
     border: var(--border-default);
@@ -98,10 +101,11 @@ const rootClass = ["c-testimonial-card", className].filter(Boolean).join(" ");
   }
 
   /* --- Author row ------------------------------------------------------ */
+  /* Logo sits right below the person (lead, 2026-11-04). */
   .c-testimonial-card__author {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 1rem;
     width: 100%;
   }
@@ -159,6 +163,6 @@ const rootClass = ["c-testimonial-card", className].filter(Boolean).join(" ");
     width: auto;
     max-width: 8.75rem;
     object-fit: contain;
-    object-position: right center;
+    object-position: left center;
   }
 </style>
