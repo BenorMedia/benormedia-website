@@ -99,6 +99,8 @@ const PAGES = {
   '/authors/mauricio-guerra': { expected: ['ProfilePage', 'BreadcrumbList'], keyword: 'mauricio guerra' },
   // Released 2026-11-03.
   '/about': { expected: ['AboutPage', 'BreadcrumbList', 'Organization', 'Person'], keyword: 'webflow agency' },
+  // Case studies (src/lib/case-studies/), drafts until the lead releases them: built in previews only.
+  '/work/surfe': { expected: ['Article', 'BreadcrumbList'], keyword: 'surfe' },
 };
 const NOINDEX_PAGES = ['/testimonials', '/cookie-policy']; // must stay out of the sitemap
 
