@@ -242,3 +242,62 @@ export function pageJsonLd(page: NpPage): Ld[] {
   }
   return out;
 }
+
+/** Case study (`/work/[slug]`, brief-next-pages Part 2 task 2.5): an
+ *  Article about the client, written and published by the shared
+ *  Organization, its breadcrumb (Home › Work › client) and, when the entry
+ *  has FAQ items, a FAQPage from the same array as the visible FAQ. */
+export function caseStudyJsonLd(c: {
+  path: string;
+  title: string;
+  headline: string;
+  description: string;
+  publishedAt: string;
+  updatedAt: string;
+  image: string;
+  client: { name: string; url: string };
+  faq: readonly { question: string; answer: string }[];
+}): Ld[] {
+  const url = abs(c.path);
+  const out: Ld[] = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "@id": `${url}#article`,
+      headline: c.headline,
+      name: c.title,
+      description: c.description,
+      url,
+      mainEntityOfPage: url,
+      inLanguage: "en-US",
+      image: c.image,
+      datePublished: c.publishedAt,
+      dateModified: c.updatedAt,
+      author: { ...PROVIDER_LD },
+      publisher: { ...PROVIDER_LD, "@id": ORG_ID },
+      about: { "@type": "Organization", name: c.client.name, url: c.client.url },
+      isPartOf: { "@id": WEBSITE_ID },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: abs("/") },
+        { "@type": "ListItem", position: 2, name: "Work", item: abs("/work") },
+        { "@type": "ListItem", position: 3, name: c.client.name, item: url },
+      ],
+    },
+  ];
+  if (c.faq.length > 0) {
+    out.push({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: c.faq.map((item) => ({
+        "@type": "Question",
+        name: item.question,
+        acceptedAnswer: { "@type": "Answer", text: item.answer },
+      })),
+    });
+  }
+  return out;
+}

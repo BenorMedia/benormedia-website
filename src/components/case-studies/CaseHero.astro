@@ -1,0 +1,255 @@
+---
+/**
+ * CaseHero — case study hero (Figma 4225:11825): breadcrumbs, the client
+ * logo chip and "Case study" tag, the `<h1>` and intro on the left; a
+ * browser frame with the client's homepage on the right, bleeding off the
+ * container's right edge (Figma: it runs to the 1920 frame's edge and is
+ * cut there), with a "Visit live site" button over it.
+ *
+ * Sizes in Figma px (`--u` = 1/19.2 rem, as AboutHero / CtaBanner); type
+ * uses the site's typography classes. ≤991 (no tablet or mobile design,
+ * `TODO: DS mobile`): the frame moves under the copy, full width.
+ */
+import { Image } from "astro:assets";
+import NpCrumbs from "../new-pages/NpCrumbs.astro";
+import Eyebrow from "../ui/Eyebrow.astro";
+import Tag from "../ui/Tag.astro";
+import type { VisibleCrumb } from "../../lib/new-pages/links";
+import type { CsImage } from "../../lib/case-studies/types";
+import dotRed from "../../assets/case-studies/shared/dot-red.svg";
+import dotYellow from "../../assets/case-studies/shared/dot-yellow.svg";
+import dotGreen from "../../assets/case-studies/shared/dot-green.svg";
+import arrow from "../../assets/case-studies/shared/arrow-up-right.svg";
+import pointer from "../../assets/case-studies/shared/pointer.svg";
+
+interface Props {
+  crumbs: readonly VisibleCrumb[];
+  logo: CsImage;
+  tag: string;
+  h1: string;
+  intro: string;
+  screenshot: CsImage;
+  address: string;
+  liveLabel: string;
+  liveUrl: string;
+}
+
+const { crumbs, logo, tag, h1, intro, screenshot, address, liveLabel, liveUrl } = Astro.props;
+---
+
+<section class="c-case-hero" aria-labelledby="case-hero-title">
+  <div class="c-case-hero__inner">
+    <div class="c-case-hero__copy">
+      <NpCrumbs items={crumbs} />
+      <div class="c-case-hero__tags">
+        <Eyebrow class="c-case-hero__logo">
+          <Image src={logo.src} alt={logo.alt} width={113} densities={[1, 2]} class="c-case-hero__logo-img" />
+        </Eyebrow>
+        <Tag variant="accent">{tag}</Tag>
+      </div>
+      <h1 id="case-hero-title" class="c-text_xl c-case-hero__title">{h1}</h1>
+      <p class="c-paragraph_l c-case-hero__intro">{intro}</p>
+    </div>
+
+    <div class="c-case-hero__media">
+      <div class="c-case-hero__frame">
+        <div class="c-case-hero__bar" aria-hidden="true">
+          <span class="c-case-hero__dots">
+            <img src={dotRed.src} alt="" width="17" height="17" />
+            <img src={dotYellow.src} alt="" width="17" height="17" />
+            <img src={dotGreen.src} alt="" width="17" height="17" />
+          </span>
+          <span class="c-case-hero__address">{address}</span>
+        </div>
+        <Image
+          src={screenshot.src}
+          alt={screenshot.alt}
+          widths={[760, 1100, 1520, 2200]}
+          sizes="(max-width: 991px) 100vw, 1100px"
+          class="c-case-hero__shot"
+          loading="eager"
+          fetchpriority="high"
+        />
+        <a class="c-button is-white c-case-hero__live" href={liveUrl} target="_blank" rel="noopener noreferrer">
+          <span class="c-button__text">{liveLabel}</span>
+          <span class="c-button__icon c-case-hero__live-icon" aria-hidden="true"><img src={arrow.src} alt="" width="16" height="16" /></span>
+          <span class="c-case-hero__sr"> (opens in a new tab)</span>
+        </a>
+        <img class="c-case-hero__pointer" src={pointer.src} alt="" width="19" height="23" aria-hidden="true" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .c-case-hero {
+    --u: calc(1rem / 19.2);
+    overflow: hidden;
+    background: var(--color-white);
+  }
+  .c-case-hero__inner {
+    display: flex;
+    align-items: center;
+    gap: calc(50 * var(--u));
+    max-width: 1440px;
+    margin-inline: auto;
+    padding: calc(110 * var(--u)) 0 calc(80 * var(--u)) 7.5rem;
+  }
+  .c-case-hero__copy {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: calc(25 * var(--u));
+    min-width: 0;
+  }
+  .c-case-hero__tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: calc(16 * var(--u));
+  }
+  /* Logo chip: the default eyebrow box (Figma's thinner chip, TODO: DS). */
+  .c-case-hero :global(.c-case-hero__logo) {
+    padding: 0.6em 1.6em;
+  }
+  .c-case-hero :global(.c-case-hero__logo-img) {
+    display: block;
+    width: calc(56.54 * var(--u) * 1.4);
+    height: auto;
+  }
+  .c-case-hero__title {
+    margin: 0;
+    color: var(--color-black-secondary);
+    line-height: 1.4;
+  }
+  .c-case-hero__intro {
+    max-width: calc(728 * var(--u));
+    margin: calc(-15 * var(--u)) 0 0;
+    color: var(--color-text);
+  }
+
+  /* Browser frame: 981 x 675 window onto the 1103 wide frame. */
+  .c-case-hero__media {
+    flex: 0 0 calc(981 * var(--u));
+    height: calc(675 * var(--u));
+    overflow: hidden;
+  }
+  .c-case-hero__frame {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: calc(1103 * var(--u));
+    padding-bottom: calc(18 * var(--u));
+    overflow: hidden;
+    border-radius: 8px;
+    background: var(--color-gray-light); /* Figma #F4F5F7, TODO: DS */
+  }
+  .c-case-hero__bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: calc(46 * var(--u));
+  }
+  .c-case-hero__dots {
+    position: absolute;
+    top: 50%;
+    left: calc(30 * var(--u));
+    display: flex;
+    gap: calc(14.4 * var(--u));
+    transform: translateY(-50%);
+  }
+  .c-case-hero__dots img {
+    width: calc(16.78 * var(--u));
+    height: calc(16.78 * var(--u));
+  }
+  .c-case-hero__address {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: calc(289 * var(--u));
+    height: calc(30 * var(--u));
+    border: var(--border-default);
+    border-radius: 30px;
+    background: var(--color-white);
+    color: var(--color-text); /* Figma #8A909E, TODO: DS */
+    font-size: var(--fs-p-s);
+    line-height: 1;
+  }
+  .c-case-hero :global(.c-case-hero__shot) {
+    display: block;
+    width: calc(1069.24 * var(--u));
+    height: auto;
+    aspect-ratio: 1069.24 / 611.1;
+    object-fit: cover;
+    object-position: top;
+    border-radius: 8px 8px 0 0;
+  }
+  /* Figma: centred at +135 / -20.65 px from the frame's middle. */
+  .c-case-hero__live {
+    position: absolute;
+    top: calc(50% - 20.65 * var(--u));
+    left: calc(50% + 135 * var(--u));
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+  }
+  .c-case-hero__live-icon img {
+    display: block;
+    width: 1em;
+    height: 1em;
+    transform: rotate(180deg);
+  }
+  /* Screen-reader only (no global utility yet; request in the handoff). */
+  .c-case-hero__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .c-case-hero__pointer {
+    position: absolute;
+    top: calc(50% + 9.35 * var(--u));
+    left: calc(50% + 39.71 * var(--u));
+    width: calc(20 * var(--u));
+    height: auto;
+    transform: translate(-50%, -50%) rotate(35.36deg);
+    pointer-events: none;
+  }
+
+  @media (max-width: 991px) {
+    .c-case-hero__inner {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 3rem;
+      padding-right: 7.5rem;
+    }
+    .c-case-hero__media {
+      flex: none;
+      width: 100%;
+      height: auto;
+    }
+    .c-case-hero__frame {
+      width: 100%;
+    }
+    .c-case-hero :global(.c-case-hero__shot) {
+      width: 96.9%;
+    }
+  }
+  @media (max-width: 767px) {
+    .c-case-hero__inner {
+      padding: 4rem 2rem 3rem;
+    }
+    .c-case-hero__address {
+      width: 40%;
+      height: 2rem;
+    }
+    .c-case-hero__live {
+      font-size: var(--fs-p);
+    }
+  }
+</style>

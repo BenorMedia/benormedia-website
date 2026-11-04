@@ -1,0 +1,171 @@
+---
+/**
+ * CaseRelated — other case studies under the body (Figma 4225:12803
+ * "WhyItWorks"): eyebrow, heading and up to three cards (cover with the
+ * client's logo, "Case study" and published date tags, the case study's
+ * H1, two numbers, "Learn more"). Renders nothing when there are no other
+ * case studies (Surfe is the only one, lead 2026-11-04).
+ *
+ * Not checked against Figma in a browser yet: no second entry exists.
+ * ≤991: one column (`TODO: DS mobile`).
+ */
+import CaseDecor from "./CaseDecor.astro";
+import Eyebrow from "../ui/Eyebrow.astro";
+import Tag from "../ui/Tag.astro";
+import type { CaseStudy } from "../../lib/case-studies/types";
+import { caseStudyPath } from "../../lib/case-studies";
+
+interface Props {
+  eyebrow: string;
+  heading: string;
+  cardTag: string;
+  published: string;
+  more: string;
+  items: readonly CaseStudy[];
+}
+
+const { eyebrow, heading, cardTag, published, more, items } = Astro.props;
+const shown = items.slice(0, 3);
+const fmt = (iso: string): string =>
+  new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "2-digit", timeZone: "UTC" });
+---
+
+{shown.length > 0 && (
+  <section class="c-case-related" aria-labelledby="case-related-title">
+    <div class="c-case-related__inner">
+      <header class="c-case-related__head">
+        <Eyebrow>{eyebrow}</Eyebrow>
+        <h2 id="case-related-title" class="c-text_xl c-case-related__title">{heading}</h2>
+      </header>
+      <ul class="c-case-related__list">
+        {shown.map((c) => (
+          <li class="c-case-related__card">
+            <CaseDecor src={c.card.cover.src} width={540} class="c-case-related__cover" />
+            <div class="c-case-related__body">
+              <div class="c-case-related__tags">
+                <Tag variant="accent">{cardTag}</Tag>
+                <Eyebrow>{published} <time datetime={c.publishedAt}>{fmt(c.publishedAt)}</time></Eyebrow>
+              </div>
+              <h3 class="c-text_m c-case-related__name">{c.hero.h1}</h3>
+              <dl class="c-case-related__stats">
+                {c.card.stats.map((s) => (
+                  <div class="c-case-related__stat">
+                    <dt class="c-case-related__stat-label">{s.label}</dt>
+                    <dd class="c-text_m c-case-related__stat-value">{s.value}</dd>
+                  </div>
+                ))}
+              </dl>
+              <a class="c-paragraph_m c-case-related__more" href={caseStudyPath(c)} aria-label={`${more}: ${c.hero.h1}`}>
+                {more} <span aria-hidden="true">→</span>
+              </a>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+)}
+
+<style>
+  .c-case-related {
+    --u: calc(1rem / 19.2);
+  }
+  .c-case-related__inner {
+    max-width: 1440px;
+    margin-inline: auto;
+    padding: calc(110 * var(--u)) 7.5rem;
+  }
+  .c-case-related__head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(20 * var(--u));
+    margin-bottom: calc(60 * var(--u));
+    text-align: center;
+  }
+  .c-case-related__title {
+    margin: 0;
+    color: var(--color-black-secondary);
+  }
+  .c-case-related__list {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: calc(40 * var(--u));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .c-case-related__card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 0.5px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-white);
+  }
+  .c-case-related :global(.c-case-related__cover) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-bottom: var(--border-default);
+  }
+  .c-case-related__body {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: calc(32 * var(--u));
+    padding: calc(24 * var(--u));
+  }
+  .c-case-related__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: calc(16 * var(--u));
+  }
+  .c-case-related__name {
+    margin: 0;
+    color: var(--color-black-secondary);
+    line-height: 1.5;
+  }
+  .c-case-related__stats {
+    display: flex;
+    gap: calc(40 * var(--u));
+    width: 100%;
+    margin: 0;
+    padding-top: calc(16 * var(--u));
+    border-top: 0.5px solid var(--color-gray);
+  }
+  .c-case-related__stat {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: calc(7 * var(--u));
+  }
+  .c-case-related__stat-value {
+    margin: 0;
+    color: var(--color-blue);
+  }
+  .c-case-related__stat-label {
+    padding: 0.35em 0.9em;
+    border: var(--border-default);
+    border-radius: 3px;
+    color: var(--color-text);
+    font-size: var(--fs-p-s);
+    letter-spacing: 0.064em;
+    text-transform: uppercase;
+  }
+  .c-case-related__more {
+    display: inline-flex;
+    gap: 0.5em;
+    color: var(--color-black-secondary);
+    text-decoration: none;
+  }
+  .c-case-related__more:hover {
+    color: var(--color-accent);
+  }
+  @media (max-width: 991px) {
+    .c-case-related__list { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 767px) {
+    .c-case-related__inner { padding: 6rem 2rem; }
+  }
+</style>

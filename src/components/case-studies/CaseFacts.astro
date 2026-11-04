@@ -1,0 +1,68 @@
+---
+/**
+ * CaseFacts — "At a glance" grid (Figma 4225:11956): ten bordered cards,
+ * five per row, each with a 3D icon, the label as a chip (default eyebrow)
+ * and the value. A `<dl>` (label = term).
+ * ≤991: three per row; ≤767: two (`TODO: DS mobile`).
+ */
+import CaseDecor from "./CaseDecor.astro";
+import Eyebrow from "../ui/Eyebrow.astro";
+import type { CsFact } from "../../lib/case-studies/types";
+
+interface Props {
+  facts: readonly CsFact[];
+}
+
+const { facts } = Astro.props;
+---
+
+<dl class="c-case-facts">
+  {facts.map((f) => (
+    <div class="c-case-facts__card">
+      <CaseDecor src={f.icon} width={52} class="c-case-facts__icon" />
+      <dt><Eyebrow>{f.label}</Eyebrow></dt>
+      <dd class="c-paragraph c-case-facts__value">{f.value}</dd>
+    </div>
+  ))}
+</dl>
+
+<style>
+  .c-case-facts {
+    --u: calc(1rem / 19.2);
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: calc(16 * var(--u));
+    margin: calc(8 * var(--u)) 0 0;
+  }
+  .c-case-facts__card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: calc(16 * var(--u));
+    min-width: 0;
+    padding: calc(16 * var(--u));
+    border: var(--border-default);
+    border-radius: 8px;
+    background: var(--color-white);
+  }
+  .c-case-facts :global(.c-case-facts__icon) {
+    width: calc(52 * var(--u));
+    height: calc(52 * var(--u));
+  }
+  .c-case-facts dt {
+    padding-inline: 0.35rem;
+  }
+  .c-case-facts__value {
+    margin: 0;
+    color: var(--color-text);
+    overflow-wrap: anywhere;
+  }
+  @media (max-width: 991px) {
+    .c-case-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (max-width: 767px) {
+    .c-case-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; }
+    .c-case-facts__card { padding: 1.6rem; gap: 1.2rem; }
+    .c-case-facts :global(.c-case-facts__icon) { width: 4.5rem; height: 4.5rem; }
+  }
+</style>

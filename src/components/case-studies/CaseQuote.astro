@@ -1,0 +1,166 @@
+---
+/**
+ * CaseQuote — a client quote between two lines (Figma 4225:12046 and
+ * 4225:12560): quote mark, the words (Brulia Text), photo, name and role,
+ * a square on each corner and two rotated streams of 3D shapes at the
+ * sides (the site's shapes strip, placed as Figma has them). Static: no
+ * animation is marked in the design.
+ *
+ * `<figure>` + `<blockquote>` + `<figcaption>`. ≤767 (`TODO: DS mobile`):
+ * the shapes are hidden so the words keep the full width.
+ */
+import { Image } from "astro:assets";
+import CaseDecor from "./CaseDecor.astro";
+import type { CsQuote } from "../../lib/case-studies/types";
+import shapes from "../../assets/case-studies/shared/shapes-stream.png";
+import quoteMark from "../../assets/case-studies/shared/quote-mark.svg";
+
+interface Props {
+  quote: CsQuote;
+}
+
+const { quote } = Astro.props;
+---
+
+<figure class="c-case-quote">
+  <div class="c-case-quote__shapes is-left" aria-hidden="true">
+    <div class="c-case-quote__strip"><CaseDecor src={shapes} width={1200} class="c-case-quote__strip-img" /></div>
+  </div>
+  <div class="c-case-quote__shapes is-right" aria-hidden="true">
+    <div class="c-case-quote__strip"><CaseDecor src={shapes} width={1200} class="c-case-quote__strip-img" /></div>
+  </div>
+  <img class="c-case-quote__mark" src={quoteMark.src} alt="" width="48" height="36" aria-hidden="true" />
+  <blockquote class="c-case-quote__text">
+    <p class="c-text_m">{quote.text}</p>
+  </blockquote>
+  <figcaption class="c-case-quote__person">
+    <Image src={quote.photo.src} alt={quote.photo.alt} width={52} densities={[1, 2]} class="c-case-quote__photo" />
+    <span class="c-case-quote__who">
+      <span class="c-paragraph_m c-case-quote__name">{quote.name}</span>
+      <span class="c-paragraph c-case-quote__role">{quote.role}</span>
+    </span>
+  </figcaption>
+  <span class="c-case-quote__corner is-tl" aria-hidden="true"></span>
+  <span class="c-case-quote__corner is-tr" aria-hidden="true"></span>
+  <span class="c-case-quote__corner is-bl" aria-hidden="true"></span>
+  <span class="c-case-quote__corner is-br" aria-hidden="true"></span>
+</figure>
+
+<style>
+  .c-case-quote {
+    --u: calc(1rem / 19.2);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(24 * var(--u));
+    margin: calc(40 * var(--u)) 0 0;
+    padding: calc(40 * var(--u)) calc(60 * var(--u));
+    overflow: hidden;
+    border-block: 1px solid var(--color-gray);
+    text-align: center;
+  }
+  /* Overflow clips the corner squares, so they sit just inside. */
+  .c-case-quote__corner {
+    position: absolute;
+    width: 9px;
+    height: 9px;
+    border: 1px solid var(--color-gray);
+    border-radius: 1.5px;
+    background: var(--color-white);
+  }
+  .c-case-quote__corner.is-tl { top: 0; left: 0; }
+  .c-case-quote__corner.is-tr { top: 0; right: 0; }
+  .c-case-quote__corner.is-bl { bottom: 0; left: 0; }
+  .c-case-quote__corner.is-br { bottom: 0; right: 0; }
+
+  /* Shapes (Figma 4225:12047 / 12048): a strip shown at 228.54% of its
+     box width, the box rotated around its centre. */
+  .c-case-quote__shapes {
+    position: absolute;
+    pointer-events: none;
+  }
+  .c-case-quote__shapes.is-left {
+    top: calc((-484.52 + 1123.89 / 2) * var(--u));
+    left: calc((-660.41 + 1138.06 / 2) * var(--u));
+    --w: 876.255;
+    --h: 849.589;
+    --r: 22.94deg;
+  }
+  .c-case-quote__shapes.is-right {
+    top: calc((-346.65 + 1296.98 / 2) * var(--u));
+    left: calc((666.44 + 1307.43 / 2) * var(--u));
+    --w: 966.05;
+    --h: 936.651;
+    --r: -149.56deg;
+  }
+  .c-case-quote__strip {
+    width: calc(var(--w) * var(--u));
+    height: calc(var(--h) * var(--u));
+    overflow: hidden;
+    transform: translate(-50%, -50%) rotate(var(--r));
+  }
+  .c-case-quote :global(.c-case-quote__strip-img) {
+    display: block;
+    width: 228.54%;
+    max-width: none;
+    height: 100%;
+  }
+  .c-case-quote__mark,
+  .c-case-quote__text,
+  .c-case-quote__person {
+    position: relative;
+    z-index: 1;
+  }
+  .c-case-quote__mark {
+    width: calc(48 * var(--u));
+    height: auto;
+  }
+  .c-case-quote__text {
+    max-width: calc(728 * var(--u));
+    margin: 0;
+  }
+  .c-case-quote__text p {
+    margin: 0;
+    color: var(--color-heading);
+    text-wrap: balance;
+  }
+  .c-case-quote__person {
+    display: flex;
+    align-items: center;
+  }
+  .c-case-quote :global(.c-case-quote__photo) {
+    width: calc(51.78 * var(--u) * 1.3);
+    height: calc(51.78 * var(--u) * 1.3);
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .c-case-quote__who {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: calc(4 * var(--u));
+    padding-inline: calc(16 * var(--u));
+    text-align: left;
+  }
+  /* Figma: Acumin Pro Medium (500); the kit has 400 / 700 (TODO: DS). */
+  .c-case-quote__name {
+    color: var(--color-black-secondary);
+    line-height: 1.2;
+  }
+  .c-case-quote__role {
+    color: var(--color-text);
+    line-height: 1.2;
+  }
+  @media (max-width: 767px) {
+    .c-case-quote {
+      padding: 3rem 1rem;
+      gap: 2rem;
+    }
+    .c-case-quote__shapes {
+      display: none;
+    }
+    .c-case-quote__mark { width: 4rem; }
+    .c-case-quote :global(.c-case-quote__photo) { width: 5rem; height: 5rem; }
+  }
+</style>

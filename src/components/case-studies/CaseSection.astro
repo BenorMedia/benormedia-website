@@ -1,0 +1,44 @@
+---
+/**
+ * CaseSection — one block of the case study body (Figma "Content section"):
+ * an `<h2>` (Text L) and its content, 24px apart. The `id` is the table of
+ * contents anchor. `scroll-margin-top` clears the sticky nav.
+ */
+interface Props {
+  id: string;
+  heading: string;
+  class?: string;
+}
+
+const { id, heading, class: className } = Astro.props;
+---
+
+<section class:list={["c-case-section", className]} id={id} aria-labelledby={`${id}-title`}>
+  <h2 id={`${id}-title`} class="c-text_l c-case-section__title">{heading}</h2>
+  <slot />
+</section>
+
+<style>
+  .c-case-section {
+    --u: calc(1rem / 19.2);
+    display: flex;
+    flex-direction: column;
+    gap: calc(24 * var(--u));
+    min-width: 0;
+    scroll-margin-top: calc(var(--c-nav-height, 0px) + 2rem);
+  }
+  .c-case-section__title {
+    margin: 0;
+    color: var(--color-black-secondary);
+    line-height: 1.2;
+  }
+  .c-case-section :global(.c-case-text) {
+    margin: 0;
+    color: var(--color-text);
+  }
+  @media (max-width: 767px) {
+    .c-case-section {
+      gap: 2rem;
+    }
+  }
+</style>

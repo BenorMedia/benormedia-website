@@ -1,0 +1,111 @@
+---
+/**
+ * CaseFigure — an image in the case study body with its caption (Figma
+ * "Content" + "Caption Figure"): 1220 x 470 frame, 8px radius, caption
+ * centred 15px under it. The images are Figma exports of the composed
+ * screenshots. `chips` (the before / after figure): the labels sit over
+ * the image's top band as HTML, so no text is baked into the file (the
+ * export is cut below them).
+ */
+import { Image } from "astro:assets";
+import Eyebrow from "../ui/Eyebrow.astro";
+import type { CsFigure } from "../../lib/case-studies/types";
+
+interface Props {
+  figure: CsFigure;
+}
+
+const { figure } = Astro.props;
+const { image, caption, chips } = figure;
+---
+
+<figure class:list={["c-case-figure", { "has-chips": chips }]}>
+  <div class="c-case-figure__frame">
+    <Image
+      src={image.src}
+      alt={image.alt}
+      widths={[620, 940, 1240, 1860, 2440]}
+      sizes="(max-width: 991px) 100vw, 900px"
+      class="c-case-figure__img"
+    />
+    {chips && (
+      <>
+        <Eyebrow class="c-case-figure__chip is-before">{chips.before}</Eyebrow>
+        <span class="c-case-figure__chip is-after">{chips.after}</span>
+      </>
+    )}
+  </div>
+  {caption && <figcaption class="c-paragraph c-case-figure__caption">{caption}</figcaption>}
+</figure>
+
+<style>
+  .c-case-figure {
+    --u: calc(1rem / 19.2);
+    display: flex;
+    flex-direction: column;
+    gap: calc(15 * var(--u));
+    margin: 0;
+  }
+  .c-case-figure__frame {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+  }
+  .c-case-figure :global(.c-case-figure__img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  /* Before / after: Figma's 50px band above the export holds the chips. */
+  .c-case-figure.has-chips .c-case-figure__frame {
+    padding-top: calc(50 * var(--u));
+    border: 1px solid var(--color-gray-light); /* Figma #F3F3F3, TODO: DS */
+    background: var(--color-white);
+  }
+  .c-case-figure :global(.c-case-figure__chip) {
+    position: absolute;
+    top: calc(12.42 * var(--u));
+    text-transform: none;
+  }
+  .c-case-figure :global(.c-case-figure__chip.is-before) {
+    left: calc(108.64 * var(--u));
+  }
+  .c-case-figure__chip.is-after {
+    right: calc(139 * var(--u));
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5em 1.05em;
+    border: 0.5px solid var(--color-blue);
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--color-blue) 10%, var(--color-white));
+    color: var(--color-text);
+    font-size: 0.9375rem;
+    line-height: normal;
+    letter-spacing: 0.064em;
+  }
+  .c-case-figure__chip.is-after::before,
+  .c-case-figure__chip.is-after::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 0.625rem;
+    height: 0.625rem;
+    border: 0.5px solid var(--color-blue);
+    border-radius: 1.5px;
+    background: color-mix(in srgb, var(--color-blue) 5%, var(--color-white));
+    transform: translateY(-50%);
+  }
+  .c-case-figure__chip.is-after::before { left: -0.344rem; }
+  .c-case-figure__chip.is-after::after { right: -0.344rem; }
+  .c-case-figure__caption {
+    margin: 0;
+    color: var(--color-text); /* Figma Grey 400 #848484, TODO: DS */
+    text-align: center;
+  }
+  @media (max-width: 767px) {
+    .c-case-figure.has-chips .c-case-figure__frame { padding-top: 4rem; }
+    .c-case-figure :global(.c-case-figure__chip) { top: 0.9rem; }
+    .c-case-figure :global(.c-case-figure__chip.is-before) { left: 1.5rem; }
+    .c-case-figure__chip.is-after { right: 1.5rem; }
+  }
+</style>

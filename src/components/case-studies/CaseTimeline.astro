@@ -1,0 +1,214 @@
+---
+/**
+ * CaseTimeline — project phases (Figma 4225:12638): a dashed line with a
+ * diamond at the start of each phase (outlined; the milestone's filled
+ * with the brand gradient), the milestone's label above it, and one card
+ * per phase with a glow, the shapes strip and a glass tile holding the
+ * phase icon (decorative), then title, dates, a rule and what was done.
+ * An ordered list. ≤767 (`TODO: DS mobile`): cards stack; the line is
+ * hidden and the milestone label shows in its card's column.
+ */
+import CaseDecor from "./CaseDecor.astro";
+import type { CsPhase } from "../../lib/case-studies/types";
+import glow from "../../assets/case-studies/shared/timeline-glow.svg";
+import shapes from "../../assets/case-studies/shared/shapes-stream.png";
+
+interface Props {
+  phases: readonly CsPhase[];
+  milestone: { label: string; date: string; at: number };
+}
+
+const { phases, milestone } = Astro.props;
+---
+
+<div class="c-case-timeline" style={`--n: ${phases.length}; --at: ${milestone.at};`}>
+  <div class="c-case-timeline__track" aria-hidden="true">
+    <span class="c-case-timeline__milestone">
+      <span class="c-paragraph_m c-case-timeline__milestone-label">{milestone.label}</span>
+      <span class="c-paragraph_m c-case-timeline__milestone-date">{milestone.date}</span>
+    </span>
+    <span class="c-case-timeline__line"></span>
+    {phases.map((_, i) => (
+      <span class:list={["c-case-timeline__diamond", { "is-milestone": i === milestone.at }]} style={`--i: ${i};`}></span>
+    ))}
+  </div>
+  <ol class="c-case-timeline__list">
+    {phases.map((p, i) => (
+      <li class="c-case-timeline__card">
+        <img class="c-case-timeline__glow" src={glow.src} alt="" width="682" height="771" aria-hidden="true" />
+        <div class="c-case-timeline__strip" aria-hidden="true">
+          <CaseDecor src={shapes} width={900} class="c-case-timeline__strip-img" />
+        </div>
+        <div class="c-case-timeline__tile" aria-hidden="true">
+          <CaseDecor src={p.icon} width={132} class="c-case-timeline__icon" />
+        </div>
+        <div class="c-case-timeline__body">
+          <h3 class="c-paragraph_m c-case-timeline__title">{p.title}</h3>
+          <p class="c-paragraph_m c-case-timeline__dates">
+            {p.dates}
+            {i === milestone.at && <span class="c-case-timeline__sr"> ({milestone.label}: {milestone.date})</span>}
+          </p>
+          <p class="c-paragraph_m c-case-timeline__text">{p.text}</p>
+        </div>
+      </li>
+    ))}
+  </ol>
+</div>
+
+<style>
+  .c-case-timeline {
+    --u: calc(1rem / 19.2);
+    --gap: calc(16 * var(--u));
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+  }
+  .c-case-timeline__track {
+    position: relative;
+    height: calc((58 + 8 + 29) * var(--u));
+  }
+  /* Column start of phase i: i card widths plus i gaps. */
+  .c-case-timeline__milestone,
+  .c-case-timeline__diamond {
+    --col: calc((100% - (var(--n) - 1) * var(--gap)) / var(--n));
+  }
+  .c-case-timeline__milestone {
+    position: absolute;
+    top: 0;
+    left: calc(var(--at) * (var(--col) + var(--gap)));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(4 * var(--u));
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+  .c-case-timeline__milestone-label {
+    color: var(--color-black-secondary);
+    line-height: 1.2;
+  }
+  .c-case-timeline__milestone-date {
+    color: var(--color-text);
+    line-height: 1.5;
+  }
+  .c-case-timeline__line {
+    position: absolute;
+    bottom: calc(14.5 * var(--u));
+    left: 0;
+    right: 0;
+    border-top: 1px dashed var(--color-gray);
+  }
+  .c-case-timeline__diamond {
+    position: absolute;
+    bottom: calc(4.53 * var(--u));
+    left: calc(var(--i) * (var(--col) + var(--gap)) + 4 * var(--u));
+    width: calc(19.47 * var(--u));
+    height: calc(19.47 * var(--u));
+    border: 1px solid var(--color-blue);
+    background: color-mix(in srgb, var(--color-blue) 10%, var(--color-white));
+    transform: translateX(-50%) rotate(45deg);
+  }
+  .c-case-timeline__diamond.is-milestone {
+    border: 0;
+    background: var(--gradient-primary);
+  }
+
+  .c-case-timeline__list {
+    display: grid;
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    gap: var(--gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .c-case-timeline__card {
+    position: relative;
+    min-width: 0;
+    min-height: calc(292 * var(--u));
+    overflow: hidden;
+    border: var(--border-default);
+    border-radius: 8px;
+    background: var(--color-white);
+  }
+  /* Decor, Figma px from the card's top-left (396 x 292 card). */
+  .c-case-timeline__glow {
+    position: absolute;
+    top: calc(-408.4 * var(--u));
+    left: calc(129 * var(--u));
+    width: calc(681.9 * var(--u));
+    height: auto;
+    pointer-events: none;
+  }
+  .c-case-timeline__strip {
+    position: absolute;
+    top: calc((-326.38 + 807.49 / 2) * var(--u));
+    left: calc((-50.38 + 814.4 / 2) * var(--u));
+    width: calc(604.06 * var(--u));
+    height: calc(585.67 * var(--u));
+    overflow: hidden;
+    transform: translate(-50%, -50%) rotate(29.57deg);
+    pointer-events: none;
+  }
+  .c-case-timeline :global(.c-case-timeline__strip-img) {
+    display: block;
+    width: 228.54%;
+    max-width: none;
+    height: 100%;
+  }
+  .c-case-timeline__tile {
+    position: absolute;
+    top: calc((146 - 74.64) * var(--u));
+    left: calc((198 + 116.24) * var(--u));
+    display: flex;
+    padding: calc(16.68 * var(--u)) calc(26.21 * var(--u));
+    border: 0.7px solid var(--color-border);
+    border-radius: 9.5px;
+    background: var(--color-surface-glass); /* Figma white 10%, TODO: DS */
+    -webkit-backdrop-filter: blur(6.9px);
+            backdrop-filter: blur(6.9px);
+    transform: translate(-50%, -50%);
+  }
+  .c-case-timeline :global(.c-case-timeline__icon) {
+    width: calc(131.66 * var(--u));
+    height: calc(131.66 * var(--u));
+    object-fit: contain;
+  }
+  .c-case-timeline__body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: calc(8 * var(--u));
+    padding: calc(120 * var(--u)) calc(32 * var(--u)) calc(32 * var(--u));
+  }
+  .c-case-timeline__title,
+  .c-case-timeline__dates,
+  .c-case-timeline__text {
+    margin: 0;
+  }
+  .c-case-timeline__title {
+    color: var(--color-black-secondary);
+    line-height: 1.2;
+  }
+  .c-case-timeline__dates {
+    padding-bottom: calc(8 * var(--u));
+    border-bottom: var(--border-default);
+    color: var(--color-text);
+  }
+  .c-case-timeline__text {
+    color: var(--color-text);
+  }
+  .c-case-timeline__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  @media (max-width: 767px) {
+    .c-case-timeline__track { display: none; }
+    .c-case-timeline__list { grid-template-columns: minmax(0, 1fr); gap: 1.6rem; }
+    .c-case-timeline__body { padding: 12rem 2rem 2rem; }
+    .c-case-timeline__tile { left: auto; right: -2rem; top: 6rem; transform: translateY(-50%); }
+  }
+</style>

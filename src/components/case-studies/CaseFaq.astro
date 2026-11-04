@@ -1,0 +1,25 @@
+---
+/**
+ * CaseFaq — FAQ inside the case study body (Figma 4225:12760): heading and
+ * the site's accordion. The page builds the FAQPage JSON-LD from the same
+ * array (`caseStudyJsonLd`). Empty items → renders nothing (Surfe has no
+ * FAQ copy yet: Figma's block holds the Pricing placeholder questions).
+ */
+import FaqAccordion from "../ui/FaqAccordion.astro";
+import CaseSection from "./CaseSection.astro";
+import type { CsFaqItem } from "../../lib/case-studies/types";
+
+interface Props {
+  id: string;
+  heading: string;
+  items: readonly CsFaqItem[];
+}
+
+const { id, heading, items } = Astro.props;
+---
+
+{items.length > 0 && (
+  <CaseSection id={id} heading={heading}>
+    <FaqAccordion items={items.map((i) => ({ question: i.question, answer: i.answer }))} name={`${id}-faq`} />
+  </CaseSection>
+)}

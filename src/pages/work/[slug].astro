@@ -1,0 +1,274 @@
+---
+/**
+ * /work/[slug] — case study template (Figma 4225:11810, lead 2026-11-04;
+ * brief-next-pages Part 2, where Figma wins over the brief's section list).
+ * One static page per entry in `src/lib/case-studies/` (data in code, not
+ * Sanity). `/work` rows link here through `caseStudyHref()` when the Sanity
+ * client has `caseStudy` + `slug`.
+ *
+ * Drafts (`DRAFT = true` in the entry): built only where drafts are
+ * (previews, `astro dev`, `PAGES_INCLUDE_DRAFTS=1`), with noindex, and kept
+ * out of the sitemap (astro.config.mjs), as /about.
+ *
+ * Order as Figma: hero → stats → body (sticky TOC + share + Get in Touch |
+ * At a glance, About, Challenge and goals, What we did, Results, Client
+ * quote, Stack, Team and timeline, Key takeaways, CTA, FAQ) → other case
+ * studies → site CTA banner + footer (BaseLayout).
+ */
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import JsonLd from "../../components/layout/JsonLd.astro";
+import NpBlogSidebar from "../../components/new-pages/NpBlogSidebar.astro";
+import CaseHero from "../../components/case-studies/CaseHero.astro";
+import CaseStats from "../../components/case-studies/CaseStats.astro";
+import CaseSection from "../../components/case-studies/CaseSection.astro";
+import CaseFacts from "../../components/case-studies/CaseFacts.astro";
+import CaseQuote from "../../components/case-studies/CaseQuote.astro";
+import CaseGoals from "../../components/case-studies/CaseGoals.astro";
+import CaseFigure from "../../components/case-studies/CaseFigure.astro";
+import CaseTable from "../../components/case-studies/CaseTable.astro";
+import CaseStack from "../../components/case-studies/CaseStack.astro";
+import CaseTimeline from "../../components/case-studies/CaseTimeline.astro";
+import CaseTeam from "../../components/case-studies/CaseTeam.astro";
+import CaseTakeaways from "../../components/case-studies/CaseTakeaways.astro";
+import CaseCta from "../../components/case-studies/CaseCta.astro";
+import CaseFaq from "../../components/case-studies/CaseFaq.astro";
+import CaseRelated from "../../components/case-studies/CaseRelated.astro";
+import { builtCaseStudies, caseStudyPath } from "../../lib/case-studies";
+import type { CaseStudy } from "../../lib/case-studies/types";
+import { caseStudyJsonLd } from "../../lib/new-pages/jsonld";
+import { escapeHtml, Slugger } from "../../lib/new-pages/html";
+import { SITE } from "../../lib/content/entity";
+import { getCtaBadgeUrlsCached } from "../../lib/sanity/site";
+
+export function getStaticPaths() {
+  return builtCaseStudies().map((c) => ({ params: { slug: c.slug }, props: { c } }));
+}
+
+interface Props {
+  c: CaseStudy;
+}
+
+const { c } = Astro.props;
+const path = caseStudyPath(c);
+const badges = await getCtaBadgeUrlsCached();
+
+// Section ids from their headings; the table of contents lists them in
+// page order (Figma: the H2s, the three H3s under "What we did", then
+// "Next steps" for the CTA).
+const slug = new Slugger();
+const ids = {
+  glance: slug.slug(c.glance.heading),
+  about: slug.slug(c.about.heading),
+  challenge: slug.slug(c.challenge.heading),
+  work: slug.slug(c.work.heading),
+  questions: c.work.questions.map((q) => slug.slug(q.heading)),
+  results: slug.slug(c.results.heading),
+  quote: slug.slug(c.clientQuote.heading),
+  stack: slug.slug(c.stack.heading),
+  team: slug.slug(c.team.heading),
+  takeaways: slug.slug(c.takeaways.heading),
+  cta: slug.slug(c.cta.tocLabel),
+  faq: slug.slug(c.faq.heading),
+};
+const toc = [
+  [ids.glance, c.glance.heading],
+  [ids.about, c.about.heading],
+  [ids.challenge, c.challenge.heading],
+  [ids.work, c.work.heading],
+  ...c.work.questions.map((q, i) => [ids.questions[i]!, q.heading] as const),
+  [ids.results, c.results.heading],
+  [ids.quote, c.clientQuote.heading],
+  [ids.stack, c.stack.heading],
+  [ids.team, c.team.heading],
+  [ids.takeaways, c.takeaways.heading],
+  [ids.cta, c.cta.tocLabel],
+  ...(c.faq.items.length > 0 ? [[ids.faq, c.faq.heading] as const] : []),
+].map(([id, label]) => ({ id, html: escapeHtml(label) }));
+
+const crumbs = [
+  { label: "Home", href: "/" },
+  { label: "Work", href: "/work" },
+  { label: c.client.name },
+];
+
+const related = builtCaseStudies().filter((x) => x.slug !== c.slug);
+
+const ld = caseStudyJsonLd({
+  path,
+  title: c.seo.title,
+  headline: c.hero.h1,
+  description: c.seo.description,
+  publishedAt: c.publishedAt,
+  updatedAt: c.updatedAt,
+  image: `${SITE}${c.seo.ogImage}`,
+  client: { name: c.client.name, url: c.client.url },
+  faq: c.faq.items,
+});
+---
+
+<BaseLayout
+  title={c.seo.title}
+  description={c.seo.description}
+  titleTemplate={false}
+  noIndex={c.draft}
+  ogImage={c.seo.ogImage}
+>
+  {ld.map((data) => <JsonLd data={data} />)}
+
+  <CaseHero
+    crumbs={crumbs}
+    logo={c.client.logo}
+    tag={c.hero.tag}
+    h1={c.hero.h1}
+    intro={c.hero.intro}
+    screenshot={c.hero.screenshot}
+    address={c.hero.address}
+    liveLabel={c.hero.liveLabel}
+    liveUrl={c.client.url}
+  />
+  <CaseStats stats={c.stats} />
+
+  <div class="c-case-body">
+    <div class="c-case-body__grid">
+      <aside class="c-case-body__toc">
+        <NpBlogSidebar items={toc} url={`${SITE}${path}`} />
+      </aside>
+
+      <div class="c-case-body__main">
+        <CaseSection id={ids.glance} heading={c.glance.heading}>
+          <p class="c-paragraph_m c-case-text">{c.glance.summary}</p>
+          <CaseFacts facts={c.glance.facts} />
+        </CaseSection>
+
+        <CaseSection id={ids.about} heading={c.about.heading}>
+          {c.about.paragraphs.map((p) => <p class="c-paragraph_m c-case-text">{p}</p>)}
+        </CaseSection>
+
+        <CaseSection id={ids.challenge} heading={c.challenge.heading}>
+          {c.challenge.paragraphs.map((p) => <p class="c-paragraph_m c-case-text">{p}</p>)}
+          <CaseQuote quote={c.challenge.quote} />
+          <CaseGoals intro={c.challenge.goalsIntro} goals={c.challenge.goals} />
+          <CaseFigure figure={c.challenge.figure} />
+        </CaseSection>
+
+        <CaseSection id={ids.work} heading={c.work.heading} class="c-case-body__work">
+          <p class="c-paragraph_m c-case-text">{c.work.intro}</p>
+          {c.work.questions.map((q, i) => (
+            <div class="c-case-body__question" id={ids.questions[i]}>
+              <h3 class="c-text_m c-case-body__h3">{q.heading}</h3>
+              {q.paragraphs.map((p) => <p class="c-paragraph_m c-case-text">{p}</p>)}
+              <CaseFigure figure={q.figure} />
+            </div>
+          ))}
+        </CaseSection>
+
+        <CaseSection id={ids.results} heading={c.results.heading}>
+          {c.results.paragraphs.map((p) => <p class="c-paragraph_m c-case-text">{p}</p>)}
+          <CaseTable table={c.results.table} />
+          <CaseFigure figure={c.results.figure} />
+        </CaseSection>
+
+        <CaseSection id={ids.quote} heading={c.clientQuote.heading}>
+          <CaseQuote quote={c.clientQuote.quote} />
+        </CaseSection>
+
+        <CaseSection id={ids.stack} heading={c.stack.heading}>
+          <p class="c-paragraph_m c-case-text">{c.stack.intro}</p>
+          <CaseStack core={c.stack.core} items={c.stack.items} />
+        </CaseSection>
+
+        <CaseSection id={ids.team} heading={c.team.heading}>
+          <p class="c-paragraph_m c-case-text">{c.team.intro}</p>
+          <CaseTimeline phases={c.team.phases} milestone={c.team.milestone} />
+          <p class="c-paragraph_m c-case-text">{c.team.summary}</p>
+          <CaseTeam members={c.team.members} />
+        </CaseSection>
+
+        <CaseSection id={ids.takeaways} heading={c.takeaways.heading}>
+          <CaseTakeaways items={c.takeaways.items} />
+        </CaseSection>
+
+        <CaseCta
+          id={ids.cta}
+          eyebrow={c.cta.eyebrow}
+          heading={c.cta.heading}
+          button={c.cta.button}
+          trusted={c.cta.trusted}
+          badges={badges}
+        />
+
+        <CaseFaq id={ids.faq} heading={c.faq.heading} items={c.faq.items} />
+      </div>
+    </div>
+  </div>
+
+  <CaseRelated
+    eyebrow={c.related.eyebrow}
+    heading={c.related.heading}
+    cardTag={c.related.cardTag}
+    published={c.related.published}
+    more={c.related.more}
+    items={related}
+  />
+</BaseLayout>
+
+<style>
+  /* Figma 4225:11904: 350 | 110 gap | 1220 in the 1680 grid (the blog
+     article's columns); 80px above, 110 below. */
+  .c-case-body {
+    --u: calc(1rem / 19.2);
+    max-width: 1440px;
+    margin-inline: auto;
+    padding: calc(80 * var(--u)) 7.5rem calc(110 * var(--u));
+  }
+  .c-case-body__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 350fr) minmax(0, 1220fr);
+    align-items: start;
+    column-gap: 6.55%;
+  }
+  .c-case-body__toc {
+    align-self: stretch;
+    min-width: 0;
+  }
+  .c-case-body__main {
+    display: flex;
+    flex-direction: column;
+    gap: calc(48 * var(--u));
+    min-width: 0;
+  }
+  .c-case-body :global(.c-case-body__work) {
+    gap: calc(24 * var(--u));
+  }
+  .c-case-body__question {
+    display: flex;
+    flex-direction: column;
+    gap: calc(24 * var(--u));
+    margin-top: calc(24 * var(--u));
+    scroll-margin-top: calc(var(--c-nav-height, 0px) + 2rem);
+  }
+  .c-case-body__h3 {
+    margin: 0;
+    color: var(--color-black-secondary);
+    line-height: 1.4;
+  }
+  @media (max-width: 1199px) {
+    .c-case-body__grid {
+      grid-template-columns: minmax(0, 300fr) minmax(0, 800fr);
+    }
+  }
+  @media (max-width: 991px) {
+    .c-case-body__grid {
+      grid-template-columns: 1fr;
+      row-gap: 4rem;
+    }
+  }
+  @media (max-width: 767px) {
+    .c-case-body {
+      padding: 4.444rem 2rem 6rem;
+    }
+    .c-case-body__main {
+      gap: 5rem;
+    }
+  }
+</style>
