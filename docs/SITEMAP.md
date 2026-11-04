@@ -5,7 +5,8 @@ English only. No locale prefix.
 | Page | Route | Type | Sanity source | Notes |
 |---|---|---|---|---|
 | Home | `/` | Singleton | `homePage` | Home.png received |
-| Work | `/work` | Singleton + list | `workPage` (SEO) + `client[]` | Listing only, no detail pages |
+| Work | `/work` | Singleton + list | `workPage` (SEO) + `client[]` | Listing; case study clients first, linked to their case study |
+| Case study | `/work/[slug]` | Dynamic | `client` with `caseStudy` on | Template to build (new design, lead 2026-11-04). Surfe, JOOR, DarwinCX first |
 | Pricing | `/pricing` | Singleton | `pricingPage` | |
 | Testimonials | `/testimonials` | Singleton + list | `testimonialsPage` + `testimonial[]` | |
 | Custom Websites & Migrations | `/custom-websites-migrations` | Service template | `service` | |

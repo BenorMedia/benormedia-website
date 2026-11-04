@@ -195,6 +195,8 @@ export interface Client extends SanityRef<'client'> {
   category?: Category;
   sector?: ClientSector;
   websiteUrl?: string;
+  /** Set only when the client has a case study (`/work/<slug>`). */
+  caseStudySlug?: string | null;
   testimonial?: Testimonial;
 }
 

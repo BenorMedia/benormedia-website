@@ -7,9 +7,11 @@
  * specs (§9).
  *   - `default`: gray border, text color, no background.
  *   - `accent`:  accent border + 8% accent tint + accent text.
+ *   - `muted`:   gray border + light gray fill + heading text ("Case study",
+ *     `docs/refs/work-component.png`, lead 2026-11-04).
  */
 interface Props {
-  variant?: "default" | "accent";
+  variant?: "default" | "accent" | "muted";
   class?: string;
 }
 
@@ -51,5 +53,11 @@ const classList = ["c-tag", `is-${variant}`, className].filter(Boolean).join(" "
     background: color-mix(in srgb, var(--color-accent) 8%, transparent);
     color: var(--color-accent);
     font-weight: 600;
+  }
+
+  /* TODO: DS — values read from the PNG ref (no Figma access); closest tokens. */
+  .c-tag.is-muted {
+    background: var(--color-gray-light);
+    color: var(--color-heading);
   }
 </style>

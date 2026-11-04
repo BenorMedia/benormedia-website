@@ -25,6 +25,12 @@
  *     the name isn't read twice (QA 2026-09-30).
  *   - Hover preview only renders when `websiteScreenshot` is set.
  *
+ * Case studies (`caseStudies` prop, Work page only; lead 2026-11-04, ref
+ * `docs/refs/work-component.png`): a client with `caseStudySlug` gets a
+ * "Case study" tag (`muted`) after its other tags, and its row links to
+ * `/work/<slug>` in the same tab instead of the website. Other rows, and
+ * every list without the prop (Home), are unchanged.
+ *
  * Hover (lead, visual QA 2026-09-29):
  *   - The row lifts 0.4rem with a soft shadow (`transition: all 0.2s linear`).
  *     Lead-approved shadow exception 2026-09-29 — see docs/DECISIONS.md.
@@ -54,22 +60,27 @@ import type { Client } from "../../lib/sanity/types";
 import { urlFor, assetDimensions, type Source } from "../../lib/sanity/image";
 import Tag from "./Tag.astro";
 import ClientIcon from "./ClientIcon.astro";
+import { caseStudyHref } from "../../lib/sanity/links";
 
 interface Props {
   clients: Client[];
   limit?: number;
   class?: string;
+  /** Work page: tag + link case study clients (see header). */
+  caseStudies?: boolean;
 }
 
-const { clients, limit, class: className } = Astro.props;
+const { clients, limit, class: className, caseStudies = false } = Astro.props;
 
 const rows = (limit === undefined ? clients : clients.slice(0, limit)).map(
   (client) => {
+    const caseStudyUrl = caseStudies ? caseStudyHref(client) : undefined;
     return {
       id: client._id,
       client,
       name: client.name,
-      href: client.websiteUrl,
+      href: caseStudyUrl ?? client.websiteUrl,
+      isCaseStudy: caseStudyUrl !== undefined,
       fundsLabel: client.fundsRaised?.trim()
         ? `${client.fundsRaised.trim()} Raised`
         : undefined,
@@ -98,8 +109,11 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
 <ul class={rootClass}>
   {rows.map((row) => {
     const RowTag = row.href ? "a" : "div";
+    const opensNewTab = row.href !== undefined && !row.isCaseStudy;
     const linkAttrs = row.href
-      ? { href: row.href, target: "_blank", rel: "noopener noreferrer" }
+      ? opensNewTab
+        ? { href: row.href, target: "_blank", rel: "noopener noreferrer" }
+        : { href: row.href }
       : {};
     return (
       <li class="c-client-list__item" data-category={row.categorySlug} data-sector={row.sector}>
@@ -108,12 +122,13 @@ const rootClass = ["c-client-list", className].filter(Boolean).join(" ");
             <ClientIcon client={row.client} />
             <span class="c-client-list__name c-text_m">{row.name}</span>
             {/* TODO: COPY — screen-reader note on linked rows. */}
-            {row.href && <span class="c-client-list__sr-only"> (opens in a new tab)</span>}
+            {opensNewTab && <span class="c-client-list__sr-only"> (opens in a new tab)</span>}
           </span>
 
           <span class="c-client-list__tags">
             {row.fundsLabel && <Tag>{row.fundsLabel}</Tag>}
             {row.categoryLabel && <Tag variant="accent">{row.categoryLabel}</Tag>}
+            {row.isCaseStudy && <Tag variant="muted">Case study</Tag>}
           </span>
 
           <svg

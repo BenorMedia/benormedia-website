@@ -28,8 +28,11 @@
  *   Agency clients still show under View All; `?sector=agency` falls back
  *   to "all".
  *
- * Order: the rows keep the `getAllClients()` order (Studio drag-and-drop
- * `orderRank`); filtering only hides rows.
+ * Order: clients with a case study first (lead 2026-11-04), then the rest;
+ * each group keeps the `getAllClients()` order (Studio drag-and-drop
+ * `orderRank`). Sorted here, not in the query, so the hero orbit keeps the
+ * plain Studio order. Filtering only hides rows. Case study rows get the
+ * tag and the `/work/<slug>` link (`ClientList` `caseStudies`).
  *
  * Hides entirely when there are no clients.
  */
@@ -56,6 +59,11 @@ const filters: Filter[] = [
   { label: "SaaS", value: "saas" },
   { label: "Professional Services", value: "professional-services" },
 ];
+
+// Case studies first; `sort` is stable, so each group keeps the Studio order.
+const rows = [...clients].sort(
+  (a, b) => Number(Boolean(b.caseStudySlug)) - Number(Boolean(a.caseStudySlug)),
+);
 
 const headingId = "work-listing-title";
 ---
@@ -89,7 +97,7 @@ const headingId = "work-listing-title";
       ></p>
 
       <div class="c-work-listing__list" data-anim="work-list">
-        <ClientList clients={clients} />
+        <ClientList clients={rows} caseStudies />
       </div>
     </Container>
   </section>

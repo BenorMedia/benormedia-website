@@ -1,6 +1,12 @@
-# Sanity ↔ Astro Data Contract (v0.8, approved)
+# Sanity ↔ Astro Data Contract (v0.10)
 
-Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) approved 2026-09-29. v0.7 (`client.orderRank`) requested by the lead 2026-09-29. v0.8 (`client.websiteVideo`) requested by the lead 2026-09-30. v0.9 (`client.sector`) requested by the lead 2026-10-01.
+Status: v0.5 approved by the project lead 2026-09-25. v0.6 (`service` document) approved 2026-09-29. v0.7 (`client.orderRank`) requested by the lead 2026-09-29. v0.8 (`client.websiteVideo`) requested by the lead 2026-09-30. v0.9 (`client.sector`) requested by the lead 2026-10-01. v0.10 (`client.caseStudy` + `client.slug`) requested by the lead 2026-11-04.
+
+### v0.10 changes vs v0.9 (2026-11-04)
+- **`client.caseStudy`** (optional `boolean`, default off): the client has a case study.
+- **`client.slug`** (`slug` from `name`, kebab-case, unique among clients; shown and required only when `caseStudy` is on): the case study URL `/work/<slug>`.
+- Projected in `CLIENT_LIST_FIELDS` as `caseStudySlug` = `select(caseStudy == true => slug.current)` (null otherwise). URL helper: `caseStudyHref()` in `src/lib/sanity/links.ts`.
+- Work page: those clients list first (then the Studio order), with a "Case study" tag (`Tag` `muted`), and their row links to `/work/<slug>` in the same tab. Other rows unchanged. Set on Surfe (`surfe`), JOOR (`joor`) and DarwinCX (`darwincx`) on 2026-11-04.
 
 ### v0.9 changes vs v0.8 (2026-10-01)
 - **`client.sector`** (optional `string`, dropdown, one value): `agency` (Agency), `professional-services` (Professional Services), `saas` (SaaS). Projected in `CLIENT_LIST_FIELDS` (so `CLIENTS_BY_IDS` + `ALL_CLIENTS`). The Work page filters by it (View All · SaaS · Professional Services; no Agency tab since 2026-10-05, `agency` clients show under View All); `category` no longer drives any filter. Values are filled in Studio / MCP by the lead.
@@ -35,10 +41,12 @@ Approach: **repeatable data lives in Sanity documents; page copy is authored dir
 
 ## Documents
 
-### `client` — Clients (no detail page)
+### `client` — Clients (detail page only with a case study, `/work/<slug>`)
 | Field | Name | Type | Rules |
 |---|---|---|---|
 | Name | `name` | string | optional |
+| Case study | `caseStudy` | boolean | optional, default off. Work page tag, order and link (v0.10) |
+| Case study slug | `slug` | slug (from `name`) | hidden unless `caseStudy`; then required, kebab-case, unique among clients. URL `/work/<slug>` |
 | Logo | `logo` | image (SVG preferred) | optional. Alt auto = client name |
 | Icon | `icon` | image (SVG preferred) | optional. Alt auto = client name |
 | Badge | `badge` | image (no hotspot) | optional. Alt auto = "<name> badge" (required if image is set and alt blank) |

@@ -177,6 +177,9 @@ const CLIENT_LIST_FIELDS = /* groq */ `
   fundsRaised,
   websiteUrl,
   sector,
+  // Case study (SCHEMAS v0.10): the slug only when the switch is on, so a
+  // leftover slug on a client without a case study never links anywhere.
+  "caseStudySlug": select(caseStudy == true => slug.current),
   "category": category->{
     _id,
     _type,
