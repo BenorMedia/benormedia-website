@@ -136,9 +136,9 @@ const ld = caseStudyJsonLd({
   updatedAt: c.updatedAt,
   image: `${SITE}${c.seo.ogImage}`,
   client: { name: c.client.name, url: c.client.url },
-  // FAQPage only for answered questions: an answer still waiting on its
-  // copy (a `[FACT NEEDED: ...]` marker) stays out of the structured data.
-  faq: c.faq.items.filter((i) => !/\[(FACT NEEDED|VERIFY|PERSON|QUOTE|RESULT NEEDED):/.test(i.answer)),
+  // No FAQPage on case studies: every draft says "FAQs (optional; no
+  // FAQPage markup)" (docs/*-case-study-draft.md, lead 2026-11-04).
+  faq: [],
 });
 ---
 

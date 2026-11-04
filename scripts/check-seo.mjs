@@ -101,6 +101,8 @@ const PAGES = {
   '/about': { expected: ['AboutPage', 'BreadcrumbList', 'Organization', 'Person'], keyword: 'webflow agency' },
   // Case studies (src/lib/case-studies/), drafts until the lead releases them: built in previews only.
   '/work/surfe': { expected: ['Article', 'BreadcrumbList'], keyword: 'surfe' },
+  '/work/joor': { expected: ['Article', 'BreadcrumbList'], keyword: 'joor' },
+  '/work/darwincx': { expected: ['Article', 'BreadcrumbList'], keyword: 'darwin' },
 };
 const NOINDEX_PAGES = ['/testimonials', '/cookie-policy']; // must stay out of the sitemap
 

@@ -138,6 +138,8 @@ const LASTMOD = {
   // Case studies (src/lib/case-studies/entries/*.ts): listed only once
   // released (drafts are filtered below); set to the entry's `updatedAt`.
   '/work/surfe': '2026-11-04',
+  '/work/joor': '2026-11-04',
+  '/work/darwincx': '2026-11-04',
 };
 
 // New pages (content-pack/content/*.md, docs/new-pages.md): draft pages stay

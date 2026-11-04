@@ -80,11 +80,10 @@ export const CASE_STUDY: CaseStudy = {
   publishedAt,
   updatedAt,
   seo: {
-    // TODO: COPY: no SEO fields for Surfe in the brief; derived from the H1
-    // and intro (DECISIONS → Work, open question).
-    title: "Surfe Case Study: WordPress to Webflow | BenorMedia",
+    // docs/Surfe-case-study-draft.md → Page metadata.
+    title: "Surfe case study: SaaS website redesign on Webflow | BenorMedia",
     description:
-      "How BenorMedia moved Surfe's 350 pages from WordPress to Webflow in three months, with about 1,500 redirects and higher Lighthouse scores.",
+      "Surfe, a B2B sales data platform, moved 350 pages from WordPress to Webflow in three months. How we redesigned its SaaS website for enterprise buyers.",
     // The hero screenshot cut to 1200 x 630.
     ogImage: "/images/case-studies/surfe-og.jpg",
   },
@@ -358,14 +357,16 @@ export const CASE_STUDY: CaseStudy = {
   },
   // Figma's FAQ block (4225:12760) holds the Pricing placeholder questions,
   // not Surfe's: no FAQ until copy exists (TODO: COPY).
-  // Figma 4225:12760 (lead 2026-11-04). Only the second question has an
-  // answer in the design; the others wait for theirs (markers, never guessed).
+  // Figma 4225:12760; answers from docs/Surfe-case-study-draft.md. Figma's
+  // fourth row, "Evidence log", is the draft's internal source list, not
+  // page copy: left out.
   faq: {
     heading: "Frequently asked questions.",
     items: [
       {
         question: "How long does a WordPress to Webflow migration take?",
-        answer: "[FACT NEEDED: answer not in Figma 4225:12770]",
+        answer:
+          "Surfe's took about three months, from kickoff in May 2026 to launch in August: design first, then the Webflow build and the content move.",
       },
       {
         question: "Can you run a website redesign and a Webflow migration at the same time?",
@@ -374,11 +375,7 @@ export const CASE_STUDY: CaseStudy = {
       },
       {
         question: "Does BenorMedia support the site after launch?",
-        answer: "[FACT NEEDED: answer not in Figma 4225:12785]",
-      },
-      {
-        question: "Evidence log",
-        answer: "[FACT NEEDED: content not in Figma 4225:12791]",
+        answer: "Yes. BenorMedia handles Surfe's ongoing website support: new pages, updates and fixes.",
       },
     ],
   },
