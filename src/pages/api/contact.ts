@@ -31,12 +31,18 @@ import type { APIRoute } from "astro";
 
 export const prerender = false;
 
-const BUDGETS = ["<5000", "5000-15000", "15000-30000", "30000+"] as const;
-const BUDGET_LABELS: Record<(typeof BUDGETS)[number], string> = {
-  "<5000": "<5,000",
-  "5000-15000": "5,000 - 15,000",
-  "15000-30000": "15,000 - 30,000",
-  "30000+": "30,000+",
+// Budget ranges (lead 2026-11-04). The previous values (until 2026-11-04)
+// stay accepted so a form already open in a visitor's tab during the deploy
+// still sends; the email shows their old label.
+const BUDGET_LABELS: Record<string, string> = {
+  "<10000": "<10,000",
+  "10000-20000": "10,000 - 20,000",
+  "20000-40000": "20,000 - 40,000",
+  "40000+": "40,000+",
+  "<5000": "<5,000 (previous form)",
+  "5000-15000": "5,000 - 15,000 (previous form)",
+  "15000-30000": "15,000 - 30,000 (previous form)",
+  "30000+": "30,000+ (previous form)",
 };
 
 const MAX = { name: 120, email: 254, company: 160, message: 5000 } as const;
@@ -89,7 +95,7 @@ export const POST: APIRoute = async ({ request }) => {
   if (!name) invalid.push("name");
   if (!EMAIL_RE.test(email)) invalid.push("email");
   if (!company) invalid.push("company");
-  if (!(BUDGETS as readonly string[]).includes(budget)) invalid.push("budget");
+  if (!Object.hasOwn(BUDGET_LABELS, budget)) invalid.push("budget");
   if (invalid.length) return json(400, { ok: false, error: "invalid", fields: invalid });
 
   const apiKey = env("RESEND_API_KEY");
@@ -100,7 +106,7 @@ export const POST: APIRoute = async ({ request }) => {
   const from = env("CONTACT_FROM_EMAIL") || "BenorMedia Website <website@benor.media>";
   const to = env("CONTACT_TO_EMAIL") || "info@benor.media";
 
-  const budgetLabel = BUDGET_LABELS[budget as (typeof BUDGETS)[number]];
+  const budgetLabel = BUDGET_LABELS[budget] ?? budget;
   const rows: [string, string][] = [
     ["Name", name],
     ["Email", email],
