@@ -99,6 +99,7 @@ Step list items show their number (01, 02…) next to the step preview (name · 
 | Field | Name | Type | Rules |
 |---|---|---|---|
 | Quote | `quote` | text | required, max length TBD by design |
+| Highlights | `highlights` | array of string | optional, max 3; each must be an exact substring of `quote`; rendered bold in the testimonial slider |
 | Author Name | `authorName` | string | required |
 | Author Role and Company | `authorRole` | string | e.g. "VP of Digital, Verifone" |
 | Author Photo | `authorPhoto` | image (hotspot) | alt auto = author name |

@@ -1,0 +1,523 @@
+---
+/**
+ * TestimonialSlider — expanding-card testimonial slider (Figma 4227:6140).
+ *
+ * One row of cards: the active card is wide (tag, name, logo, quote over a
+ * colour headshot), the others are narrow grayscale portraits of the same
+ * height. Prev / next arrows sit above the row.
+ *
+ * Movement (Figma shows three states of the row; the interaction follows the
+ * stripe-slider.webflow.io reference): the row is a window of
+ * `--ts-slots` cards. Next / prev move the active card one slot inside the
+ * window (the old card collapses while the new one expands); at the window's
+ * edge the whole row slides by one card instead. The loop is infinite, a
+ * click on a portrait opens it, arrows / keyboard / swipe all work and the
+ * row advances on its own until the visitor interacts.
+ * Logic: `src/scripts/ui/testimonial-slider.ts`.
+ *
+ * Data: `getTestimonials()` (Sanity `testimonial`). The role comes from
+ * `authorRole` ("Role, Company"), the logo from the referencing client, then
+ * the testimonial's own `companyLogo`, then the company name as text.
+ * `highlights` are rendered bold.
+ *
+ * Loop: the list is repeated until there are at least MIN_CARDS cards, so a
+ * card that wraps from one end of the row to the other is always off-screen,
+ * even after fast repeated clicks.
+ *
+ * Without JS the cards render as a horizontally scrollable row, fully
+ * readable.
+ *
+ * Sizes: Figma frame is 1920 wide with a 1680 container; px → rem at 19.2
+ * (the 1680 container = 87.5rem, the site's 1230px container at 14px).
+ */
+import type { Testimonial } from "../../lib/sanity/types";
+import { urlFor, clientImageAlt, isSvgAsset, type Source } from "../../lib/sanity/image";
+import { highlightQuote, splitAuthorRole } from "../../lib/sanity/testimonial-text";
+import Eyebrow from "./Eyebrow.astro";
+
+interface Props {
+  testimonials: Testimonial[];
+  /** Accessible name of the carousel. */
+  label?: string;
+  class?: string;
+}
+
+const { testimonials, label = "Client testimonials", class: className } = Astro.props;
+
+/* Enough cards that the widest window (6 slots) plus fast clicking never
+   shows a card jumping from one end to the other. */
+const MIN_CARDS = 16;
+
+const PHOTO_WIDTHS = [480, 800, 1200];
+
+const items = testimonials.map((t, i) => {
+  const { role, company } = splitAuthorRole(t.authorRole);
+  const photo = t.authorPhoto?.asset ? (t.authorPhoto as Source) : undefined;
+  const photoSrcset = photo
+    ? PHOTO_WIDTHS.map(
+        (w) => `${urlFor(photo).width(w).height(w).fit("crop").auto("format").url()} ${w}w`,
+      ).join(", ")
+    : undefined;
+  const photoSrc = photo ? urlFor(photo).width(800).height(800).fit("crop").auto("format").url() : undefined;
+
+  const logoSource = t.client?.logo?.asset ? t.client.logo : t.companyLogo?.asset ? t.companyLogo : undefined;
+  const logoSrc = logoSource
+    ? isSvgAsset(logoSource.asset?._id ?? logoSource.asset?._ref)
+      ? urlFor(logoSource as Source).url()
+      : urlFor(logoSource as Source).height(120).fit("max").auto("format").url()
+    : undefined;
+  const logoAlt = clientImageAlt(logoSource?.alt, t.client?.name ?? company, "logo");
+
+  return {
+    key: t._id,
+    position: i + 1,
+    name: t.authorName,
+    role,
+    company,
+    photoSrc,
+    photoSrcset,
+    logoSrc,
+    logoAlt,
+    runs: highlightQuote(t.quote, t.highlights),
+  };
+});
+
+const cards: { item: (typeof items)[number]; clone: boolean }[] = [];
+if (items.length > 0) {
+  while (cards.length < MIN_CARDS || cards.length < items.length) {
+    for (const item of items) cards.push({ item, clone: cards.length >= items.length });
+  }
+}
+
+const total = items.length;
+const trackId = `c-ts-track-${Math.random().toString(36).slice(2, 8)}`;
+const rootClass = ["c-ts", className].filter(Boolean).join(" ");
+---
+
+{total > 0 && (
+  <div class={rootClass} data-testimonial-slider>
+    {total > 1 && (
+      <div class="c-ts__controls">
+        <button class="c-ts__arrow is-prev" type="button" aria-label="Previous testimonial" aria-controls={trackId} data-ts-prev>
+          <span aria-hidden="true">→</span>
+        </button>
+        <button class="c-ts__arrow is-next" type="button" aria-label="Next testimonial" aria-controls={trackId} data-ts-next>
+          <span aria-hidden="true">→</span>
+        </button>
+      </div>
+    )}
+
+    <div
+      class="c-ts__viewport"
+      role="region"
+      aria-roledescription="carousel"
+      aria-label={label}
+      tabindex="0"
+      data-ts-viewport
+    >
+      <ul class="c-ts__track" id={trackId} aria-live="polite" data-ts-track>
+        {cards.map(({ item, clone }) => (
+          <li
+            class="c-ts__card"
+            role="group"
+            aria-roledescription="slide"
+            aria-label={`${item.position} of ${total}: ${item.name}`}
+            data-ts-card
+            data-clone={clone ? "" : undefined}
+          >
+            {item.photoSrc && (
+              <img
+                class="c-ts__photo"
+                src={item.photoSrc}
+                srcset={item.photoSrcset}
+                sizes="(max-width: 767px) 420px, (max-width: 1439px) 47vw, 650px"
+                alt=""
+                width="800"
+                height="800"
+                loading="lazy"
+                decoding="async"
+              />
+            )}
+
+            <div class="c-ts__content" data-ts-content>
+              <div class="c-ts__head">
+                <div class="c-ts__person">
+                  {item.role && <Eyebrow class="c-ts__role">{item.role}</Eyebrow>}
+                  <p class="c-ts__name c-text_l">{item.name}</p>
+                </div>
+                {item.logoSrc ? (
+                  <img class="c-ts__logo" src={item.logoSrc} alt={item.logoAlt} loading="lazy" decoding="async" />
+                ) : (
+                  item.company && <p class="c-ts__company c-paragraph_m">{item.company}</p>
+                )}
+              </div>
+
+              <blockquote class="c-ts__quote c-paragraph_m">
+                <p>&ldquo;{item.runs.map((run) => (run.bold ? <strong>{run.text}</strong> : run.text))}&rdquo;</p>
+              </blockquote>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <span class="c-ts__probe" aria-hidden="true" data-ts-probe></span>
+    </div>
+  </div>
+)}
+
+<script>
+  import { initTestimonialSlider } from "../../scripts/ui/testimonial-slider";
+
+  document.querySelectorAll<HTMLElement>("[data-testimonial-slider]").forEach((root) => {
+    initTestimonialSlider(root);
+  });
+</script>
+
+<style>
+  .c-ts {
+    /* Layout knobs, read by testimonial-slider.ts (any CSS length).
+       Desktop = Figma 1920 frame (px / 19.2). */
+    --ts-slots: 6;              /* cards in the window (Figma: 5 portraits + active) */
+    --ts-start-slot: 3;         /* slot of the active card on load (Figma state 1) */
+    --ts-inactive-w: 8.135rem;  /* 156.19px */
+    --ts-gap: 1.513rem;         /* 29.06px */
+    --ts-min-h: 60.54rem;       /* 1162.36px */
+    /* TODO: DS — no spec: the least photo height left under the longest quote. */
+    --ts-photo-min: 30rem;
+    --ts-photo-size: 46.17rem;  /* 886.48px square, bottom-aligned */
+    --ts-photo-overlap: 6.82rem; /* photo top above the content's bottom edge (131px) */
+    /* TODO: DS motion — reference slider: 0.9s width transition. Ease = site token. */
+    --ts-duration: 900ms;
+    --ts-ease: var(--ease-smooth);
+
+    display: flex;
+    flex-direction: column;
+    /* Arrows → cards: 40px. */
+    gap: 2.083rem;
+  }
+
+  /* Tablet: fewer, still-narrow portraits; photo sized to the space under the
+     tallest quote so faces stay visible. */
+  @media (max-width: 991px) {
+    .c-ts {
+      --ts-slots: 3;
+      --ts-start-slot: 1;
+      --ts-photo-size: max(
+        var(--ts-active-w, 100%),
+        calc(var(--ts-h, 60rem) - var(--ts-content-h, 30rem) + var(--ts-photo-overlap))
+      );
+    }
+  }
+
+  /* Mobile: the active card fills the row, one slim portrait peeks beside it. */
+  @media (max-width: 767px) {
+    .c-ts {
+      --ts-slots: 2;
+      --ts-start-slot: 0;
+      /* TODO: DS mobile — no Figma mobile frame. */
+      --ts-inactive-w: 4.5rem;
+      --ts-gap: 1rem;
+      --ts-min-h: 60rem;
+      --ts-photo-min: 26rem;
+      --ts-photo-overlap: 4rem;
+    }
+  }
+
+  /* --- Arrows (Figma 4237:11478: 62px squares, 10px apart) ------------- */
+  .c-ts__controls {
+    display: none; /* no JS → no arrows; the row scrolls instead */
+    justify-content: center;
+    gap: 0.521rem;
+  }
+
+  .c-ts.is-ready .c-ts__controls {
+    display: flex;
+  }
+
+  .c-ts__arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.229rem;
+    height: 3.229rem;
+    padding: 0;
+    border: var(--border-default);
+    border-radius: 8px;
+    background: var(--color-white);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 0.9375rem; /* 18px */
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      background-color var(--duration-hover) var(--ease-smooth),
+      border-color var(--duration-hover) var(--ease-smooth),
+      color var(--duration-hover) var(--ease-smooth);
+  }
+
+  .c-ts__arrow.is-prev span {
+    transform: scaleX(-1);
+  }
+
+  /* Dark on hover, as the site's other arrows (lead 2026-11-03). */
+  @media (hover: hover) {
+    .c-ts__arrow:hover {
+      background: var(--color-heading);
+      border-color: var(--color-heading);
+      color: var(--color-white);
+    }
+  }
+
+  .c-ts__arrow:focus-visible,
+  .c-ts__viewport:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  @media (max-width: 767px) {
+    .c-ts__arrow {
+      width: 4.5rem;
+      height: 4.5rem;
+      font-size: 1.6rem;
+    }
+  }
+
+  /* --- Viewport + track --------------------------------------------------- */
+  .c-ts__viewport {
+    position: relative;
+  }
+
+  .c-ts__track {
+    display: flex;
+    gap: var(--ts-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  .c-ts.is-ready .c-ts__viewport {
+    overflow: hidden;
+    touch-action: pan-y;
+  }
+
+  .c-ts.is-ready .c-ts__track {
+    position: relative;
+    display: block;
+    height: var(--ts-h, var(--ts-min-h));
+    overflow: visible;
+  }
+
+  .c-ts.is-dragging .c-ts__track {
+    user-select: none;
+  }
+
+  .c-ts__probe {
+    position: absolute;
+    visibility: hidden;
+    height: 0;
+    pointer-events: none;
+  }
+
+  /* --- Card ----------------------------------------------------------------
+     Figma 4227:11631 (active) / 4237:11207 (portrait). */
+  .c-ts__card {
+    position: relative;
+    flex: 0 0 min(37.76rem, 85%);
+    min-height: var(--ts-min-h);
+    overflow: hidden;
+    border: var(--border-default);
+    border-radius: 20px;
+    background: var(--color-white);
+    scroll-snap-align: start;
+    /* Card-only stacking context: glows, photo and content stay inside. */
+    isolation: isolate;
+  }
+
+  .c-ts.is-ready .c-ts__card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    min-height: 0;
+    /* width + transform are set inline by the script. */
+    transition:
+      transform var(--ts-duration) var(--ts-ease),
+      width var(--ts-duration) var(--ts-ease);
+    will-change: transform, width;
+  }
+
+  .c-ts.is-ready .c-ts__card:not(.is-active) {
+    cursor: pointer;
+  }
+
+  .c-ts.is-ready .c-ts__card.is-instant,
+  .c-ts.is-instant .c-ts__card {
+    transition: none;
+  }
+
+  /* Brand-gradient glows (Figma ellipse, 20% opacity, blurred; the asset
+     is the Figma export). Top glow over the photo on every card; the lower
+     one behind the photo, active card only. Both anchored to the card's left
+     edge so they don't move while the card resizes. */
+  .c-ts__card::before,
+  .c-ts__card::after {
+    content: "";
+    position: absolute;
+    width: 106.54rem;
+    height: 120.51rem;
+    background: url("/images/testimonials/card-glow.svg") no-repeat 0 0 / 100% 100%;
+    pointer-events: none;
+  }
+
+  .c-ts__card::before {
+    z-index: 0;
+    left: -28.52rem;
+    top: calc(100% - 55.37rem);
+    opacity: 0;
+    transition: opacity var(--ts-duration) var(--ts-ease);
+  }
+
+  .c-ts__card::after {
+    z-index: 2;
+    left: -26.63rem;
+    top: -65.82rem;
+  }
+
+  .c-ts__card.is-active::before,
+  .c-ts:not(.is-ready) .c-ts__card::before {
+    opacity: 1;
+  }
+
+  /* --- Photo: same box and crop in both states; grayscale when inactive. -- */
+  .c-ts__photo {
+    position: absolute;
+    z-index: 1;
+    left: 50%;
+    bottom: 0;
+    width: var(--ts-photo-size);
+    height: var(--ts-photo-size);
+    max-width: none;
+    object-fit: cover;
+    object-position: center top;
+    transform: translateX(-50%);
+    filter: grayscale(1);
+    transition: filter var(--ts-duration) var(--ts-ease);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .c-ts__card.is-active .c-ts__photo,
+  .c-ts:not(.is-ready) .c-ts__photo {
+    filter: none;
+  }
+
+  /* --- Content (Figma 4237:11129): frosted panel over the top of the photo.
+     Fixed to the active card's width and centred, so its height never
+     changes while the card resizes; the card clips it. */
+  .c-ts__content {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 1.615rem;
+    padding: 2.083rem;
+    border-bottom: var(--border-default);
+    background: color-mix(in srgb, var(--color-white) 40%, transparent);
+    -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+  }
+
+  .c-ts.is-ready .c-ts__content {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: var(--ts-active-w, 100%);
+    transform: translateX(-50%);
+    opacity: 0;
+    visibility: hidden;
+    /* Collapse: fade out fast. */
+    transition:
+      opacity calc(var(--ts-duration) * 0.25) var(--ts-ease),
+      visibility 0s linear calc(var(--ts-duration) * 0.25);
+  }
+
+  /* Expand: fade in once the card is mostly open. */
+  .c-ts.is-ready .c-ts__card.is-active .c-ts__content {
+    opacity: 1;
+    visibility: visible;
+    transition:
+      opacity calc(var(--ts-duration) * 0.6) var(--ts-ease) calc(var(--ts-duration) * 0.35),
+      visibility 0s;
+  }
+
+  .c-ts__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+
+  .c-ts__person {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.729rem;
+    min-width: 0;
+    /* Room for the eyebrow's outer squares. */
+    padding-inline-start: 0.3rem;
+    margin-inline-start: -0.3rem;
+  }
+
+  .c-ts__name {
+    margin: 0;
+    color: var(--color-black-secondary);
+    line-height: 1; /* Figma: Text L, line-height 100% */
+  }
+
+  .c-ts__logo {
+    flex: 0 1 auto;
+    width: auto;
+    height: 2.42rem;  /* 46.44px */
+    max-width: 11.6rem; /* 222.56px */
+    object-fit: contain;
+    object-position: right bottom;
+  }
+
+  .c-ts__company {
+    margin: 0;
+    color: var(--color-black-secondary);
+    text-align: right;
+  }
+
+  .c-ts__quote {
+    margin: 0;
+    color: var(--color-text);
+    line-height: 1.5; /* Figma: Paragraph M, 150% */
+  }
+
+  .c-ts__quote p {
+    margin: 0;
+  }
+
+  .c-ts__quote strong {
+    font-weight: 700;
+  }
+
+  @media (max-width: 767px) {
+    .c-ts__head {
+      gap: 1rem;
+    }
+
+    .c-ts__logo {
+      height: 3rem;
+      max-width: 12rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .c-ts {
+      --ts-duration: 0ms;
+    }
+  }
+</style>

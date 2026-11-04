@@ -19,6 +19,20 @@ export const testimonial = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'highlights',
+      title: 'Highlights',
+      description:
+        'Short phrases from the quote to show in bold, copied exactly as they appear in the quote (same capitals and punctuation). One or two per quote.',
+      type: 'array',
+      of: [{ type: 'string' }],
+      validation: (Rule) =>
+        Rule.max(3).custom((highlights, context) => {
+          const quote = (context.document as { quote?: string } | undefined)?.quote ?? '';
+          const missing = (highlights ?? []).filter((h) => typeof h === 'string' && !quote.includes(h));
+          return missing.length === 0 || `Not found in the quote: ${missing.join(' / ')}`;
+        }),
+    }),
+    defineField({
       name: 'authorName',
       title: 'Author name',
       description: 'The person who said the quote, e.g. "Jane Doe".',

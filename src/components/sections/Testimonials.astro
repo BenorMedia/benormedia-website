@@ -2,16 +2,16 @@
 /**
  * Testimonials — Home "Testimonials" section.
  *
- * Section header + the shared `TestimonialMarquee` (two infinite rows),
- * run edge-to-edge across the viewport. Data: `getTestimonials()` in
- * `src/pages/index.astro`.
+ * Section header + `TestimonialSlider` (expanding-card slider, Figma
+ * 4227:6140; replaced the two-row marquee 2026-11-04). The slider sits in
+ * the container. Data: `getTestimonials()` in the page.
  *
  * Shown on every page that renders it (lead 2026-11-04; hidden from
  * 2026-09-30 while production shipped without testimonials).
  */
 import Container from "../ui/Container.astro";
 import SectionHeader from "../ui/SectionHeader.astro";
-import TestimonialMarquee from "../ui/TestimonialMarquee.astro";
+import TestimonialSlider from "../ui/TestimonialSlider.astro";
 import type { Testimonial } from "../../lib/sanity/types";
 
 interface Props {
@@ -31,9 +31,7 @@ const { testimonials } = Astro.props;
       class="c-testimonials__header"
     />
 
-    <div class="c-testimonials__marquee">
-      <TestimonialMarquee testimonials={testimonials} />
-    </div>
+    <TestimonialSlider testimonials={testimonials} class="c-testimonials__slider" />
   </Container>
 </section>
 )}
@@ -61,10 +59,8 @@ const { testimonials } = Astro.props;
     }
   }
 
-  .c-testimonials__marquee {
-    /* TODO: DS space between section header and content. */
-    margin-top: 3rem;
-    /* Full-bleed: break out of the container to the viewport edges. */
-    margin-inline: calc(50% - 50vw);
+  /* Header → arrows: 40px (Figma 4227:6427). */
+  .c-testimonials :global(.c-testimonials__slider) {
+    margin-top: 2.083rem;
   }
 </style>

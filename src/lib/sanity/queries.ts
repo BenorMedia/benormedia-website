@@ -276,6 +276,7 @@ export const TESTIMONIALS = /* groq */ `
   _id,
   _type,
   quote,
+  highlights,
   authorName,
   authorRole,
   "authorPhoto": authorPhoto${IMAGE},
