@@ -1,6 +1,7 @@
 // Analysis behind scripts/check-content.mjs and scripts/build-index.mjs. Dependency-free.
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { readContentFile } from './frontmatter.mjs';
 
 export const LIVE_PATHS = new Set([
@@ -15,7 +16,7 @@ let blogPaths;
 export function releasedBlogPaths() {
   if (blogPaths) return blogPaths;
   blogPaths = new Set();
-  const dir = resolve(dirname(new URL(import.meta.url).pathname), '../../../content-drafts/blog');
+  const dir = resolve(dirname(fileURLToPath(import.meta.url)), '../../../content-drafts/blog');
   if (!existsSync(dir)) return blogPaths;
   for (const f of readdirSync(dir).filter((n) => n.endsWith('.md'))) {
     const s = readFileSync(join(dir, f), 'utf8');
