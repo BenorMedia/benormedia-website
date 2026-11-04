@@ -27,7 +27,7 @@
 
 .c-button:hover {
   transform: translateY(-7%);
-  box-shadow: 0 0 20px #2223;   /* lead 2026-09-30, every button */
+  box-shadow: 0 0 20px color-mix(in srgb, var(--color-black-secondary) 14%, transparent);   /* lead 2026-09-30, every button; 30% lighter (lead 2026-11-04) */
 }
 
 .c-button:focus-visible {
