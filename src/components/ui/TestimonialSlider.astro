@@ -2,7 +2,7 @@
 /**
  * TestimonialSlider — expanding-card testimonial slider (Figma 4227:6140).
  *
- * One row of cards: the active card is wide (tag, name, logo, quote over a
+ * One row of cards: the active card is wide (quote, rule, name, role, logo over a
  * colour headshot), the others are narrow grayscale portraits of the same
  * height. Prev / next arrows sit above the row.
  *
@@ -35,7 +35,6 @@
 import type { Testimonial } from "../../lib/sanity/types";
 import { urlFor, clientImageAlt, isSvgAsset, type Source } from "../../lib/sanity/image";
 import { highlightQuote, splitAuthorRole } from "../../lib/sanity/testimonial-text";
-import Eyebrow from "./Eyebrow.astro";
 
 interface Props {
   testimonials: Testimonial[];
@@ -142,21 +141,21 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
             )}
 
             <div class="c-ts__content" data-ts-content>
-              <div class="c-ts__head">
+              <blockquote class="c-ts__quote c-paragraph">
+                <p>&ldquo;{item.runs.map((run) => (run.bold ? <strong>{run.text}</strong> : run.text))}&rdquo;</p>
+              </blockquote>
+
+              <div class="c-ts__meta">
                 <div class="c-ts__person">
-                  {item.role && <Eyebrow class="c-ts__role">{item.role}</Eyebrow>}
                   <p class="c-ts__name c-text_l">{item.name}</p>
+                  {item.role && <p class="c-ts__role c-paragraph">{item.role}</p>}
                 </div>
                 {item.logoSrc ? (
                   <img class="c-ts__logo" src={item.logoSrc} alt={item.logoAlt} loading="lazy" decoding="async" />
                 ) : (
-                  item.company && <p class="c-ts__company c-paragraph_m">{item.company}</p>
+                  item.company && <p class="c-ts__company c-paragraph">{item.company}</p>
                 )}
               </div>
-
-              <blockquote class="c-ts__quote c-paragraph">
-                <p>&ldquo;{item.runs.map((run) => (run.bold ? <strong>{run.text}</strong> : run.text))}&rdquo;</p>
-              </blockquote>
             </div>
           </li>
         ))}
@@ -230,59 +229,63 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
   }
 
   /* --- Arrows (Figma 4252:11514 / 4252:11519): frosted squares on the row's
-     outer edges, centred on the photo area (Figma: on the card's middle,
-     just under the quote panel). 120 × 124px, 16px radius, 2px Grey 300
-     border, white 30% + 15px backdrop blur, white arrow. */
+     outer edges, centred on the row. Figma style (white 30% + 15px backdrop
+     blur, Grey 300 border, white arrow) at half Figma's 120 × 124px size
+     (lead 2026-11-04). Hover nudges each arrow outwards. */
   .c-ts__arrow {
     position: absolute;
     z-index: 5;
-    top: calc(var(--ts-content-h, 50%) + (var(--ts-h, 100%) - var(--ts-content-h, 50%)) / 2);
+    top: 50%;
     display: none; /* no JS → no arrows; the row scrolls instead */
     align-items: center;
     justify-content: center;
-    width: 6.256rem;
-    height: 6.458rem;
+    width: 3.128rem;
+    height: 3.229rem;
     padding: 0;
-    border: 2px solid var(--color-border);
-    border-radius: 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
     background: color-mix(in srgb, var(--color-white) 30%, transparent);
     -webkit-backdrop-filter: blur(15px);
             backdrop-filter: blur(15px);
-    color: var(--color-white);
+    /* Figma's arrow is white; centred on the row it sits on the light top of
+       the portraits, so it uses the text colour to stay visible. */
+    color: var(--color-text);
     cursor: pointer;
-    transform: translateY(-50%);
-    transition:
-      background-color var(--duration-hover) var(--ease-smooth),
-      border-color var(--duration-hover) var(--ease-smooth);
+    transform: translate(var(--ts-arrow-nudge, 0), -50%);
+    transition: transform var(--duration-hover) var(--ease-smooth);
   }
 
   .c-ts.is-ready .c-ts__arrow {
     display: inline-flex;
   }
 
-  /* Figma: left box from −46px to 74px of the row; the right one mirrors it. */
+  /* Centred on the row's edges, as in Figma. */
   .c-ts__arrow.is-prev {
-    left: -2.39rem;
+    left: -1.564rem;
   }
 
   .c-ts__arrow.is-next {
-    right: -2.39rem;
+    right: -1.564rem;
   }
 
   .c-ts__arrow-icon {
-    width: 1.464rem;  /* 28.12px */
-    height: 1.508rem; /* 28.94px */
+    width: 0.732rem;
+    height: 0.754rem;
   }
 
   .c-ts__arrow.is-prev .c-ts__arrow-icon {
     transform: scaleX(-1);
   }
 
-  /* Dark on hover, as the site's other arrows (lead 2026-11-03). */
+  /* Hover: move slightly outwards, no colour change (lead 2026-11-04).
+     TODO: DS distance. */
   @media (hover: hover) {
-    .c-ts__arrow:hover {
-      background: var(--color-heading);
-      border-color: var(--color-heading);
+    .c-ts__arrow.is-prev:hover {
+      --ts-arrow-nudge: -0.3rem;
+    }
+
+    .c-ts__arrow.is-next:hover {
+      --ts-arrow-nudge: 0.3rem;
     }
   }
 
@@ -295,9 +298,8 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
   /* Mobile: smaller, inside the 2rem page gutter's reach. */
   @media (max-width: 767px) {
     .c-ts__arrow {
-      width: 5rem;
-      height: 5.2rem;
-      border-radius: 12px;
+      width: 4rem;
+      height: 4.13rem;
     }
 
     .c-ts__arrow.is-prev {
@@ -309,8 +311,8 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
     }
 
     .c-ts__arrow-icon {
-      width: 1.8rem;
-      height: 1.85rem;
+      width: 1.2rem;
+      height: 1.24rem;
     }
   }
 
@@ -494,22 +496,44 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
       visibility 0s;
   }
 
-  .c-ts__head {
+  /* Lead 2026-11-04 (screenshot): quote first, a subtle rule, then name,
+     role in the quote's text style, and the logo on the right. */
+  .c-ts__quote,
+  .c-ts__role,
+  .c-ts__company {
+    margin: 0;
+    color: var(--color-text);
+    /* Quote size: one paragraph step + 20% (lead 2026-11-04). */
+    font-size: calc(var(--fs-p) * 1.2);
+    line-height: 1.5; /* Figma: Paragraph M, 150% */
+  }
+
+  .c-ts__quote p {
+    margin: 0;
+  }
+
+  .c-ts__quote strong {
+    font-weight: 700;
+  }
+
+  .c-ts__meta {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
     gap: 1.5rem;
+    /* Rule above the author, inside the panel padding; space mirrors the
+       panel's bottom padding (TODO: DS — from the lead's screenshot). */
+    margin-top: 0.7rem;
+    padding-top: 2.3rem;
+    border-top: var(--border-default);
   }
 
   .c-ts__person {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.729rem;
+    gap: 0.6rem;
     min-width: 0;
-    /* Room for the eyebrow's outer squares. */
-    padding-inline-start: 0.3rem;
-    margin-inline-start: -0.3rem;
   }
 
   .c-ts__name {
@@ -528,27 +552,11 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
   }
 
   .c-ts__company {
-    margin: 0;
-    color: var(--color-black-secondary);
     text-align: right;
   }
 
-  .c-ts__quote {
-    margin: 0;
-    color: var(--color-text);
-    line-height: 1.5; /* Figma: Paragraph M, 150% */
-  }
-
-  .c-ts__quote p {
-    margin: 0;
-  }
-
-  .c-ts__quote strong {
-    font-weight: 700;
-  }
-
   @media (max-width: 767px) {
-    .c-ts__head {
+    .c-ts__meta {
       gap: 1rem;
     }
 
