@@ -31,9 +31,10 @@ interface Props {
 const { testimonials, class: className } = Astro.props;
 
 const MIN_PER_HALF = 6;
-/* TODO: DS marquee speed — no spec yet. 13.2s per card = 10% slower than
-   the first pass (12s), per lead 2026-09-29. */
-const SECONDS_PER_CARD = 13.2;
+/* TODO: DS marquee speed — no spec yet. 26.4s per card: half the speed of
+   13.2s (lead 2026-11-04), which was 10% slower than the first pass (12s,
+   lead 2026-09-29). */
+const SECONDS_PER_CARD = 26.4;
 
 const rotate = <T,>(list: T[], by: number): T[] => [...list.slice(by), ...list.slice(0, by)];
 
