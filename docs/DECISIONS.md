@@ -492,22 +492,48 @@ Without adding to your team." with "website moving." marked Gradient (published 
 | 2026-10-04 | Work filter tab order: View All · SaaS · Professional Services · Agency (was View All · Agency · Professional Services · SaaS). Order only; values, URL `?sector=` and behavior unchanged | Lead request | Lead |
 | 2026-11-04 | Case studies on `/work` (ref `docs/refs/work-component.png`, Figma 4225-10746): `client.caseStudy` + `client.slug` (SCHEMAS v0.10). Those clients list first (Studio order inside each group; sorted in `WorkListing`, so the hero orbit keeps the plain order), get a "Case study" tag (`Tag` `muted`: light gray fill, heading text, `TODO: DS`, read from the PNG) after the other tags, and their row links to `/work/<slug>` in the same tab. Other rows still open the website in a new tab. Case studies live at `/work/<slug>`, not `/case-studies/<slug>`; PR #74 (`feat/case-studies-v2`) closed and its branch deleted: Sergio asked for a new design | Lead | Lead |
 | 2026-10-05 | Work page: Agency filter tab removed. Tabs now View All · SaaS · Professional Services. `client.sector` keeps the `agency` value (schema unchanged); Agency clients show under View All; `?sector=agency` falls back to "all" | Lead request | Lead |
+| 2026-11-04 | Case study template `/work/[slug]` (Figma 4225:11810; Figma wins over the brief's JOOR section list). Content in code: one typed entry per case study in `src/lib/case-studies/entries/*.ts` (types `types.ts`, registry `index.ts`), not Sanity. Components `src/components/case-studies/` (`c-case-*`), route `src/pages/work/[slug].astro`. Order: hero, stats, body (sticky TOC + Get in Touch + Share \| At a glance, About, Challenge and goals with quote + goals + before/after figure, What we did with 3 question H3s + figures, Results with table + figure, Client quote, Stack, Team and timeline, Key takeaways, inline CTA, FAQ), other case studies, site CtaBanner, footer | Lead 2026-11-04 | Lead |
+| 2026-11-04 | Case study drafts follow `/about`: `DRAFT = true` builds the page only where drafts are (previews, `astro dev`, `PAGES_INCLUDE_DRAFTS=1`), with noindex, out of the sitemap (`src/lib/case-studies/registry.mjs` reads `SLUG` / `DRAFT` from the entry files for `astro.config.mjs`). Surfe stays `DRAFT = true`; the lead releases it | Lead 2026-11-04 | Lead |
+| 2026-11-04 | Surfe copy word for word from Figma (client-approved), except: missing spaces where Figma ran lines together restored; split words joined ("Pipe drive", "forf ree", "sitel aunched", "or are direct" → "or a redirect", "healthscore"); left out the About paragraph "Wording follows Surfe's homepage ... more names can be added." (a source note), the caption prefix "brief 6 - " and the results caption "Image brief 7"; Sergio's role "General Manager, BenorMedia" (authors.ts, lead 2026-11-03) instead of Figma's "Managing Director"; browser address "surfe.com" instead of "yoursite.com". Full list in the entry's header | Fidelity vs obvious copy-paste errors | Proposed |
+| 2026-11-04 | Case study reuse: `NpBlogSidebar` (TOC, Get in Touch, Share), `NpCrumbs`, `Eyebrow`, `Tag`, `CtaActions` + `CtaShapes` (inline CTA, one contact button at its own width), `FaqAccordion`, the /about team photos (`/images/about/team/<slug>.webp`; Figma has a placeholder photo) with names and author-page links from `authors.ts` | CLAUDE.md rule 7 | Proposed |
+| 2026-11-04 | Images: Figma exports in `src/assets/case-studies/` through astro:assets. The before/after export is cut below its "BEFORE" / "After" chips, which are HTML over a 50px band (no text baked in). At-a-glance icons have Figma's crop baked into 52px boxes. Decorative images use `CaseDecor` (plain `<img alt="">`, since `<Image alt="">` prints a bare `alt` that check-seo flags). OG image: the hero screenshot cut to 1200 x 630 (`public/images/case-studies/surfe-og.jpg`) | No text in images, check-seo | Proposed |
+| 2026-11-04 | Case study JSON-LD (`caseStudyJsonLd` in `src/lib/new-pages/jsonld.ts`): `Article` (headline = H1, author and publisher = the shared Organization `@id`, `about` = the client Organization, `image` = OG image) + `BreadcrumbList` Home › Work › client; `FAQPage` only when the entry has FAQ items (same array as the visible FAQ). `/work/surfe` in check-seo `PAGES` (keyword `surfe`) and `LASTMOD` | Brief Part 2 task 2.5 | Proposed |
+| 2026-11-04 | Case study FAQ: Figma's block (4225:12760) holds the Pricing placeholder questions, so Surfe has no FAQ and the block renders nothing until copy exists. Related case studies render nothing with no other entry; their heading stays "Lorem ipsum dolor sit" (`TODO: COPY`) | Lead 2026-11-04 (related) | Proposed |
+| 2026-11-04 | Case study sizes: layout in Figma px (`--u` = 1/19.2 rem, the 1680 grid in the container, as /about); type with the site classes (H1 `c-text_xl`, H2 `c-text_l`, H3 / names `c-text_m`, body `c-paragraph_m`, small `c-paragraph`), so text runs larger than the 1920 frame and wraps more | Site convention | Proposed |
 
 ### Open questions
 
 #### Content
 - ~~**`workPage` document missing in Sanity**~~ — RESOLVED 2026-09-29: there will be no `workPage` document; SEO stays in code (see Decisions).
 - **Hidden copy** — visually hidden section heading "All projects" and the live-region text "Showing {shown} of {total} projects" are placeholders (`TODO: COPY`). (2026-09-29)
+- **Case study SEO title and meta (Surfe)** — no SEO fields for Surfe in the brief; built with "Surfe Case Study: WordPress to Webflow | BenorMedia" and a derived description (`TODO: COPY`, `entries/surfe.ts`). (2026-11-04)
+- **Related case studies heading and card copy** — heading "Lorem ipsum dolor sit" and the card numbers ("XXX / Lorem ipsum") are Figma placeholders (`TODO: COPY`); nothing renders until a second case study exists. (2026-11-04)
+- **Surfe results image caption** — Figma's caption is "Image brief 7"; no caption is shown (`TODO: COPY`). The image also shows Lighthouse Performance 97, while the table says 86 (mobile). (2026-11-04)
+- **Surfe redirect-map caption** — the caption "Surfe homepage after the move to Webflow" sits under the redirect map image; kept as in Figma. (2026-11-04)
+- **Surfe copy that contradicts itself or house style** — "a structured 10-week engagement broken into two phases" vs "about three months" and three timeline phases; "optimisation" (UK spelling); the At a glance summary has no final full stop; "surfe's marketing team" in lower case; Results names Ahrefs ("In Ahrefs' Site Audit", table rows), which the house style keeps off pages except as a study publisher; H2s have no full stop (the brief asks for one). All kept as in Figma. (2026-11-04)
+- **Case study FAQ copy** — the template supports an FAQ (visible + FAQPage); Figma's block has the Pricing placeholder questions. Surfe has none. (2026-11-04)
+
+#### Lead / CEO
+- **Case study links to missing pages** — `/work` rows link to `/work/joor` and `/work/darwincx`, which have no entry, and to `/work/surfe`, which production does not build while it is a draft: all three 404 in production. Option: link a row only when its case study is built (an Astro-side check against `builtCaseStudies()`), or hold the Sanity `caseStudy` flags until each page is released. (2026-11-04)
 
 #### Needs lead OK
+- **Surfe copy fixes and omissions** — see the 2026-11-04 Decisions row (spaces, split words, source note, captions, Sergio's role, browser address). (2026-11-04)
+- **Case study reuse, images, JSON-LD, FAQ, sizes** — the 2026-11-04 `Proposed` rows above. (2026-11-04)
 - ~~**List order**~~ — RESOLVED 2026-09-29: Studio drag-and-drop order, seeded to the ref order (see Decisions).
 - ~~**Filter tab → category mapping**~~ — RESOLVED 2026-09-29: approved, plus an AI & Technology tab (see Decisions).
 - ~~**Work page structure, `ALL_CLIENTS` query, filter behavior**~~ — RESOLVED 2026-09-29: approved (W-8).
 
 #### Design team
 - **Mobile / tablet** — no mobile refs; built with DS tokens, `TODO: DS mobile`. (2026-09-29)
+- **Case study mobile / tablet** — Figma has only the 1920 template (4225:11810); built responsive from the site's patterns (`TODO: DS mobile` in each `src/components/case-studies/` component). (2026-11-04)
+- **Case study values not in tokens** — closest token used, `TODO: DS`: browser frame fill #F4F5F7 and address text #8A909E (hero), figure border #F3F3F3, caption #848484, table header fill, stack logo tile #F7F7F7, Webflow card text #F3F3F3, glass tiles white 10% (`--color-surface-glass`, 5%), on-dark chips, stat numbers 50px (`c-text_xl`), Acumin Medium names (400 used). (2026-11-04)
+- **Case study team photos** — Figma uses one placeholder photo; the /about team photos are used. Confirm. (2026-11-04)
 - ~~**Hero and listing spacing**~~ — RESOLVED 2026-09-29: lead set 7.5rem (hero top, hero → filters) and 3rem (filters → list) in visual QA (see Decisions).
 - ~~**Hero type sizes**~~ — CLOSED 2026-09-29: the lead gives measurements in visual QA if needed (W-10).
+
+#### Engineering follow-ups
+- **Screen-reader-only utility** — case study components each carry a local visually-hidden class (hero link note, table caption, timeline milestone); a global utility in `src/styles/utilities.css` would replace them (ui request). (2026-11-04)
+- **`scripts/check-draft.mjs` missing** — the brief's draft checker is not in the repo, so the case study's draft check was not run. (2026-11-04)
 
 ---
 

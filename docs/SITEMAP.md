@@ -6,7 +6,7 @@ English only. No locale prefix.
 |---|---|---|---|---|
 | Home | `/` | Singleton | `homePage` | Home.png received |
 | Work | `/work` | Singleton + list | `workPage` (SEO) + `client[]` | Listing; case study clients first, linked to their case study |
-| Case study | `/work/[slug]` | Dynamic | `client` with `caseStudy` on | Template to build (new design, lead 2026-11-04). Surfe, JOOR, DarwinCX first |
+| Case study | `/work/[slug]` | Dynamic (code data) | `src/lib/case-studies/entries/*.ts`; Sanity `client.caseStudy` + `slug` only drive the `/work` link | Built 2026-11-04 (Figma 4225:11810). `/work/surfe` draft (noindex, previews only). JOOR, DarwinCX: no entry yet |
 | Pricing | `/pricing` | Singleton | `pricingPage` | |
 | Testimonials | `/testimonials` | Singleton + list | `testimonialsPage` + `testimonial[]` | |
 | Custom Websites & Migrations | `/custom-websites-migrations` | Service template | `service` | |
