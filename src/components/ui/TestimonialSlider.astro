@@ -104,14 +104,9 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
 {total > 0 && (
   <div class={rootClass} data-testimonial-slider>
     {total > 1 && (
-      <div class="c-ts__controls">
-        <button class="c-ts__arrow is-prev" type="button" aria-label="Previous testimonial" aria-controls={trackId} data-ts-prev>
-          <span aria-hidden="true">→</span>
-        </button>
-        <button class="c-ts__arrow is-next" type="button" aria-label="Next testimonial" aria-controls={trackId} data-ts-next>
-          <span aria-hidden="true">→</span>
-        </button>
-      </div>
+      <button class="c-ts__arrow is-prev" type="button" aria-label="Previous testimonial" aria-controls={trackId} data-ts-prev>
+        <svg class="c-ts__arrow-icon" viewBox="46 47.528 28.116 28.944" aria-hidden="true" focusable="false"><path d="M46 60.596H69.328C66.196 57.932 60.508 52.568 56.98 49.364L58.708 47.528L74.116 61.856V61.964L58.708 76.472L56.98 74.6C60.544 71.324 66.16 66.104 69.328 63.224H46V60.596Z" fill="currentColor"/></svg>
+      </button>
     )}
 
     <div
@@ -137,7 +132,7 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
                 class="c-ts__photo"
                 src={item.photoSrc}
                 srcset={item.photoSrcset}
-                sizes="(max-width: 767px) 320px, (max-width: 1439px) 40vw, 560px"
+                sizes="(max-width: 767px) 360px, (max-width: 1439px) 32vw, 440px"
                 alt=""
                 width="800"
                 height="800"
@@ -159,7 +154,7 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
                 )}
               </div>
 
-              <blockquote class="c-ts__quote c-paragraph_m">
+              <blockquote class="c-ts__quote c-paragraph">
                 <p>&ldquo;{item.runs.map((run) => (run.bold ? <strong>{run.text}</strong> : run.text))}&rdquo;</p>
               </blockquote>
             </div>
@@ -168,6 +163,12 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
       </ul>
       <span class="c-ts__probe" aria-hidden="true" data-ts-probe></span>
     </div>
+
+    {total > 1 && (
+      <button class="c-ts__arrow is-next" type="button" aria-label="Next testimonial" aria-controls={trackId} data-ts-next>
+        <svg class="c-ts__arrow-icon" viewBox="46 47.528 28.116 28.944" aria-hidden="true" focusable="false"><path d="M46 60.596H69.328C66.196 57.932 60.508 52.568 56.98 49.364L58.708 47.528L74.116 61.856V61.964L58.708 76.472L56.98 74.6C60.544 71.324 66.16 66.104 69.328 63.224H46V60.596Z" fill="currentColor"/></svg>
+      </button>
+    )}
   </div>
 )}
 
@@ -189,20 +190,21 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
     --ts-gap: 1.513rem;         /* 29.06px */
     /* Figma 1162.36px (60.54rem), 30% shorter (lead 2026-11-04). */
     --ts-min-h: 42.38rem;
-    /* TODO: DS — no spec: the least photo height left under the longest quote. */
-    --ts-photo-min: 16rem;
-    /* Photo top above the content's bottom edge, under the frosted panel. */
-    --ts-photo-overlap: 4rem;
+    /* TODO: DS — no spec: the least photo height left under the longest quote
+       (lead 2026-11-04: headshots at least 50% bigger than round 2). */
+    --ts-photo-min: 23.4rem;
+    /* Share of the photo's height tucked under the frosted panel (hair only;
+       Figma: 131 / 886 ≈ 15%). */
+    --ts-photo-tuck: 0.22;
     /* Hover on a portrait: +20% width, as the reference (10% → 12%). */
     --ts-hover-grow: 1.627rem;
     /* TODO: DS motion — reference slider: 0.9s width transition. Ease = site token. */
     --ts-duration: 900ms;
     --ts-ease: var(--ease-smooth);
 
+    position: relative;
     display: flex;
     flex-direction: column;
-    /* Arrows → cards: 40px. */
-    gap: 2.083rem;
   }
 
   /* Tablet: fewer, still-narrow portraits. */
@@ -222,45 +224,57 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
       --ts-inactive-w: 4.5rem;
       --ts-gap: 1rem;
       --ts-min-h: 42rem;
-      --ts-photo-min: 22rem;
-      --ts-photo-overlap: 3rem;
+      --ts-photo-min: 29rem;
       --ts-hover-grow: 0rem;
     }
   }
 
-  /* --- Arrows (Figma 4237:11478: 62px squares, 10px apart) ------------- */
-  .c-ts__controls {
-    display: none; /* no JS → no arrows; the row scrolls instead */
-    justify-content: center;
-    gap: 0.521rem;
-  }
-
-  .c-ts.is-ready .c-ts__controls {
-    display: flex;
-  }
-
+  /* --- Arrows (Figma 4252:11514 / 4252:11519): frosted squares on the row's
+     outer edges, centred on the photo area (Figma: on the card's middle,
+     just under the quote panel). 120 × 124px, 16px radius, 2px Grey 300
+     border, white 30% + 15px backdrop blur, white arrow. */
   .c-ts__arrow {
-    display: inline-flex;
+    position: absolute;
+    z-index: 5;
+    top: calc(var(--ts-content-h, 50%) + (var(--ts-h, 100%) - var(--ts-content-h, 50%)) / 2);
+    display: none; /* no JS → no arrows; the row scrolls instead */
     align-items: center;
     justify-content: center;
-    width: 3.229rem;
-    height: 3.229rem;
+    width: 6.256rem;
+    height: 6.458rem;
     padding: 0;
-    border: var(--border-default);
-    border-radius: 8px;
-    background: var(--color-white);
-    color: var(--color-text);
-    font-family: var(--font-body);
-    font-size: 0.9375rem; /* 18px */
-    line-height: 1;
+    border: 2px solid var(--color-border);
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--color-white) 30%, transparent);
+    -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(15px);
+    color: var(--color-white);
     cursor: pointer;
+    transform: translateY(-50%);
     transition:
       background-color var(--duration-hover) var(--ease-smooth),
-      border-color var(--duration-hover) var(--ease-smooth),
-      color var(--duration-hover) var(--ease-smooth);
+      border-color var(--duration-hover) var(--ease-smooth);
   }
 
-  .c-ts__arrow.is-prev span {
+  .c-ts.is-ready .c-ts__arrow {
+    display: inline-flex;
+  }
+
+  /* Figma: left box from −46px to 74px of the row; the right one mirrors it. */
+  .c-ts__arrow.is-prev {
+    left: -2.39rem;
+  }
+
+  .c-ts__arrow.is-next {
+    right: -2.39rem;
+  }
+
+  .c-ts__arrow-icon {
+    width: 1.464rem;  /* 28.12px */
+    height: 1.508rem; /* 28.94px */
+  }
+
+  .c-ts__arrow.is-prev .c-ts__arrow-icon {
     transform: scaleX(-1);
   }
 
@@ -269,7 +283,6 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
     .c-ts__arrow:hover {
       background: var(--color-heading);
       border-color: var(--color-heading);
-      color: var(--color-white);
     }
   }
 
@@ -279,11 +292,25 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
     outline-offset: 2px;
   }
 
+  /* Mobile: smaller, inside the 2rem page gutter's reach. */
   @media (max-width: 767px) {
     .c-ts__arrow {
-      width: 4.5rem;
-      height: 4.5rem;
-      font-size: 1.6rem;
+      width: 5rem;
+      height: 5.2rem;
+      border-radius: 12px;
+    }
+
+    .c-ts__arrow.is-prev {
+      left: -1rem;
+    }
+
+    .c-ts__arrow.is-next {
+      right: -1rem;
+    }
+
+    .c-ts__arrow-icon {
+      width: 1.8rem;
+      height: 1.85rem;
     }
   }
 
@@ -397,10 +424,11 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
 
   /* --- Photo: same box and crop in both states; grayscale when inactive.
      A bottom-aligned square (the cut-outs are square) that fills the space
-     under the tallest quote, its top tucked under the frosted panel by
-     --ts-photo-overlap, so every face shows whole whatever the quote length. */
+     under the tallest quote, its top (hair) tucked under the frosted panel
+     by --ts-photo-tuck, so every face shows whole whatever the quote length. */
   .c-ts__photo {
-    --ts-photo-s: calc(var(--ts-h, var(--ts-min-h)) - var(--ts-content-h, 0px) + var(--ts-photo-overlap));
+    /* Visible part under the panel = (1 − tuck) of the square. */
+    --ts-photo-s: calc((var(--ts-h, var(--ts-min-h)) - var(--ts-content-h, 0px)) / (1 - var(--ts-photo-tuck)));
     position: absolute;
     z-index: 1;
     left: 50%;
