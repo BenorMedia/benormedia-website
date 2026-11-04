@@ -94,8 +94,8 @@ const toc = [
   [ids.stack, c.stack.heading],
   [ids.team, c.team.heading],
   [ids.takeaways, c.takeaways.heading],
+  // Figma's TOC ends at "Next steps": the FAQ is not listed (4225:11906).
   [ids.cta, c.cta.tocLabel],
-  ...(c.faq.items.length > 0 ? [[ids.faq, c.faq.heading] as const] : []),
 ].map(([id, label]) => ({ id, html: escapeHtml(label) }));
 
 const crumbs = [
@@ -115,7 +115,9 @@ const ld = caseStudyJsonLd({
   updatedAt: c.updatedAt,
   image: `${SITE}${c.seo.ogImage}`,
   client: { name: c.client.name, url: c.client.url },
-  faq: c.faq.items,
+  // FAQPage only for answered questions: an answer still waiting on its
+  // copy (a `[FACT NEEDED: ...]` marker) stays out of the structured data.
+  faq: c.faq.items.filter((i) => !/\[(FACT NEEDED|VERIFY|PERSON|QUOTE|RESULT NEEDED):/.test(i.answer)),
 });
 ---
 
@@ -256,6 +258,13 @@ const ld = caseStudyJsonLd({
       --cs-fs-small: calc(var(--fs-p) * 0.9); /* Text S 18 */
       --cs-fs-xs: calc(var(--fs-p-s) * 0.868); /* Text XS 15 */
     }
+  }
+
+  /* Accent chips (hero "Case study", "GOAL 01"…, related cards) are Acumin
+     Regular in Figma (4225:11842, 4225:12067); the shared Tag sets 600 on
+     `is-accent` (lead 2026-11-04). */
+  :global(body.is-case-study main .c-tag.is-accent) {
+    font-weight: 400;
   }
 
   /* Design-size chips and TOC (lead 2026-11-04, ref 4225:11810), 768 up:

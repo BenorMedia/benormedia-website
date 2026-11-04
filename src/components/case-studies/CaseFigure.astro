@@ -3,9 +3,16 @@
  * CaseFigure — an image in the case study body with its caption (Figma
  * "Content" + "Caption Figure"): 1220 x 470 frame, 8px radius, caption
  * centred 15px under it. The images are Figma exports of the composed
- * screenshots. `chips` (the before / after figure): the labels sit over
- * the image's top band as HTML, so no text is baked into the file (the
- * export is cut below them).
+ * screenshots.
+ *
+ * `compare` (the before / after figure, Figma 4225:12100; lead 2026-11-04:
+ * the flat export lost its top band): the frame is rebuilt from its layers
+ * at Figma's coordinates, in % of the 1220 x 470 frame so it scales:
+ * blurred glow (CSS), the client's faded swatches, the two browsers
+ * (exports clipped to the frame, shadow included), the connector lines
+ * (unrotated vectors, turned here as in Figma), the round badge, then the
+ * BEFORE / After labels in HTML, so no text is baked in. Layers are
+ * decorative (`alt=""`); `image.alt` names the whole (`role="img"`).
  */
 import { Image } from "astro:assets";
 import Eyebrow from "../ui/Eyebrow.astro";
@@ -16,25 +23,47 @@ interface Props {
 }
 
 const { figure } = Astro.props;
-const { image, caption, chips } = figure;
+const { image, caption, compare } = figure;
+// Browser layers fill ~36% of the frame width.
+const browserSizes = "(max-width: 991px) 40vw, 330px";
 ---
 
-<figure class:list={["c-case-figure", { "has-chips": chips }]}>
-  <div class="c-case-figure__frame">
-    <Image
-      src={image.src}
-      alt={image.alt}
-      widths={[620, 940, 1240, 1860, 2440]}
-      sizes="(max-width: 991px) 100vw, 900px"
-      class="c-case-figure__img"
-    />
-    {chips && (
-      <>
-        <Eyebrow class="c-case-figure__chip is-before">{chips.before}</Eyebrow>
-        <span class="c-case-figure__chip is-after">{chips.after}</span>
-      </>
-    )}
-  </div>
+<figure class:list={["c-case-figure", { "has-compare": compare }]}>
+  {compare ? (
+    <div class="c-case-figure__frame c-case-figure__compare" role="img" aria-label={image.alt}>
+      <span class="c-case-figure__glow" aria-hidden="true"></span>
+      {compare.backdrop && (
+        <Image src={compare.backdrop} alt="" widths={[280, 560, 1091]} sizes="(max-width: 991px) 45vw, 410px" class="c-case-figure__layer is-backdrop" />
+      )}
+      <Image src={compare.before} alt="" widths={[220, 440, 868]} sizes={browserSizes} class="c-case-figure__layer is-before" />
+      <Image src={compare.after} alt="" widths={[220, 440, 872]} sizes={browserSizes} class="c-case-figure__layer is-after" />
+      {compare.linesLeft && (
+        <span class="c-case-figure__lines is-left" aria-hidden="true">
+          <img src={compare.linesLeft.src} alt="" width={compare.linesLeft.width} height={compare.linesLeft.height} loading="lazy" decoding="async" />
+        </span>
+      )}
+      {compare.linesRight && (
+        <span class="c-case-figure__lines is-right" aria-hidden="true">
+          <img src={compare.linesRight.src} alt="" width={compare.linesRight.width} height={compare.linesRight.height} loading="lazy" decoding="async" />
+        </span>
+      )}
+      {compare.badge && (
+        <Image src={compare.badge} alt="" widths={[200, 396]} sizes="(max-width: 991px) 18vw, 150px" class="c-case-figure__layer is-badge" />
+      )}
+      <Eyebrow class="c-case-figure__chip is-before">{compare.chips.before}</Eyebrow>
+      <span class="c-case-figure__chip is-after">{compare.chips.after}</span>
+    </div>
+  ) : (
+    <div class="c-case-figure__frame">
+      <Image
+        src={image.src}
+        alt={image.alt}
+        widths={[620, 940, 1240, 1860, 2440]}
+        sizes="(max-width: 991px) 100vw, 900px"
+        class="c-case-figure__img"
+      />
+    </div>
+  )}
   {caption && <figcaption class="c-paragraph c-case-figure__caption">{caption}</figcaption>}
 </figure>
 
@@ -56,22 +85,88 @@ const { image, caption, chips } = figure;
     width: 100%;
     height: auto;
   }
-  /* Before / after: Figma's 50px band above the export holds the chips. */
-  .c-case-figure.has-chips .c-case-figure__frame {
-    padding-top: calc(50 * var(--u));
+  /* Before / after: layers at Figma's coordinates (frame 1220 x 470). */
+  .c-case-figure__compare {
+    aspect-ratio: 1220 / 470;
     border: 1px solid var(--color-gray-light); /* Figma #F3F3F3, TODO: DS */
     background: var(--color-white);
   }
+  /* Figma 4225:12101: 1801.8 x 676.5 radial glow, blur 99px. */
+  .c-case-figure__glow {
+    position: absolute;
+    inset: -22% -24%;
+    background: radial-gradient(
+      closest-side,
+      color-mix(in srgb, var(--color-blue) 50%, transparent) 0%,
+      color-mix(in srgb, var(--color-blue) 40%, transparent) 23%,
+      color-mix(in srgb, var(--color-blue-light) 30%, transparent) 46%,
+      transparent 78%
+    );
+    filter: blur(calc(99 * var(--u)));
+  }
+  .c-case-figure :global(.c-case-figure__layer) {
+    position: absolute;
+    display: block;
+    height: auto;
+    max-width: none;
+  }
+  .c-case-figure :global(.c-case-figure__layer.is-backdrop) {
+    left: 26.811%; /* 327.09 */
+    top: 0;
+    width: 44.713%; /* 545.5 */
+  }
+  /* Browsers: x -210 / 813, y 61, 615 wide; the exports start at the
+     shadow's edge (28.8 blur − 13 offset → y 45.2) and are cut by the frame. */
+  .c-case-figure :global(.c-case-figure__layer.is-before) {
+    left: 0;
+    top: 9.617%; /* 45.2 */
+    width: 35.574%; /* 434 */
+  }
+  .c-case-figure :global(.c-case-figure__layer.is-after) {
+    left: 64.279%; /* 784.2 */
+    top: 9.617%;
+    width: 35.721%; /* 435.8 */
+  }
+  /* Connector frames 263 x 193, vertically centred, at x 403 / 549
+     (4225:12157 / 12164); the vectors are 193 x 263, turned −90deg (the
+     right one also flipped), as in Figma. */
+  .c-case-figure__lines {
+    position: absolute;
+    top: 29.468%; /* (470 − 193) / 2 */
+    width: 21.557%; /* 263 */
+    height: 41.064%; /* 193 */
+  }
+  .c-case-figure__lines.is-left { left: 33.033%; /* 403 */ }
+  .c-case-figure__lines.is-right { left: 45%; /* 549 */ }
+  .c-case-figure__lines img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 73.384%; /* 193 / 263 of the box width */
+    height: 136.269%; /* 263 / 193 of the box height */
+    max-width: none;
+    transform: translate(-50%, -50%) rotate(-90deg);
+  }
+  .c-case-figure__lines.is-right img {
+    transform: translate(-50%, -50%) rotate(-90deg) scaleY(-1);
+  }
+  .c-case-figure :global(.c-case-figure__layer.is-badge) {
+    left: 41.885%; /* 511 */
+    top: 28.936%; /* 136 */
+    width: 16.23%; /* 198 */
+    border-radius: 50%; /* Figma: 100px on a 198 square */
+  }
   .c-case-figure :global(.c-case-figure__chip) {
     position: absolute;
-    top: calc(12.42 * var(--u));
+    z-index: 1;
+    top: 2.855%; /* 13.42 */
     text-transform: none;
   }
   .c-case-figure :global(.c-case-figure__chip.is-before) {
-    left: calc(108.64 * var(--u));
+    left: 8.987%; /* 109.64 */
   }
   .c-case-figure__chip.is-after {
-    right: calc(139 * var(--u));
+    left: 83.197%; /* 1015 */
     display: inline-flex;
     align-items: center;
     padding: 0.5em 1.05em;
@@ -104,10 +199,13 @@ const { image, caption, chips } = figure;
     font-size: var(--cs-fs-xs);
     line-height: 1.5;
   }
+  /* TODO: DS mobile — the composition scales; labels shrink with it. */
   @media (max-width: 767px) {
-    .c-case-figure.has-chips .c-case-figure__frame { padding-top: 4rem; }
-    .c-case-figure :global(.c-case-figure__chip) { top: 0.9rem; }
-    .c-case-figure :global(.c-case-figure__chip.is-before) { left: 1.5rem; }
-    .c-case-figure__chip.is-after { right: 1.5rem; }
+    .c-case-figure :global(.c-case-figure__chip),
+    .c-case-figure__chip.is-after {
+      font-size: 0.9rem;
+    }
+    .c-case-figure :global(.c-case-figure__chip.is-before) { left: 4%; }
+    .c-case-figure__chip.is-after { left: auto; right: 4%; }
   }
 </style>

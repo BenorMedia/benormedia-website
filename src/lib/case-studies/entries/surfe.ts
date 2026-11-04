@@ -50,7 +50,12 @@ import goal3 from "../../../assets/case-studies/surfe/goal-3.png";
 import goal4 from "../../../assets/case-studies/surfe/goal-4.png";
 import goal5 from "../../../assets/case-studies/surfe/goal-5.png";
 import trelise from "../../../assets/case-studies/surfe/trelise-mansfield.png";
-import beforeAfter from "../../../assets/case-studies/surfe/before-after.png";
+import baBefore from "../../../assets/case-studies/surfe/before-after/browser-before.png";
+import baAfter from "../../../assets/case-studies/surfe/before-after/browser-after.png";
+import baBackdrop from "../../../assets/case-studies/surfe/before-after/swatches.png";
+import baBadge from "../../../assets/case-studies/surfe/before-after/hub.png";
+import baLinesLeft from "../../../assets/case-studies/surfe/before-after/lines-left.svg";
+import baLinesRight from "../../../assets/case-studies/surfe/before-after/lines-right.svg";
 import redirectMap from "../../../assets/case-studies/surfe/redirect-map.png";
 import trustApi from "../../../assets/case-studies/surfe/trust-center-and-api.png";
 import cmsTemplates from "../../../assets/case-studies/surfe/cms-templates.png";
@@ -154,11 +159,19 @@ export const CASE_STUDY: CaseStudy = {
     ],
     figure: {
       image: {
-        src: beforeAfter,
+        src: baBefore,
         alt: "Surfe's homepage on WordPress next to the new homepage on Webflow, with the new color palette between them",
       },
       caption: "Surfe homepage on WordPress, before the redesign",
-      chips: { before: "BEFORE", after: "After" },
+      compare: {
+        before: baBefore,
+        after: baAfter,
+        backdrop: baBackdrop,
+        badge: baBadge,
+        linesLeft: baLinesLeft,
+        linesRight: baLinesRight,
+        chips: { before: "BEFORE", after: "After" },
+      },
     },
   },
   work: {
@@ -346,7 +359,30 @@ export const CASE_STUDY: CaseStudy = {
   },
   // Figma's FAQ block (4225:12760) holds the Pricing placeholder questions,
   // not Surfe's: no FAQ until copy exists (TODO: COPY).
-  faq: { heading: "Frequently asked questions.", items: [] },
+  // Figma 4225:12760 (lead 2026-11-04). Only the second question has an
+  // answer in the design; the others wait for theirs (markers, never guessed).
+  faq: {
+    heading: "Frequently asked questions.",
+    items: [
+      {
+        question: "How long does a WordPress to Webflow migration take?",
+        answer: "[FACT NEEDED: answer not in Figma 4225:12770]",
+      },
+      {
+        question: "Can you run a website redesign and a Webflow migration at the same time?",
+        answer:
+          "Yes. Surfe's redesign and its WordPress to Webflow migration ran as one project, so the design system and the CMS collections were built together.",
+      },
+      {
+        question: "Does BenorMedia support the site after launch?",
+        answer: "[FACT NEEDED: answer not in Figma 4225:12785]",
+      },
+      {
+        question: "Evidence log",
+        answer: "[FACT NEEDED: content not in Figma 4225:12791]",
+      },
+    ],
+  },
   related: {
     eyebrow: "Case studies",
     heading: "Lorem ipsum dolor sit", // TODO: COPY (Figma placeholder, lead 2026-11-04)

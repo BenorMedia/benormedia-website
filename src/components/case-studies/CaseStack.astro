@@ -172,12 +172,20 @@ const GLOWS = [
     height: auto;
     pointer-events: none;
   }
+  /* Logo and chip on one row (Figma 4225:12593, lead 2026-11-04). The
+     chip is Text XS with no tracking (4225:12597), so the longest label
+     ("CRM, FORMS AND TRACKING", 206px) fits beside the 44px logo. */
   .c-case-stack__head {
     position: relative;
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
     gap: calc(16 * var(--u));
+  }
+  .c-case-stack__head :global(.c-eyebrow) {
+    min-width: 0;
+    letter-spacing: 0;
+    white-space: nowrap;
   }
   .c-case-stack__logo {
     display: grid;

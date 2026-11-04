@@ -1,9 +1,10 @@
 ---
 /**
- * CaseFaq — FAQ inside the case study body (Figma 4225:12760): heading and
+ * CaseFaq — FAQ inside the case study body (Figma 4225:12760): centred
+ * Text XL heading ("Frequently asked questions.", 60px Brulia), 48px above
  * the site's accordion. The page builds the FAQPage JSON-LD from the same
- * array (`caseStudyJsonLd`). Empty items → renders nothing (Surfe has no
- * FAQ copy yet: Figma's block holds the Pricing placeholder questions).
+ * array (`caseStudyJsonLd`, answered items only). Empty items → renders
+ * nothing. Not listed in the TOC (Figma's ends at "Next steps").
  */
 import FaqAccordion from "../ui/FaqAccordion.astro";
 import CaseSection from "./CaseSection.astro";
@@ -19,7 +20,29 @@ const { id, heading, items } = Astro.props;
 ---
 
 {items.length > 0 && (
-  <CaseSection id={id} heading={heading}>
+  <CaseSection id={id} heading={heading} class="c-case-faq">
     <FaqAccordion items={items.map((i) => ({ question: i.question, answer: i.answer }))} name={`${id}-faq`} />
   </CaseSection>
 )}
+
+<style>
+  /* Figma 4225:12761: heading centred at Text XL, list 48px below and full
+     width (4225:12769 is w-full; the shared accordion caps itself at 70%). */
+  :global(.c-case-section.c-case-faq) {
+    gap: calc(48 * var(--u));
+  }
+  :global(.c-case-section.c-case-faq .c-faq) {
+    max-width: none;
+  }
+  :global(.c-case-faq .c-case-section__title) {
+    color: var(--color-heading);
+    font-size: var(--cs-fs-h1);
+    line-height: 1.4;
+    text-align: center;
+  }
+  @media (max-width: 767px) {
+    :global(.c-case-section.c-case-faq) {
+      gap: 3rem;
+    }
+  }
+</style>

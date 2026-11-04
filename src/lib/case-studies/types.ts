@@ -21,9 +21,25 @@ export interface CsImage {
 export interface CsFigure {
   image: CsImage;
   caption?: string | undefined;
-  /** Labels laid over the image's top corners (Figma's before / after
-   *  chips), kept out of the image file so no text is baked in. */
-  chips?: { before: string; after: string } | undefined;
+  /** Before / after composition (Figma 4225:12100) instead of one flat
+   *  export: `image.src` is unused, `image.alt` describes the whole. */
+  compare?: CsCompare | undefined;
+}
+
+/** Layers of the before / after figure, placed at Figma's coordinates in
+ *  `CaseFigure`. The browser exports are clipped to the 1220 x 470 frame
+ *  (shadow included); the labels are HTML, so no text is baked in. */
+export interface CsCompare {
+  before: ImageMetadata;
+  after: ImageMetadata;
+  /** The client's brand material between the browsers (faded swatches). */
+  backdrop?: ImageMetadata | undefined;
+  /** Round badge in the middle (the client's mark). */
+  badge?: ImageMetadata | undefined;
+  /** Connector lines between the badge and the browsers. */
+  linesLeft?: ImageMetadata | undefined;
+  linesRight?: ImageMetadata | undefined;
+  chips: { before: string; after: string };
 }
 
 export interface CsQuote {

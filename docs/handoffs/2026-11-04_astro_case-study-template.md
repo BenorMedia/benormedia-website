@@ -83,3 +83,10 @@ Date: 2026-11-04 · Author: astro agent · Branch: `feat/work-case-study-templat
 
 ### Requests
 - @ui: switch `ClientCard.astro`'s inline video script to `src/scripts/ui/client-video.ts`; load the Adobe Fonts kit (site-wide, needs the kit ID).
+
+## Follow-up 2 (orchestrator, lead review 2026-11-04)
+
+- **Before / after figure** (4225:12100): the flat export had its top band cut (chips) and the backdrop lost. Rebuilt in `CaseFigure` (`figure.compare`) from Figma's layers at Figma's coordinates (% of 1220 × 470): CSS glow, swatches, both browsers (exports clipped to the frame, shadow included), connector vectors turned −90deg as in Figma (frames centred, x 403 / 549), round badge, BEFORE / After chips in HTML. `src/assets/case-studies/surfe/before-after.png` replaced by `before-after/*`.
+- **Accent chips weight**: hero "Case study" and "GOAL 0x" are Acumin Regular in Figma (4225:11842, 4225:12067); the shared Tag sets 600 on `is-accent`. Page-level override to 400 on `/work/[slug]` only.
+- **Stack chips**: logo and chip on one row (4225:12593), chip without tracking (4225:12597).
+- **FAQ**: Figma's visible FAQ is Surfe's (4 questions; the layer names are stale Pricing ones). Added; centred Text XL heading, full-width list 48px below; not in the TOC (Figma's ends at "Next steps"). Only Q2 has an answer in Figma: Q1, Q3 and "Evidence log" carry `[FACT NEEDED: ...]` markers and stay out of the FAQPage JSON-LD.
