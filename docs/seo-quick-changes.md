@@ -74,7 +74,7 @@ Evidence (raw HTML of the 2026-10-05 crawl; confirm against the current build). 
 | Card | Quote | Name and role | Logo alt |
 | --- | --- | --- | --- |
 | 1 | "BenorMedia is a valued partner to us at Surfe..." | Trelise Mansfield, Head of Marketing, Surfe | Surfe |
-| 2 | "For more than a year, BenorMedia has been an essential partner..." | Ozgur Uzuner, CEO, Puzzle | Puzzle |
+| 2 | "For more than a year, BenorMedia has been an essential partner..." | Ozgur Uzuner, Chief Executive Officer, Puzzle | Puzzle |
 | 3 | "Lorem ipsum dolor sit amet, consectetur adipiscing elit..." | Rob Alfano, VP of Digital, Verifone | HireArt |
 | 4 | "Lorem ipsum dolor sit amet, consectetur adipiscing elit..." | Rob Alfano, VP of Digital, Verifone | SimpleTiger |
 

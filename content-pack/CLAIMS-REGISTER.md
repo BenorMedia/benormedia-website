@@ -79,7 +79,7 @@ H1: "Simple and transparent pricing that meets your needs." Plans: **Design + De
 ### A8. Testimonials and results (quote exactly)
 
 - Surfe: "BenorMedia is a valued partner to us at Surfe. Communication is always easy, things get implemented quickly, and their ongoing support has become an important part of our day-to-day operations." Trelise Mansfield, Head of Marketing, Surfe. Results shown: "100 Perfect SEO score"; "3x Faster go-to-market".
-- Puzzle: "For more than a year, BenorMedia has been an essential partner in our growth. They created a flexible, system-driven website that helps us launch faster, experiment more, and scale our digital presence with ease." Ozgur Uzuner, CEO, Puzzle. Results shown: "150+ New pages and components"; "3x Faster workflows".
+- Puzzle: "For more than a year, BenorMedia has been an essential partner in our growth. They created a flexible, system-driven website that helps us launch faster, experiment more, and scale our digital presence with ease." Ozgur Uzuner, Chief Executive Officer, Puzzle. Results shown: "150+ New pages and components"; "3x Faster workflows".
 - Do not create any other quote. Do not attribute these quotes to anything beyond their authors' roles.
 
 ### A9. The /work list (61 projects, tag, funding as displayed)

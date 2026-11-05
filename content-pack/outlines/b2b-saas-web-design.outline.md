@@ -110,7 +110,7 @@ Our [work page](https://www.benormedia.com/work) lists projects for B2B companie
 
 > "For more than a year, BenorMedia has been an essential partner in our growth. They created a flexible, system-driven website that helps us launch faster, experiment more, and scale our digital presence with ease."
 >
-> Ozgur Uzuner, CEO, Puzzle
+> Ozgur Uzuner, Chief Executive Officer, Puzzle
 
 \[Result tiles shown beside it on the home page: 150+ New pages and components · 3x Faster workflows\]
 
