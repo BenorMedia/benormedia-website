@@ -66,15 +66,15 @@ const blogLinks = [
   ...latestPosts(3).map((p) => ({ label: shortTitle(p.title), href: p.url })),
   { label: "All articles", href: "/blog" },
 ];
-// `hidden`: kept in the markup, not shown. Testimonials stays out of
-// production for now (lead 2026-09-30, same as the nav).
+// `hidden`: kept in the markup, not shown. Testimonials under Our Work
+// (lead 2026-11-05; was hidden 2026-09-30).
 // "About us" (lead 2026-11-03) only where /about is built (`aboutBuilt`).
 const aboutLinks: Array<{ label: string; href: string; openContact?: boolean; hidden?: boolean }> = [
   ...(aboutBuilt() ? [{ label: "About us", href: "/about" }] : []),
   { label: "Our Work", href: "/work" },
+  { label: "Testimonials", href: "/testimonials" },
   { label: "Pricing", href: "/pricing" },
   { label: "Contact", href: "#", openContact: true },
-  { label: "Testimonials", href: "/testimonials", hidden: true },
 ];
 
 // --- Legal links (bottom strip) -------------------------------------------

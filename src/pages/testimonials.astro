@@ -40,6 +40,14 @@ const [testimonialsPage, testimonials] = await Promise.all([
     title={"Hear from our\nhappy clients."}
     accent="happy clients."
     description="What marketing leaders say after launch day, and years into working together."
+    class="is-testimonials"
   />
   <TestimonialsGrid testimonials={testimonials} />
 </BaseLayout>
+
+<style>
+  /* Two even lines for the hero subtitle (lead 2026-11-05). */
+  :global(.c-page-hero.is-testimonials .c-section-header__description) {
+    text-wrap: balance;
+  }
+</style>

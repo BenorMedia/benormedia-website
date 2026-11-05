@@ -56,12 +56,12 @@ const services = [
 ];
 
 // `hidden`: kept in the markup but not shown (desktop bar + mobile menu).
-// Testimonials stays out of production for now — lead 2026-09-30.
-// Blog moved into Resources (lead 2026-10-28).
+// Testimonials shown again, right of Our Work (lead 2026-11-05; was hidden
+// 2026-09-30). Blog moved into Resources (lead 2026-10-28).
 const primaryLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
-  { label: "Work", href: "/work" },
+  { label: "Our Work", href: "/work" },
+  { label: "Testimonials", href: "/testimonials" },
   { label: "Pricing", href: "/pricing" },
-  { label: "Testimonials", href: "/testimonials", hidden: true },
 ];
 
 // Resources: featured articles chosen by the lead (2026-11-03, was

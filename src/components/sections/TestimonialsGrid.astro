@@ -395,7 +395,7 @@ const photoSizes: Record<Shape, string> = {
     margin: 0;
     color: var(--color-heading);
     font-weight: 400;
-    line-height: 1.5;
+    line-height: 1.3; /* Figma 1.5, tightened (lead 2026-11-05) */
     text-wrap: balance;
   }
 
@@ -443,8 +443,8 @@ const photoSizes: Record<Shape, string> = {
   .c-testimonial-figure__logo {
     display: block;
     width: auto;
-    max-width: 9rem;
-    height: 1.4rem; /* 26.89px */
+    max-width: 11rem;
+    height: 1.75rem; /* Figma 26.89px (1.4rem), +25% (lead 2026-11-05) */
     object-fit: contain;
     object-position: left center;
   }
@@ -500,8 +500,8 @@ const photoSizes: Record<Shape, string> = {
     }
 
     .c-testimonial-figure__logo {
-      height: 2.2rem;
-      max-width: 14rem;
+      height: 2.75rem;
+      max-width: 17rem;
     }
   }
 
