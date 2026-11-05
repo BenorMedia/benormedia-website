@@ -98,6 +98,7 @@ Step list items show their number (01, 02…) next to the step preview (name · 
 ### `testimonial` — Testimonials
 | Field | Name | Type | Rules |
 |---|---|---|---|
+| Headline | `headline` | string | optional, max 60 characters. Short title over the quote on the Testimonials page cards, taken from the quote's highlights (lead 2026-11-05). No headline → the card shows the quote only |
 | Quote | `quote` | text | required, max length TBD by design |
 | Highlights | `highlights` | array of string | optional, max 3; each must be an exact substring of `quote`; rendered bold in the testimonial slider |
 | Author Name | `authorName` | string | required |

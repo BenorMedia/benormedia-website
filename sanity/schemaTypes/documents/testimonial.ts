@@ -10,6 +10,14 @@ export const testimonial = defineType({
   type: 'document',
   fields: [
     defineField({
+      name: 'headline',
+      title: 'Headline',
+      description:
+        'Short title shown above the quote on the Testimonials page, e.g. "Seamless and simple." Take it from the bold part of the quote. Leave empty to show the quote only.',
+      type: 'string',
+      validation: (Rule) => Rule.max(60),
+    }),
+    defineField({
       name: 'quote',
       title: 'Quote',
       description: 'The quote itself. Do not include curly quotes — they are added automatically.',

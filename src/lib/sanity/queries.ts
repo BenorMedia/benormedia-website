@@ -275,6 +275,7 @@ export const TESTIMONIALS = /* groq */ `
 *[_type == "testimonial" && !(_id in path("drafts.**")) && !(quote match "lorem ipsum*")] | order(_createdAt asc){
   _id,
   _type,
+  headline,
   quote,
   highlights,
   authorName,

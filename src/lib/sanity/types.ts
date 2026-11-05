@@ -164,6 +164,8 @@ export interface Author extends SanityRef<'author'> {
 }
 
 export interface Testimonial extends SanityRef<'testimonial'> {
+  /** Short title over the quote, Testimonials page cards (TESTIMONIALS query only). */
+  headline?: string | null;
   quote: string;
   /** Exact substrings of `quote` shown in bold (TESTIMONIALS query only). */
   highlights?: string[] | null;

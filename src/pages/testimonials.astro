@@ -1,7 +1,7 @@
 ---
 /**
- * Testimonials page — Phase 5. Refs: `docs/refs/testimonials/`
- * (`testimonials-preview.png`).
+ * Testimonials page — Phase 5; cards redesigned 2026-11-05 after Figma
+ * 4271:13535 (hero copy from the same frame).
  *
  * All page copy is static. Sanity supplies the testimonials and the
  * `testimonialsPage` SEO singleton (null until the document is created: the
@@ -37,8 +37,9 @@ const [testimonialsPage, testimonials] = await Promise.all([
 >
   <PageHero
     eyebrow="Testimonials"
-    title={"Hear from our more\nthan 100 happy clients."}
-    accent="100 happy clients."
+    title={"Hear from our\nhappy clients."}
+    accent="happy clients."
+    description="What marketing leaders say after launch day, and years into working together."
   />
   <TestimonialsGrid testimonials={testimonials} />
 </BaseLayout>

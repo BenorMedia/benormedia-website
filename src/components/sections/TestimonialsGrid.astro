@@ -1,23 +1,39 @@
 ---
 /**
- * TestimonialsGrid — Testimonials page: every testimonial as a static card grid.
- * Ref: `docs/refs/testimonials/testimonials-grid.jpg` (1920 frame, 1 ref px =
- * 1/14 rem, same base as the Phase 5 pages).
+ * TestimonialsGrid — Testimonials page: every testimonial as a bento of
+ * figure cards (Figma 4271:13631, "Testimonials Page" 4271:13535; the lead
+ * calls it a direction, not a pixel spec, 2026-11-05).
  *
- * Data: `getTestimonials()`, passed in by the page. Every published
- * testimonial renders once (the ref's 15 identical cards are placeholders; no
- * duplicates to fill rows). Cards = the shared marquee `TestimonialCard`,
- * unchanged except `width: 100%` on this page (lead, 2026-09-29) so each card
- * fills its grid cell and is solid white (no glass). Height stays the card's
- * fixed marquee height.
+ * Card (Figma 4271:13707): portrait | headline, quote, name, role, logo.
+ * Three shapes:
+ *  - `is-row`: photo panel on the left, content on the right;
+ *  - `is-stack`: content on top, photo below;
+ *  - `is-stack is-photo-top`: photo on top, content below.
  *
- * Layout: 3 columns, 2 at ≤991, 1 at ≤767. Plain white background (the ref
- * shows no line art behind the grid). Visually hidden `<h2>` keeps the outline
- * h1 → h2. Hides entirely when there are no testimonials.
+ * Layout: testimonials go in groups of 7, each group is the Figma frame's two
+ * columns (883 / 759 of 1672px):
+ *   left  = row, row, [stack | stack photo-top]
+ *   right = row, row, wide stack
+ * The last card of each column grows (its photo panel takes the extra
+ * height), so both columns end level whatever the quote lengths.
+ * DOM order is column by column (left, then right), which is also the reading
+ * order. ≤991 one column; ≤767 every card stacks photo-first.
+ *
+ * Data: `getTestimonials()`. Headline = `headline` (short phrase from the
+ * quote's highlights, lead 2026-11-05; hidden when empty). Photo = `portrait`
+ * (transparent cut-out) or `authorPhoto`. Logo = referencing client's logo,
+ * then `companyLogo`, then the company name as text (same chain as the
+ * slider). The quote renders plain, as in Figma.
+ *
+ * The Figma frame's background 3D shapes are a crop of an unrelated
+ * illustration ("BY PURPOSE" shield); left out until a dedicated asset exists.
+ *
+ * Sizes: Figma 1920 frame, px ÷ 19.2 = rem.
  */
 import Container from "../ui/Container.astro";
-import TestimonialCard from "../ui/TestimonialCard.astro";
 import type { Testimonial } from "../../lib/sanity/types";
+import { urlFor, clientImageAlt, isSvgAsset, type Source } from "../../lib/sanity/image";
+import { splitAuthorRole } from "../../lib/sanity/testimonial-text";
 
 interface Props {
   testimonials: Testimonial[];
@@ -25,77 +41,398 @@ interface Props {
 
 const { testimonials } = Astro.props;
 const headingId = "testimonials-grid-title";
+
+const PHOTO_WIDTHS = [400, 640, 960];
+
+type Shape = "row" | "stack" | "stack-photo-top";
+
+const cards = testimonials.map((t) => {
+  const { role, company } = splitAuthorRole(t.authorRole);
+  const photo = t.portrait?.asset
+    ? (t.portrait as Source)
+    : t.authorPhoto?.asset
+      ? (t.authorPhoto as Source)
+      : undefined;
+  const photoSrcset = photo
+    ? PHOTO_WIDTHS.map(
+        (w) => `${urlFor(photo).width(w).height(w).fit("crop").auto("format").url()} ${w}w`,
+      ).join(", ")
+    : undefined;
+  const photoSrc = photo ? urlFor(photo).width(640).height(640).fit("crop").auto("format").url() : undefined;
+
+  const logoSource = t.client?.logo?.asset ? t.client.logo : t.companyLogo?.asset ? t.companyLogo : undefined;
+  const logoSrc = logoSource
+    ? isSvgAsset(logoSource.asset?._id ?? logoSource.asset?._ref)
+      ? urlFor(logoSource as Source).url()
+      : urlFor(logoSource as Source).height(80).fit("max").auto("format").url()
+    : undefined;
+
+  return {
+    key: t._id,
+    headline: t.headline?.trim() || undefined,
+    quote: t.quote,
+    name: t.authorName,
+    role,
+    company,
+    photoSrc,
+    photoSrcset,
+    logoSrc,
+    logoAlt: clientImageAlt(logoSource?.alt, t.client?.name ?? company, "logo"),
+  };
+});
+
+type Card = (typeof cards)[number];
+
+// Groups of 7 → { left, pair, right } following the Figma frame.
+const GROUP = 7;
+const groups: { left: Card[]; pair: Card[]; right: Card[] }[] = [];
+for (let i = 0; i < cards.length; i += GROUP) {
+  const g = cards.slice(i, i + GROUP);
+  const at = (n: number) => (g[n] ? [g[n]] : []);
+  groups.push({
+    left: [...at(0), ...at(2)],
+    pair: [...at(4), ...at(5)],
+    right: [...at(1), ...at(3), ...at(6)],
+  });
+}
+
+const shapeClass = (shape: Shape) =>
+  ["c-testimonial-figure", shape === "row" ? "is-row" : "is-stack", shape === "stack-photo-top" && "is-photo-top"]
+    .filter(Boolean)
+    .join(" ");
+
+const photoSizes: Record<Shape, string> = {
+  row: "(max-width: 767px) 90vw, 400px",
+  stack: "(max-width: 767px) 90vw, 560px",
+  "stack-photo-top": "(max-width: 767px) 90vw, 480px",
+};
 ---
 
-{testimonials.length > 0 && (
+{cards.length > 0 && (
   <section class="c-testimonials-grid" aria-labelledby={headingId}>
     <Container>
       {/* TODO: COPY — section heading (visually hidden). */}
       <h2 id={headingId} class="c-testimonials-grid__sr-only">Client testimonials</h2>
 
-      <ul class="c-testimonials-grid__list" data-anim="testimonials-grid">
-        {testimonials.map((testimonial) => (
-          <li class="c-testimonials-grid__item">
-            <TestimonialCard testimonial={testimonial} />
-          </li>
+      <div class="c-testimonials-grid__groups">
+        {groups.map((group) => (
+          <div class="c-testimonials-grid__group">
+            {[
+              { cells: group.left.map((c) => ({ card: c, shape: "row" as Shape })), pair: group.pair },
+              {
+                cells: group.right.map((c, i) => ({
+                  card: c,
+                  shape: (i === 2 ? "stack" : "row") as Shape,
+                })),
+                pair: [] as Card[],
+              },
+            ]
+              .filter((col) => col.cells.length > 0 || col.pair.length > 0)
+              .map((col) => (
+                <div class="c-testimonials-grid__col">
+                  {[
+                    ...col.cells.map(({ card, shape }) => ({ cards: [{ card, shape }] })),
+                    ...(col.pair.length > 0
+                      ? [{ cards: col.pair.map((card, i) => ({ card, shape: (i === 0 ? "stack" : "stack-photo-top") as Shape })) }]
+                      : []),
+                  ].map((cell) => (
+                    <div class={cell.cards.length > 1 ? "c-testimonials-grid__pair" : "c-testimonials-grid__cell"}>
+                      {cell.cards.map(({ card, shape }) => (
+                        <figure class={shapeClass(shape)}>
+                          <div class="c-testimonial-figure__photo">
+                            {card.photoSrc && (
+                              <img
+                                src={card.photoSrc}
+                                srcset={card.photoSrcset}
+                                sizes={photoSizes[shape]}
+                                alt=""
+                                width="640"
+                                height="640"
+                                loading="lazy"
+                                decoding="async"
+                              />
+                            )}
+                          </div>
+
+                          <div class="c-testimonial-figure__content">
+                            <div class="c-testimonial-figure__text">
+                              {card.headline && (
+                                <h3 class="c-testimonial-figure__headline c-paragraph_l">&ldquo;{card.headline}&rdquo;</h3>
+                              )}
+                              <blockquote class="c-testimonial-figure__quote c-paragraph">
+                                <p>&ldquo;{card.quote}&rdquo;</p>
+                              </blockquote>
+                            </div>
+
+                            <figcaption class="c-testimonial-figure__author">
+                              <span class="c-testimonial-figure__person">
+                                <span class="c-testimonial-figure__name">{card.name}</span>
+                                {card.role && <span class="c-testimonial-figure__role">{card.role}</span>}
+                              </span>
+                              {card.logoSrc ? (
+                                <img
+                                  class="c-testimonial-figure__logo"
+                                  src={card.logoSrc}
+                                  alt={card.logoAlt}
+                                  loading="lazy"
+                                  decoding="async"
+                                />
+                              ) : (
+                                card.company && <span class="c-testimonial-figure__company">{card.company}</span>
+                              )}
+                            </figcaption>
+                          </div>
+                        </figure>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              ))}
+          </div>
         ))}
-      </ul>
+      </div>
     </Container>
   </section>
 )}
 
 <style>
   .c-testimonials-grid {
+    --tg-gap: 1.5625rem; /* 30px */
+    --tg-row-photo-w: 19.14rem; /* 367.48px */
+    --tg-pad: 2.083rem; /* 40px */
     background: var(--color-white);
   }
 
   .c-testimonials-grid :global(.c-container) {
-    /* Hero title ink (descenders) → first card ≈ 112px in the ref = 102px
-       below the h1 line box; last card → CTA banner ≈ 220px (the CTA section
-       has no top padding). TODO: DS. */
     padding-top: 7.5rem; /* lead visual QA 2026-09-29 */
     padding-bottom: 15.714rem;
   }
 
-  .c-testimonials-grid__list {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.2rem; /* between cards and rows (lead visual QA 2026-09-29) */
-    margin: 0;
-    padding: 0;
-    list-style: none;
+  .c-testimonials-grid__groups {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tg-gap);
   }
 
-  .c-testimonials-grid__item {
+  /* Figma columns 883 / 759 of 1672. */
+  .c-testimonials-grid__group {
+    display: grid;
+    grid-template-columns: 883fr 759fr;
+    gap: var(--tg-gap);
+  }
+
+  .c-testimonials-grid__group > .c-testimonials-grid__col:only-child {
+    grid-column: 1 / -1;
+  }
+
+  .c-testimonials-grid__col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tg-gap);
+    min-width: 0;
+  }
+
+  .c-testimonials-grid__cell,
+  .c-testimonials-grid__pair {
     display: flex;
     min-width: 0;
   }
 
-  /* This page only: the marquee card fills its grid cell and is solid white
-     instead of glass (lead, 2026-09-29; no line art behind the grid). */
-  .c-testimonials-grid :global(.c-testimonial-card) {
-    width: 100%;
-    background: var(--color-white);
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
+  .c-testimonials-grid__pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--tg-gap);
   }
 
-  /* TODO: DS mobile — no tablet ref. */
-  @media (max-width: 991px) {
-    .c-testimonials-grid__list {
-      grid-template-columns: repeat(2, 1fr);
+  /* The last block of each column takes the leftover height. */
+  .c-testimonials-grid__col > :last-child {
+    flex-grow: 1;
+  }
+
+  /* --- Card (Figma 4271:13707) ------------------------------------------ */
+  .c-testimonial-figure {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    border: var(--border-default);
+    border-radius: 14px;
+    background: var(--color-white);
+  }
+
+  .c-testimonial-figure.is-stack {
+    flex-direction: column;
+  }
+
+  .c-testimonial-figure__photo {
+    position: relative;
+    overflow: hidden;
+    background: var(--color-white);
+  }
+
+  /* Cut-out portrait: square, bottom-anchored and centred, as tall as the
+     panel (capped so a stretched panel doesn't blow the face up). */
+  .c-testimonial-figure__photo img {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: auto;
+    height: min(100%, 34rem);
+    aspect-ratio: 1;
+    max-width: none;
+    object-fit: cover;
+    transform: translateX(-50%);
+  }
+
+  .is-row .c-testimonial-figure__photo {
+    flex: 0 0 var(--tg-row-photo-w);
+    min-height: 21rem; /* Figma's shortest row card: 405px */
+    border-right: var(--border-default);
+  }
+
+  /* Content on top, photo below (Figma 4271:13783 / 4271:13821). */
+  .is-stack .c-testimonial-figure__photo {
+    order: 2;
+    flex: 1 0 20rem;
+    border-top: var(--border-default);
+  }
+
+  /* Photo on top, content below (Figma 4271:13859). */
+  .is-stack.is-photo-top .c-testimonial-figure__photo {
+    order: 0;
+    border-top: 0;
+    border-bottom: var(--border-default);
+  }
+
+  .c-testimonial-figure__content {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.04rem; /* 20px */
+    min-width: 0;
+    padding: var(--tg-pad);
+  }
+
+  .is-stack .c-testimonial-figure__content {
+    order: 1;
+    flex: 0 0 auto;
+  }
+
+  .c-testimonial-figure__text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.521rem; /* 10px */
+  }
+
+  .c-testimonial-figure__headline {
+    margin: 0;
+    color: var(--color-heading);
+    font-weight: 400;
+    line-height: 1.5;
+    text-wrap: balance;
+  }
+
+  .c-testimonial-figure__quote {
+    margin: 0;
+    color: var(--color-text);
+
+    & p {
+      margin: 0;
     }
   }
 
-  /* TODO: DS mobile — no mobile ref; container's mobile padding. */
+  .c-testimonial-figure__author {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.78rem; /* 15px */
+    margin-top: 1.04rem;
+  }
+
+  .c-testimonial-figure__person {
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-body);
+    font-size: var(--fs-text-xs);
+    line-height: 1.5;
+  }
+
+  .c-testimonial-figure__name {
+    color: var(--color-heading);
+    font-weight: 700;
+  }
+
+  .c-testimonial-figure__role,
+  .c-testimonial-figure__company {
+    color: var(--color-text);
+  }
+
+  .c-testimonial-figure__company {
+    font-family: var(--font-body);
+    font-size: var(--fs-p);
+    font-weight: 700;
+  }
+
+  .c-testimonial-figure__logo {
+    display: block;
+    width: auto;
+    max-width: 9rem;
+    height: 1.4rem; /* 26.89px */
+    object-fit: contain;
+    object-position: left center;
+  }
+
+  /* --- Tablet: one column ------------------------------------------------- */
+  @media (max-width: 991px) {
+    .c-testimonials-grid__group {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* --- Mobile: every card stacks, photo first ----------------------------- */
   @media (max-width: 767px) {
+    .c-testimonials-grid {
+      --tg-gap: 1.5rem;
+      --tg-pad: 2rem;
+    }
+
     .c-testimonials-grid :global(.c-container) {
       padding-top: 5rem;
       padding-bottom: 5rem;
     }
 
-    .c-testimonials-grid__list {
+    .c-testimonials-grid__pair {
       grid-template-columns: 1fr;
+    }
+
+    .c-testimonial-figure,
+    .c-testimonial-figure.is-stack {
+      flex-direction: column;
+    }
+
+    .c-testimonial-figure .c-testimonial-figure__photo,
+    .is-stack .c-testimonial-figure__photo,
+    .is-stack.is-photo-top .c-testimonial-figure__photo {
+      order: 0;
+      flex: 0 0 auto;
+      height: 26rem;
+      min-height: 0;
+      border-top: 0;
+      border-right: 0;
+      border-bottom: var(--border-default);
+    }
+
+    .c-testimonial-figure__content,
+    .is-stack .c-testimonial-figure__content {
+      order: 1;
+      flex: 1 1 auto;
+    }
+
+    .c-testimonial-figure__logo {
+      height: 2.2rem;
+      max-width: 14rem;
     }
   }
 
