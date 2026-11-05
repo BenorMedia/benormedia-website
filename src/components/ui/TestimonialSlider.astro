@@ -391,32 +391,24 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
     transition: none;
   }
 
-  /* Brand-gradient glows (Figma ellipse, 20% opacity, blurred; the asset
-     is the Figma export). Top glow over the photo on every card; the lower
-     one behind the photo, active card only. Both anchored to the card's left
-     edge so they don't move while the card resizes. */
-  .c-ts__card::before,
-  .c-ts__card::after {
+  /* Brand-gradient glow (Figma 4227:11640, ellipse at 20% opacity, blurred;
+     the asset is the Figma export). One soft glow low behind the photo,
+     active card only, so the card reads white with a faint blue at the
+     bottom (lead 2026-11-05: was two glows, too blue). Anchored to the
+     card's left and bottom edges so it doesn't move while the card resizes.
+     In the 843px-tall Figma card the asset's top sits 223.7px down. */
+  .c-ts__card::before {
     content: "";
     position: absolute;
+    z-index: 0;
+    left: -28.52rem;
+    top: calc(100% - 32.26rem);
     width: 106.54rem;
     height: 120.51rem;
     background: url("/images/testimonials/card-glow.svg") no-repeat 0 0 / 100% 100%;
     pointer-events: none;
-  }
-
-  .c-ts__card::before {
-    z-index: 0;
-    left: -28.52rem;
-    top: calc(100% - 55.37rem);
     opacity: 0;
     transition: opacity var(--ts-duration) var(--ts-ease);
-  }
-
-  .c-ts__card::after {
-    z-index: 2;
-    left: -26.63rem;
-    top: -65.82rem;
   }
 
   .c-ts__card.is-active::before,
