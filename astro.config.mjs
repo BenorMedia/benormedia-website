@@ -123,6 +123,7 @@ const LASTMOD = {
   '/ongoing-website-support': '2026-10-06',
   '/pricing': '2026-10-06',
   '/work': '2026-10-06',
+  '/testimonials': '2026-11-05',
   '/privacy-policy': '2026-10-05',
   '/terms-conditions': '2026-10-05',
   '/authors/sergio-gancedo': '2026-11-03',
@@ -162,14 +163,13 @@ export default defineConfig({
     react(),
     // Needs `site` (PUBLIC_SITE_URL): skipped with a warning until the
     // production domain is set. Dev pages, Studio and the 404 are left out,
-    // and so are the noindex pages: /cookie-policy (placeholder) and
-    // /testimonials while testimonials are off (lead 2026-09-30; drop them
-    // from this list when they go live). Privacy Policy + Terms are
+    // and so is the noindex /cookie-policy (placeholder). /testimonials is
+    // listed since 2026-11-05 (lead). Privacy Policy + Terms are
     // indexable since 2026-10-05, so they are listed. /about is listed since
     // its release (2026-11-03).
     sitemap({
       filter: (page) =>
-        !/\/(dev|studio)(\/|$)|\/404$|^\/(cookie-policy|testimonials)\/?$/.test(
+        !/\/(dev|studio)(\/|$)|\/404$|^\/cookie-policy\/?$/.test(
           new URL(page).pathname,
         ) && !NEW_PAGES.draftPaths.has(new URL(page).pathname.replace(/\/$/, '')),
       serialize(item) {

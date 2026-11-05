@@ -12,9 +12,8 @@
  *
  * BaseLayout owns Nav, CtaBanner, Footer and ContactModal.
  *
- * `noindex` and out of the sitemap for now (lead 2026-09-30): production
- * ships without testimonials (the section and the nav / footer links are
- * hidden).
+ * Indexable and in the sitemap since 2026-11-05 (lead; was noindex from
+ * 2026-09-30 while testimonials were hidden). Linked from the nav and footer.
  */
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getPageSeo, getTestimonials } from "../lib/sanity/queries";
@@ -33,7 +32,6 @@ const [testimonialsPage, testimonials] = await Promise.all([
   pageSeo={testimonialsPage?.seo ?? null}
   title={PAGE_META.testimonials.title}
   description={PAGE_META.testimonials.description}
-  noIndex={true}
 >
   <PageHero
     eyebrow="Testimonials"
