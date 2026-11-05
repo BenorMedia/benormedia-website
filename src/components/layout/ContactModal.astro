@@ -422,6 +422,9 @@ const testimonial = await getContactTestimonialCached();
        lead visual QA 2026-10-01. */
     padding: 1.357rem 1.214rem;
     height: 100%;
+    /* No min-height in the contact form: the card's 23.03rem floor left a
+       big empty gap under short quotes (lead 2026-11-05). */
+    min-height: 0;
     gap: 2rem;
     background: var(--color-white);
     -webkit-backdrop-filter: none;
