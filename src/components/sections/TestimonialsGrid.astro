@@ -17,7 +17,8 @@
  * The last card of each column grows (its photo panel takes the extra
  * height), so both columns end level whatever the quote lengths.
  * DOM order is column by column (left, then right), which is also the reading
- * order. ≤991 one column; ≤767 every card stacks photo-first.
+ * order. ≤991 one column; ≤767 every card stacks, quote first, headshot
+ * second (lead 2026-11-05).
  *
  * Data: `getTestimonials()`. Headline = `headline` (short phrase from the
  * quote's highlights, lead 2026-11-05; hidden when empty). Photo = `portrait`
@@ -25,8 +26,12 @@
  * then `companyLogo`, then the company name as text (same chain as the
  * slider). The quote renders plain, as in Figma.
  *
- * The Figma frame's background 3D shapes are a crop of an unrelated
- * illustration ("BY PURPOSE" shield); left out until a dedicated asset exists.
+ * Background: the lead's 3D-shapes image (`/images/testimonials/shapes.png`,
+ * 2026-11-05) twice, peeking in from the right near the top and from the
+ * left lower down, as in Figma. Scrubbed parallax on scroll
+ * (`scripts/animations/testimonials-shapes.ts`); static without JS or with
+ * reduced motion. The card's content panel is frosted glass (Figma: white
+ * 30% + 30px blur), so the shapes show through it softly. Hidden ≤767.
  *
  * Sizes: Figma 1920 frame, px ÷ 19.2 = rem.
  */
@@ -110,6 +115,28 @@ const photoSizes: Record<Shape, string> = {
 
 {cards.length > 0 && (
   <section class="c-testimonials-grid" aria-labelledby={headingId}>
+    <div class="c-testimonials-grid__shapes" aria-hidden="true">
+      <img
+        class="c-testimonials-grid__shape is-right"
+        src="/images/testimonials/shapes.png"
+        alt=""
+        width="2013"
+        height="2059"
+        loading="lazy"
+        decoding="async"
+        data-testimonials-shape="-1"
+      />
+      <img
+        class="c-testimonials-grid__shape is-left"
+        src="/images/testimonials/shapes.png"
+        alt=""
+        width="2013"
+        height="2059"
+        loading="lazy"
+        decoding="async"
+        data-testimonials-shape="1"
+      />
+    </div>
     <Container>
       {/* TODO: COPY — section heading (visually hidden). */}
       <h2 id={headingId} class="c-testimonials-grid__sr-only">Client testimonials</h2>
@@ -200,10 +227,43 @@ const photoSizes: Record<Shape, string> = {
     --tg-gap: 1.5625rem; /* 30px */
     --tg-row-photo-w: 19.14rem; /* 367.48px */
     --tg-pad: 2.083rem; /* 40px */
+    position: relative;
+    /* Shapes sit partly off-canvas: clip them without a scroll container. */
+    overflow: clip;
     background: var(--color-white);
   }
 
+  /* --- Background shapes ------------------------------------------------- */
+  .c-testimonials-grid__shapes {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  /* The image's band of shapes runs down its middle (≈ 25–60% across), so
+     each copy sits mostly off-canvas and only the band peeks past the cards.
+     TODO: DS — positions follow Figma 4271:14092 / 4271:14094 by eye. */
+  .c-testimonials-grid__shape {
+    position: absolute;
+    width: 52rem;
+    max-width: none;
+    height: auto;
+    will-change: transform;
+  }
+
+  .c-testimonials-grid__shape.is-right {
+    top: -6rem;
+    right: -26rem;
+  }
+
+  .c-testimonials-grid__shape.is-left {
+    top: 52%;
+    left: -27rem;
+    rotate: 180deg;
+  }
+
   .c-testimonials-grid :global(.c-container) {
+    position: relative;
     padding-top: 7.5rem; /* lead visual QA 2026-09-29 */
     padding-bottom: 15.714rem;
   }
@@ -258,7 +318,8 @@ const photoSizes: Record<Shape, string> = {
     overflow: hidden;
     border: var(--border-default);
     border-radius: 14px;
-    background: var(--color-white);
+    /* Transparent so the glass content panel can show the shapes behind. */
+    background: transparent;
   }
 
   .c-testimonial-figure.is-stack {
@@ -305,7 +366,11 @@ const photoSizes: Record<Shape, string> = {
     border-bottom: var(--border-default);
   }
 
+  /* Frosted glass (Figma: white 30% + 30px backdrop blur). */
   .c-testimonial-figure__content {
+    background: color-mix(in srgb, var(--color-white) 30%, transparent);
+    -webkit-backdrop-filter: blur(30px);
+            backdrop-filter: blur(30px);
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
@@ -391,8 +456,12 @@ const photoSizes: Record<Shape, string> = {
     }
   }
 
-  /* --- Mobile: every card stacks, photo first ----------------------------- */
+  /* --- Mobile: every card stacks, quote first, headshot second ----------- */
   @media (max-width: 767px) {
+    .c-testimonials-grid__shapes {
+      display: none;
+    }
+
     .c-testimonials-grid {
       --tg-gap: 1.5rem;
       --tg-pad: 2rem;
@@ -415,18 +484,18 @@ const photoSizes: Record<Shape, string> = {
     .c-testimonial-figure .c-testimonial-figure__photo,
     .is-stack .c-testimonial-figure__photo,
     .is-stack.is-photo-top .c-testimonial-figure__photo {
-      order: 0;
+      order: 1;
       flex: 0 0 auto;
       height: 26rem;
       min-height: 0;
-      border-top: 0;
+      border-top: var(--border-default);
       border-right: 0;
-      border-bottom: var(--border-default);
+      border-bottom: 0;
     }
 
     .c-testimonial-figure__content,
     .is-stack .c-testimonial-figure__content {
-      order: 1;
+      order: 0;
       flex: 1 1 auto;
     }
 
