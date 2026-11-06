@@ -432,11 +432,6 @@ const rootClass = ["c-ts", className].filter(Boolean).join(" ");
     max-width: none;
     object-fit: contain;
     object-position: center bottom;
-    /* Cut-outs end in hard vertical edges at the shoulders; on the open card
-       the square is narrower than the card, so fade its outer sides. On the
-       narrow portraits the fade sits outside the card. */
-    -webkit-mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
-            mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
     transform: translateX(-50%);
     filter: grayscale(1);
     transition: filter var(--ts-duration) var(--ts-ease);
