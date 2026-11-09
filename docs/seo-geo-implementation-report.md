@@ -179,3 +179,35 @@ None. The white-label diagram is built from `FlowDiagram`. The Webflow vs WordPr
 - "Professional Partner" in the internal outlines and registers.
 - `docs/webflow-seo-agency.md` and `docs/content/webflow-seo-agency.md` still hold the old proof line.
 - The untracked `docs/handoffs/2026-10-12_orchestrator_service-step-link.md`.
+
+## T7 release (2026-11-09)
+
+Sergio signed off all three pages. They are released together on this branch, and go live when the pull request is merged and deployed.
+
+- **Front matter:** `draft: false`; `publishedAt`, `updatedAt` and `volatileChecked` are all 2026-11-09. `pages:release-check` passes on all three with no key fixes.
+- **Volatile facts rechecked 2026-11-09:**
+  - **Webflow pricing:** all figures unchanged.
+  - **W3Techs:** 39.4%.
+  - **Patchstack:** all 2025 figures unchanged.
+  - **WordPress.com:** $45 and $4 plans unchanged.
+  - **Yoast:** 10+ million installs.
+  - **Clutch:** all figures unchanged.
+  - **BLS:** both May 2025 figures unchanged.
+  - **WordPress.org plugin count:** kept as "more than 78,000". Sergio confirmed it on the directory page; the plugin API counts about 74,500.
+  - **Forbes Advisor:** figures, including the $10 to $35 domain range, confirmed by Sergio. Forbes blocks automated access.
+- **Services menu:** "White label for agencies" sits under Build.
+- **Site lists:** one line per page in `public/llms.txt`, and PAGES entries in `scripts/check-seo.mjs`.
+- **Inbound links:** 9 of 11 added, in their own commit:
+  - wordpress-to-webflow-migration, webflow-vs-custom-code, is-webflow-good-for-seo and webflow-price-increase link to Webflow vs WordPress.
+  - website-redesign, how-long-does-a-website-redesign-take, website-rfp-template and saas-website-redesign link to the cost guide.
+  - webflow-migration links to the white label page.
+  - On `/website-redesign`, the sentence sits in "Start with what your current site already wins." The process section's intro renders as plain text and would have dropped the link.
+- **Left out:** the two links from `/custom-websites-migrations` and `/ongoing-website-support`. Their copy is in Sanity. Sergio can add them in Studio:
+  - "Agencies can also hire us for white label web development under their own brand." (anchor "white label web development")
+  - "Support can run under your agency's brand too; see white label Webflow support." (anchor "white label Webflow support")
+- **Checks (production build):**
+  - `check-seo.mjs`: all checks passed.
+  - All three pages are indexable and in the sitemap, with the expected JSON-LD.
+  - The `pages:verify` production view includes all 15 pages. Its only failures are the template-level checks 8 and 3.
+  - `check` and `lint` pass.
+- **After the deploy:** run `node scripts/indexnow.mjs` for the three new URLs and the five refreshed posts, then request indexing in Search Console.
