@@ -22,19 +22,18 @@ Brief: `docs/seo-geo-implementation-brief-2026-11-09.md`. Tasks T1 to T6 and T8 
 | `a0b50e3` content(blog): refresh track-brand-mentions-in-chatgpt | T5.5 |
 | `e60f9c6` feat(pages): add three draft pages | T6 |
 | `fc056d5` fix(blog): open headless-cms-comparison's body with the at-a-glance table | T5.1 fix |
+| `baebee9` feat(pages): fill the answered gaps on the three draft pages | T6 gaps |
+| `cb9c24e` content(blog): add why we chose Sanity to astro-cms | T5.3 gap |
+| `0fe74e4` content(blog): add our first AI Mode reading to track-brand-mentions-in-chatgpt | T5.5 gap |
 
 ## Decisions Sergio needs to make
 
 1. **Third-party prices block the new guides' release.** `scripts/check-new-pages.mjs` check 10 fails on any currency amount such as "$38,105" (98 hits on the cost guide, 32 on Webflow vs WordPress). Existing pages write amounts in words ("30,000 dollars"), and the guides' copy is final. There are two options:
    - Exempt pages with `thirdPartyPrices: true` from check 10. This is a script change; `pages:check` already honors the flag.
    - Rewrite the amounts in words. This is a copy change and would go through the copy process.
-2. **Gap markers can't go into blog posts.** The blog build gate (`src/lib/new-pages/loader.ts`, `blogGate`) stops the build on any marker, draft or not. The brief's defaults were applied:
-   - **astro-cms:** paragraph 2 (#P32-5 and #P32-6) is left out. The new H2 carries paragraph 1 only.
-   - **track-brand-mentions-in-chatgpt:** the "What did our own first reading show?" section (#P64-9) is left out, and the second meta description is used.
-
-   Answer any of them and the sentences go back in, with the first meta description for #P64-9.
+2. **Gap markers: resolved.** Sergio answered every gap on 2026-11-09, and the answers are in (see "Gap markers" below).
 3. **Cost guide URL.** `content-pack/data/plan.json` reserves `b2b-website-redesign-cost` at `/guides/b2b-website-redesign-cost`, wave 3. The content file used `website-redesign-cost` at `/guides/website-redesign-cost`, wave 2. Following the brief, the file now uses the plan's slug and URL; its wave stays 2. Moving to the shorter URL is a one-line change in both files before release.
-4. **WL-2 default.** The brief's default for the NDA FAQ is to replace the answer with "Ask us about confidentiality terms before you share the brief." The checker only accepts `DELETE-ITEM` for a marker in a FAQ answer, so the marker says `DELETE-ITEM`. If WL-2 is unanswered at release, use the brief's sentence instead of deleting the FAQ.
+4. **WL-2: resolved.** The NDA FAQ answer is "Yes. We sign your NDA before you share any client details."
 
 ## What discovery found
 
@@ -94,9 +93,9 @@ Brief: `docs/seo-geo-implementation-brief-2026-11-09.md`. Tasks T1 to T6 and T8 
 - **website-maintenance-checklist:**
   - The template table has 26 rows: 11 from the monthly table, the backup restore test, 8 quarterly items and 6 yearly items. Owners come from the owners table.
   - Seven tasks have no owner there (uptime, core SEO elements, devices and browsers, release notes, conversion review, plan limits, analytics settings). Their owner cell says "Assign an owner", after the post's own rule of one named person per row. Change it if you'd rather name owners.
-- **astro-cms:** the new meta description, and the H2 with paragraph 1. Paragraph 2 is on its default (see decision 2).
+- **astro-cms:** the new meta description, and the H2 with both paragraphs (paragraph 2 answers #P32-5 and #P32-6).
 - **saas-website-redesign:** the new meta description, the sixth FAQ, and "redesign timelines" linked. The FAQPage JSON-LD keeps the answer as plain text.
-- **track-brand-mentions-in-chatgpt:** the new title, the second meta description and the sixth FAQ. The first-reading section is on its default (see decision 2).
+- **track-brand-mentions-in-chatgpt:** the new title, the first meta description, the sixth FAQ, and the "What did our own first reading show?" section, which ends the body so it renders just before the FAQ (#P64-9 confirmed).
 
 ### T6. Draft pages
 
@@ -146,15 +145,19 @@ Screenshots at 1440 and 390 px (Services menu, mobile menu, the Home block, the 
 | Website redesign cost | 1,867 | 1,800 to 3,200 |
 | White label web development | 1,031 | 650 to 1,200 |
 
-## Open gap markers
+## Gap markers
 
-| File | Markers |
+All answered by Sergio on 2026-11-09, and no marker is left (`pages:check`: 0 open markers).
+
+| Id | Where the answer went |
 | --- | --- |
-| `content-pack/content/webflow-vs-wordpress.md` | WVW-1 (DELETE-LINE) |
-| `content-pack/content/b2b-website-redesign-cost.md` | RDC-1 (DELETE-LINE) |
-| `content-pack/content/white-label-webflow-development.md` | WL-1 (KEEP: removes the marker only), WL-2 (DELETE-ITEM; see decision 4), WL-3 (DELETE-LINE), WL-4 (DELETE-LINE), WL-5 (KEEP) |
-| astro-cms (not in the file) | P32-5, P32-6: defaults applied |
-| track-brand-mentions-in-chatgpt (not in the file) | P64-9: default applied |
+| WVW-1 | Webflow vs WordPress: the end of the security section's second paragraph (the old sentence in the editing section is gone) |
+| RDC-1 | Website redesign cost: the sentence after the cost drivers table |
+| WL-1, WL-4, WL-5 | White label: the "No client contact", "The same people" and "Hours that overlap" bullets |
+| WL-2 | White label: the NDA FAQ answer |
+| WL-3 | White label: the SimpleTiger bullet (SimpleTiger approved being named) |
+| P32-5, P32-6 | astro-cms: paragraph 2 of the new H2 |
+| P64-9 | track-brand-mentions-in-chatgpt: the first-reading section and the first meta description |
 
 ## Visuals still to make
 
@@ -163,7 +166,7 @@ None. The white-label diagram is built from `FlowDiagram`. The Webflow vs WordPr
 ## Lists
 
 **What Sergio must do**
-- Decide items 1 to 4 above.
+- Decide items 1 and 3 above.
 - Review the preview, then sign off each new page for T7.
 - After deploy, request indexing in Search Console (brief T7 step 5).
 
