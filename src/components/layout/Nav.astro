@@ -46,13 +46,45 @@ const logoUrl = siteSettings?.logo?.asset
   : "/images/Logo.svg";
 const logoAlt = siteSettings?.logo?.alt ?? siteSettings?.siteName ?? "BenorMedia";
 
-// Icons: the 3D icons on transparent backgrounds (the thumbnails set), in a
-// white square that turns grey on hover (lead 2026-10-28).
-const TH_ICONS = "/images/new-pages/thumbs/icons";
-const services = [
-  { label: "Custom Websites & Migrations", href: "/custom-websites-migrations", icon: { src: `${TH_ICONS}/code.webp`, w: 160, h: 103 } },
-  { label: "Growth (SEO/GEO + CRO)", href: "/growth", icon: { src: `${TH_ICONS}/seo-chart.webp`, w: 157, h: 160 } },
-  { label: "Ongoing Website Support", href: "/ongoing-website-support", icon: { src: `${TH_ICONS}/plugs.webp`, w: 160, h: 109 } },
+// Services menu: every service page, in four groups (SEO/GEO brief
+// 2026-11-09, T2; replaces the three-item list with icons). Group labels are
+// plain text. The panel shows labels only: the dropdown link has no room for
+// a description. "White label for agencies" (/white-label-webflow-development)
+// joins Build when that page is released (brief T7).
+const serviceGroups: Array<{ id: string; label: string; items: Array<{ label: string; href: string }> }> = [
+  {
+    id: "nav-svc-build",
+    label: "Build",
+    items: [
+      { label: "Webflow design & development", href: "/custom-websites-migrations" },
+      { label: "Webflow migration", href: "/webflow-migration" },
+      { label: "Website redesign", href: "/website-redesign" },
+      { label: "Headless CMS development", href: "/headless-cms-agency" },
+    ],
+  },
+  {
+    id: "nav-svc-grow",
+    label: "Grow",
+    items: [
+      { label: "SEO, GEO & CRO", href: "/growth" },
+      { label: "Webflow SEO", href: "/webflow-seo-agency" },
+      { label: "AEO & GEO", href: "/aeo-agency" },
+    ],
+  },
+  {
+    id: "nav-svc-support",
+    label: "Support",
+    items: [{ label: "Webflow maintenance & support", href: "/ongoing-website-support" }],
+  },
+  {
+    id: "nav-svc-industries",
+    label: "Industries",
+    items: [
+      { label: "B2B SaaS", href: "/b2b-saas-web-design" },
+      { label: "Cybersecurity", href: "/cybersecurity-web-design" },
+      { label: "Enterprise", href: "/webflow-enterprise-agency" },
+    ],
+  },
 ];
 
 // `hidden`: kept in the markup but not shown (desktop bar + mobile menu).
@@ -90,7 +122,7 @@ const resourceLinks = [
 
     <nav class="c-nav__primary" aria-label="Primary">
       <ul class="c-nav__list">
-        <li class="c-nav__item is-has-menu">
+        <li class="c-nav__item is-has-menu is-wide">
           <button
             type="button"
             class="c-nav__trigger"
@@ -111,16 +143,16 @@ const resourceLinks = [
           </button>
           <div
             id="nav-services-panel"
-            class="c-nav__panel"
+            class="c-nav__panel is-services"
             role="menu"
           >
-            {services.map((s) => (
-              <a href={s.href} role="menuitem" class="c-nav__panel-link">
-                <span class="c-nav__icon-box">
-                  <img src={s.icon.src} alt="" width={s.icon.w} height={s.icon.h} loading="lazy" decoding="async" />
-                </span>
-                {s.label}
-              </a>
+            {serviceGroups.map((group) => (
+              <div class="c-nav__svc-col" role="group" aria-labelledby={group.id}>
+                <span id={group.id} class="c-nav__svc-label">{group.label}</span>
+                {group.items.map((s) => (
+                  <a href={s.href} role="menuitem" class="c-nav__panel-link">{s.label}</a>
+                ))}
+              </div>
             ))}
           </div>
         </li>
@@ -234,8 +266,15 @@ const resourceLinks = [
       <li class="c-nav__mobile-group">
         <div class="c-nav__mobile-group-label">Services</div>
         <ul class="c-nav__mobile-sublist">
-          {services.map((s) => (
-            <li><a href={s.href} class="c-nav__mobile-sublink">{s.label}</a></li>
+          {serviceGroups.map((group) => (
+            <li class="c-nav__mobile-subgroup">
+              <div class="c-nav__mobile-subgroup-label">{group.label}</div>
+              <ul class="c-nav__mobile-sublist is-nested">
+                {group.items.map((s) => (
+                  <li><a href={s.href} class="c-nav__mobile-sublink">{s.label}</a></li>
+                ))}
+              </ul>
+            </li>
           ))}
         </ul>
       </li>
@@ -643,6 +682,32 @@ const resourceLinks = [
     background: var(--color-gray-light);
   }
 
+  /* --- Services panel: four groups side by side (brief 2026-11-09, T2).
+     Centered on the bar like Resources (is-wide), so the wider panel never
+     runs off the side; same top offset as Resources. Links keep the
+     c-nav__panel-link style; group labels mirror the mobile group label. */
+  .c-nav__panel.is-services {
+    top: calc(100% - 1rem);
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 2.5rem;
+    padding: 1.25rem 1.5rem;
+  }
+  .c-nav__svc-col {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  .c-nav__svc-label {
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--fs-p-s);
+    text-transform: uppercase;
+    letter-spacing: 0.064em;
+    padding: 0 0.429rem;
+  }
+
   /* --- Resources panel (Figma 3995:8355, measured from the lead's
      screenshot at 1440: 1 screenshot px ≈ 0.06rem) ----------------------- */
   /* Wide panel: centered on the bar, not on its trigger. */
@@ -909,6 +974,20 @@ const resourceLinks = [
   }
   .c-nav__mobile-sublink {
     font-size: var(--fs-p);
+  }
+  .c-nav__mobile-sublist.is-nested {
+    padding-left: 0;
+    gap: 0;
+  }
+  .c-nav__mobile-subgroup + .c-nav__mobile-subgroup {
+    margin-top: 0.75rem;
+  }
+  .c-nav__mobile-subgroup-label {
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--fs-p-s);
+    letter-spacing: 0.064em;
+    text-transform: uppercase;
   }
   .c-nav__mobile-cta {
     margin-top: auto;
