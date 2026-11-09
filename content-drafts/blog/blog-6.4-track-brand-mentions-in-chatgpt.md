@@ -7,7 +7,7 @@ blockedBy: []
 topicId: "6.4"
 wave: 2
 title: "How to Track Brand Mentions in ChatGPT for Free"
-description: "Track brand mentions in ChatGPT and other AI chats for free: a 30-prompt method, a clean way to run it, a scoring sheet, and what it can't tell you."
+description: "Track brand mentions in ChatGPT and other AI chats for free: a 30-prompt method, a scoring sheet, and what our own first reading showed. November 2026."
 h1: "How to track brand mentions in ChatGPT by hand: a 30-prompt method"
 lang: en-US
 author: "Sergio Gancedo, General Manager"
@@ -176,3 +176,9 @@ It shows visibility trends: how a fixed sample of buyer questions is answered ov
 It can't tell you how often real buyers see your brand, because you don't know how many people ask each question or how their history and location change the answer. Treat the mention rate as a trend indicator for AI search, not market share. Google AI Mode, ChatGPT, and the other platforms each change over time, so a steady month-to-month method matters more than any single result. When the set grows beyond what one person can run in an afternoon, or you need daily data, it's time to automate the same method.
 
 We track AI visibility for B2B SaaS companies with a fixed set of 30 to 50 buyer prompts, so we have an interest in this topic. For how we measure and report it, see our [AEO agency](/aeo-agency) page.
+
+## What did our own first reading show?
+
+On November 9, 2026, we ran 10 buyer prompts in Google's AI Mode (US, English, logged out). BenorMedia was named in 1 of the 10 answers, and that was the branded question. The other nine named different agencies and leaned on "best agencies" roundups and Reddit threads rather than on agency service pages.
+
+That pattern is the useful part. The answers we wanted to show up in were assembled from third-party lists, so our next moves are reviews, case studies, and getting onto those lists, not more service pages. We rerun the same 10 prompts each week and score the answers with the sheet described above.
