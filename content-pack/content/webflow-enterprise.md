@@ -14,7 +14,7 @@ secondaryKeywords: [webflow enterprise plan, webflow for enterprise]
 targetCountry: US
 author: "Sergio Gancedo, General Manager, BenorMedia"
 publishedAt: 2026-10-07
-updatedAt: 2026-10-12
+updatedAt: 2026-11-09
 reviewEvery: 30
 breadcrumb:
   - name: Home
@@ -188,7 +188,7 @@ A website project is an enterprise project when requirements from outside the ma
 
 Webflow Enterprise is Webflow's plan for larger organizations, and Webflow's own pages list security, access control, publishing workflow, and support terms among what it adds to other plans. The plan is separate from an agency's partner status, which describes the agency's relationship with Webflow.
 
-Plans and limits change, so confirm each row with Webflow first.
+Plans and limits change, so confirm each row with Webflow first. For the self-serve plans and their prices, see our overview of [Webflow pricing in 2026](/blog/webflow-price-increase).
 
 Table: What Webflow says Enterprise includes, as of October 2026
 

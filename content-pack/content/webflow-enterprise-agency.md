@@ -14,7 +14,7 @@ primaryKeyword: webflow enterprise agency
 secondaryKeywords: [enterprise webflow agency, enterprise website design agency, enterprise web development agency]
 targetCountry: US
 publishedAt: 2026-10-07
-updatedAt: 2026-10-28
+updatedAt: 2026-11-09
 reviewEvery: 90
 breadcrumb:
   - name: Home
@@ -39,7 +39,7 @@ faq:
   - q: Is Webflow secure enough for an enterprise website?
     a: "Webflow publishes security evidence for your security team to judge. As of October 2026 its security page names ISO 27001 and SOC 2 among its certifications, and its trust center lists reports and self-assessments. Webflow also says it is not HIPAA compliant by default."
   - q: Do you need Webflow Enterprise for an enterprise website?
-    a: "Only if your requirements call for what Webflow reserves for it. As of October 2026 that includes single sign-on, custom roles, an audit log API, custom security headers, and contractual SLAs. If your review needs none of them, compare current plan limits first."
+    a: "Only if your requirements call for what Webflow reserves for it. As of October 2026 that includes single sign-on, custom roles, an audit log API, custom security headers, and contractual SLAs. If your review needs none of them, compare current plan limits first, using our [Webflow pricing](/blog/webflow-price-increase) overview."
   - q: Can Webflow run a multi-language enterprise site?
     a: "Yes, through Webflow's Localize add-on, which as of October 2026 translates pages and CMS content and adds hreflang tags to the generated sitemap. The build process includes a multi-language CMS and localization workflows."
   - q: What response times do you offer after launch?
