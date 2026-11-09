@@ -233,6 +233,8 @@ We build headless sites on Astro and Next.js with Sanity, so we have an interest
 
 Our own site runs on Astro and Sanity. Titles, descriptions, Open Graph images, and canonical tags are CMS fields, and content reaches the HTML through server-side rendering or static generation, so crawlers and AI assistants get the full page.
 
+We chose Sanity for two reasons: structured content, so reusable page sections map one to one to Astro components, and a studio defined in code, so the editing screens fit our content model. The site is hosted on Vercel, and a change published in Sanity is usually live within five minutes.
+
 ## What changed in Astro 7 for CMS-driven sites?
 
 Astro 7, released June 22, 2026, made route caching stable, switched to a Rust compiler, and made a new Rust-based processor, Sätteri, the default for Markdown and MDX. Sites that render CMS content should test templates and Markdown output before upgrading, because the new compiler is stricter about markup.
