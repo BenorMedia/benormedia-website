@@ -65,6 +65,22 @@ export const DIAGRAMS: Record<string, DiagramEntry> = {
     component: TimelineDiagram,
     props: { milestones: ["Audit", "Stakeholder sign-offs", "Component library build", "Launch"] },
   },
+  // Labels: the five steps of "How a white label project runs." (bold leads), as in the visual's brief
+  // (SEO/GEO brief 2026-11-09, T6).
+  "white-label-webflow-development:1": {
+    component: FlowDiagram,
+    props: {
+      numbered: true,
+      columns: 3,
+      steps: [
+        { label: "Brief and scope" },
+        { label: "Design handoff" },
+        { label: "Build in Webflow" },
+        { label: "QA and launch" },
+        { label: "Site transfer" },
+      ],
+    },
+  },
   // Labels: brief ("map, design, build, launch and audit"), the guide's four phases (lead 2026-10-25).
   "wordpress-to-webflow-migration:1": {
     component: FlowDiagram,

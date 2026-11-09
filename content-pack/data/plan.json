@@ -15,6 +15,17 @@
    "label": "Webflow migration services"
   },
   {
+   "slug": "white-label-webflow-development",
+   "url": "/white-label-webflow-development",
+   "pageType": "service",
+   "wave": 2,
+   "lang": "en-US",
+   "primaryKeyword": "white label web development",
+   "role": "Revenue",
+   "pillar": "/custom-websites-migrations",
+   "label": "White label web development"
+  },
+  {
    "slug": "b2b-saas-web-design",
    "url": "/b2b-saas-web-design",
    "pageType": "service",
