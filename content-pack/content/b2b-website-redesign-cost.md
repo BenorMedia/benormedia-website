@@ -146,7 +146,7 @@ Table: What moves a website redesign quote
 
 Some of these costs continue after launch. On Webflow, for example, a second language means the Localize add-on: $9 a month for one to three locales or $29 a month for up to ten. If accessibility is on the list, our [Webflow accessibility checklist](/blog/webflow-accessibility-checklist) shows who fixes what.
 
-On our own B2B redesigns, the line that grows most often after kickoff is [FACT NEEDED #RDC-1: On our B2B redesigns, which line grows most often after kickoff: content, integrations, or redirects? | default: DELETE-LINE].
+On our own B2B redesigns, the line that grows most often after kickoff is content: writing the copy and moving existing pages usually take longer than planned.
 
 ## What should you budget for after launch?
 

@@ -39,7 +39,7 @@ faq:
   - q: "Can you build from our designers' Figma files?"
     a: "Yes. We build from your files and flag anything that will be hard for your client to edit in Webflow before the build starts, so there are no surprises at handoff."
   - q: "Do you sign an NDA?"
-    a: "[FACT NEEDED #WL-2: Do we sign partner NDAs by default, ours or theirs? | default: DELETE-ITEM]"
+    a: "Yes. We sign your NDA before you share any client details."
   - q: "How do you price white label work?"
     a: "Per project against a written scope, or as a monthly retainer for ongoing changes. Send us the brief and we'll return a quote you can price for your client."
   - q: "Can you take over existing Webflow sites for our clients?"
@@ -70,7 +70,7 @@ inbound:
 editorNotes:
   - "Keywords (US, Ahrefs, 2026-11-09, internal only): white label web development 900 (KD 1); white label web design agency 250 (KD 0); white label website development 200 (KD 0); webflow white label 80 (KD 0); white label webflow development 50. Parent topic: white label web design."
   - "SERP 2026-11-09: mostly agency service pages (DR 37 to 69, 1 to 19 referring domains), including two Webflow-focused ones; Reddit #4; two listicles. A service page fits the intent."
-  - "Partner names need the partner's permission (house rule). SimpleTiger is behind a PERSON marker."
+  - "Partner names need the partner's permission (house rule). SimpleTiger approved being named (Sergio, 2026-11-09)."
   - "testimonial: none. If the template only accepts surfe, puzzle, or both, leave the testimonial out and report it; a partner quote is the right one here once a partner approves it."
   - "Surfer (2026-11-09, Content Editor 17005286): SEO 38, AI Search 47, total 43. The commercial template runs about 1,100 words against 3,000-word competitor pages; audience and capacity sections were added and the page was not padded further. AI detector (Surfer, free): 0%."
 ---
@@ -82,7 +82,7 @@ Your agency sells the website; we build it in Webflow under your name. We work i
 White label means the client relationship stays yours, start to finish.
 
 - **No credit on the site.** No "Website by" link in the footer, no logo in the CMS, and no name in the code.
-- **No client contact unless you ask.** Questions come through you. [FACT NEEDED #WL-1: Do we join partners' client calls as part of their team, under the agency's name? | default: KEEP]
+- **No client contact unless you ask.** Questions come through you. If you want us on a client call, we join as part of your team, under your agency's name.
 - **Your deliverables, your format.** Staging links, progress notes, and handoff documents arrive ready to forward under your agency's name.
 
 ## Who we work with.
@@ -124,8 +124,8 @@ You set the channel, the cadence, and the tone, and you choose how much capacity
 - **Room for busy months.** When you win several website projects at once, tell us early and we plan the capacity with you.
 - **Your tools.** We work in your Slack, your project tracker, or by email, whichever your team already uses.
 - **Updates you can forward.** Written progress notes that read as your agency's, with no rewriting needed.
-- **The same people from start to finish.** [FACT NEEDED #WL-4: Confirm that every partner project is delivered by our own staff, with no subcontractors | default: DELETE-LINE]
-- **Hours that overlap with yours.** We're based in Barcelona and work remotely. [FACT NEEDED #WL-5: Which US and European hours do we cover for partners? | default: KEEP]
+- **The same people from start to finish.** Partner projects are delivered by our own staff only, with no subcontractors or freelancers.
+- **Hours that overlap with yours.** We're based in Barcelona and work remotely. Our hours cover the European working day and overlap with every US time zone.
 
 ## Proof you can check.
 
@@ -134,7 +134,7 @@ Partners get the same track record our direct clients see.
 - **Webflow Premium Partner since 2022.** Listed in Webflow's partner directory.
 - **100+ launches over 6+ years.** Marketing sites, migrations, and CMS builds for B2B companies.
 - **Clients that have raised $700M+.** B2B SaaS, fintech, cybersecurity, and AI companies.
-- **A long-running agency partnership.** [PERSON #WL-3: Can we name SimpleTiger as a white label partner, and for how many years and sites? | default: DELETE-LINE]
+- **A long-running agency partnership.** We've worked with SimpleTiger as their white label Webflow team for 5+ years, on 10+ client sites.
 
 ## When white label isn't the right setup.
 

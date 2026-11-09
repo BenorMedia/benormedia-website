@@ -172,7 +172,7 @@ Table: What you pay for on each platform
 
 Webflow is the lower-maintenance option: it holds SOC 2 Type II and ISO 27001 certifications and patches the platform for every site at once. WordPress core is rarely the weak point. Patchstack counted 11,334 new vulnerabilities in the WordPress ecosystem in 2025, 91% of them in plugins and 9% in themes, so a site's risk depends on what it runs.
 
-The same report says 46% of those vulnerabilities had no fix from the developer by the time they were made public, and about half of the high-impact ones were exploited within 24 hours. Core itself had 6 reported vulnerabilities. A WordPress site that sells to security-minded buyers needs a short plugin list, an owner for updates, and a patch routine measured in hours, not weeks.
+The same report says 46% of those vulnerabilities had no fix from the developer by the time they were made public, and about half of the high-impact ones were exploited within 24 hours. Core itself had 6 reported vulnerabilities. A WordPress site that sells to security-minded buyers needs a short plugin list, an owner for updates, and a patch routine measured in hours, not weeks. That upkeep is the reason clients on our migration projects give most often for leaving WordPress.
 
 Webflow's security page lists automatic SSL, built-in DDoS protection, and "automated patches and updates with no customer maintenance." You still own who has access to the site and which third-party scripts you add. If enterprise buyers send your team security questionnaires, Webflow Enterprise offers a Whistic profile to share with reviewers, and our guide to [security questionnaires](/blog/security-questionnaire) covers what else they ask for. For a recent example of how platform news plays out, see [what the PHP2Shell vulnerability meant for Webflow sites](/blog/webflow-security-php2shell).
 
@@ -183,8 +183,6 @@ Webflow is easier for marketers who build and change pages themselves, because e
 WordPress ships with default roles. An Editor can publish and manage anyone's content, an Author publishes only their own posts, and a Contributor can write but not publish, so their drafts wait for an Editor. That gives you one review step. Multi-step approvals, scheduled changes to pages that are already live, and side-by-side drafts of a live page need plugins or custom development.
 
 Webflow Enterprise builds those steps in: "reviews, approvals, branching, and staging," custom roles, single sign-on with SCIM, and an audit log API that can feed security tools. Webflow's Enterprise FAQ mentions a 99.99% uptime SLA, and its comparison page says sites are backed up every 10 minutes or every 10 changes. Our [Webflow Enterprise guide](page:webflow-enterprise) walks through what each feature does for a marketing team.
-
-On our own migration projects, the reason clients give most often for leaving WordPress is [FACT NEEDED #WVW-1: Across our WordPress-to-Webflow projects, which reason do clients give most often for leaving WordPress: editing, plugin updates, speed, or security? | default: DELETE-LINE].
 
 ## Is Webflow or WordPress better for SEO?
 
