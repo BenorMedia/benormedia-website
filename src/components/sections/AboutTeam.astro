@@ -176,6 +176,17 @@ const JOIN_PEOPLE: Piece = {
   .c-about-team__photo {
     height: calc(437.66 * var(--u));
   }
+  /* ≤991 the cards are wider than Figma's 396 px column: keep the photo's
+     own 396 × 438 ratio so the head is not cropped. */
+  @media (max-width: 991px) {
+    .c-about-team__card {
+      min-height: 0;
+    }
+    .c-about-team__photo {
+      height: auto;
+      aspect-ratio: 396 / 438;
+    }
+  }
   .c-about-team__photo img {
     display: block;
     width: 100%;
@@ -283,6 +294,12 @@ const JOIN_PEOPLE: Piece = {
     height: calc(var(--h) * var(--u));
     max-width: none;
     transform: translate(-50%, -50%) rotate(var(--r));
+  }
+  /* ≤991 the join card is wider than Figma's 396 px: centre its art. */
+  @media (max-width: 991px) {
+    .c-about-team__card.is-join .c-about-team__art:not(.is-right) {
+      left: calc(50% + (var(--x) - 198) * var(--u));
+    }
   }
   .c-about-team__art.is-right {
     left: calc(100% + var(--x) * var(--u));
