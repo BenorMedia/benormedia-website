@@ -7,12 +7,12 @@ blockedBy: []
 topicId: "1.6"
 wave: 3
 title: "SaaS Website Redesign in Phases: When It Beats a Relaunch"
-description: "When to redesign a SaaS website section by section instead of in one launch, how to sequence phases, share one domain, and protect SEO between releases."
+description: "When a phased SaaS website redesign beats one big relaunch: how to sequence phases, share one domain, keep publishing, and protect SEO in between."
 h1: "SaaS website redesign in phases: when a section-by-section rollout beats one big launch, and how to run it"
 lang: en-US
 author: "Emily Gaitan, Senior Web Designer"
 publishedAt: 2026-10-27
-updatedAt: 2026-10-27
+updatedAt: 2026-11-09
 reviewEvery: 90 days
 primaryKeyword: "saas website redesign"
 secondaryKeywords: ["website redesign strategy", "website relaunch", "website redesign phases", "website redesign plan"]
@@ -33,7 +33,9 @@ faq:
   - q: "Can you move to Webflow in phases?"
     a: "Yes. Webflow's self-managed reverse proxy can serve Webflow pages under paths of a domain hosted elsewhere, such as /blog, while the rest of the site stays on the old platform. It needs a paid Site plan and a dedicated origin subdomain, and your team configures and supports the proxy, since Webflow's support doesn't."
   - q: "What goes in a website redesign plan for a phased project?"
-    a: "The usual goals, scope, owners, and dates, plus four things a single launch doesn't need: the order of sections, the routing change for each phase, a redirect map per phase, and the checks that must pass before the next phase starts. Our post on redesign timelines covers how long each project phase takes."
+    a: "The usual goals, scope, owners, and dates, plus four things a single launch doesn't need: the order of sections, the routing change for each phase, a redirect map per phase, and the checks that must pass before the next phase starts. Our post on [redesign timelines](/blog/how-long-does-a-website-redesign-take) covers how long each project phase takes."
+  - q: "Is a website relaunch the same as a redesign?"
+    a: "Not quite. A redesign changes how the site looks and how it's organized; the relaunch is the day the new version goes live. A phased redesign swaps one big relaunch for several smaller ones, section by section."
 related:
   - /website-redesign
   - /webflow-migration
