@@ -28,11 +28,9 @@ Brief: `docs/seo-geo-implementation-brief-2026-11-09.md`. Tasks T1 to T6 and T8 
 
 ## Decisions Sergio needs to make
 
-1. **Third-party prices block the new guides' release.** `scripts/check-new-pages.mjs` check 10 fails on any currency amount such as "$38,105" (98 hits on the cost guide, 32 on Webflow vs WordPress). Existing pages write amounts in words ("30,000 dollars"), and the guides' copy is final. There are two options:
-   - Exempt pages with `thirdPartyPrices: true` from check 10. This is a script change; `pages:check` already honors the flag.
-   - Rewrite the amounts in words. This is a copy change and would go through the copy process.
+1. **Third-party prices: resolved.** Sergio's decision (2026-11-09): check 10 in `scripts/check-new-pages.mjs` now allows currency amounts only on guide and comparison pages that set `thirdPartyPrices: true`, list `sources` and carry a `volatileChecked` date. Every other page, service pages included, keeps the check, and the amounts stay as figures. A negative test confirmed it: a dollar amount on the white-label page still fails, and so does the cost guide with the flag turned off.
 2. **Gap markers: resolved.** Sergio answered every gap on 2026-11-09, and the answers are in (see "Gap markers" below).
-3. **Cost guide URL.** `content-pack/data/plan.json` reserves `b2b-website-redesign-cost` at `/guides/b2b-website-redesign-cost`, wave 3. The content file used `website-redesign-cost` at `/guides/website-redesign-cost`, wave 2. Following the brief, the file now uses the plan's slug and URL; its wave stays 2. Moving to the shorter URL is a one-line change in both files before release.
+3. **Cost guide URL: resolved.** Sergio chose `/guides/website-redesign-cost` (2026-11-09). The file is `content-pack/content/website-redesign-cost.md` again, and `plan.json` now reserves `website-redesign-cost` at that URL (label "Website redesign cost"; its wave stays 3, the file's 2). The old planned address also changed in the `/guides/b2b-saas-website-pages` related list, `RULES.md` and the page's outline. It was never published, so no redirect is needed.
 4. **WL-2: resolved.** The NDA FAQ answer is "Yes. We sign your NDA before you share any client details."
 
 ## What discovery found
@@ -108,7 +106,7 @@ No visible copy changed, except the marker defaults listed further down.
 | all three | `breadcrumb[].path` | renamed `url` |
 | all three | `inbound[]` | `page` / `sentence` renamed `from` / `where` ("one sentence: ...") |
 | both guides | `volatile[]` | strings changed to `{claim, source, recheck}`, sources taken from each file's `sources` list |
-| cost guide | `slug`, `url`, breadcrumb `url`, file name | changed to `b2b-website-redesign-cost` from `plan.json` (see decision 3) |
+| cost guide | `slug`, `url`, breadcrumb `url`, file name | briefly `b2b-website-redesign-cost` from `plan.json`, then back to `website-redesign-cost` (decision 3) |
 | white label | `author` | removed: service pages show no byline (RULES section 7) |
 | white label | `service` | string changed to `{name: White label Webflow development, serviceType: Website design and development}`, the same `serviceType` as the other build pages |
 | white label | `testimonial: none` | kept: the checker and template accept it, and no testimonial shows |
@@ -130,7 +128,7 @@ No visible copy changed, except the marker defaults listed further down.
 | `pnpm run build`, `check`, `lint` | Pass (0 errors, 0 warnings) |
 | `check-seo.mjs dist/client` | Unchanged: 886 pass, 1 fail (robots.txt Sitemap line, failing before this branch) |
 | `pages:check` | 0 failures on the three new pages; warnings only |
-| `pages:verify` | Every page already fails check 8 (service-card artwork images without width and height) and the guides fail check 3 (lead paragraph): both are template-level, and the new pages fail them the same way. The only new failure is check 10 on the two guides (decision 1). |
+| `pages:verify` | Every page already fails check 8 (service-card artwork images without width and height) and the guides fail check 3 (lead paragraph): both are template-level, and the new pages fail them the same way. With decision 1, the guides no longer fail check 10. |
 | Diff against the baseline (header removed, random slider IDs ignored) | Changes only on the pages this brief names, on cards that repeat their H1s or descriptions, on blog "Related resources" lists (these pick recent posts, so the T5 dates reorder them), on `llms.txt` and on sitemap `lastmod` |
 | Internal links | All 13 new T4 links and every link on the new pages resolve; no new `href="#"` (the only one is on the internal styleguide and was there before) |
 | Lighthouse (local build) | Home: Accessibility 88, SEO 61; headless-cms-comparison: 96 and 61. Identical before and after. The SEO score is low because local builds are noindex. |
@@ -166,7 +164,7 @@ None. The white-label diagram is built from `FlowDiagram`. The Webflow vs WordPr
 ## Lists
 
 **What Sergio must do**
-- Decide items 1 and 3 above.
+- Nothing left to decide from the list above.
 - Review the preview, then sign off each new page for T7.
 - After deploy, request indexing in Search Console (brief T7 step 5).
 
