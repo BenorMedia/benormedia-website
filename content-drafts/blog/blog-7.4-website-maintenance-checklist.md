@@ -6,13 +6,13 @@ draft: false
 blockedBy: []
 topicId: "7.4"
 wave: 2
-title: "Website Maintenance Checklist for B2B SaaS | BenorMedia"
-description: "Website maintenance checklist for B2B SaaS: what to check monthly, quarterly, and yearly, who owns each task, and what changes on headless and WordPress sites."
+title: "Website Maintenance Checklist: Monthly, Quarterly, Yearly"
+description: "A website maintenance checklist for B2B SaaS sites: what to check monthly, quarterly, and yearly, who owns each task, and a template you can copy."
 h1: "Website maintenance checklist for a B2B SaaS site: monthly, quarterly, and yearly"
 lang: en-US
 author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-19
-updatedAt: 2026-10-19
+updatedAt: 2026-11-09
 reviewEvery: 30 days
 primaryKeyword: "website maintenance checklist"
 secondaryKeywords: []
@@ -233,6 +233,41 @@ Yearly maintenance tasks cover renewals, standards, and the content that ages, a
 4. **Accessibility.** Re-test key templates against WCAG 2.2 level AA, with a keyboard and a screen reader as well as an automated tool, because the W3C says evaluation tools can't determine accessibility, only assist in doing so. Our [Webflow accessibility checklist](/blog/webflow-accessibility-checklist) lists what designers and developers each fix.
 5. **Analytics settings.** Confirm the data retention setting in Google Analytics 4. Standard properties can keep event data for 2 or 14 months, and the setting affects explorations and funnel reports, not standard reports, so a 2-month setting limits how far back you can analyze.
 6. **Content and legal pages.** Run a content audit: update prices, product names, screenshots, statistics, titles, and meta descriptions, and remove or merge outdated content. Check the privacy policy and cookie notice against what the site collects now, and ask counsel what applies if you serve visitors in the EU, the UK, or California, where rules such as GDPR and CCPA can matter. Out-of-date facts mislead buyers, and anyone quoting your page, human or machine, will repeat them.
+
+## Is there a website maintenance checklist template you can copy?
+
+Yes. The table below puts every task from this checklist on one page, with how often to run it, who owns it, and what done looks like. Copy it into a spreadsheet, swap in your team's names, and add a column for the date each check last passed.
+
+Table: Website maintenance checklist template
+
+| Task | How often | Owner | Done when |
+| --- | --- | --- | --- |
+| Page indexing | Monthly | SEO lead or web developer | A steady rise in indexed pages; no sudden drops or new crawl errors |
+| Security issues and manual actions | Monthly | SEO lead or web developer | A clean report |
+| HTTPS | Monthly | SEO lead or web developer | No reasons such as "HTTPS has invalid certificate" or "Sitemap points to HTTP" |
+| Core Web Vitals and page speed | Monthly | SEO lead or web developer | No URLs moving out of "good" |
+| Key forms | Monthly | Marketing operations | Each demo, contact, and sign-up form reaches the CRM with its source fields |
+| Key events | Monthly | Marketing operations | Demo requests and sign-ups still recorded at normal volumes |
+| Broken links and 404s | Monthly | SEO lead or web developer | No important URLs returning errors, and no broken links in the navigation, the footer, and landing pages |
+| Uptime | Monthly | Assign an owner | Alerts reach a named person, and every outage has an explanation |
+| Core SEO elements | Monthly | Assign an owner | Title tags and meta descriptions present and accurate on new or changed pages |
+| Devices and browsers | Monthly | Assign an owner | Key pages and forms render, work, and stay user friendly |
+| Release notes | Monthly | Assign an owner | A note for every launch or fix |
+| Backup restore test | Monthly | Web developer or agency | A recent backup restored to a test environment, the key pages open, and each main form submitted |
+| Third-party scripts and tags | Quarterly | Marketing operations with the web developer | Every script and tag has an owner and a purpose; what nobody can justify is removed |
+| User access | Quarterly | IT or security, with a marketing backup | People who have left or changed roles removed, and two-factor authentication switched on |
+| Consent and cookies | Quarterly | Marketing operations with the web developer | The cookie banner and the cookie list match the tags that actually fire |
+| Redirects | Quarterly | SEO lead or web developer | No redirect chains or missing rules after any launch or URL change |
+| robots.txt and crawler access | Quarterly | SEO lead or web developer | The robots.txt file Google found is the one you published |
+| Sitemaps | Quarterly | SEO lead or web developer | lastmod changes when a page changes in a significant way, not on every deploy |
+| Speed and performance audit | Quarterly | SEO lead or web developer | Field and lab results for your key pages compared with last quarter |
+| Conversion review | Quarterly | Assign an owner | One test picked for the next quarter |
+| Domains | Yearly | IT or security, with a marketing backup | Renewed well before the date, with reminders going to a monitored team inbox |
+| Certificates | Yearly | IT or security, with a marketing backup | DNS records stay pointed at Webflow, and CAA records allow its certificate providers |
+| Plan limits | Yearly | Assign an owner | Usage compared with the plan you pay for |
+| Accessibility | Yearly | Content lead with design | Key templates re-tested against WCAG 2.2 level AA, with a keyboard and a screen reader |
+| Analytics settings | Yearly | Assign an owner | The data retention setting in Google Analytics 4 confirmed |
+| Content and legal pages | Yearly | Content lead with design | Outdated content updated, removed, or merged, and the privacy policy and cookie notice checked against what the site collects |
 
 ## What changes on a headless Astro and Sanity site?
 
