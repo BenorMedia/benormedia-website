@@ -125,6 +125,8 @@ Table: Webflow SEO features and what you still set
 
 Two of those are off until someone turns them on in site settings. The sitemap needs Auto-generate sitemap set to Yes under Site settings, SEO tab. The canonical needs a base URL in Global canonical tag URL in the same tab, entered with the protocol and without the trailing slash. Webflow notes that if a canonical is missing or misconfigured, search engines may choose their own preferred URL.
 
+Webflow can run large CMS page sets within its plan limits; our guide to [programmatic SEO on Webflow](/blog/programmatic-seo-webflow) covers those limits and how to keep the pages useful.
+
 ## Where do Webflow sites usually go wrong for SEO?
 
 In setup and maintenance. These are the problems our Webflow SEO page warns about, and each one is a setting, not a platform limit.

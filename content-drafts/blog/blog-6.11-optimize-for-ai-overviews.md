@@ -206,7 +206,7 @@ Clicks are not the whole picture. A summary that names your product still puts y
 
 Use the Generative AI performance report in Google Search Console, rolled out to all sites by August 31, 2026. It shows impressions from AI Overviews and AI Mode by page, country, device, and date. Pair it with the Performance report and GA4 for clicks and conversions.
 
-How Google counts it: "Impressions are how many times links to your site were shown to a user in a generative AI feature on Google Search." Two results from your site in the same AI feature count as one impression in the chart total, while the page table counts each page. A search type filter splits "Web: text-based" from "Web: multimodal." The report may not appear until a site has enough AI impressions, and Discover has its own report.
+How Google counts it: "Impressions are how many times links to your site were shown to a user in a generative AI feature on Google Search." Two results from your site in the same AI feature count as one impression in the chart total, while the page table counts each page. A search type filter splits "Web: text-based" from "Web: multimodal." The report may not appear until a site has enough AI impressions, and Discover has its own report. Search Console won't show whether an AI Mode answer names your brand without linking to you; that's what [AI Mode tracking](/blog/ai-mode-tracking) is for.
 
 Table: Where to measure Google's AI features
 
@@ -244,3 +244,5 @@ Start with eligibility and a baseline, then rebuild the pages behind your highes
 7. Every month: compare AI impressions by page, clicks, and conversions with the baseline.
 
 We offer SEO and GEO for B2B SaaS sites, many of them on Webflow, so we have an interest in the topic. Our [Webflow SEO agency](/webflow-seo-agency) page shows how we run it.
+
+If you'd rather have a team run this for you, see our [AEO and GEO services](/aeo-agency).

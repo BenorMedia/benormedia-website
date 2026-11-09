@@ -100,7 +100,7 @@ That's a narrower move than a full headless CMS project. As our [headless CMS ag
 
 ## What can the Webflow CMS API do?
 
-Almost everything an editor can do to an item. The API lists, reads, creates, updates, publishes, and unpublishes items, and it can write several locales in one request. A headless build leans on three parts in particular: reading published items, reading drafts for previews, and webhooks that fire when an item changes.
+Almost everything an editor can do to an item. The API lists, reads, creates, updates, publishes, and unpublishes items, and it can write several locales in one request. A headless build leans on three parts in particular: reading published items, reading drafts for previews, and webhooks that fire when an item changes. When the CMS feeds hundreds of pages, the same API powers [programmatic SEO on Webflow](/blog/programmatic-seo-webflow).
 
 Table: Webflow CMS API features a headless build uses
 

@@ -218,7 +218,7 @@ Table: A monthly attribution report for a B2B SaaS team
 | Account B | Value | Paid social | 2027q1-webinar-security | "Webinar" | Sources agree |
 | Account C | Value | Direct | (none) | "Podcast with your CEO" | Media under-credited |
 
-Then sum pipeline, and later closed revenue, by source two ways: by the CRM's first source and by the coded self-reported answer. Where the two disagree, the gap shows which marketing channels your tracking under-counts. After three months, you'll have a much better answer to the marketing budget question than any single source gives, even without an attribution model.
+Then sum pipeline, and later closed revenue, by source two ways: by the CRM's first source and by the coded self-reported answer. Where the two disagree, the gap shows which marketing channels your tracking under-counts. After three months, you'll have a much better answer to the marketing budget question than any single source gives, even without an attribution model. Fewer clicks doesn't mean less demand; see what to measure as [zero-click searches](/blog/zero-click-searches-b2b-saas) grow.
 
 ## When is it worth buying an attribution tool?
 

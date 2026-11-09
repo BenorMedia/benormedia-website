@@ -172,6 +172,8 @@ Three details matter:
 
 On a Webflow site, open Site settings, then SEO, then Indexing, add the rules, save, and publish the site. Webflow says you need a Site plan or a paid Workspace plan to add a robots.txt file.
 
+Whether you also need an [llms.txt file](/blog/do-you-need-an-llms-txt-file) is a separate question, and the evidence on it is thin so far.
+
 ## How do you check which AI crawlers visit your site?
 
 Check your server logs or CDN request logs, if your host provides them. Each AI bot names itself in the user-agent string of its requests: GPTBot's, for example, contains GPTBot and a link to openai.com/gptbot. Any client can send a user-agent string that names a crawler, though, so verify each visit against the vendor's published IP list.
@@ -183,6 +185,8 @@ The vendors publish their lists here:
 - Perplexity: perplexity.com/perplexitybot.json and perplexity.com/perplexity-user.json.
 
 Look for three things: which bots come at all, which pages their requests target, and whether blocked crawlers keep sending requests. If you block GPTBot and it still requests pages days later, check the user agent and IP address before you assume the rule failed. A training crawler that ignores a Disallow is worth reporting to its vendor. A user-triggered fetcher that ignores it is behaving as its vendor describes.
+
+If you'd rather have a team run this for you, see our [AEO and GEO services](/aeo-agency).
 
 ## How was this post written and checked?
 

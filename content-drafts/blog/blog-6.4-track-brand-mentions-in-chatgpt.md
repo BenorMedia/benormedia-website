@@ -122,6 +122,8 @@ Control everything you can, and record everything you can't.
 
 With 30 prompts, four or five platforms, and two runs, you'll record between 240 and 300 answers a month. Paste each answer's text into the sheet, or save it as a file, so you can check it later.
 
+For Google's AI Mode in particular, our guide to [AI Mode tracking](/blog/ai-mode-tracking) covers what you can and can't measure today.
+
 ## What should you record for each AI answer?
 
 One row per answer, with the same columns every month.

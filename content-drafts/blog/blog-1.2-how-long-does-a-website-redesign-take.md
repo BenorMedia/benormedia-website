@@ -110,7 +110,7 @@ Table: Example plan for a mid-size B2B SaaS website redesign
 | 6. Content migration and quality assurance | 2 weeks | 9 to 10 | Every page moved and checked, every redirect tested, no broken links |
 | 7. Launch, training, and handoff | 1 week | 11 | Go-live, team training, then 30 days of support |
 
-The phases of this redesign project add up to 13 weeks of work, but they overlap: the design phase starts on the first approved wireframes, and the development phase starts on approved components. That brings the project timeline to 11 weeks. Faster reviews can take it to 10; with no overlap and slower feedback, it runs to 13.
+The phases of this redesign project add up to 13 weeks of work, but they overlap: the design phase starts on the first approved wireframes, and the development phase starts on approved components. That brings the project timeline to 11 weeks. Faster reviews can take it to 10; with no overlap and slower feedback, it runs to 13. Plan the final week of the project around a [website launch checklist](/blog/website-launch-checklist), so nothing slips at go-live.
 
 The audit and the strategy plan look short for the weight they carry. They set the project scope and the URL map, and the whole project depends on both, so a decision changed in week 6 costs more time than one made in week 2.
 

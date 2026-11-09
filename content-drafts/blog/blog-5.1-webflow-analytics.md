@@ -140,6 +140,8 @@ Through Site settings, with the ID from Google.
 
 Custom code, such as a second tool's script, needs a paid Site plan or Workspace plan. If you already used the integration before Webflow added the Google tag gateway, Webflow says to re-save your measurement ID and republish to prevent gaps in your data.
 
+Consent settings change what reaches GA4, so set up [Consent Mode v2 on Webflow](/blog/consent-mode-v2-webflow) before you trust the numbers.
+
 ## What is the Google tag gateway, and should you use it?
 
 It loads Google's tags from your own domain instead of from Google's. Google describes it as a way to deploy a Google tag using your own first-party infrastructure, hosted on your website's domain. Webflow's integration uses it to reduce the impact of ad blockers.
@@ -179,7 +181,7 @@ A one-page monthly view for a B2B SaaS site on Webflow can cover:
 - the search queries that brought visitors, from Google Search Console;
 - anything that changed on the site that month, such as a new page or a pricing update.
 
-Read these key metrics as trends over months. A B2B site gets few leads a month, so a handful can swing the percentages. Compare each month with the same tool's earlier months, not one tool's numbers with another's: Webflow says discrepancies between Analyze and third-party tools are expected. For how this fits into SEO work on Webflow, see our [Webflow SEO and AEO](/webflow-seo-agency) page.
+Read these key metrics as trends over months. A B2B site gets few leads a month, so a handful can swing the percentages. Compare each month with the same tool's earlier months, not one tool's numbers with another's: Webflow says discrepancies between Analyze and third-party tools are expected. For how this fits into SEO work on Webflow, see our [Webflow SEO and AEO](/webflow-seo-agency) page. When clicks drop but impressions hold, [the zero-click searches guide](/blog/zero-click-searches-b2b-saas) explains what to report instead.
 
 We set up analytics and reporting on Webflow sites for B2B SaaS companies, so we have an interest in the topic.
 

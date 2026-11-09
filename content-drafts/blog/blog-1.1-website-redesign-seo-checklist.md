@@ -161,6 +161,8 @@ On launch day:
 - submit the updated XML sitemap in Google Search Console;
 - if DNS changes, lower the TTL at least one full TTL period ahead, as Webflow recommends.
 
+The last week before go-live needs its own list; use our [website launch checklist](/blog/website-launch-checklist).
+
 ## What should you monitor in the 90 days after launch?
 
 Google Search Console, your analytics, and the redirect map, with a check-in at each stage while search engines recrawl the site. Google says that after a move, sitemaps for old URLs should show fewer indexed pages while those for new URLs grow, search reports should start showing new URLs, and the indexing report should be checked regularly for unexpected crawl errors.

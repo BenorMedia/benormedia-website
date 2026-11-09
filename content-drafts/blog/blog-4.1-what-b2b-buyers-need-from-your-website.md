@@ -129,7 +129,7 @@ A pricing page that helps the whole buying team shows:
 - how usage-based charges are measured and billed;
 - the contract terms finance will ask about, such as billing cycle and minimum term.
 
-The [B2B SaaS website pages guide](/guides/b2b-saas-website-pages) covers what the pricing page and the other core page types should hold.
+The [B2B SaaS website pages guide](/guides/b2b-saas-website-pages) covers what the pricing page and the other core page types should hold. For the bigger call, whether to publish prices at all and what to show if you don't, see our guide to [SaaS pricing page decisions](/blog/saas-pricing-page).
 
 ## What do security and IT reviewers need to find?
 
