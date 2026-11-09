@@ -6,10 +6,10 @@ pageType: service
 wave: 1
 draft: false
 blockedBy: []
-title: "Webflow SEO Agency: SEO & AEO for B2B | BenorMedia"
+title: "Webflow SEO Agency & Services for B2B Teams | BenorMedia"
 description: "Webflow SEO services from a Webflow Premium Partner: technical fixes, CMS structure and content that get B2B sites found on Google and in AI answers."
-h1: "Webflow SEO and AEO for B2B teams, measured in pipeline."
-eyebrow: Webflow SEO & AEO
+h1: "Webflow SEO for B2B teams, measured in pipeline."
+eyebrow: Webflow SEO services
 primaryKeyword: webflow seo agency
 secondaryKeywords: [webflow seo services, webflow seo company, webflow seo expert, webflow aeo, webflow seo]
 targetCountry: US
@@ -195,7 +195,7 @@ visuals:
     type: diagram
     brief: "The seven Webflow SEO problems as a checklist."
     alt: "Common Webflow SEO problems: staging indexing, hidden CMS content, duplicates, URLs, redirects, images, schema"
-  - after: "AEO and AI search on Webflow: what helps and what doesn't."
+  - after: "AI search on Webflow: what helps and what doesn't."
     side: right
     type: diagram
     brief: "Rows of AEO items, each labelled Built-in setting, Integration or Custom code."
@@ -248,7 +248,7 @@ We build the SEO strategy from your sales conversations and search data, not fro
 - **CMS templates for repeatable pages.** Programmatic SEO done carefully: where a page type repeats, such as integrations, one template with real data behind every item instead of thin copies.
 - **Refreshes before new posts.** Updating pages that already rank, with the date and the change visible, often beats publishing something new.
 
-## AEO and AI search on Webflow: what helps and what doesn't.
+## AI search on Webflow: what helps and what doesn't.
 
 More buyers now research in AI tools as well as on Google. Answer engine optimization on Webflow is mostly good SEO done thoroughly on a sound technical foundation, plus a few platform settings. [Google's guidance](https://developers.google.com/search/docs/appearance/ai-features) is that its AI features need nothing beyond what regular Search needs: a page that's indexed and eligible for a snippet. So we don't sell shortcuts.
 
@@ -258,7 +258,7 @@ More buyers now research in AI tools as well as on Google. Answer engine optimiz
 - **Webflow AEO.** On Team and Enterprise plans with the Analyze add-on, Webflow AEO reports prompt insights, AI crawler logs and AI-referred visitors. We use it where you have it, alongside our own prompt tracking.
 - **Bing and Copilot.** Bing Webmaster Tools now reports how often Copilot and Bing's AI summaries cite your pages, and IndexNow tells Bing about new pages as soon as you publish.
 
-For the full program across ChatGPT, Perplexity, Gemini and Google, see our [AEO and GEO service](page:aeo-agency).
+For the full program across ChatGPT, Perplexity, Gemini and Google, see our [AEO and GEO services](page:aeo-agency).
 
 ## Authority that moves rankings and AI answers.
 

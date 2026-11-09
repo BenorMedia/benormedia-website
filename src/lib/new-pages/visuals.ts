@@ -455,7 +455,7 @@ export const DIAGRAMS: Record<string, DiagramEntry> = {
       tokens: ["Redirect imports", "Schema gaps"],
     },
   },
-  // "AEO and AI search on Webflow": the content file's legend as chips; cards = structured data, crawler access, Bing.
+  // "AI search on Webflow": the content file's legend as chips; cards = structured data, crawler access, Bing.
   "webflow-seo-agency:3": {
     framed: true,
     component: IlHub,
