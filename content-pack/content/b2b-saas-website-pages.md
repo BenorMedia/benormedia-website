@@ -44,7 +44,7 @@ takeaways:
   - "Keep the design system, the CMS content, and the access roles separate, so each person can change what they own and nothing else."
   - "Treat any change of URLs as a site move: map every old URL and give each one that changes a permanent redirect."
   - "Publish fewer, more specific pages. Google's spam policies treat many pages made mainly to manipulate rankings as scaled content abuse."
-related: [b2b-saas-web-design, saas-website-examples, b2b-website-redesign-cost, fintech-web-design, aeo-agency]
+related: [b2b-saas-web-design, saas-website-examples, website-redesign-cost, fintech-web-design, aeo-agency]
 inbound:
   - from: /b2b-saas-web-design
     anchor: B2B SaaS website pages guide

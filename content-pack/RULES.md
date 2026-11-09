@@ -207,7 +207,7 @@ The plan's rule: every spoke links up to its pillar with a descriptive anchor, a
 | Pillar | Spokes |
 |---|---|
 | `/custom-websites-migrations` (live) | `webflow-migration`, `b2b-saas-web-design`, `webflow-enterprise-agency`, all comparisons and Webflow guides |
-| `b2b-saas-web-design` | `fintech-web-design`, `cybersecurity-web-design`, `hr-tech-web-design`, `saas-website-examples`, `b2b-website-redesign-cost` |
+| `b2b-saas-web-design` | `fintech-web-design`, `cybersecurity-web-design`, `hr-tech-web-design`, `saas-website-examples`, `website-redesign-cost` |
 | `/growth` (live) | `aeo-agency`, `generative-engine-optimization`, `aeo-vs-geo-vs-seo`, `ai-visibility-checker` |
 | `webflow-alternatives` | `framer-vs-webflow`, `webflow-vs-squarespace`, `webflow-vs-wix`, `webflow-vs-wordpress` |
 | `/guides` (hub) | every guide and comparison |

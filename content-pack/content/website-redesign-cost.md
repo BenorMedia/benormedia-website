@@ -1,6 +1,6 @@
 ---
-slug: b2b-website-redesign-cost
-url: /guides/b2b-website-redesign-cost
+slug: website-redesign-cost
+url: /guides/website-redesign-cost
 pageType: guide
 draft: true
 blockedBy: []
@@ -22,7 +22,7 @@ breadcrumb:
   - name: "Guides"
     url: /guides
   - name: "Website redesign cost"
-    url: /guides/b2b-website-redesign-cost
+    url: /guides/website-redesign-cost
 schema: ["Article", "FAQPage", "BreadcrumbList"]
 takeaways:
   - "Clutch's pricing data puts the average web design project at $38,105. Agencies typically charge $2,000 to $100,000, and most projects reviewed on Clutch cost under $10,000."

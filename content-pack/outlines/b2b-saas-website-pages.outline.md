@@ -194,7 +194,7 @@ Questions about applying this to your own site? One of our team members will be 
 
 * [B2B SaaS web design](https://www.benormedia.com/b2b-saas-web-design)
 * [SaaS website examples (page planned)](https://www.benormedia.com/guides/saas-website-examples)
-* [B2B website redesign cost (page planned)](https://www.benormedia.com/guides/b2b-website-redesign-cost)
+* [Website redesign cost (page planned)](https://www.benormedia.com/guides/website-redesign-cost)
 * [Fintech web design (page planned)](https://www.benormedia.com/fintech-web-design)
 * [AEO agency (page planned)](https://www.benormedia.com/aeo-agency)
 
