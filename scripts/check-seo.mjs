@@ -81,7 +81,7 @@ const PAGES = {
   '/blog/track-brand-mentions-in-chatgpt': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'brand mentions chatgpt' },
   '/blog/consent-mode-v2-webflow': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'consent mode v2' },
   '/blog/webflow-accessibility-checklist': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow accessibility checklist' },
-  '/blog/webflow-price-increase': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow price increase' },
+  '/blog/webflow-price-increase': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow pricing 2026' },
   '/blog/what-b2b-buyers-need-from-your-website': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'b2b software buyers website' },
   '/blog/ai-traffic-in-ga4': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'chatgpt traffic ga4' },
   '/blog/how-long-does-a-website-redesign-take': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'website redesign take' },
