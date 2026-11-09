@@ -17,7 +17,7 @@ export const PAGE_META = {
   home: {
     title: "Webflow Agency for B2B SaaS Websites",
     description:
-      "BenorMedia builds high-converting, AEO-optimized Webflow websites for B2B SaaS and tech companies. Webflow Premium Partner, 6+ years, 100+ clients.",
+      "BenorMedia builds high-converting, AEO-optimized Webflow websites for B2B SaaS and tech companies. Webflow Premium Partner since 2022, 100+ clients.",
   },
   work: {
     title: "Our Work: Webflow Websites for B2B Brands",

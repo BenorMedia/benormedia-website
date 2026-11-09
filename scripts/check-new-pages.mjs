@@ -412,7 +412,7 @@ for (const { f, family, draft } of built) {
   }
 
   // 10. Banned strings in <main>.
-  for (const banned of ['Benor Media', 'Enterprise Partner', 'Official Webflow Partner']) if (mainText.includes(banned)) fail(f, 10, banned);
+  for (const banned of ['Benor Media', 'Enterprise Partner', 'Official Webflow Partner', 'Professional Partner', 'years as a Webflow']) if (mainText.includes(banned)) fail(f, 10, banned);
   for (const m of mainText.matchAll(/[$€£]\s?\d[\d,.]*(\s?[MBK]\b|\s?(million|billion)\b)?/g)) {
     if (!m[1] && !/^[$€£]\d+[MB]\+?$/.test(m[0])) fail(f, 10, `currency amount: ${m[0]}`);
   }

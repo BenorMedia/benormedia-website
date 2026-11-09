@@ -117,7 +117,7 @@ const benorSanityAliasFix = {
 // Update the date when a page's content changes.
 /** @type {Record<string, string>} */
 const LASTMOD = {
-  '/': '2026-10-06',
+  '/': '2026-11-09',
   '/custom-websites-migrations': '2026-10-06',
   '/growth': '2026-10-06',
   '/ongoing-website-support': '2026-10-06',

@@ -14,7 +14,7 @@ primaryKeyword: webflow seo agency
 secondaryKeywords: [webflow seo services, webflow seo company, webflow seo expert, webflow aeo, webflow seo]
 targetCountry: US
 publishedAt: 2026-10-10
-updatedAt: 2026-10-10
+updatedAt: 2026-11-09
 reviewEvery: 30
 breadcrumb:
   - name: Home
@@ -214,7 +214,7 @@ visuals:
 
 A Webflow SEO agency should fix what the platform leaves to you, then build what helps your pages rank and get quoted. Our Webflow SEO services for B2B and SaaS teams cover the technical setup, the pages your buyers search for, and how often Google, ChatGPT and Perplexity send people to you.
 
-6+ years as a Webflow Premium Partner, and 100+ launches.
+Webflow Premium Partner, and 100+ launches.
 
 ## Start with a Webflow SEO audit, not a keyword list.
 
