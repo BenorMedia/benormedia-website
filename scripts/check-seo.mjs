@@ -34,6 +34,10 @@ const PAGES = {
   // docs/brief-headless-guide.md (drafts until sign-off: built in previews only).
   '/headless-cms-agency': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'headless cms agency' },
   '/guides/webflow-vs-custom-code': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow vs custom code' },
+  // docs/seo-geo-implementation-brief-2026-11-09.md, released 2026-11-09.
+  '/guides/webflow-vs-wordpress': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow vs wordpress' },
+  '/guides/website-redesign-cost': { expected: ['Article', 'FAQPage', 'BreadcrumbList'], keyword: 'website redesign cost' },
+  '/white-label-webflow-development': { expected: ['Service', 'FAQPage', 'BreadcrumbList'], keyword: 'white label web development' },
   // Blog (content-drafts/blog/, docs/new-pages.md), released 2026-10-15.
   '/blog': { expected: ['CollectionPage', 'BreadcrumbList'], keyword: 'b2b saas blog' },
   '/guides': { expected: ['CollectionPage', 'BreadcrumbList'], keyword: 'webflow guides' },

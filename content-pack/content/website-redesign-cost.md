@@ -2,7 +2,7 @@
 slug: website-redesign-cost
 url: /guides/website-redesign-cost
 pageType: guide
-draft: true
+draft: false
 blockedBy: []
 wave: 2
 title: "Website Redesign Cost for B2B Sites in 2026 | BenorMedia"
@@ -10,8 +10,8 @@ description: "What a website redesign costs in 2026: Clutch's pricing data, the 
 h1: "How much does a website redesign cost? A 2026 guide for B2B SaaS teams"
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
-publishedAt: 2026-11-18
-updatedAt: 2026-11-18
+publishedAt: 2026-11-09
+updatedAt: 2026-11-09
 reviewEvery: 30
 primaryKeyword: "website redesign cost"
 secondaryKeywords: ["how much does a website redesign cost", "website redesign pricing", "cost to redesign a website"]

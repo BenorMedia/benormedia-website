@@ -49,8 +49,8 @@ const logoAlt = siteSettings?.logo?.alt ?? siteSettings?.siteName ?? "BenorMedia
 // Services menu: every service page, in four groups (SEO/GEO brief
 // 2026-11-09, T2; replaces the three-item list with icons). Group labels are
 // plain text. The panel shows labels only: the dropdown link has no room for
-// a description. "White label for agencies" (/white-label-webflow-development)
-// joins Build when that page is released (brief T7).
+// a description. "White label for agencies" joined Build at its release
+// (brief T7, 2026-11-09).
 const serviceGroups: Array<{ id: string; label: string; items: Array<{ label: string; href: string }> }> = [
   {
     id: "nav-svc-build",
@@ -60,6 +60,7 @@ const serviceGroups: Array<{ id: string; label: string; items: Array<{ label: st
       { label: "Webflow migration", href: "/webflow-migration" },
       { label: "Website redesign", href: "/website-redesign" },
       { label: "Headless CMS development", href: "/headless-cms-agency" },
+      { label: "White label for agencies", href: "/white-label-webflow-development" },
     ],
   },
   {

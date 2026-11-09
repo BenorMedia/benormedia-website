@@ -2,7 +2,7 @@
 slug: webflow-vs-wordpress
 url: /guides/webflow-vs-wordpress
 pageType: comparison
-draft: true
+draft: false
 blockedBy: []
 wave: 2
 title: "Webflow vs WordPress for B2B Marketing Sites | BenorMedia"
@@ -10,8 +10,8 @@ description: "Webflow vs WordPress for B2B SaaS marketing sites: what each costs
 h1: "Webflow vs WordPress for B2B marketing sites: cost, security, editing, and SEO compared"
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
-publishedAt: 2026-11-16
-updatedAt: 2026-11-16
+publishedAt: 2026-11-09
+updatedAt: 2026-11-09
 reviewEvery: 30
 primaryKeyword: "webflow vs wordpress"
 secondaryKeywords: ["wordpress vs webflow", "webflow vs wordpress seo", "is webflow better than wordpress", "webflow or wordpress"]
