@@ -7,12 +7,12 @@ blockedBy: []
 topicId: "3.2"
 wave: 3
 title: "Astro CMS: How to Choose and Connect One | BenorMedia"
-description: "Astro has no built-in CMS. When content collections are enough, which CMS types fit, and how to connect one like Sanity with previews, as of Astro 7."
+description: "Astro has no built-in CMS. How to choose one in 2026: content collections, Git-based and headless options, connecting Sanity, and what Astro 7 changed."
 h1: "Astro CMS: how to choose a CMS for an Astro site, and how to connect it"
 lang: en-US
 author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-26
-updatedAt: 2026-10-26
+updatedAt: 2026-11-09
 reviewEvery: 60 days
 primaryKeyword: "astro cms"
 secondaryKeywords: ["astro headless cms", "best cms for astro", "sanity astro"]
@@ -228,6 +228,10 @@ Install Sanity's official integration, @sanity/astro, add your project ID and da
 Our own site runs on Astro and Sanity, and its robots.txt points to a sitemap index with one child sitemap. On our headless builds, content arrives in the HTML through server-side rendering or static site generation, so search engines and AI crawlers read it without running JavaScript.
 
 We build headless sites on Astro and Next.js with Sanity, so we have an interest in the topic. See our [headless CMS agency](/headless-cms-agency) page for how we run those projects.
+
+## How do we run benormedia.com on Astro and Sanity?
+
+Our own site runs on Astro and Sanity. Titles, descriptions, Open Graph images, and canonical tags are CMS fields, and content reaches the HTML through server-side rendering or static generation, so crawlers and AI assistants get the full page.
 
 ## What changed in Astro 7 for CMS-driven sites?
 
