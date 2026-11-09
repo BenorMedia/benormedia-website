@@ -201,6 +201,8 @@ Table: Signals that point to staying on Webflow, adding code to it, or moving
 
 Two or more signals in the "Move" rows deserve a closer look. A single one usually has a middle path, covered further down.
 
+If WordPress is the other option on your list, read [Webflow vs WordPress](page:webflow-vs-wordpress) first.
+
 ## Why are teams moving off Webflow in 2026?
 
 Most Webflow sites aren't going anywhere, but the movement that exists runs mostly one way. In its July 2026 crawl, [TechnologyChecker](https://technologychecker.io/blog/webflow-to-nextjs) counted 988 domains that had dropped Webflow for Next.js in about five weeks, and 95 that went the other way. That's a small share of the 249,194 domains it found on Webflow, but it's roughly ten to one. Software, IT services and technology or internet companies made up 32.8% of the movers. Four reasons stand out.

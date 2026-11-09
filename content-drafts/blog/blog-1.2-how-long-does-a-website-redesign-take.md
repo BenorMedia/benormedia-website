@@ -171,6 +171,8 @@ The dates worth writing down are kickoff, strategy plan sign-off, wireframes app
 
 We plan and run website redesigns for B2B and SaaS companies, so we have an interest in the topic.
 
+Time and budget move together; our guide to [website redesign cost](/guides/website-redesign-cost) covers the budget side.
+
 ## How was this post written and checked?
 
 This post draws on our published redesign and migration timelines, Google Search Central, and Webflow's help center, all opened on October 15, 2026, and listed in the sources. The phase lengths are a worked example built from those published ranges and the stated assumptions, not measurements from past projects.

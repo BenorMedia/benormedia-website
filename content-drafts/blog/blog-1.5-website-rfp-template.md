@@ -143,6 +143,8 @@ If you can't share a number, share what drives the cost instead, so agencies can
 - how many review rounds and approvers the design needs;
 - security reviews and procurement steps.
 
+To set a realistic budget line in your RFP, see [how much a website redesign costs](/guides/website-redesign-cost).
+
 ## What should you leave out of a website RFP?
 
 Anything that answers the questions you're paying an agency to answer, or that adds work without helping you choose.

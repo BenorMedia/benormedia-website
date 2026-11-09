@@ -191,6 +191,8 @@ Your marketers get live training, video walkthroughs, and documentation they wil
 
 A standard migration is a like-for-like move of your pages, CMS content, and redirects, and a redesign is scoped as its own project. We clean up the content as it moves, and support continues for 30 days after launch.
 
+Agencies moving client sites to Webflow can hand us [white label migrations](page:white-label-webflow-development).
+
 ## When staying on WordPress is the better call
 
 Not every WordPress site should move. Look hard at these cases before you commit:

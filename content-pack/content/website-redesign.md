@@ -151,6 +151,8 @@ Plenty of redesigns start with what people dislike about the current site. We st
 
 That inventory becomes the redirect map, the sitemap and the timeline in the website strategy plan, the first step of [our build process](/custom-websites-migrations).
 
+Before you ask for quotes, read [what a website redesign costs](page:website-redesign-cost) and what drives the price.
+
 ## How we plan and run a website redesign.
 
 Our redesign process has seven steps, and strategy, design and development stay with one team from the first audit to launch. You know what happens when, and what we need from you at each step.

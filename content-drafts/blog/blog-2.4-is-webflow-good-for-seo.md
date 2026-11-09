@@ -164,6 +164,8 @@ WordPress core generates a basic sitemap, and most WordPress sites add an SEO pl
 
 WordPress sites keep the edge where a plugin does something Webflow doesn't, and for teams that need full control over the server. For international SEO, Webflow Localize adds hreflang tags to the sitemap for each locale. Our [WordPress to Webflow migration guide](/guides/wordpress-to-webflow-migration) covers the SEO steps if you decide to move.
 
+For cost, security, and editing as well as SEO, see [how Webflow and WordPress compare](/guides/webflow-vs-wordpress).
+
 ## What do you still own on a Webflow site?
 
 Everything the platform can't decide for you:

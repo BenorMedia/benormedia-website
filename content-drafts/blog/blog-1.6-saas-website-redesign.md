@@ -104,6 +104,8 @@ The brand question gets less attention than it deserves. After a rename, a phase
 
 Size alone doesn't force phases, though. A single launch can carry thousands of URLs when the redirects are planned and tested: on Surfe's move from WordPress to Webflow, we redirected 2,400 pages and tested every one before launch, as our [WordPress to Webflow migration guide](/guides/wordpress-to-webflow-migration) describes.
 
+Phasing changes when you pay, not only what you pay; see [the cost of a website redesign](/guides/website-redesign-cost).
+
 ## How do you sequence the phases?
 
 Lead with the pages that sell: homepage, product, pricing, and the demo request flow, since they carry the new positioning and most demo traffic. Supporting pages follow in order of value. The blog and other big libraries usually move last, as they hold the most URLs and rankings, and a platform change deserves a small pilot before anything else.

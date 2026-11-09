@@ -263,6 +263,8 @@ Rarely on its own. For a typical marketing site, the Site plan is one cost among
 
 The [Webflow vs custom code guide](/guides/webflow-vs-custom-code) walks through when a move pays off and when staying is the better call. If you're staying and need more control, security reviews, or governance inside Webflow, the [Webflow Enterprise guide](/guides/webflow-enterprise) covers what to check.
 
+To put these prices next to WordPress hosting and plugins, read [Webflow vs WordPress](/guides/webflow-vs-wordpress).
+
 ## How was this post written and checked?
 
 This post draws on Webflow's pricing page, its help center articles, and its pricing change calculator, listed in the sources. We first opened them on October 15, 2026, when Sergio Gancedo reviewed the facts, and rechecked every price and date against them on November 9, 2026.

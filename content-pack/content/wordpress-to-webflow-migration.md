@@ -251,6 +251,8 @@ For most B2B marketing sites, the decision comes down to who edits the site and 
 
 A migration is a recommendation, not a reflex. If none of these situations applies and the site works for your team, staying on WordPress and fixing the site you have is a legitimate answer. To hand the work to us, see our [WordPress to Webflow migration service](page:webflow-migration).
 
+If the decision isn't made yet, start with our [Webflow vs WordPress comparison](page:webflow-vs-wordpress).
+
 ## A real-life example: Surfe.com
 
 - **Starting point:** a WordPress site with more than 3,000 pages and posts, plus plugins for SEO, HubSpot, and analytics.
