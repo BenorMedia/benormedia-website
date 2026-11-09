@@ -14,6 +14,7 @@ author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-23
 updatedAt: 2026-11-09
 reviewEvery: none
+heroLead: 1
 primaryKeyword: "headless cms comparison"
 secondaryKeywords: []
 takeaways:
