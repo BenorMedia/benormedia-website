@@ -6,13 +6,13 @@ draft: false
 blockedBy: []
 topicId: "6.4"
 wave: 2
-title: "How to Track Brand Mentions in ChatGPT by Hand | BenorMedia"
-description: "How to track brand mentions in ChatGPT and other AI assistants by hand: a 30-prompt set, a clean way to run it, a scoring sheet, and what it can't tell you."
+title: "How to Track Brand Mentions in ChatGPT for Free"
+description: "Track brand mentions in ChatGPT and other AI chats for free: a 30-prompt method, a clean way to run it, a scoring sheet, and what it can't tell you."
 h1: "How to track brand mentions in ChatGPT by hand: a 30-prompt method"
 lang: en-US
 author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-18
-updatedAt: 2026-10-18
+updatedAt: 2026-11-09
 reviewEvery: none
 primaryKeyword: "how to track brand mentions in chatgpt"
 secondaryKeywords: []
@@ -34,6 +34,8 @@ faq:
     a: "Monthly is enough for most B2B SaaS companies. Run the same prompts in the same week each month, so changes reflect the answers and not the timing."
   - q: "How do you see traffic from ChatGPT in Google Analytics?"
     a: "Look at the AI Assistant channel in GA4's default channel group, and at sessions with the source chatgpt.com, which ChatGPT adds to the links it sends."
+  - q: "How do you track brand mentions in other AI chats?"
+    a: "Run the same prompt set in each assistant you care about, such as ChatGPT, Claude, Gemini, Perplexity, or Google's AI Mode, in a clean session. Log the same fields for every answer, named or not, position, competitors, and cited pages, and give each assistant its own column so the gaps stand out."
 related:
   - /aeo-agency
   - /growth
