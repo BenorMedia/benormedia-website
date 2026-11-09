@@ -413,8 +413,19 @@ for (const { f, family, draft } of built) {
 
   // 10. Banned strings in <main>.
   for (const banned of ['Benor Media', 'Enterprise Partner', 'Official Webflow Partner', 'Professional Partner', 'years as a Webflow']) if (mainText.includes(banned)) fail(f, 10, banned);
-  for (const m of mainText.matchAll(/[$€£]\s?\d[\d,.]*(\s?[MBK]\b|\s?(million|billion)\b)?/g)) {
-    if (!m[1] && !/^[$€£]\d+[MB]\+?$/.test(m[0])) fail(f, 10, `currency amount: ${m[0]}`);
+  // Third-party prices (Sergio, 2026-11-09): currency amounts are allowed only
+  // on guide and comparison pages that set `thirdPartyPrices: true`, list their
+  // sources and carry a `volatileChecked` date. Every other page, including all
+  // service pages, keeps the check.
+  const thirdPartyPricesOk =
+    ['guide', 'comparison'].includes(d.pageType) &&
+    d.thirdPartyPrices === true &&
+    Array.isArray(d.sources) && d.sources.length > 0 &&
+    /^\d{4}-\d{2}-\d{2}$/.test(String(d.volatileChecked ?? ''));
+  if (!thirdPartyPricesOk) {
+    for (const m of mainText.matchAll(/[$€£]\s?\d[\d,.]*(\s?[MBK]\b|\s?(million|billion)\b)?/g)) {
+      if (!m[1] && !/^[$€£]\d+[MB]\+?$/.test(m[0])) fail(f, 10, `currency amount: ${m[0]}`);
+    }
   }
 
   // 11. Family rules.

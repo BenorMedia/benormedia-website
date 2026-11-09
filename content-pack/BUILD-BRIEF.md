@@ -428,7 +428,7 @@ Checks, per built page:
 7. Links inside `<main>`: every internal `href` resolves to a built file or a live path. No `href="#"`, except the reused contact trigger if the live component uses one. External links use `https`. In the production view, no link points at a draft page.
 8. Images inside `<main>`: every `<img>` has an `alt` (empty only for a decorative image) and `width` and `height`.
 9. Residue: no `[FACT NEEDED`, `[VERIFY` or `[PERSON`; in the defaults and production views no `np-gap`; in the production view none of the preview chrome (draft banner, gaps panel, placeholders, `(planned)`, `data-draft-target`, `data-planned`).
-10. Banned strings in `<main>`: `Benor Media` with a space, `Enterprise Partner`, `Official Webflow Partner`, any currency amount (millions and billions as on `/work` are fine).
+10. Banned strings in `<main>`: `Benor Media` with a space, `Enterprise Partner`, `Official Webflow Partner`, any currency amount (millions and billions as on `/work` are fine). Exception (Sergio, 2026-11-09): guide and comparison pages with `thirdPartyPrices: true`, a `sources` list and a `volatileChecked` date may quote third-party amounts; service pages never can.
 11. Family rules: a commercial page has no byline row, no `<time>`, no "Rechecked" text. An article has the byline row with the expected values.
 
 In the review view, markers replace part of the text, so checks 3 and 4 do not run there. The defaults view proves fidelity for the same files. Exit non-zero on any failure and print `file`, `check number` and the offending text. The production view also asserts that no `draft: true` page exists in `dist` and that every `draft: false` page does.
