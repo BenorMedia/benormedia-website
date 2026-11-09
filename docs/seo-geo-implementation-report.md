@@ -66,7 +66,7 @@ Brief: `docs/seo-geo-implementation-brief-2026-11-09.md`. Tasks T1 to T6 and T8 
 - **Wider panel:** the Services panel now opens centered on the bar, like Resources, so the four columns fit at 1024 px.
 - **Keyboard:** Tab moves through all 11 links in order, and the panel closes when focus leaves it.
 - **White label:** left out until T7.
-- **Home:** a "Specialist services." H3 with text links to the 8 pages sits under the service cards, on Home only. The commercial pages use the same section component but don't show it. There's no Figma frame for this block, so its styles reuse the section's spacing and the site's link arrow, marked `TODO: DS`.
+- **Home:** a "Specialist services." block was added under the service cards, then removed at Sergio's request (2026-11-09). The homepage links to the 8 pages through the Services menu only.
 
 ### T3. `/webflow-seo-agency`
 - **Changed:** the title, eyebrow, H1 and AI search H2, plus the link anchor "AEO and GEO services". The H2's visual anchor follows the new heading, so the diagram stays in place.

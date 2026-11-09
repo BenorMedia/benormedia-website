@@ -54,26 +54,9 @@ import { ABOUT_FACTS, DRAFT } from "../../lib/content/about";
 
 interface Props {
   variant?: "home" | "about";
-  /** Home only: the "Specialist services." links under the cards. */
-  specialist?: boolean;
 }
 
-const { variant = "home", specialist = false } = Astro.props;
-
-// "Specialist services." (SEO/GEO brief 2026-11-09, T2): text links to the
-// newer service pages, under the cards on Home only. Labels and one-line
-// descriptions match the Services menu table in the brief; the three
-// industry pages show their label alone.
-const SPECIALIST: Array<{ label: string; href: string; description?: string }> = [
-  { label: "Webflow migration", href: "/webflow-migration", description: "Move to Webflow with every redirect tested." },
-  { label: "Website redesign", href: "/website-redesign", description: "Redesigns for B2B and SaaS sites." },
-  { label: "Headless CMS development", href: "/headless-cms-agency", description: "Astro and Next.js builds on Sanity." },
-  { label: "Webflow SEO", href: "/webflow-seo-agency", description: "Technical SEO and content for Webflow sites." },
-  { label: "AEO & GEO", href: "/aeo-agency", description: "Get named in AI answers." },
-  { label: "B2B SaaS", href: "/b2b-saas-web-design" },
-  { label: "Cybersecurity", href: "/cybersecurity-web-design" },
-  { label: "Enterprise", href: "/webflow-enterprise-agency" },
-];
+const { variant = "home" } = Astro.props;
 const isAbout = variant === "about";
 
 const IMG = "/images/home/services";
@@ -422,23 +405,6 @@ const header = isAbout
         </article>
       ))}
     </div>
-
-    {specialist && !isAbout && (
-      <div class="c-services__specialist">
-        <h3 class="c-services__specialist-title c-text_m">Specialist services.</h3>
-        <ul class="c-services__specialist-list">
-          {SPECIALIST.map((s) => (
-            <li class="c-services__specialist-item">
-              <a class="c-services__specialist-link c-text_s" href={s.href}>
-                {s.label}
-                <span class="c-services__arrow" set:html={ARROW_RIGHT} />
-              </a>
-              {s.description && <p class="c-services__specialist-desc c-paragraph_s">{s.description}</p>}
-            </li>
-          ))}
-        </ul>
-      </div>
-    )}
   </Container>
 </section>
 
@@ -489,56 +455,6 @@ const header = isAbout
       grid-auto-rows: auto;
       gap: calc(30 * var(--u));
       margin-top: 3rem; /* 27px at the 9px root, as the other sections */
-    }
-  }
-
-  /* --- Specialist services (Home, brief 2026-11-09 T2) ------------------ */
-  /* Text links, not cards: four columns ≥992, two ≤991, one ≤767. Spacing
-     reuses the grid's own gap. TODO: DS no Figma frame for this block. */
-  .c-services__specialist {
-    margin-top: calc(80 * var(--u));
-  }
-  .c-services__specialist-title {
-    color: var(--color-heading);
-  }
-  .c-services__specialist-list {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: calc(30 * var(--u)) calc(45.08 * var(--u));
-    margin: calc(30 * var(--u)) 0 0;
-    padding: 0;
-    list-style: none;
-  }
-  .c-services__specialist-link {
-    display: inline-flex;
-    align-items: center;
-    gap: calc(6.4 * var(--u));
-    color: var(--color-heading);
-    text-decoration: none;
-  }
-  .c-services__specialist-link:hover,
-  .c-services__specialist-link:focus-visible {
-    text-decoration: underline;
-  }
-  .c-services__specialist-link:hover .c-services__arrow,
-  .c-services__specialist-link:focus-visible .c-services__arrow {
-    transform: rotate(-30.963deg);
-  }
-  .c-services__specialist-desc {
-    margin: calc(6.4 * var(--u)) 0 0;
-    color: var(--color-black-secondary);
-  }
-  @media (max-width: 991px) {
-    .c-services__specialist-list {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-  @media (max-width: 767px) {
-    .c-services__specialist {
-      margin-top: 3rem;
-    }
-    .c-services__specialist-list {
-      grid-template-columns: minmax(0, 1fr);
     }
   }
 
