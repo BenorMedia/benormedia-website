@@ -48,9 +48,15 @@ import OurWork from "../components/sections/OurWork.astro";
 import Testimonials from "../components/sections/Testimonials.astro";
 import FaqSection from "../components/sections/FaqSection.astro";
 import ResourcesSection from "../components/sections/ResourcesSection.astro";
+import { pagesOf } from "../lib/new-pages/loader";
 
 export async function getStaticPaths() {
-  const slugs = await getServiceSlugs();
+  // A content-pack page built at the same URL replaces the Sanity page
+  // (rebuilds at a legacy URL, e.g. /ongoing-website-support). Drafts are only
+  // built in previews and dev, so production keeps the Sanity page until the
+  // pack page is released.
+  const packUrls = new Set(pagesOf("commercial").map((page) => page.url));
+  const slugs = (await getServiceSlugs()).filter((slug) => !packUrls.has(`/${slug}`));
   const services = await Promise.all(slugs.map((slug) => getServiceBySlug(slug)));
   return services
     .filter((service): service is Service => service !== null)

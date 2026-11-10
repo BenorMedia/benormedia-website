@@ -42,6 +42,8 @@ const gridClass = ["c-np-split__grid", hasVisual && "has-visual", hasVisual && `
 <style>
   .c-np-split__grid {
     display: grid;
+    /* minmax(0, …): a wide table scrolls in its wrapper instead of widening the page. */
+    grid-template-columns: minmax(0, 1fr);
     gap: 3.429rem;
   }
   .c-np-split__grid:not(.has-visual) .c-np-split__text {
