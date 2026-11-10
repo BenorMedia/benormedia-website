@@ -39,9 +39,9 @@ faq:
   - q: "How quickly do you handle urgent fixes?"
     a: "A priority SLA is available for mission-critical sites. Under it, we respond within minutes to anything you flag as urgent."
   - q: "Is there a minimum contract?"
-    a: "No. There's no minimum term, and you can end the plan with one month's notice."
+    a: "No. There's no minimum term, and you can cancel anytime."
   - q: "How is Webflow maintenance priced?"
-    a: "As a monthly retainer sized to your backlog and goals. Current plans are on our pricing page, and we agree the scope in writing before work starts."
+    a: "As a flat monthly plan with unlimited requests, so you never count hours or ration tickets. Current plans are on our pricing page, and we agree what the plan covers in writing before work starts."
   - q: "Who will work on my site?"
     a: "Our own staff only, with no subcontractors or freelancers. A project manager is your single point of contact, and the same designers and developers stay on your site month after month."
   - q: "Do you offer white label Webflow support for agencies?"
@@ -139,17 +139,17 @@ Teams whose website changes every month but who don't want to hire and manage in
 
 ## Retainer, hours, or unlimited requests.
 
-Webflow support is usually sold in three ways: a block of hours, an "unlimited requests" plan, or a monthly retainer. We work on monthly retainers, because a team that knows your site can plan around your marketing calendar instead of clearing a queue one ticket at a time.
+Webflow support is usually sold in three ways: a block of hours, a retainer with set capacity, or an "unlimited requests" plan. We work on unlimited requests: one flat monthly plan, no cap on the number of requests, and the same team working through them against your marketing calendar.
 
 Table: Three common Webflow support models
 
 | Model | How it works | Fits |
 | --- | --- | --- |
 | Block of hours | You buy hours up front and spend them on tasks as they come up | Sites with occasional, predictable changes |
-| Unlimited requests | A flat monthly fee for a queue of tasks, worked in order | Small, frequent tasks with flexible deadlines |
-| Monthly retainer | A set team and set capacity each month, planned against your roadmap | Sites that change every month and support pipeline goals |
+| Monthly retainer | A set amount of capacity each month, planned against your roadmap | Teams that can predict their workload month to month |
+| Unlimited requests | A flat monthly fee with no cap on requests, worked through in priority order | Sites that change every month, with workloads that rise and fall with campaigns |
 
-You can see current plans on our [pricing page](/pricing). Search work beyond technical upkeep sits with our [Webflow SEO agency](page:webflow-seo-agency) service.
+You don't track hours or save requests for next month, and you can cancel anytime. You can see current plans on our [pricing page](/pricing). Search work beyond technical upkeep sits with our [Webflow SEO agency](page:webflow-seo-agency) service.
 
 ## Proof you can check.
 
@@ -167,4 +167,4 @@ Some sites don't need a monthly team, and we'd rather say so up front.
 
 - **Your site rarely changes.** If your team edits CMS content itself and the pages stay the same for months, Webflow's hosting covers the platform. Book a one-off project when something comes up.
 - **You need a new site, not more updates.** If the site no longer fits your positioning, a [website redesign](page:website-redesign) comes first, and support can follow.
-- **You need one fix.** A single scoped project makes more sense than a retainer for a one-time problem.
+- **You need one fix.** A single scoped project makes more sense than a monthly plan for a one-time problem.
