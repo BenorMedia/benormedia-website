@@ -23,6 +23,10 @@
  *     next step opens (looping). It waits until the box is on screen, pauses
  *     while hovered or focused, and stops for good once the visitor picks a
  *     step. No autoplay with reduced motion (the ring just shows full).
+ *   - Hover (lead 2026-11-10, as Vitrum): pointing at a step or at its layer
+ *     opens it (mouse only, after 120ms of real movement, so the list
+ *     reflowing under a still cursor never flips steps). Clicking a step or
+ *     a layer opens it too and ends autoplay.
  *   - Keys: Up / Down / Home / End move between the step buttons.
  *   - No JS: every step is open and readable; the stack shows step 1.
  *   - Mobile ≤767: one column, the stack above the list, smaller. No mobile
@@ -118,6 +122,10 @@ const headerOptional = {
                   <span class="c-service-process__marker-line"></span>
                   <span class="c-service-process__marker">{item.num}</span>
                 </div>
+              ))}
+              {/* Hover / click areas: one band per layer (the plates overlap). */}
+              {items.map((_item, i) => (
+                <span class="c-service-process__hit" style={`--c-service-process-i: ${i}`}></span>
               ))}
             </div>
           </div>
@@ -271,8 +279,45 @@ const headerOptional = {
       });
     }
 
+    // Hover (mouse only): a step or its layer opens after a short pause on
+    // it. Only real pointer movement counts, so the list reflowing under a
+    // still cursor never opens another step. Autoplay is paused while the
+    // pointer is in the box and resumes from the hovered step.
+    const hits = Array.from(box.querySelectorAll<HTMLElement>(".c-service-process__hit"));
+    const HOVER_DELAY = 120;
+    let hoverTimer: number | undefined;
+    let lastX = NaN;
+    let lastY = NaN;
+    const cancelHover = (): void => {
+      window.clearTimeout(hoverTimer);
+      hoverTimer = undefined;
+    };
+    const hoverSelect = (index: number, event: PointerEvent): void => {
+      if (event.pointerType !== "mouse") return;
+      if (event.clientX === lastX && event.clientY === lastY) return;
+      lastX = event.clientX;
+      lastY = event.clientY;
+      cancelHover();
+      if (index === active) return;
+      hoverTimer = window.setTimeout(() => select(index), HOVER_DELAY);
+    };
+    [steps, hits].forEach((targets) => {
+      targets.forEach((target, i) => {
+        target.addEventListener("pointermove", (event) => hoverSelect(i, event));
+        target.addEventListener("pointerleave", cancelHover);
+      });
+    });
+    hits.forEach((hit, i) => {
+      hit.addEventListener("click", () => {
+        cancelHover();
+        stop();
+        select(i);
+      });
+    });
+
     buttons.forEach((button, i) => {
       button?.addEventListener("click", () => {
+        cancelHover();
         stop();
         select(i);
       });
@@ -417,6 +462,32 @@ const headerOptional = {
   }
   .c-service-process__layer.is-active .c-service-process__layer-art.is-active-art {
     opacity: 1;
+  }
+
+  /* Hover / click bands: each covers its plate's middle (corner line ±
+     half a pitch); the first and last stretch to the stack's edges. */
+  .c-service-process__hit {
+    position: absolute;
+    left: 0;
+    top: calc((var(--c-service-process-i) * 87.54 + 42.14) * var(--s));
+    width: 100%;
+    height: calc(87.54 * var(--s));
+    z-index: 20;
+    cursor: pointer;
+  }
+  .c-service-process__hit:first-of-type {
+    top: calc(-27.49 * var(--s));
+    height: calc((27.49 + 42.14 + 87.54) * var(--s));
+  }
+  .c-service-process__hit:last-of-type {
+    height: calc((178.2 - 42.14) * var(--s));
+  }
+  /* A single step: one band over the whole plate. */
+  .c-service-process__hit:first-of-type:last-of-type {
+    height: calc((27.49 + 178.2) * var(--s));
+  }
+  .c-service-process:not(.is-enhanced) .c-service-process__hit {
+    display: none;
   }
 
   /* Marker: 25.2px circle + 49.25px line to the plate's left corner. */
