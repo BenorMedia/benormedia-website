@@ -24,9 +24,12 @@
  *     while hovered or focused, and stops for good once the visitor picks a
  *     step. No autoplay with reduced motion (the ring just shows full).
  *   - Hover (lead 2026-11-10, as Vitrum): pointing at a step or at its layer
- *     opens it (mouse only, after 120ms of real movement, so the list
- *     reflowing under a still cursor never flips steps). Clicking a step or
- *     a layer opens it too and ends autoplay.
+ *     opens it at once (mouse only, on real movement, so the list reflowing
+ *     under a still cursor never flips steps). Clicking a step or a layer
+ *     opens it too and ends autoplay.
+ *   - Switching is instant (no transitions, lead 2026-11-10). The list is
+ *     locked to its tallest state (JS measures every step open), so the box
+ *     keeps one height whichever step is open.
  *   - Keys: Up / Down / Home / End move between the step buttons.
  *   - No JS: every step is open and readable; the stack shows step 1.
  *   - Mobile ≤767: one column, the stack above the list, smaller. No mobile
@@ -279,37 +282,53 @@ const headerOptional = {
       });
     }
 
-    // Hover (mouse only): a step or its layer opens after a short pause on
-    // it. Only real pointer movement counts, so the list reflowing under a
-    // still cursor never opens another step. Autoplay is paused while the
-    // pointer is in the box and resumes from the hovered step.
+    // Fixed height (lead 2026-11-10): the list is locked to its tallest
+    // state (each step open in turn, measured with no transitions), so the
+    // box never changes height when another step opens. Steps sit at the
+    // top of that space, so the ones above the open step never move.
+    const list = box.querySelector<HTMLElement>(".c-service-process__steps");
+    let measuredWidth = -1;
+    const lockHeight = (): void => {
+      if (!list) return;
+      list.style.removeProperty("height");
+      let tallest = 0;
+      steps.forEach((_, open) => {
+        steps.forEach((step, i) => step.classList.toggle("is-active", i === open));
+        tallest = Math.max(tallest, list.getBoundingClientRect().height);
+      });
+      steps.forEach((step, i) => step.classList.toggle("is-active", i === active));
+      list.style.height = `${Math.ceil(tallest)}px`;
+    };
+    lockHeight();
+    void document.fonts?.ready.then(lockHeight);
+    new ResizeObserver(([entry]) => {
+      const width = entry?.contentRect.width ?? 0;
+      if (width === measuredWidth) return;
+      measuredWidth = width;
+      lockHeight();
+    }).observe(box);
+
+    // Hover (mouse only): a step or its layer opens at once. Only real
+    // pointer movement counts, so the list reflowing under a still cursor
+    // never opens another step. Autoplay is paused while the pointer is in
+    // the box and resumes from the hovered step.
     const hits = Array.from(box.querySelectorAll<HTMLElement>(".c-service-process__hit"));
-    const HOVER_DELAY = 120;
-    let hoverTimer: number | undefined;
     let lastX = NaN;
     let lastY = NaN;
-    const cancelHover = (): void => {
-      window.clearTimeout(hoverTimer);
-      hoverTimer = undefined;
-    };
     const hoverSelect = (index: number, event: PointerEvent): void => {
       if (event.pointerType !== "mouse") return;
       if (event.clientX === lastX && event.clientY === lastY) return;
       lastX = event.clientX;
       lastY = event.clientY;
-      cancelHover();
-      if (index === active) return;
-      hoverTimer = window.setTimeout(() => select(index), HOVER_DELAY);
+      if (index !== active) select(index);
     };
     [steps, hits].forEach((targets) => {
       targets.forEach((target, i) => {
         target.addEventListener("pointermove", (event) => hoverSelect(i, event));
-        target.addEventListener("pointerleave", cancelHover);
       });
     });
     hits.forEach((hit, i) => {
       hit.addEventListener("click", () => {
-        cancelHover();
         stop();
         select(i);
       });
@@ -317,7 +336,6 @@ const headerOptional = {
 
     buttons.forEach((button, i) => {
       button?.addEventListener("click", () => {
-        cancelHover();
         stop();
         select(i);
       });
@@ -437,7 +455,6 @@ const headerOptional = {
     width: 100%;
     height: calc(178.2 * var(--s));
     z-index: calc(var(--c-service-process-count) - var(--c-service-process-i));
-    transition: transform var(--duration-hover) var(--ease-smooth);
   }
   .c-service-process__layer.is-active {
     transform: translateY(calc(-6 * var(--s)));
@@ -450,7 +467,6 @@ const headerOptional = {
     width: calc(300 * var(--s));
     max-width: none;
     height: auto;
-    transition: opacity var(--duration-hover) var(--ease-smooth);
   }
   /* Active art (401 × 227, with its glow): plate corner at (75.04, 113.4)
      in the file, matched to the grey plate's corner. */
@@ -494,11 +510,6 @@ const headerOptional = {
   .c-service-process__marker,
   .c-service-process__marker-line {
     position: absolute;
-    transition:
-      background-color var(--duration-hover) var(--ease-smooth),
-      color var(--duration-hover) var(--ease-smooth),
-      border-color var(--duration-hover) var(--ease-smooth),
-      opacity var(--duration-hover) var(--ease-smooth);
   }
   .c-service-process__marker {
     top: calc(73.31 * var(--s));
@@ -528,7 +539,6 @@ const headerOptional = {
     border-radius: inherit;
     background: var(--gradient-primary);
     opacity: 0;
-    transition: opacity var(--duration-hover) var(--ease-smooth);
   }
   .c-service-process__marker-line {
     top: calc(85.34 * var(--s));
@@ -543,7 +553,6 @@ const headerOptional = {
     inset: 0;
     background: var(--gradient-primary);
     opacity: 0;
-    transition: opacity var(--duration-hover) var(--ease-smooth);
   }
   .c-service-process__layer.is-active .c-service-process__marker {
     border-color: transparent;
@@ -560,7 +569,11 @@ const headerOptional = {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    /* JS locks the height to the tallest state; steps sit at its top and
+       the list is centred in the box (Figma centres it). */
+    justify-content: flex-start;
+    align-self: center;
+    box-sizing: border-box;
     margin: 0;
     padding: calc(29.575 * var(--u)) calc(49.292 * var(--u));
     list-style: none;
@@ -571,9 +584,6 @@ const headerOptional = {
     padding: calc(17.252 * var(--u)) calc(24.646 * var(--u));
     border-radius: 22px;
     background-color: transparent;
-    transition:
-      background-color var(--duration-hover) var(--ease-smooth),
-      padding var(--duration-hover) var(--ease-smooth);
   }
   .c-service-process__step.is-active {
     padding: calc(30 * var(--u));
@@ -633,9 +643,6 @@ const headerOptional = {
     box-shadow: 0 0 0 1px var(--color-border); /* Figma rgba(38,40,46,.14) — TODO: DS */
     color: var(--color-text);
     line-height: 1;
-    transition:
-      color var(--duration-hover) var(--ease-smooth),
-      box-shadow var(--duration-hover) var(--ease-smooth);
   }
   .c-service-process__num::before {
     content: "";
@@ -644,7 +651,6 @@ const headerOptional = {
     border-radius: inherit;
     background: var(--gradient-primary);
     opacity: 0;
-    transition: opacity var(--duration-hover) var(--ease-smooth);
   }
   .c-service-process__num-text {
     position: relative;
@@ -672,7 +678,6 @@ const headerOptional = {
        the top. */
     transform: scaleY(-1);
     opacity: 0;
-    transition: opacity var(--duration-hover) var(--ease-smooth);
     pointer-events: none;
   }
   .c-service-process__step.is-active .c-service-process__ring {
@@ -715,9 +720,6 @@ const headerOptional = {
     z-index: 1;
     display: grid;
     grid-template-rows: 1fr;
-    transition:
-      grid-template-rows var(--duration-hover) var(--ease-smooth),
-      opacity var(--duration-hover) var(--ease-smooth);
   }
   .c-service-process.is-enhanced .c-service-process__step:not(.is-active) .c-service-process__step-body {
     grid-template-rows: 0fr;
@@ -799,6 +801,9 @@ const headerOptional = {
     .c-service-process__visual,
     .c-service-process__steps {
       flex: none;
+    }
+    .c-service-process__steps {
+      align-self: stretch;
     }
     .c-service-process__visual {
       padding: 2.5rem 1rem;
