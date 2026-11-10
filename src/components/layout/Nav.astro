@@ -50,40 +50,46 @@ const logoAlt = siteSettings?.logo?.alt ?? siteSettings?.siteName ?? "BenorMedia
 // 2026-11-09, T2; replaces the three-item list with icons). Group labels are
 // plain text. The panel shows labels only: the dropdown link has no room for
 // a description. "White label for agencies" joined Build at its release
-// (brief T7, 2026-11-09).
-const serviceGroups: Array<{ id: string; label: string; items: Array<{ label: string; href: string }> }> = [
+// (brief T7, 2026-11-09). Icons: Figma 4376:7619 (lead 2026-11-10), cropped
+// as in Figma and saved at 4x; `w`/`h` are the Figma image box in px.
+type ServiceIcon = { src: string; w: number; h: number };
+const serviceGroups: Array<{
+  id: string;
+  label: string;
+  items: Array<{ label: string; href: string; icon: ServiceIcon }>;
+}> = [
   {
     id: "nav-svc-build",
     label: "Build",
     items: [
-      { label: "Webflow design & development", href: "/custom-websites-migrations" },
-      { label: "Webflow migration", href: "/webflow-migration" },
-      { label: "Website redesign", href: "/website-redesign" },
-      { label: "Headless CMS development", href: "/headless-cms-agency" },
-      { label: "White label for agencies", href: "/white-label-webflow-development" },
+      { label: "Webflow design & development", href: "/custom-websites-migrations", icon: { src: "/images/nav/services/design.webp", w: 25.993, h: 22.695 } },
+      { label: "Webflow migration", href: "/webflow-migration", icon: { src: "/images/nav/services/migration.webp", w: 30.888, h: 30.888 } },
+      { label: "Website redesign", href: "/website-redesign", icon: { src: "/images/nav/services/redesign.webp", w: 22.15, h: 24.96 } },
+      { label: "Headless CMS development", href: "/headless-cms-agency", icon: { src: "/images/nav/services/headless.webp", w: 26.144, h: 24 } },
+      { label: "White label for agencies", href: "/white-label-webflow-development", icon: { src: "/images/nav/services/white-label.webp", w: 26.503, h: 26.4 } },
     ],
   },
   {
     id: "nav-svc-grow",
     label: "Grow",
     items: [
-      { label: "SEO & CRO", href: "/growth" },
-      { label: "Webflow SEO", href: "/webflow-seo-agency" },
-      { label: "AEO & GEO", href: "/aeo-agency" },
+      { label: "SEO & CRO", href: "/growth", icon: { src: "/images/nav/services/growth.webp", w: 26.767, h: 28 } },
+      { label: "Webflow SEO", href: "/webflow-seo-agency", icon: { src: "/images/nav/services/webflow-seo.webp", w: 22.521, h: 26.4 } },
+      { label: "AEO & GEO", href: "/aeo-agency", icon: { src: "/images/nav/services/aeo.webp", w: 22.561, h: 25.92 } },
     ],
   },
   {
     id: "nav-svc-support",
     label: "Support",
-    items: [{ label: "Webflow maintenance & support", href: "/ongoing-website-support" }],
+    items: [{ label: "Webflow maintenance & support", href: "/ongoing-website-support", icon: { src: "/images/nav/services/support.webp", w: 27.894, h: 25.2 } }],
   },
   {
     id: "nav-svc-industries",
     label: "Industries",
     items: [
-      { label: "B2B SaaS", href: "/b2b-saas-web-design" },
-      { label: "Cybersecurity", href: "/cybersecurity-web-design" },
-      { label: "Enterprise", href: "/webflow-enterprise-agency" },
+      { label: "B2B SaaS", href: "/b2b-saas-web-design", icon: { src: "/images/nav/services/b2b-saas.webp", w: 29.721, h: 28.93 } },
+      { label: "Cybersecurity", href: "/cybersecurity-web-design", icon: { src: "/images/nav/services/cybersecurity.webp", w: 24.423, h: 26.4 } },
+      { label: "Enterprise", href: "/webflow-enterprise-agency", icon: { src: "/images/nav/services/enterprise.webp", w: 26.546, h: 28 } },
     ],
   },
 ];
@@ -150,9 +156,26 @@ const resourceLinks = [
             {serviceGroups.map((group) => (
               <div class="c-nav__svc-col" role="group" aria-labelledby={group.id}>
                 <span id={group.id} class="c-nav__svc-label">{group.label}</span>
-                {group.items.map((s) => (
-                  <a href={s.href} role="menuitem" class="c-nav__panel-link">{s.label}</a>
-                ))}
+                <span class="c-nav__svc-rule" aria-hidden="true"></span>
+                <div class="c-nav__svc-links">
+                  {group.items.map((s) => (
+                    <a href={s.href} role="menuitem" class="c-nav__panel-link">
+                      <span class="c-nav__icon-box">
+                        <img
+                          class="c-nav__svc-icon"
+                          src={s.icon.src}
+                          alt=""
+                          width={Math.round(s.icon.w * 4)}
+                          height={Math.round(s.icon.h * 4)}
+                          style={`--w:${s.icon.w};--h:${s.icon.h}`}
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </span>
+                      {s.label}
+                    </a>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
@@ -694,19 +717,39 @@ const resourceLinks = [
     gap: 2.5rem;
     padding: 1.25rem 1.5rem;
   }
+  /* Figma 4376:7619 (lead 2026-11-10), px ÷ 14 like the links: label,
+     rule and links 12px apart; label 12.6px at 60% opacity. */
   .c-nav__svc-col {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 0.5rem;
+    gap: 0.857rem;
   }
   .c-nav__svc-label {
     color: var(--color-text);
     font-family: var(--font-body);
     font-size: var(--fs-p-s);
+    line-height: 1.5;
     text-transform: uppercase;
-    letter-spacing: 0.064em;
+    letter-spacing: 0.0605em;
+    opacity: 0.6;
     padding: 0 0.429rem;
+  }
+  /* Figma: black at 10% on white; closest token. TODO: DS */
+  .c-nav__svc-rule {
+    display: block;
+    border-top: var(--border-default);
+  }
+  .c-nav__svc-links {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  /* Each icon keeps its Figma image box inside the 35.52px square. */
+  .c-nav__icon-box > img.c-nav__svc-icon {
+    width: calc(var(--w) / 14 * 1rem);
+    height: calc(var(--h) / 14 * 1rem);
+    object-fit: fill;
   }
 
   /* --- Resources panel (Figma 3995:8355, measured from the lead's
