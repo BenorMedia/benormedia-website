@@ -15,7 +15,7 @@ const PAGES = {
   '/': { expected: ['Organization', 'WebSite'], keyword: 'webflow agency' },
   '/custom-websites-migrations': { expected: ['Service', 'BreadcrumbList', 'FAQPage'], keyword: 'webflow development agency' },
   '/growth': { expected: ['Service', 'BreadcrumbList'], keyword: 'b2b saas seo agency' },
-  '/ongoing-website-support': { expected: ['Service', 'BreadcrumbList'], keyword: 'webflow maintenance service' },
+  '/ongoing-website-support': { expected: ['Service', 'FAQPage', 'BreadcrumbList'], keyword: 'webflow maintenance service' },
   '/pricing': { expected: ['FAQPage'], keyword: null },
   '/work': { expected: [], keyword: null },
   '/testimonials': { expected: [], keyword: null },

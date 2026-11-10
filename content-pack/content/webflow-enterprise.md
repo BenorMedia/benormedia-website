@@ -245,7 +245,7 @@ Evaluate an agency for an enterprise Webflow site on evidence you can check, and
 3. **Contracts.** Ask which documents the agency signs, such as a master services agreement, a data processing agreement, and an NDA, and which legal entity signs them.
 4. **Releases and rollbacks.** Ask who approves a release and how a rollback works. Webflow creates restore points as you work, and restoring a backup changes the Published on date of CMS items, so a rollback needs a plan.
 5. **Team.** Ask who will work on the project and in which roles, who you will talk to day to day, and whether any work goes to freelancers or partners.
-6. **Support.** Ask for response times in writing, the hours they cover, and the escalation path for a critical bug.
+6. **Support.** Ask for response times in writing, the hours they cover, and the escalation path for a critical bug. For ongoing changes after launch, see our [Webflow maintenance and support](/ongoing-website-support).
 7. **Accessibility and languages.** Ask which version and level of the Web Content Accessibility Guidelines (WCAG) the agency builds to and how it tests. WCAG 2.2 defines three levels: A, AA, and AAA. Ask how it handles locale URLs and hreflang.
 8. **References and handover.** Ask to speak to a client with similar review requirements, and ask what documentation, training, and ownership transfer you get at the end.
 

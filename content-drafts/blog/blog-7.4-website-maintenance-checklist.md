@@ -269,6 +269,8 @@ Table: Website maintenance checklist template
 | Analytics settings | Yearly | Assign an owner | The data retention setting in Google Analytics 4 confirmed |
 | Content and legal pages | Yearly | Content lead with design | Outdated content updated, removed, or merged, and the privacy policy and cookie notice checked against what the site collects |
 
+If you'd rather hand this checklist to a team, see our [Webflow maintenance services](/ongoing-website-support).
+
 ## What changes on a headless Astro and Sanity site?
 
 You take on the software upkeep that a hosted builder handles for you. The rows below sit on top of the monthly, quarterly, and yearly lists.

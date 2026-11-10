@@ -207,7 +207,7 @@ Every redesign ships with the groundwork for search engine optimization and AI s
 
 ## After launch: measure, fix, keep improving.
 
-Launch is the halfway point of a redesign. For the first weeks we watch rankings, conversions and errors, then hand you a short plan for what to improve next.
+Launch is the halfway point of a redesign. For the first weeks we watch rankings, conversions and errors, then hand you a short plan for what to improve next. After launch, the same team can stay on through our [Webflow maintenance services](/ongoing-website-support).
 
 - **Post-launch support.** Fixes and adjustments while traffic settles. Support continues for 30 days after launch.
 - **Before-and-after report.** Search Console, analytics, form and CRM data, including lead quality, for every page that changed, compared with the baseline from the audit.
