@@ -22,6 +22,8 @@ import ThImageConverge from "../../components/new-pages/thumbs/ThImageConverge.a
 const IMG = "/images/new-pages/thumbs/images";
 const GPT = `${IMG}/chatgpt-mentions`;
 const WFS = `${IMG}/webflow-source`;
+const WVW = `${IMG}/webflow-vs-wordpress`;
+const RDC = `${IMG}/website-redesign-cost`;
 
 export interface ThumbEntry {
   // Astro components take any props object.
@@ -96,6 +98,88 @@ export const THUMBS: Record<string, ThumbEntry> = {
       { icon: "contentStack", label: "Move the content" },
     ],
     column: { x: 132, y: 6, w: 280 },
+  }),
+  // The lead's image (2026-11-10): WordPress and the Webflow W on glass,
+  // cubes and spheres drifting in from both sides behind them. Shapes the
+  // image cuts off use a whole shape of their kind.
+  "webflow-vs-wordpress": t(ThImageConverge, {
+    bg: { src: `${GPT}/bg.webp`, w: 1088, h: 724 },
+    cards: [
+      { x: 37.75, y: 65.75, size: 225.5, h: 230, object: { src: `${WVW}/wordpress.webp`, w: 334, h: 349, x: 66.5, y: 94 } },
+      { x: 280.75, y: 65.75, size: 225.5, h: 230, object: { src: `${WVW}/webflow.webp`, w: 289, h: 252, x: 321, y: 118 } },
+    ],
+    shapes: [
+      { src: `${WVW}/cube-1.webp`, w: 54, h: 55, x: -10.5, y: 117 },
+      { src: `${WVW}/sphere-1.webp`, w: 49, h: 48, x: 23, y: 151.5 },
+      { src: `${WVW}/sphere-2.webp`, w: 49, h: 50, x: -1.5, y: 183 },
+      { src: `${WVW}/cube-2.webp`, w: 58, h: 58, x: 28.5, y: 211.5 },
+      { src: `${WVW}/cube-3.webp`, w: 60, h: 60, x: -14, y: 240.5 },
+      { src: `${WVW}/sphere-3.webp`, w: 44, h: 45, x: 266, y: 156 },
+      { src: `${WVW}/cube-4.webp`, w: 61, h: 61, x: 252, y: 162.5 },
+      { src: `${WVW}/sphere-4.webp`, w: 49, h: 48, x: 264, y: 187 },
+      { src: `${WVW}/pyramid-1.webp`, w: 51, h: 46, x: 487, y: 148.5 },
+      { src: `${WVW}/sphere-5.webp`, w: 48, h: 50, x: 532, y: 163.5 },
+      { src: `${WVW}/cube-5.webp`, w: 55, h: 55, x: 491.5, y: 187.5 },
+      { src: `${WVW}/cube-6.webp`, w: 62, h: 60, x: 515.5, y: 222 },
+    ],
+  }),
+  // The lead's image (2026-11-10): the dollar shield, two bands of shapes
+  // on each side drifting in toward it and passing behind it (no glass).
+  "website-redesign-cost": t(ThImageConverge, {
+    bg: { src: `${RDC}/bg.webp`, w: 1088, h: 724 },
+    cards: [
+      { x: 174.5, y: 61.5, size: 199.5, h: 221.5, glass: false, object: { src: `${RDC}/shield.webp`, w: 399, h: 443, x: 174.5, y: 61.5 } },
+    ],
+    shapes: [
+      { src: `${RDC}/shape-1.webp`, w: 58, h: 58, x: 536, y: -2.5 },
+      { src: `${RDC}/shape-2.webp`, w: 69, h: 60, x: 28, y: 33.5 },
+      { src: `${RDC}/shape-3.webp`, w: 69, h: 60, x: 460.5, y: 33.5 },
+      { src: `${RDC}/shape-4.webp`, w: 56, h: 56, x: 513, y: 38.5 },
+      { src: `${RDC}/shape-5.webp`, w: 50, h: 50, x: -16.5, y: 40 },
+      { src: `${RDC}/shape-6.webp`, w: 62, h: 61, x: 82, y: 55 },
+      { src: `${RDC}/shape-7.webp`, w: 62, h: 61, x: 410, y: 55 },
+      { src: `${RDC}/shape-8.webp`, w: 68, h: 68, x: 7.5, y: 72 },
+      { src: `${RDC}/shape-9.webp`, w: 68, h: 68, x: 481.5, y: 72 },
+      { src: `${RDC}/shape-10.webp`, w: 67, h: 68, x: 125.5, y: 76 },
+      { src: `${RDC}/shape-11.webp`, w: 67, h: 68, x: 364, y: 76 },
+      { src: `${RDC}/shape-12.webp`, w: 56, h: 56, x: 48, y: 79.5 },
+      { src: `${RDC}/shape-13.webp`, w: 56, h: 56, x: 447, y: 79.5 },
+      { src: `${RDC}/shape-14.webp`, w: 62, h: 62, x: -28, y: 99 },
+      { src: `${RDC}/shape-15.webp`, w: 62, h: 62, x: 519.5, y: 99 },
+      { src: `${RDC}/shape-16.webp`, w: 62, h: 60, x: 175.5, y: 106.5 },
+      { src: `${RDC}/shape-17.webp`, w: 57, h: 57, x: 104, y: 107 },
+      { src: `${RDC}/shape-18.webp`, w: 56, h: 56, x: 390.5, y: 107.5 },
+      { src: `${RDC}/shape-19.webp`, w: 70, h: 69, x: 61, y: 116.5 },
+      { src: `${RDC}/shape-20.webp`, w: 70, h: 69, x: 427, y: 116.5 },
+      { src: `${RDC}/shape-21.webp`, w: 59, h: 58, x: 140, y: 119 },
+      { src: `${RDC}/shape-22.webp`, w: 53, h: 52, x: 355, y: 120 },
+      { src: `${RDC}/shape-23.webp`, w: 56, h: 57, x: 19, y: 120.5 },
+      { src: `${RDC}/shape-24.webp`, w: 56, h: 57, x: 476, y: 120.5 },
+      { src: `${RDC}/shape-25.webp`, w: 63, h: 63, x: 166, y: 202.5 },
+      { src: `${RDC}/shape-26.webp`, w: 66, h: 66, x: 109.5, y: 212 },
+      { src: `${RDC}/shape-27.webp`, w: 66, h: 66, x: 380.5, y: 212 },
+      { src: `${RDC}/shape-28.webp`, w: 71, h: 71, x: 59.5, y: 223 },
+      { src: `${RDC}/shape-29.webp`, w: 71, h: 71, x: 428, y: 223 },
+      { src: `${RDC}/shape-30.webp`, w: 69, h: 69, x: 144.5, y: 233.5 },
+      { src: `${RDC}/shape-31.webp`, w: 69, h: 69, x: 344, y: 233.5 },
+      { src: `${RDC}/shape-32.webp`, w: 62, h: 60, x: 11.5, y: 244.5 },
+      { src: `${RDC}/shape-33.webp`, w: 63, h: 60, x: 480, y: 244.5 },
+      { src: `${RDC}/shape-34.webp`, w: 57, h: 57, x: 112, y: 251.5 },
+      { src: `${RDC}/shape-35.webp`, w: 57, h: 57, x: 382.5, y: 251.5 },
+      { src: `${RDC}/shape-36.webp`, w: 56, h: 56, x: 51.5, y: 267.5 },
+      { src: `${RDC}/shape-37.webp`, w: 56, h: 56, x: 443.5, y: 267.5 },
+      { src: `${RDC}/shape-38.webp`, w: 50, h: 50, x: -24.5, y: 281.5 },
+      { src: `${RDC}/shape-39.webp`, w: 50, h: 50, x: 522, y: 281.5 },
+      { src: `${RDC}/shape-40.webp`, w: 66, h: 66, x: 88, y: 284.5 },
+      { src: `${RDC}/shape-41.webp`, w: 66, h: 66, x: 402, y: 284.5 },
+      { src: `${RDC}/shape-42.webp`, w: 65, h: 65, x: 18, y: 286.5 },
+      { src: `${RDC}/shape-43.webp`, w: 66, h: 65, x: 472, y: 286.5 },
+      { src: `${RDC}/shape-44.webp`, w: 57, h: 57, x: 56.5, y: 317.5 },
+      { src: `${RDC}/shape-45.webp`, w: 57, h: 57, x: 438, y: 317.5 },
+      { src: `${RDC}/shape-46.webp`, w: 50, h: 50, x: 529, y: 320.5 },
+      { src: `${RDC}/shape-47.webp`, w: 70, h: 68, x: 6, y: 328 },
+      { src: `${RDC}/shape-48.webp`, w: 71, h: 68, x: 481.5, y: 328 },
+    ],
   }),
   // Webflow, the headless CMSs and the AI tools the guide names.
   "webflow-vs-custom-code": t(ThLogos, {
