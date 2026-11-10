@@ -204,7 +204,7 @@ Security companies ship fast: new detections, new integrations, new research eve
 As a cybersecurity web design agency, we cover the website and the search work around it. Look elsewhere, or for a second partner, in these cases.
 
 - **The marketing site must be HIPAA compliant.** Webflow says it isn't HIPAA compliant by default, so that site needs different hosting.
-- **You want a full cybersecurity marketing agency.** We handle the website, search engine optimization, AEO and conversion work, not events, paid media or analyst relations. We work alongside the marketing partner or demand generation team that owns your marketing strategy.
+- **You want a full cybersecurity marketing agency.** We handle the website, search engine optimization, AEO and conversion work, not events, paid media or analyst relations. We work alongside the marketing partner or demand generation team that owns your marketing strategy. For the content side, see our guide to [cybersecurity marketing](/blog/cybersecurity-content-marketing) for CISOs and engineers.
 - **Your product docs need a portal with customer logins.** That's a documentation platform project; we link the marketing site to it.
 - **Your positioning isn't settled.** A new site can't decide which buyer you sell to first.
 - **You need it live before a conference in two weeks.** Build a focused landing page now and plan the full site after the event.

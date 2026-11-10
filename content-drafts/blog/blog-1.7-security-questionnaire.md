@@ -210,7 +210,7 @@ We build websites for B2B SaaS and [cybersecurity companies](/cybersecurity-web-
 
 ## How do you answer a security questionnaire faster?
 
-Answer from a maintained library, not from scratch. Keep one approved answer for each common question, with an owner, an evidence link, and a review date, and build it from your latest SOC 2 report or completed CAIQ. Each new questionnaire then becomes a matching exercise instead of a research project.
+Answer from a maintained library, not from scratch. Keep one approved answer for each common question, with an owner, an evidence link, and a review date, and build it from your latest SOC 2 report or completed CAIQ. Each new questionnaire then becomes a matching exercise instead of a research project. Security reviews are the last step of a [cybersecurity marketing strategy](/blog/cybersecurity-content-marketing), so plan the answers before the campaign starts.
 
 The time adds up. Vanta, which sells compliance software, says its customers spend 5 to 15 hours on each security review, and more in highly regulated industries. That estimate comes from the vendor's conversations with customers, not from a survey, so treat it as a rough order of magnitude.
 

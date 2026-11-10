@@ -143,6 +143,8 @@ Give these reviewers a page on your website they can work from:
 - one page per integration, with setup steps and known limits, so IT can check fit with the stack;
 - a named contact for security questions, so the review doesn't wait in a general inbox.
 
+Security vendors face a higher bar for evidence; see our guide to [marketing to security buyers](/blog/cybersecurity-content-marketing).
+
 ## What proof do buyers need before they shortlist you?
 
 Proof from people other than you. TrustRadius found that 77% of buyers read user reviews, and Forrester reports that more than 60% of business buyers use a trial before they buy.

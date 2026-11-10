@@ -184,7 +184,7 @@ What that means for the page:
 3. Keep the trust page indexable and in your sitemap, and keep the gated documents gated.
 4. Check that AI crawlers can reach the page. Our post on [which AI crawlers to allow in robots.txt](/blog/ai-crawlers-robots-txt) covers the settings.
 
-We design websites for B2B SaaS and cybersecurity companies, including trust pages, so we have an interest in the topic. Our guide to [the pages a B2B SaaS website needs](/guides/b2b-saas-website-pages) treats security and trust as a page type of its own, and our [cybersecurity website design](/cybersecurity-web-design) page covers the version for security vendors.
+We design websites for B2B SaaS and cybersecurity companies, including trust pages, so we have an interest in the topic. Our guide to [the pages a B2B SaaS website needs](/guides/b2b-saas-website-pages) treats security and trust as a page type of its own, and our [cybersecurity website design](/cybersecurity-web-design) page covers the version for security vendors. A trust center works best as one part of a wider [cybersecurity marketing](/blog/cybersecurity-content-marketing) plan.
 
 ## How does a trust center shorten security reviews and accelerate sales?
 
