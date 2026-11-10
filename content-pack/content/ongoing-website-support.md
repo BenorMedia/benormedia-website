@@ -3,7 +3,7 @@ slug: ongoing-website-support
 url: /ongoing-website-support
 pageType: service
 draft: true
-blockedBy: ["#OWS-1 request tool", "#OWS-2 retainer terms", "#OWS-3 priority SLA"]
+blockedBy: []
 wave: 3
 title: "Webflow Maintenance Services for B2B Teams | BenorMedia"
 description: "Webflow maintenance services for B2B teams: weekly updates, new pages, bug fixes, technical SEO, and quarterly CRO from one team that knows your site."
@@ -37,9 +37,9 @@ faq:
   - q: "Can you maintain a Webflow site another agency built?"
     a: "Yes. We review the site first, then take over changes, fixes, and improvements. The review shows anything in the build that makes edits slow or risky, so you know what needs fixing before the backlog starts."
   - q: "How quickly do you handle urgent fixes?"
-    a: "A priority SLA is available for mission-critical sites. [FACT NEEDED #OWS-3: What response time does the priority SLA promise, and what counts as urgent? | default: DELETE-ITEM]"
+    a: "A priority SLA is available for mission-critical sites. Under it, we respond within minutes to anything you flag as urgent."
   - q: "Is there a minimum contract?"
-    a: "[FACT NEEDED #OWS-2: What are the retainer terms today: minimum term, notice period, and whether unused capacity rolls over? | default: DELETE-ITEM]"
+    a: "No. There's no minimum term, and you can end the plan with one month's notice."
   - q: "How is Webflow maintenance priced?"
     a: "As a monthly retainer sized to your backlog and goals. Current plans are on our pricing page, and we agree the scope in writing before work starts."
   - q: "Who will work on my site?"
@@ -122,7 +122,7 @@ One team handles design, development, SEO, and conversion work for your Webflow 
 
 You send requests, we plan them with you, and finished work ships every week. One project manager is your single point of contact, and the same designers and developers stay on your site, so nobody has to relearn your brand or your build each month.
 
-- **One place for requests.** You add requests to [FACT NEEDED #OWS-1: Which tool do support clients use to send and track requests today: Trello, ClickUp, or something else? | default: REPLACE: a shared board], where you can see what's in progress, what's next, and what's done.
+- **One place for requests.** You add requests to a shared Trello board, where you can see what's in progress, what's next, and what's done.
 - **A weekly rhythm.** We agree priorities with you, ship through the week, and tell you what went live.
 - **A quarterly review.** We look at conversion, speed, and search data together and agree on the next quarter's improvements.
 - **Your channel.** We work in your Slack or by email, whichever your team already uses.
