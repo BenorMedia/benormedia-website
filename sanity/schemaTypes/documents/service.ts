@@ -155,10 +155,11 @@ export const service = defineType({
       name: 'steps',
       title: 'Process steps',
       description:
-        'The steps shown as numbered tabs. The number (01, 02…) comes from the order in this list: drag a step to change its number.',
+        'Up to 7 steps, shown as a numbered list beside a stack of layers (one layer per step). The number comes from the order in this list: drag a step to change its number. The step image is no longer shown.',
       type: 'array',
       group: 'process',
       of: [defineArrayMember({ type: 'processStep' })],
+      validation: (rule) => rule.max(7),
     }),
 
     // FAQs

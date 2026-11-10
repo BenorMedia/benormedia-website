@@ -438,6 +438,8 @@ Without adding to your team." with "website moving." marked Gradient (published 
 | 2026-09-30 | Process tabs ≤767 (`docs/refs/services-images/services-template-tabs-mobile.png`): sliding strip — `overflow: hidden`, no wrap, tabs `padding: 0 1.5rem` with a 1px divider between them, active = square + name (name up to 12rem); selecting scrolls the strip smoothly so the new step is at the left (target computed from the final layout while names transition; last steps clamp at the strip end); progress line under the bar (3px, `--color-gray`, width = step / steps). Tablet (768–991) keeps the wrapped squares. Sizes `TODO: DS mobile` | Lead | Proposed |
 | 2026-09-30 | Process tabs ≤767 revised (supersedes the sliding strip): only the active step (square + name) and the next step (square, `is-next`, dividers both sides) show; the last step's next is step 01 (loops). The rest are visually hidden (1px clip), still focusable / announced, arrow keys select them. Selecting the next step: FLIP slide from its old spot to the left slot + the new next fades in from the right (800ms, `--ease-smooth` curve); reduced motion → instant. Progress line unchanged | Lead | Proposed |
 | 2026-09-30 | Process tabs ≤767: `justify-content: space-between` (active left, next right) | Lead visual QA | Lead |
+| 2026-11-10 | Process section rebuilt from Figma 4301:10711 with usevitrum.com's interaction (supersedes the tab bar rows above): left, an isometric stack with one layer per step (art `public/images/services/process/layer.svg` / `layer-active.svg`, the Figma layers' own vectors; HTML markers), the active layer blue and lifted; right, a numbered list of disclosure buttons, the active step open on a card with description, note and pills and a progress ring. Autoplay 6s per step, starts when on screen, pauses on hover/focus, stops once the visitor picks a step, off with reduced motion. No JS: every step open. Max 7 steps (Sanity `rule.max(7)`, the component shows the first 7 and warns at build). Step images no longer shown. Side line art reuses `service-mid-hero-bg.webp` (same art as Figma 4301:10712) | Lead: 'develop that section as per the Figma design… maximum of 7 steps' | Proposed |
+| 2026-11-10 | Steps removed in Sanity: custom-websites-migrations 06 Global & secure, 07 Integrations & analytics; ongoing-website-support 06 Full visibility in ClickUp, 07 Your dedicated pod, 09 Monthly check-ins, quarterly reviews. Saved as drafts (publish blocked for the agent) | Lead | Lead |
 
 ### Open questions
 
@@ -452,6 +454,7 @@ Without adding to your team." with "website moving." marked Gradient (published 
 - **Growth + Ongoing Support FAQs** — no `faqSections` yet, so both pages ship without a FAQ section. (2026-09-30)
 
 #### Design team
+- **Process stack (2026-11-10) values without tokens (`TODO: DS`)** — active step card `#F9F9F9`, panel gradient top `#F2F3F6`, marker/line `#B9BEC8` (built with `--color-gray`), ring track `#2A72E0` 20% (built with `--color-accent`), number outline rgba(38,40,46,.14) (built with `--color-border`). Inactive step names are 22.18px Geist Medium in Figma (Vitrum's font): built as Acumin `c-paragraph_m`, same as the open step. Autoplay time per step has no spec: 6s. Mobile has no design: one column, stack above the list. (2026-11-10)
 - ~~**Growth service name**~~ — RESOLVED 2026-09-30: "Growth (SEO/GEO + CRO)" in nav, footer and Sanity (see Global Decisions). Home Services and the Pricing card use it too (lead, 2026-09-30).
 - ~~**Hero line art**~~ — RESOLVED 2026-09-29: the lead supplied `service-mid-hero-bg.svg` (a different asset); placed behind the hero bottom + logo strip (see Decisions).
 - **Mobile / tablet** — no mobile refs; built with DS tokens, `TODO: DS mobile`. (2026-09-29)
@@ -466,6 +469,7 @@ Without adding to your team." with "website moving." marked Gradient (published 
 - **"Webflow" in Ongoing Support copy** — the subtitle ("Your Webflow site deserves ongoing attention…") and step 05 mention Webflow; Flagged for the CEO's content audit: confirm the service is Webflow-only or reword. (2026-09-30)
 
 #### Needs lead OK
+- **Process stack + autoplay** (2026-11-10)
 - **Service template structure + meta fallbacks** (2026-09-29)
 - **Breadcrumb: "Services" as text, JSON-LD Home → service** (2026-09-29)
 - **Hero line art placement + WebP export** (2026-09-29)

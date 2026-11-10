@@ -1,47 +1,41 @@
 ---
 /**
  * ServiceProcess — "Process" section of the service template.
- * Refs: `docs/refs/services-template/services-process.jpg` and
- * `services-procees-tabs.svg` (the tabs box, 1352px = the container content
- * width; 1 ref px = 1/14 rem).
+ * Figma: BenorMedia › Process Section (4301:10711). Behaviour reference
+ * (lead 2026-11-10): usevitrum.com, "From flat SVG to finished 3D asset".
+ * Sizes are Figma px through `--u` (1/19.2 rem: the 1920 frame fills the
+ * viewport, as Services / About / CTA).
  *
  * Header: shared `SectionHeader` — eyebrow "Process", `processTitle`
  * (accentTitle segments), `processDescription` (`\n` = line break).
  *
- * Steps: WAI-ARIA tabs wired by `initTabs` (`src/scripts/ui/tabs.ts`).
- *   - Tab bar: one `<button role="tab">` per step, numbered 01…NN by array
- *     order. Active = outlined square + the step name; inactive = gradient
- *     square with the white number only (the name stays in the accessible
- *     name, collapsed to 0 width). Arrow keys / Home / End via `initTabs`.
- *   - Smooth tab change (lead, 2026-09-29): the name's width, opacity and
- *     the square → name gap transition (the inner `__tab-name-text` keeps
- *     its wrapping while the box grows, so the other tabs slide), the
- *     square's gradient fill fades (`::before`), and the shown panel fades
- *     in. `--duration-hover` / `--ease-smooth`; reduced motion → instant
- *     (base.css).
- *   - Panel: step image left (SVG assets are served as the raw file, never
- *     rasterized), h3 name + description + feature pills right.
- *   - No JS (G-2 pattern): the tablist is rendered `hidden` and every panel
- *     is visible in order, each h3 prefixed with its number. The script
- *     reveals the tablist (initTabs) and adds `is-enhanced`, which hides the
- *     in-panel numbers (the tab shows them).
- *   - Mobile ≤767 (lead 2026-09-30, `docs/refs/services-images/
- *     services-template-tabs-mobile.png`): the bar shows only two steps —
- *     the active one (square + name) at the left and the next one (square,
- *     `is-next`) at the right, between thin dividers. The last step's "next"
- *     is step 01, so the sequence loops. Selecting the next step slides it
- *     from the right into the left slot while the new next fades in. The
- *     other steps are visually hidden, not removed: still focusable (arrow
- *     keys select them) and announced by screen readers. A progress line
- *     under the bar fills (step / steps). Tablet keeps the wrapped squares.
- *   - 1 step: no tab bar, just the panel. 0 steps: header only. No title and
- *     no steps: the section is not rendered.
+ * Box: two columns inside a rounded white frame.
+ *   - Left: an isometric stack, one layer per step (max 7, lead 2026-11-10),
+ *     each with a numbered marker. The active step's layer turns blue and
+ *     lifts; the others stay grey. Decorative (aria-hidden): the list says
+ *     the same thing. Art: `public/images/services/process/layer.svg` and
+ *     `layer-active.svg`, the Figma layers' own vectors (markers are HTML so
+ *     the numbers follow the step order).
+ *   - Right: a numbered list. Each step is a disclosure button (number +
+ *     name). The active step opens on a grey card with its description,
+ *     optional note and feature pills, and a progress ring around its number.
+ *   - Autoplay: the ring fills over `--c-service-process-duration`, then the
+ *     next step opens (looping). It waits until the box is on screen, pauses
+ *     while hovered or focused, and stops for good once the visitor picks a
+ *     step. No autoplay with reduced motion (the ring just shows full).
+ *   - Keys: Up / Down / Home / End move between the step buttons.
+ *   - No JS: every step is open and readable; the stack shows step 1.
+ *   - Mobile ≤767: one column, the stack above the list, smaller. No mobile
+ *     design yet. TODO: DS mobile.
+ *   - 1 step: no autoplay. 0 steps: header only. No title and no steps: the
+ *     section is not rendered.
+ *
+ * The step `image` field is no longer shown (the stack replaces it).
  */
 import Container from "../ui/Container.astro";
 import SectionHeader from "../ui/SectionHeader.astro";
 import type { ProcessStep } from "../../lib/sanity/types";
 import { linkRuns, type TitleSegment } from "../../lib/sanity/portable-text";
-import { urlFor, assetDimensions, isSvgAsset, type Source } from "../../lib/sanity/image";
 
 interface Props {
   /** Plain title (`\n` = line break). Empty = no title. */
@@ -49,55 +43,39 @@ interface Props {
   titleSegments?: readonly TitleSegment[];
   description?: string | null | undefined;
   steps: readonly ProcessStep[];
-  /** Id prefix for tabs / panels (unique per page). */
+  /** Id prefix for the step buttons / bodies (unique per page). */
   id?: string;
 }
 
 const { title, titleSegments, description, steps, id = "process-step" } = Astro.props;
 
-// Rendered image box: 464px in the ref (the illustration's own width) →
-// 33.143rem. TODO: DS
-const IMG_WIDTH = 464;
+/** The stack is drawn for at most 7 layers (lead 2026-11-10). */
+const MAX_STEPS = 7;
 
-const items = steps
-  .filter((step) => step.name?.trim())
-  .map((step, i) => {
-    const num = String(i + 1).padStart(2, "0");
-    const image = step.image?.asset ? step.image : null;
-    const assetId = image?.asset?._id ?? image?.asset?._ref;
-    const size = assetDimensions(assetId);
-    const height = size ? Math.round((IMG_WIDTH * size.height) / size.width) : undefined;
-    let img: { src: string; srcset?: string; width: number; height: number; alt: string } | null = null;
-    if (image && height) {
-      if (isSvgAsset(assetId)) {
-        img = { src: urlFor(image as Source).url(), width: IMG_WIDTH, height, alt: image.alt?.trim() ?? "" };
-      } else {
-        const base = urlFor(image as Source).auto("format").fit("max");
-        img = {
-          src: base.width(IMG_WIDTH).url(),
-          srcset: `${base.width(IMG_WIDTH).url()} 1x, ${base.width(IMG_WIDTH * 2).url()} 2x`,
-          width: IMG_WIDTH,
-          height,
-          alt: image.alt?.trim() ?? "",
-        };
-      }
-    }
-    return {
-      key: step._key,
-      num,
-      name: step.name.trim(),
-      description: step.description?.trim() || null,
-      note: linkRuns(step.note),
-      features: (step.features ?? []).map((f) => f.trim()).filter(Boolean),
-      img,
-      panelId: `${id}-${num}`,
-      tabId: `${id}-${num}-tab`,
-    };
-  });
+const named = steps.filter((step) => step.name?.trim());
+if (named.length > MAX_STEPS) {
+  console.warn(
+    `[ServiceProcess] ${named.length} steps for "${title.trim() || id}": only the first ${MAX_STEPS} are shown. Trim the list in Sanity.`,
+  );
+}
+
+const items = named.slice(0, MAX_STEPS).map((step, i) => {
+  const num = String(i + 1);
+  return {
+    key: step._key,
+    num,
+    name: step.name.trim(),
+    description: step.description?.trim() || null,
+    note: linkRuns(step.note),
+    features: (step.features ?? []).map((f) => f.trim()).filter(Boolean),
+    buttonId: `${id}-${num}`,
+    bodyId: `${id}-${num}-body`,
+  };
+});
 
 const hasTitle = title.trim().length > 0;
 const shouldRender = hasTitle || items.length > 0;
-const hasTabs = items.length > 1;
+const gradientId = `${id}-ring-gradient`;
 
 const headerOptional = {
   ...(titleSegments !== undefined && { titleSegments }),
@@ -111,82 +89,109 @@ const headerOptional = {
       {hasTitle && <SectionHeader eyebrow="Process" title={title} {...headerOptional} />}
 
       {items.length > 0 && (
-        <div class="c-service-process__box">
-          {hasTabs && (
-            <div class="c-service-process__tabs" role="tablist" aria-label="Process steps" hidden>
+        <div class="c-service-process__box" style={`--c-service-process-count: ${items.length}`}>
+          <div class="c-service-process__visual" aria-hidden="true">
+            <div class="c-service-process__stack">
               {items.map((item, i) => (
-                <button
-                  type="button"
-                  role="tab"
-                  id={item.tabId}
-                  class={["c-service-process__tab", i === 0 && "is-active"].filter(Boolean).join(" ")}
-                  aria-selected={i === 0 ? "true" : "false"}
-                  aria-controls={item.panelId}
-                  tabindex={i === 0 ? 0 : -1}
+                <div
+                  class={["c-service-process__layer", i === 0 && "is-active"].filter(Boolean).join(" ")}
+                  style={`--c-service-process-i: ${i}`}
                 >
-                  <span class="c-service-process__tab-num c-paragraph_m">{item.num}</span>{" "}
-                  <span class="c-service-process__tab-name c-paragraph_m"><span class="c-service-process__tab-name-text">{item.name}</span></span>
-                </button>
+                  <img
+                    class="c-service-process__layer-art"
+                    src="/images/services/process/layer.svg"
+                    width="300"
+                    height="180"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <img
+                    class="c-service-process__layer-art is-active-art"
+                    src="/images/services/process/layer-active.svg"
+                    width="401"
+                    height="227"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <span class="c-service-process__marker-line"></span>
+                  <span class="c-service-process__marker">{item.num}</span>
+                </div>
               ))}
             </div>
-          )}
-          {hasTabs && (
-            /* Mobile progress line (decorative; the tablist states the step). */
-            <div
-              class="c-service-process__progress"
-              aria-hidden="true"
-              style={`--c-service-process-progress: ${1 / items.length}`}
-            >
-              <span class="c-service-process__progress-fill"></span>
-            </div>
-          )}
-
-          <div class="c-service-process__panels">
-            {items.map((item) => (
-              /* role / tabindex / aria-labelledby are added by initTabs, so
-                 without JS these are plain blocks under their h3. */
-              <div
-                id={item.panelId}
-                class={["c-service-process__panel", !item.img && "is-no-media"].filter(Boolean).join(" ")}
-                data-anim="service-process-panel"
-              >
-                {item.img && (
-                  <div class="c-service-process__media">
-                    <img
-                      class="c-service-process__img"
-                      src={item.img.src}
-                      srcset={item.img.srcset}
-                      width={item.img.width}
-                      height={item.img.height}
-                      alt={item.img.alt}
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </div>
-                )}
-                <div class="c-service-process__content">
-                  <h3 class="c-service-process__step-title c-text_l">
-                    <span class="c-service-process__step-num">{item.num}</span>{" "}{item.name}
-                  </h3>
-                  {item.description && (
-                    <p class="c-service-process__step-description c-paragraph_m">{item.description}</p>
-                  )}
-                  {item.note.length > 0 && (
-                    <p class="c-service-process__step-note c-paragraph_m">
-                      {item.note.map((run) => (run.href ? <a href={run.href}>{run.text}</a> : run.text))}
-                    </p>
-                  )}
-                  {item.features.length > 0 && (
-                    <ul class="c-service-process__features">
-                      {item.features.map((feature) => (
-                        <li class="c-service-process__feature c-paragraph">{feature}</li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </div>
-            ))}
           </div>
+
+          <ol class="c-service-process__steps">
+            {items.map((item, i) => (
+              <li class={["c-service-process__step", i === 0 && "is-active"].filter(Boolean).join(" ")}>
+                <button
+                  type="button"
+                  id={item.buttonId}
+                  class="c-service-process__step-head"
+                  aria-expanded={i === 0 ? "true" : "false"}
+                  aria-controls={item.bodyId}
+                >
+                  <span class="c-service-process__num c-paragraph_s">
+                    <svg
+                      class="c-service-process__ring"
+                      width="47"
+                      height="47"
+                      viewBox="0 0 46.8276 46.8276"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        class="c-service-process__ring-track"
+                        d="M23.4138 45.5937C35.6643 45.5937 45.5953 35.6627 45.5953 23.4122C45.5953 11.1617 35.6643 1.23069 23.4138 1.23069C11.1634 1.23069 1.23236 11.1617 1.23236 23.4122C1.23236 35.6627 11.1634 45.5937 23.4138 45.5937Z"
+                        stroke-width="1.54038"
+                      />
+                      <path
+                        class="c-service-process__ring-progress"
+                        d="M23.4138 45.5937C35.6643 45.5937 45.5953 35.6627 45.5953 23.4122C45.5953 11.1617 35.6643 1.23069 23.4138 1.23069C11.1634 1.23069 1.23236 11.1617 1.23236 23.4122C1.23236 35.6627 11.1634 45.5937 23.4138 45.5937Z"
+                        stroke={`url(#${gradientId})`}
+                        stroke-width="1.54038"
+                        stroke-linecap="round"
+                        pathLength="1"
+                      />
+                      <defs>
+                        <linearGradient id={gradientId} x1="1.23236" y1="6.96091" x2="50.7999" y2="21.197" gradientUnits="userSpaceOnUse">
+                          <stop class="c-service-process__ring-stop-start" />
+                          <stop class="c-service-process__ring-stop-end" offset="1" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                    <span class="c-service-process__num-text">{item.num}</span>
+                  </span>
+                  <span class="c-service-process__step-name c-paragraph_m">{item.name}</span>
+                </button>
+
+                <div id={item.bodyId} class="c-service-process__step-body" role="region" aria-labelledby={item.buttonId}>
+                  <div class="c-service-process__step-body-inner">
+                    {(item.description || item.note.length > 0) && (
+                      <div class="c-service-process__step-text">
+                        {item.description && (
+                          <p class="c-service-process__step-description c-paragraph">{item.description}</p>
+                        )}
+                        {item.note.length > 0 && (
+                          <p class="c-service-process__step-note c-paragraph">
+                            {item.note.map((run) => (run.href ? <a href={run.href}>{run.text}</a> : run.text))}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                    {item.features.length > 0 && (
+                      <ul class="c-service-process__features">
+                        {item.features.map((feature) => (
+                          <li class="c-service-process__feature">{feature}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ol>
         </div>
       )}
     </Container>
@@ -194,57 +199,141 @@ const headerOptional = {
 )}
 
 <script>
-  import { initTabs } from "../../scripts/ui/tabs";
-
   document.querySelectorAll<HTMLElement>("[data-service-process]").forEach((section) => {
-    const tabs = section.querySelector<HTMLElement>(".c-service-process__tabs");
-    if (!tabs) return;
-    const progress = section.querySelector<HTMLElement>(".c-service-process__progress");
-    const allTabs = Array.from(tabs.querySelectorAll<HTMLElement>('[role="tab"]'));
-    const mobile = window.matchMedia("(max-width: 767px)");
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-    // Same timing as `--duration-hover` / `--ease-smooth` (tokens.css).
-    const MOTION: KeyframeAnimationOptions = { duration: 800, easing: "cubic-bezier(0.22, 1, 0.36, 1)" };
+    const box = section.querySelector<HTMLElement>(".c-service-process__box");
+    if (!box) return;
+    const steps = Array.from(box.querySelectorAll<HTMLElement>(".c-service-process__step"));
+    const layers = Array.from(box.querySelectorAll<HTMLElement>(".c-service-process__layer"));
+    const buttons = steps.map((step) => step.querySelector<HTMLButtonElement>(".c-service-process__step-head"));
+    const bodies = steps.map((step) => step.querySelector<HTMLElement>(".c-service-process__step-body"));
+    if (steps.length === 0) return;
 
-    // Each tab's position right before a selection (capture phase, so this
-    // runs before initTabs' own listeners change the layout).
-    let before = new Map<HTMLElement, number>();
-    const record = (): void => {
-      before = new Map(allTabs.map((tab) => [tab, tab.getBoundingClientRect().left]));
+    let active = 0;
+    const select = (index: number): void => {
+      active = (index + steps.length) % steps.length;
+      steps.forEach((step, i) => {
+        const on = i === active;
+        step.classList.toggle("is-active", on);
+        layers[i]?.classList.toggle("is-active", on);
+        buttons[i]?.setAttribute("aria-expanded", String(on));
+        bodies[i]?.toggleAttribute("inert", !on);
+      });
     };
-    tabs.addEventListener("click", record, true);
-    tabs.addEventListener("keydown", record, true);
-
-    const place = (tab: HTMLElement, initial: boolean): void => {
-      const index = allTabs.indexOf(tab);
-      const next = allTabs.length > 1 ? allTabs[(index + 1) % allTabs.length] : undefined;
-      const wasNext = tab.classList.contains("is-next");
-      allTabs.forEach((t) => t.classList.toggle("is-next", t === next));
-      progress?.style.setProperty("--c-service-process-progress", String((index + 1) / allTabs.length));
-      tabs.scrollLeft = 0;
-
-      // Slide: the former next step travels from its old spot to the left
-      // slot; the new next step fades in from the right.
-      if (initial || !mobile.matches || reduced.matches || !wasNext) return;
-      const from = before.get(tab);
-      if (from !== undefined) {
-        const dx = from - tab.getBoundingClientRect().left;
-        if (dx) tab.animate([{ transform: `translateX(${dx}px)` }, { transform: "none" }], MOTION);
-      }
-      next?.animate([{ opacity: 0, transform: "translateX(1.5rem)" }, { opacity: 1, transform: "none" }], MOTION);
-    };
-
-    initTabs(tabs, { onSelect: (tab, _panel, initial) => place(tab, initial) });
+    select(0);
     section.classList.add("is-enhanced");
+
+    // Autoplay: the active ring's CSS animation sets the pace; its end opens
+    // the next step.
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let autoplay = steps.length > 1 && !reduced;
+    let visible = false;
+    let hovered = false;
+    let focused = false;
+    const sync = (): void => {
+      section.classList.toggle("is-autoplay", autoplay);
+      section.classList.toggle("is-paused", !visible || hovered || focused);
+    };
+    const stop = (): void => {
+      autoplay = false;
+      sync();
+    };
+    sync();
+
+    if (autoplay) {
+      box.addEventListener("animationend", (event) => {
+        if (!autoplay) return;
+        const target = event.target as Element | null;
+        if (!target?.classList.contains("c-service-process__ring-progress")) return;
+        select(active + 1);
+      });
+      new IntersectionObserver(
+        ([entry]) => {
+          visible = entry?.isIntersecting ?? false;
+          sync();
+        },
+        { threshold: 0.35 },
+      ).observe(box);
+      box.addEventListener("pointerenter", (event) => {
+        if (event.pointerType === "mouse") hovered = true;
+        sync();
+      });
+      box.addEventListener("pointerleave", () => {
+        hovered = false;
+        sync();
+      });
+      box.addEventListener("focusin", () => {
+        focused = true;
+        sync();
+      });
+      box.addEventListener("focusout", (event) => {
+        if (!box.contains(event.relatedTarget as Node | null)) focused = false;
+        sync();
+      });
+    }
+
+    buttons.forEach((button, i) => {
+      button?.addEventListener("click", () => {
+        stop();
+        select(i);
+      });
+      button?.addEventListener("keydown", (event) => {
+        const last = buttons.length - 1;
+        const to =
+          event.key === "ArrowDown" ? (i + 1) % buttons.length
+          : event.key === "ArrowUp" ? (i - 1 + buttons.length) % buttons.length
+          : event.key === "Home" ? 0
+          : event.key === "End" ? last
+          : -1;
+        if (to < 0) return;
+        event.preventDefault();
+        buttons[to]?.focus();
+      });
+    });
   });
 </script>
 
 <style>
   .c-service-process {
+    /* 1 Figma px (1920 frame). */
+    --u: calc(1rem / 19.2);
+    /* Stack px: same scale as the frame on desktop. */
+    --s: var(--u);
+    /* Time each step stays open while autoplaying. TODO: DS (no spec;
+       lead may tune). */
+    --c-service-process-duration: 6s;
+    /* Figma #F9F9F9 (active step) / #F2F3F6 (visual panel top): no tokens
+       yet. TODO: DS */
+    --c-service-process-surface: #F9F9F9;
+    --c-service-process-panel: #F2F3F6;
+
+    position: relative;
+    overflow: clip;
     background: var(--color-white);
   }
 
+  /* Line art behind the box sides (Figma 4301:10712, 1920 × 747 at 62%;
+     same art as the service hero, `service-mid-hero-bg.webp`, which already
+     carries that opacity). */
+  .c-service-process::before {
+    content: "";
+    position: absolute;
+    top: calc(460 * var(--u));
+    left: 50%;
+    width: calc(1920 * var(--u));
+    height: calc(747 * var(--u));
+    transform: translateX(-50%);
+    background-image: url("/images/services/service-mid-hero-bg.webp");
+    background-image: image-set(
+      url("/images/services/service-mid-hero-bg.webp") 1x,
+      url("/images/services/service-mid-hero-bg@2x.webp") 2x
+    );
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+    pointer-events: none;
+  }
+
   .c-service-process :global(.c-container) {
+    position: relative;
     /* Problem border → eyebrow ≈ 110px, box → next section ≈ 90px in the
        ref. TODO: DS section spacing. */
     padding-top: 7.857rem;
@@ -256,42 +345,183 @@ const headerOptional = {
   .c-service-process :global(.c-section-header__description) {
     max-width: 48%;
   }
-  @media (max-width: 767px) {
-    .c-service-process :global(.c-section-header__description) {
-      max-width: 100%;
-    }
-  }
 
-  /* --- Box (services-procees-tabs.svg: 1352 × 622, 1px border, 8px) ------ */
+  /* --- Box (Figma 4301:11002) --------------------------------------------- */
   .c-service-process__box {
-    margin-top: 4.786rem; /* description → box ≈ 67px — TODO: DS */
-    padding: 1.5rem; /* 21px — TODO: DS */
+    display: flex;
+    align-items: stretch;
+    max-width: calc(1478 * var(--u));
+    margin: calc(60 * var(--u)) auto 0;
+    padding: calc(9.858 * var(--u));
     border: var(--border-default);
-    border-radius: 8px; /* TODO: DS */
+    border-radius: 30px;
     background: var(--color-white);
   }
 
-  /* --- Tab bar (1310 × 114, 1px border, 8px radius, 25px inset) ---------- */
-  .c-service-process__tabs {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 1.786rem; /* 25px — TODO: DS */
-    border: var(--border-default);
-    border-radius: 8px;
-  }
-  /* Author `display` would override `hidden` (removed by initTabs). */
-  .c-service-process__tabs[hidden] {
-    display: none;
+  /* --- Visual panel + stack ----------------------------------------------- */
+  .c-service-process__visual {
+    flex: 1 1 0;
+    min-width: 0;
+    display: grid;
+    place-items: center;
+    padding: calc(49.292 * var(--u)) calc(39.434 * var(--u));
+    border-radius: 20px;
+    background:
+      radial-gradient(90% 70% at 50% 0%, var(--color-white) 0%, transparent 70%),
+      linear-gradient(180deg, var(--c-service-process-panel) 0%, var(--c-service-process-surface) 100%);
+    /* Figma: inset 0 0 0 1.232px rgba(38,40,46,.08), inset 0 1.232px 0 #fff. */
+    box-shadow:
+      inset 0 0 0 1px rgba(38, 40, 46, 0.08),
+      inset 0 1px 0 var(--color-white);
+    overflow: hidden;
   }
 
-  .c-service-process__tab {
+  /* 373 wide; layers every 87.54px, each plate 178.2 tall (Figma stack). */
+  .c-service-process__stack {
     position: relative;
-    display: inline-flex;
+    width: calc(373 * var(--s));
+    height: calc(((var(--c-service-process-count) - 1) * 87.54 + 178.2) * var(--s));
+  }
+
+  /* One layer: its box starts at the plate's top corner. Upper layers sit in
+     front (as in Figma). */
+  .c-service-process__layer {
+    position: absolute;
+    top: calc(var(--c-service-process-i) * 87.54 * var(--s));
+    left: 0;
+    width: 100%;
+    height: calc(178.2 * var(--s));
+    z-index: calc(var(--c-service-process-count) - var(--c-service-process-i));
+    transition: transform var(--duration-hover) var(--ease-smooth);
+  }
+  .c-service-process__layer.is-active {
+    transform: translateY(calc(-6 * var(--s)));
+  }
+
+  .c-service-process__layer-art {
+    position: absolute;
+    top: calc(-0.66 * var(--s));
+    left: calc(73.31 * var(--s));
+    width: calc(300 * var(--s));
+    max-width: none;
+    height: auto;
+    transition: opacity var(--duration-hover) var(--ease-smooth);
+  }
+  /* Active art (401 × 227, with its glow): plate corner at (75.04, 113.4)
+     in the file, matched to the grey plate's corner. */
+  .c-service-process__layer-art.is-active-art {
+    top: calc(-27.49 * var(--s));
+    left: calc(-0.59 * var(--s));
+    width: calc(401 * var(--s));
+    opacity: 0;
+  }
+  .c-service-process__layer.is-active .c-service-process__layer-art.is-active-art {
+    opacity: 1;
+  }
+
+  /* Marker: 25.2px circle + 49.25px line to the plate's left corner. */
+  .c-service-process__marker,
+  .c-service-process__marker-line {
+    position: absolute;
+    transition:
+      background-color var(--duration-hover) var(--ease-smooth),
+      color var(--duration-hover) var(--ease-smooth),
+      border-color var(--duration-hover) var(--ease-smooth),
+      opacity var(--duration-hover) var(--ease-smooth);
+  }
+  .c-service-process__marker {
+    top: calc(73.31 * var(--s));
+    left: 0;
+    display: grid;
+    place-items: center;
+    width: calc(25.2 * var(--s));
+    height: calc(25.2 * var(--s));
+    border: 1px solid var(--color-gray); /* Figma #B9BEC8 — TODO: DS */
+    border-radius: 50%;
+    background: var(--color-white);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: calc(13.745 * var(--s));
+    line-height: 1;
+    /* Acumin sits high in its box: nudge to the optical centre. */
+    padding-top: calc(1.5 * var(--s));
+  }
+  .c-service-process__marker {
+    isolation: isolate;
+  }
+  .c-service-process__marker::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: -1px;
+    border-radius: inherit;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: opacity var(--duration-hover) var(--ease-smooth);
+  }
+  .c-service-process__marker-line {
+    top: calc(85.34 * var(--s));
+    left: calc(25.18 * var(--s));
+    width: calc(49.25 * var(--s));
+    height: 1px;
+    background: var(--color-gray); /* Figma #B9BEC8 — TODO: DS */
+  }
+  .c-service-process__marker-line::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--gradient-primary);
+    opacity: 0;
+    transition: opacity var(--duration-hover) var(--ease-smooth);
+  }
+  .c-service-process__layer.is-active .c-service-process__marker {
+    border-color: transparent;
+    color: var(--color-white);
+  }
+  .c-service-process__layer.is-active .c-service-process__marker::before,
+  .c-service-process__layer.is-active .c-service-process__marker-line::after {
+    opacity: 1;
+  }
+
+  /* --- Step list ---------------------------------------------------------- */
+  .c-service-process__steps {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 0;
+    padding: calc(29.575 * var(--u)) calc(49.292 * var(--u));
+    list-style: none;
+  }
+
+  .c-service-process__step {
+    position: relative;
+    padding: calc(17.252 * var(--u)) calc(24.646 * var(--u));
+    border-radius: 22px;
+    background-color: transparent;
+    transition:
+      background-color var(--duration-hover) var(--ease-smooth),
+      padding var(--duration-hover) var(--ease-smooth);
+  }
+  .c-service-process__step.is-active {
+    padding: calc(30 * var(--u));
+    background-color: var(--c-service-process-surface);
+  }
+  /* No JS: every step is open, on its card. */
+  .c-service-process:not(.is-enhanced) .c-service-process__step {
+    padding: calc(30 * var(--u));
+    background-color: var(--c-service-process-surface);
+  }
+  .c-service-process:not(.is-enhanced) .c-service-process__step + .c-service-process__step {
+    margin-top: calc(10 * var(--u));
+  }
+
+  .c-service-process__step-head {
+    display: flex;
     align-items: center;
-    gap: 0; /* inactive: square only */
-    transition: gap var(--duration-hover) var(--ease-smooth);
+    gap: calc(20 * var(--u));
+    width: 100%;
     margin: 0;
     padding: 0;
     border: 0;
@@ -301,294 +531,243 @@ const headerOptional = {
     text-align: left;
     cursor: pointer;
   }
-  .c-service-process__tab:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 3px;
-    border-radius: 4px;
-  }
-
-  .c-service-process__tab.is-active {
-    gap: 1.714rem; /* square → name 24px — TODO: DS */
-  }
-
-  /* 64px square (62px + gradient border for the active one). TODO: DS
-     Every square is the active look (white fill, 1px gradient border); the
-     inactive gradient fill is a `::before` layer that fades out on select. */
-  .c-service-process__tab-num {
-    position: relative;
-    isolation: isolate;
-    flex: 0 0 auto;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 4.571rem;
-    height: 4.571rem;
-    border: 1px solid transparent;
-    border-radius: 4px; /* TODO: DS */
-    background:
-      linear-gradient(var(--color-white), var(--color-white)) padding-box,
-      var(--gradient-primary) border-box;
-    color: var(--color-white);
-    transition:
-      transform var(--duration-hover) var(--ease-smooth),
-      color var(--duration-hover) var(--ease-smooth);
-  }
-  .c-service-process__tab-num::before {
+  /* The whole card is the hit area; the open body sits above it so its text
+     and links stay usable. */
+  .c-service-process__step-head::before {
     content: "";
     position: absolute;
-    inset: -1px;
-    z-index: -1;
+    inset: 0;
+    border-radius: inherit;
+  }
+  .c-service-process__step-head:focus-visible {
+    outline: none;
+  }
+  .c-service-process__step-head:focus-visible::before {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  .c-service-process__step.is-active .c-service-process__step-head {
+    cursor: default;
+  }
+
+  /* Number: 34.5px circle; ring 46.83px around it (Figma 4301:11277/11279). */
+  .c-service-process__num {
+    position: relative;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: calc(34.505 * var(--u));
+    height: calc(34.505 * var(--u));
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px var(--color-border); /* Figma rgba(38,40,46,.14) — TODO: DS */
+    color: var(--color-text);
+    line-height: 1;
+    transition:
+      color var(--duration-hover) var(--ease-smooth),
+      box-shadow var(--duration-hover) var(--ease-smooth);
+  }
+  .c-service-process__num::before {
+    content: "";
+    position: absolute;
+    inset: 0;
     border-radius: inherit;
     background: var(--gradient-primary);
-    opacity: 1;
+    opacity: 0;
     transition: opacity var(--duration-hover) var(--ease-smooth);
   }
-  .c-service-process__tab:not(.is-active):hover .c-service-process__tab-num {
-    transform: translateY(-7%); /* same lift as the buttons */
+  .c-service-process__num-text {
+    position: relative;
+    padding-top: 0.1em; /* Acumin optical centre */
   }
-
-  /* Active: 1px gradient outline + blue number (the fill fades out). */
-  .c-service-process__tab.is-active .c-service-process__tab-num {
-    color: var(--color-blue);
+  .c-service-process__step:not(.is-active) .c-service-process__step-head:hover .c-service-process__num {
+    box-shadow: 0 0 0 1px var(--color-gray);
   }
-  .c-service-process__tab.is-active .c-service-process__tab-num::before {
-    opacity: 0;
+  .c-service-process__step.is-active .c-service-process__num {
+    box-shadow: 0 0 0 1px transparent;
+    color: var(--color-white);
   }
-
-  /* Name: collapsed (0 width, transparent) on inactive tabs, still in the
-     tab's accessible name; grows and fades in on the active tab. The inner
-     text keeps its own width so it doesn't re-wrap while the box grows. */
-  .c-service-process__tab-name {
-    display: inline-block;
-    max-width: 0;
-    overflow: hidden;
-    color: var(--color-heading);
-    opacity: 0;
-    transition:
-      max-width var(--duration-hover) var(--ease-smooth),
-      opacity var(--duration-hover) var(--ease-smooth);
-  }
-  .c-service-process__tab-name-text {
-    display: block;
-    width: max-content;
-    max-width: 8.571rem; /* wraps "Website / strategy plan" as in the ref — TODO: DS */
-  }
-  .c-service-process__tab.is-active .c-service-process__tab-name {
-    max-width: 8.571rem;
+  .c-service-process__step.is-active .c-service-process__num::before {
     opacity: 1;
   }
 
-  /* --- Panels ------------------------------------------------------------- */
-  .c-service-process__panels {
-    display: flex;
-    flex-direction: column;
+  .c-service-process__ring {
+    position: absolute;
+    top: calc(-6.16 * var(--u));
+    left: calc(-6.16 * var(--u));
+    width: calc(46.828 * var(--u));
+    max-width: none; /* the reset caps svg at its parent's 34.5px */
+    height: calc(46.828 * var(--u));
+    /* The path starts at the bottom: flip so the fill runs clockwise from
+       the top. */
+    transform: scaleY(-1);
+    opacity: 0;
+    transition: opacity var(--duration-hover) var(--ease-smooth);
+    pointer-events: none;
+  }
+  .c-service-process__step.is-active .c-service-process__ring {
+    opacity: 1;
+  }
+  /* Figma #2A72E0 at 20%; closest token is the accent. TODO: DS */
+  .c-service-process__ring-track {
+    stroke: color-mix(in srgb, var(--color-accent) 20%, transparent);
+  }
+  .c-service-process__ring-stop-start {
+    stop-color: var(--color-blue);
+  }
+  .c-service-process__ring-stop-end {
+    stop-color: var(--color-blue-light);
+  }
+  .c-service-process__ring-progress {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+  .c-service-process.is-autoplay .c-service-process__step.is-active .c-service-process__ring-progress {
+    animation: c-service-process-ring var(--c-service-process-duration) linear both;
+  }
+  .c-service-process.is-autoplay.is-paused .c-service-process__step.is-active .c-service-process__ring-progress {
+    animation-play-state: paused;
+  }
+  @keyframes c-service-process-ring {
+    from { stroke-dashoffset: 1; }
+    to   { stroke-dashoffset: 0; }
   }
 
-  .c-service-process__panel {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: center;
-    column-gap: 3rem; /* TODO: DS */
-    padding: 1.5rem 0 0.75rem; /* image 417px centered under the bar — TODO: DS */
-  }
-  /* Without JS every panel shows: separate them. */
-  .c-service-process__panel + .c-service-process__panel {
-    border-top: var(--border-default);
-  }
-  .c-service-process__panel[hidden] {
-    display: none;
-  }
-  /* With tabs: the panel that becomes visible fades in (the animation
-     restarts each time `hidden` is removed). */
-  .c-service-process.is-enhanced .c-service-process__panel:not([hidden]) {
-    animation: c-service-process-panel-in var(--duration-hover) var(--ease-smooth);
-  }
-  @keyframes c-service-process-panel-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
-  .c-service-process__panel:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 0.5rem;
-  }
-  .c-service-process__panel.is-no-media {
-    grid-template-columns: 1fr;
-    padding: 3rem 2rem;
-  }
-
-  .c-service-process__media {
-    display: flex;
-    justify-content: center;
-  }
-
-  .c-service-process__img {
-    display: block;
-    width: 33.143rem; /* 464px — TODO: DS */
-    max-width: 100%;
-    height: auto;
-  }
-
-  .c-service-process__content {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    max-width: 37.5rem; /* text column ≈ 525px — TODO: DS */
-  }
-
-  .c-service-process__step-title {
-    margin: 0;
+  /* Figma: inactive names are 22.18px, the open one 25px (Paragraph M).
+     One size for both (no 22px token). TODO: DS */
+  .c-service-process__step-name {
     color: var(--color-black-secondary);
   }
-  /* Number only without JS (the tabs show it once enhanced). */
-  .c-service-process__step-num {
-    color: var(--color-blue);
+
+  /* Body: opens by growing its grid row (0fr → 1fr). */
+  .c-service-process__step-body {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-rows: 1fr;
+    transition:
+      grid-template-rows var(--duration-hover) var(--ease-smooth),
+      opacity var(--duration-hover) var(--ease-smooth);
   }
-  .c-service-process.is-enhanced .c-service-process__step-num {
-    display: none;
+  .c-service-process.is-enhanced .c-service-process__step:not(.is-active) .c-service-process__step-body {
+    grid-template-rows: 0fr;
+    opacity: 0;
+  }
+  .c-service-process__step-body-inner {
+    min-height: 0;
+    overflow: hidden;
   }
 
-  .c-service-process__step-description {
-    margin: 0.857rem 0 0; /* ≈12px — TODO: DS */
-    color: var(--color-text);
+  /* Text under the name (indented past the number). */
+  .c-service-process__step-text {
+    padding-left: calc((34.505 + 20) * var(--u));
+    max-width: calc((34.505 + 20 + 522.89) * var(--u));
   }
-
-  /* Optional cross-link note under the description (same spacing). */
+  .c-service-process__step-description,
   .c-service-process__step-note {
-    margin: 0.857rem 0 0; /* ≈12px — TODO: DS */
+    margin: calc(4.929 * var(--u)) 0 0;
     color: var(--color-text);
-
-    & a {
-      color: var(--color-accent);
-      text-decoration: underline;
-      text-underline-offset: 0.15em;
-    }
+  }
+  .c-service-process__step-note a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
   }
 
-  /* Feature pills: sentence case, gray outline (ref). The shared `Tag` is
-     uppercase + letter-spaced, so these are scoped. TODO: DS pill spec /
-     sentence-case Tag variant (@ui). */
+  /* Pills (Figma Text XS, 35px tall, 16px sides, 8px apart). */
   .c-service-process__features {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.571rem; /* 8px — TODO: DS */
-    margin: 2.357rem 0 0; /* ≈33px — TODO: DS */
+    gap: calc(8 * var(--u));
+    margin: calc(20 * var(--u)) 0 0;
     padding: 0;
     list-style: none;
   }
   .c-service-process__feature {
-    padding: 0.55em 1.1em;
-    border: var(--border-default);
+    padding: 0.417em 1.067em;
+    border: var(--border-default); /* Figma 0.5px #C9CEDA */
     border-radius: 3px;
+    background: var(--color-white);
     color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: var(--fs-text-xs);
+    line-height: 1.5;
     white-space: nowrap;
   }
 
-  /* TODO: DS mobile — no ref. */
-  /* ≤991 (QA S1): 9 squares + the active name don't fit the bar below the
-     desktop layout (≈713px needed at the 12px root vs ≈505px at 768), so
-     the bar shows squares only and wraps; the step name is the panel h3. */
+  /* --- Tablet ------------------------------------------------------------- */
   @media (max-width: 991px) {
-    .c-service-process__tabs {
-      flex-wrap: wrap;
-      justify-content: flex-start;
-      gap: 1rem;
+    .c-service-process__steps {
+      padding: 1rem 0.5rem 1rem 1.5rem;
     }
-    /* Squares only: the active name stays collapsed too. */
-    .c-service-process__tab.is-active {
-      gap: 0;
-    }
-    .c-service-process__tab.is-active .c-service-process__tab-name {
-      max-width: 0;
-      opacity: 0;
+    .c-service-process__feature {
+      white-space: normal;
     }
   }
 
-  /* Progress line: mobile only, once the tabs work. */
-  .c-service-process__progress {
-    display: none;
-  }
-
+  /* --- Mobile (no design yet). TODO: DS mobile ---------------------------- */
   @media (max-width: 767px) {
+    .c-service-process {
+      --s: 0.07rem;
+    }
+    .c-service-process::before {
+      display: none;
+    }
     .c-service-process :global(.c-container) {
       padding-top: 5rem;
       padding-bottom: 5rem;
     }
-
-    /* Active + next only (services-template-tabs-mobile.png). Sizes
-       measured on the ref — TODO: DS mobile. */
-    .c-service-process__tabs.c-service-process__tabs {
-      position: relative;
-      flex-wrap: nowrap;
-      /* Active left, next right (lead visual QA 2026-09-30). */
-      justify-content: space-between;
-      gap: 0;
-      padding: 1.5rem 0;
-      overflow: hidden;
-    }
-    .c-service-process__tab {
-      flex: 0 0 auto;
-      padding: 0 1.5rem;
-    }
-    .c-service-process__tab.is-next {
-      border-left: var(--border-default);
-      border-right: var(--border-default);
-    }
-    /* Every other step: visually hidden (still focusable / announced). */
-    .c-service-process.is-enhanced .c-service-process__tab:not(.is-active):not(.is-next) {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      margin: -1px;
-      padding: 0;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-    .c-service-process__tab.c-service-process__tab.is-active {
-      gap: 1.5rem;
-    }
-    .c-service-process__tab-name-text {
-      max-width: 12rem;
-    }
-    .c-service-process__tab.c-service-process__tab.is-active .c-service-process__tab-name {
-      max-width: 12rem;
-      opacity: 1;
-    }
-
-    .c-service-process.is-enhanced .c-service-process__progress {
-      display: block;
-      position: relative;
-      height: 3px;
-      margin: -4px 1px 0;
-      overflow: hidden;
-      border-radius: 0 0 8px 8px;
-    }
-    .c-service-process__progress-fill {
-      display: block;
-      height: 100%;
-      width: calc(var(--c-service-process-progress, 0) * 100%);
-      background: var(--color-gray);
-      transition: width var(--duration-hover) var(--ease-smooth);
+    .c-service-process :global(.c-section-header__description) {
+      max-width: 100%;
     }
     .c-service-process__box {
+      flex-direction: column;
       margin-top: 3rem;
-      padding: 1rem;
+      padding: 0.6rem;
+      border-radius: 20px;
     }
-    .c-service-process__tabs {
-      padding: 1.5rem;
+    .c-service-process__visual,
+    .c-service-process__steps {
+      flex: none;
     }
-    .c-service-process__tab-num {
-      width: 5rem;
-      height: 5rem;
+    .c-service-process__visual {
+      padding: 2.5rem 1rem;
+      border-radius: 14px;
     }
-    .c-service-process__panel {
-      grid-template-columns: 1fr;
-      row-gap: 2rem;
-      padding: 2rem 1rem 1rem;
+    .c-service-process__steps {
+      padding: 1rem 0 0.4rem;
     }
-    .c-service-process__feature {
-      white-space: normal;
+    .c-service-process__step {
+      padding: 1.2rem 1.4rem;
+      border-radius: 14px;
+    }
+    .c-service-process__step.is-active,
+    .c-service-process:not(.is-enhanced) .c-service-process__step {
+      padding: 1.8rem 1.4rem;
+    }
+    .c-service-process__step-head {
+      gap: 1.4rem;
+    }
+    .c-service-process__num {
+      width: 3.4rem;
+      height: 3.4rem;
+    }
+    .c-service-process__ring {
+      top: -0.6rem;
+      left: -0.6rem;
+      width: 4.6rem;
+      height: 4.6rem;
+    }
+    .c-service-process__step-text {
+      padding-left: 0;
+      max-width: none;
+    }
+    .c-service-process__step-description,
+    .c-service-process__step-note {
+      margin-top: 1rem;
+    }
+    .c-service-process__features {
+      gap: 0.6rem;
+      margin-top: 1.6rem;
     }
   }
 </style>
