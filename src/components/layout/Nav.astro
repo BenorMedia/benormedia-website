@@ -95,11 +95,11 @@ const serviceGroups: Array<{
 ];
 
 // `hidden`: kept in the markup but not shown (desktop bar + mobile menu).
-// Testimonials shown again, right of Our Work (lead 2026-11-05; was hidden
-// 2026-09-30). Blog moved into Resources (lead 2026-10-28).
+// Testimonials hidden again for now (lead 2026-11-10; was shown 2026-11-05,
+// hidden 2026-09-30). Blog moved into Resources (lead 2026-10-28).
 const primaryLinks: Array<{ label: string; href: string; hidden?: boolean }> = [
   { label: "Our Work", href: "/work" },
-  { label: "Testimonials", href: "/testimonials" },
+  { label: "Testimonials", href: "/testimonials", hidden: true },
   { label: "Pricing", href: "/pricing" },
 ];
 
