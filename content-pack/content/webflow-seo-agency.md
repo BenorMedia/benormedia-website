@@ -19,7 +19,7 @@ reviewEvery: 30
 breadcrumb:
   - name: Home
     url: /
-  - name: Growth (SEO/GEO + CRO)
+  - name: Growth (SEO + CRO)
     url: /growth
   - name: Webflow SEO & AEO
     url: /webflow-seo-agency

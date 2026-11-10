@@ -266,6 +266,8 @@ interface Card {
   body: string;
   /** Service page; none = "Learn more" opens the contact modal. */
   href?: string;
+  /** Link text naming the service, in place of "Learn more" (lead 2026-11-10). */
+  more?: string;
   /** About: an open content question, printed under the body (draft only). */
   marker?: string | undefined;
 }
@@ -284,9 +286,10 @@ const HOME_CARDS: Card[] = [
   },
   {
     key: "growth",
-    title: "Website growth\n(SEO/GEO + CRO).",
+    title: "Website growth\n(SEO + CRO).",
     body: "Drive revenue to your website through SEO, AEO, content strategy, and ongoing CRO improvements.",
     href: "/growth",
+    more: "SEO + CRO services",
   },
   {
     key: "rebrand",
@@ -370,8 +373,8 @@ const header = isAbout
             {DRAFT && card.marker && <mark class="c-about-marker c-paragraph_s">{card.marker}</mark>}
             {!isAbout && <div class="c-services__more-row">
               {card.href ? (
-                <a class="c-services__more" href={card.href} aria-label={`Learn more about ${card.title.replace("\n", " ")}`}>
-                  Learn more
+                <a class="c-services__more" href={card.href} aria-label={card.more ? undefined : `Learn more about ${card.title.replace("\n", " ")}`}>
+                  {card.more ?? "Learn more"}
                   <span class="c-services__arrow" set:html={ARROW_RIGHT} />
                 </a>
               ) : (

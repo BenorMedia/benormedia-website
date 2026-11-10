@@ -13,7 +13,7 @@ Status: DRAFT v2, written 9 Oct 2026 for BenorMedia (v1 drafted, then revised af
 | H1 | `AEO and GEO for B2B SaaS: get named in the answers your buyers read.` |
 | Primary keyword | aeo agency |
 | Secondary keywords | geo agency, generative engine optimization services, generative engine optimization agency, answer engine optimization services, answer engine optimization agency, ai seo agency, aeo services |
-| Breadcrumb | Home › Growth (SEO/GEO + CRO) › AEO & GEO Agency |
+| Breadcrumb | Home › Growth (SEO + CRO) › AEO & GEO Agency |
 | JSON-LD | `Service`, `FAQPage`, `BreadcrumbList` |
 | Service markup | `name`: "AEO and GEO for B2B SaaS" · `serviceType`: "Answer engine optimization" · `alternateName`: ["Generative engine optimization", "AI search optimization"] · `provider`: shared Organization `@id` · `description`: the meta description · `audience`: `{"@type": "BusinessAudience", "audienceType": "B2B SaaS companies"}` · no `offers` |
 
@@ -54,7 +54,7 @@ Status: DRAFT v2, written 9 Oct 2026 for BenorMedia (v1 drafted, then revised af
   - **Answer-shaped pages.** Pages that give direct answers, with the numbers and the trade-offs in plain sentences AI models can quote.
   - **Third-party presence.** Brand mentions on the lists, review sites and communities AI systems cite when your own site isn't enough.
   - **Entity and knowledge graph optimization.** The same company name, description and category on your site, LinkedIn, Crunchbase, G2 and Wikidata where you qualify, tied together with Organization schema and sameAs links.
-- Close: If your site runs on Webflow, our [Webflow SEO and AEO](/webflow-seo-agency) page covers the platform settings that matter.
+- Close: If your site runs on Webflow, our [Webflow SEO services](/webflow-seo-agency) page covers the platform settings that matter.
 
 ### 5. How we run an AEO and GEO program.
 > Component: the "Every page moved by hand" section (H2, intro, list). Six items; if the component caps at five, merge items 5 and 6.
@@ -167,7 +167,7 @@ A: Yes, if someone owns it. You'll need prompt tracking, a writer who can interv
 
 ### 14. Related pages
 - [Webflow SEO and AEO](/webflow-seo-agency)
-- [Growth (SEO/GEO + CRO)](/growth)
+- [Growth (SEO + CRO)](/growth)
 - [B2B SaaS web design](/b2b-saas-web-design)
 
 ### 15. Contact form and testimonial

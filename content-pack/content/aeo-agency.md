@@ -19,7 +19,7 @@ reviewEvery: 90
 breadcrumb:
   - name: Home
     url: /
-  - name: Growth (SEO/GEO + CRO)
+  - name: Growth (SEO + CRO)
     url: /growth
   - name: AEO & GEO Agency
     url: /aeo-agency
@@ -194,7 +194,7 @@ Answer engine optimization (AEO) and generative engine optimization (GEO) are tw
 - **Third-party presence.** Brand mentions on the lists, review sites and communities AI systems cite when your own site isn't enough.
 - **Entity and knowledge graph optimization.** The same company name, description and category on your site, LinkedIn, Crunchbase, G2 and Wikidata where you qualify, tied together with Organization schema and sameAs links.
 
-If your site runs on Webflow, our [Webflow SEO and AEO](page:webflow-seo-agency) page covers the platform settings that matter.
+If your site runs on Webflow, our [Webflow SEO services](page:webflow-seo-agency) page covers the platform settings that matter.
 
 ## How we run an AEO and GEO program.
 

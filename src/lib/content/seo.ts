@@ -60,9 +60,9 @@ export const SERVICE_META: Record<string, PageMeta> = {
       "Custom Webflow design, development and migrations for B2B SaaS and tech companies: strong creative, clear strategy and a site your team can update.",
   },
   growth: {
-    title: "B2B SaaS SEO Agency: SEO, GEO & CRO",
+    title: "B2B SaaS SEO Agency: SEO & CRO",
     description:
-      "B2B SaaS SEO agency for Google and AI search: technical SEO, AEO/GEO, content and CRO that turn more of your website traffic into pipeline.",
+      "B2B SaaS SEO agency for Google and AI search: technical SEO, content and CRO that turn more of your website traffic into pipeline.",
   },
   "ongoing-website-support": {
     title: "Webflow Maintenance & Support Service",

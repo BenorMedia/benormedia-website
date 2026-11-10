@@ -13,7 +13,7 @@ Status: DRAFT v2.1, written 9 Oct 2026 for BenorMedia (v1 drafted, then revised 
 | H1 | `Webflow SEO and AEO for B2B teams, measured in pipeline.` |
 | Primary keyword | webflow seo agency |
 | Secondary keywords | webflow seo services, webflow seo company, webflow seo expert, webflow aeo, webflow seo |
-| Breadcrumb | Home › Growth (SEO/GEO + CRO) › Webflow SEO & AEO |
+| Breadcrumb | Home › Growth (SEO + CRO) › Webflow SEO & AEO |
 | JSON-LD | `Service`, `FAQPage`, `BreadcrumbList` |
 | Service markup | `name`: "Webflow SEO and AEO" · `serviceType`: "Search engine optimization" · `provider`: shared Organization `@id` · `description`: the meta description · `areaServed` and `audience`: as on the other service pages · no `offers` |
 | Open Graph | Title = H1 without the final period; description = meta description |
@@ -172,7 +172,7 @@ A: No. Google's own hiring guide says no one can guarantee a #1 ranking on Googl
 A: Yes, content creation is part of the Growth plan. Your experts review each piece before it goes live, because the details only your team knows are what make content rank and get cited.
 
 ### 14. Related pages
-- [Growth (SEO/GEO + CRO)](/growth)
+- [Growth (SEO + CRO)](/growth)
 - [AEO and GEO for B2B SaaS](/aeo-agency)
 - [WordPress to Webflow migration](/webflow-migration)
 
