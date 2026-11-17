@@ -7,7 +7,7 @@ blockedBy: []
 topicId: "6.7"
 wave: 2
 title: "AI SEO Myths: What to Skip and What to Do | BenorMedia"
-description: "Seven AI SEO myths B2B SaaS teams still act on, what Google's own documentation says about each one, and what to do with that time and budget instead."
+description: "Nine AI SEO myths B2B SaaS teams still act on, what Google's own documentation says about each one, and what to do with that time and budget instead."
 h1: "AI SEO myths: what we would skip and what we would do instead"
 lang: en-US
 author: "David Garay, Web Developer and Designer"
