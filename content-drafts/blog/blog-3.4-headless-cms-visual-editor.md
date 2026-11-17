@@ -146,7 +146,7 @@ A typical setup checklist:
 
 1. A preview route that fetches drafts instead of published content. Storyblok requests the draft version of each story, for example, and Strapi points the CMS at a preview handler that builds each URL.
 2. Permission for the CMS to show your site in an iframe. Storyblok and Strapi both point to the frame-ancestors security header, and Contentful's help center says a "Refused to connect" error means the site's security setup is blocking the frame.
-3. Server rendering where the CMS needs it. [Sanity's Astro integration](/blog/astro-cms) says "Visual Editing only works for server-side rendered pages," and TinaCMS's Astro setup requires a server adapter. Public pages can stay static.
+3. Server rendering where the CMS needs it. [Sanity's Astro integration](https://www.sanity.io/plugins/sanity-astro) says "Visual Editing only works for server-side rendered pages," and TinaCMS's Astro setup requires a server adapter. Public pages can stay static.
 4. Preview tokens kept on the server. They read draft content, and Storyblok's docs say to validate requests server-side and keep the token out of client bundles.
 5. The click-to-edit wiring: overlays in Sanity, storyblokEditable attributes in Storyblok, field helpers in TinaCMS, the live preview SDK for Contentful's inspector mode, or content source maps in Strapi.
 6. The section library itself, with each section built as a component with fields, tested on mobile, and given a one-line note on when to use it.
