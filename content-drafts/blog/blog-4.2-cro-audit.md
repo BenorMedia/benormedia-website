@@ -6,13 +6,13 @@ draft: false
 blockedBy: []
 topicId: "4.2"
 wave: 1
-title: "CRO Audit for Low-Traffic B2B SaaS Sites | BenorMedia"
-description: "How to run a CRO audit on a B2B SaaS site without enough traffic for A/B tests: the sample-size math, the funnel checks, and how to prioritize fixes."
-h1: "How to run a CRO audit on a B2B SaaS site that's below testing traffic"
+title: "CRO Audit: Checklist, Tools, and Steps for B2B SaaS"
+description: "A CRO audit finds where B2B SaaS visitors drop out and why. The checks, tools, and funnel steps to run one, and how to rank fixes without A/B tests."
+h1: "CRO audit: how to find what stops B2B SaaS visitors from converting, with or without A/B tests."
 lang: en-US
 author: "David Garay, Web Developer and Designer"
 publishedAt: 2026-10-17
-updatedAt: 2026-10-17
+updatedAt: 2026-11-17
 reviewEvery: none
 primaryKeyword: "cro audit"
 secondaryKeywords: []
@@ -28,6 +28,8 @@ faq:
     a: "A CRO audit, or conversion rate optimization audit, is a structured review of how visitors move through a website toward its conversion goals, where they drop out, and why. It ends in a ranked list of fixes or test ideas."
   - q: "What is the difference between CRO and SEO?"
     a: "SEO works on getting qualified visitors from search engines. CRO works on what those visitors do once they arrive, so more of them request a demo, start a trial, or take another conversion step."
+  - q: "Which tools do you need for a CRO audit?"
+    a: "An analytics tool with funnel reports, such as GA4, Search Console for queries and field speed data, and one behavior tool for heatmaps, session recordings, and surveys. Microsoft Clarity, Contentsquare (which now includes Hotjar), and PostHog all had free plans when we checked on November 17, 2026."
   - q: "How much traffic do you need for A/B testing?"
     a: "It depends on the baseline conversion rate and the lift you want to detect. At a 2% conversion rate and a 20% relative lift, a standard test at 95% significance and 80% power needs about 21,100 visitors per variant, or about 42,200 in total."
   - q: "Can you do CRO without A/B testing?"
@@ -57,11 +59,24 @@ sources:
   - label: "BenorMedia: Growth (SEO/GEO + CRO)"
     url: https://www.benormedia.com/growth
     accessed: 2026-10-17
+  - label: "Microsoft Learn: Clarity frequently asked questions"
+    url: https://learn.microsoft.com/en-us/clarity/faq
+    accessed: 2026-11-17
+  - label: "Contentsquare: Hotjar is now part of Contentsquare"
+    url: https://contentsquare.com/hotjar/
+    accessed: 2026-11-17
+  - label: "PostHog: Pricing"
+    url: https://posthog.com/pricing
+    accessed: 2026-11-17
+  - label: "BenorMedia: Testimonials"
+    url: https://www.benormedia.com/testimonials
+    accessed: 2026-11-16
 volatile:
+  - "Vendor free plans: Clarity free, up to 100,000 recorded sessions per project per day; Contentsquare Free up to 200,000 sessions, 100 survey responses, and 5 user interviews a month, no new Hotjar accounts; PostHog free tier 1 million events, 5,000 recordings, 1,500 survey responses a month (sources: vendor pages, checked 2026-11-17)"
   - "Google's testing guidance: no cloaking, rel=canonical on variant URLs, 302 for redirect tests, don't run tests longer than needed (source: Minimize A/B testing impact, updated 2025-12-10)"
   - "GA4 funnel exploration: up to 10 steps, open and closed funnels (source: Funnel exploration, checked 2026-10-17)"
   - "GA4 key events: up to 30, not retroactive, up to 24 hours to appear (source: Key events, checked 2026-10-15)"
-volatileChecked: 2026-10-17
+volatileChecked: 2026-11-17
 inbound:
   - page: /growth
     anchor: "CRO audit"
@@ -75,7 +90,7 @@ editorNotes:
   - "No 30-day recheck and no AI note, per Sergio's answers of 2026-10-15."
 ---
 
-A CRO audit finds where visitors drop out of your conversion funnel and why, then ranks the fixes. Most B2B SaaS sites don't have enough traffic to A/B test small changes, so the audit has to work without tests. This guide, for marketing leads and founders, shows the traffic math, the checks, and how to decide what to change first.
+A CRO audit finds where visitors drop out of your conversion funnel and why, then ranks the fixes. On a B2B SaaS site it covers tracking, the funnel from landing page to booked demo, the reasons behind each drop, and a checklist for every key page. Most of these sites don't have the traffic to A/B test small changes, so this guide, for marketing leads and founders, also shows the traffic math and how to decide what to change without a test.
 
 ## What is a CRO audit, and how is it different from SEO?
 
@@ -83,7 +98,7 @@ A CRO audit (a conversion rate optimization audit) is a structured review of how
 
 SEO and CRO share the same visitors but work on different halves of the problem. SEO brings qualified visitors from search engines. CRO works on what happens after they land, so a larger share of the same traffic turns into pipeline. Getting the traffic is only half the battle; a site that ranks but doesn't convert still misses its targets.
 
-On a B2B SaaS site, the audit usually covers a short list of page types: the home page, product or feature pages, the pricing page, the landing pages that receive paid or organic traffic, and the forms behind each call to action.
+On a B2B SaaS site, the audit usually covers a short list of page types: the home page, product or feature pages, the pricing page, the landing pages that receive paid or organic traffic, and the forms behind each call to action. Our guides to [SaaS homepage design](/blog/saas-homepage-design) and [SaaS pricing pages](/blog/saas-pricing-page) cover what those two pages need.
 
 ## How much traffic does A/B testing need at your conversion rate?
 
@@ -108,7 +123,7 @@ Start with the measurement itself. A CRO audit built on broken tracking ranks th
 
 1. **Conversion goals are tracked as key events.** Demo requests, trial sign-ups, and contact forms should each be a key event in Google Analytics. GA4 allows up to 30 key events, and marking an event as key isn't retroactive, so a missing key event means missing historical data.
 2. **Internal and existing-customer traffic is separated.** Logged-in users heading to the app, job seekers on the careers page, and your own team inflate sessions and lower conversion rates.
-3. **Traffic is segmented by source.** Paid, organic, referral, and AI assistant traffic convert at different rates.
+3. **Traffic is segmented by source.** Paid, organic, referral, and AI assistant traffic convert at different rates. To separate assistant referrals, see [how to track AI traffic in GA4](/blog/ai-traffic-in-ga4).
 4. **The CRM agrees with analytics.** Submit every form yourself first and check that each event fires once. Compare form submissions in analytics with leads created in the CRM for the same month. A large gap means one of the two is wrong.
 
 Once the numbers hold up, gather quantitative data for each key page and record it as baseline data: sessions, conversion rate, the main traffic source, and user engagement metrics such as average engagement time, over the last 90 days. Read them next to the conversion metrics. That baseline is what later changes get compared against, and it shows which landing pages hold back the website's conversion rates most.
@@ -127,6 +142,8 @@ A typical B2B SaaS funnel has five steps:
 
 A large exit rate between the landing page and pricing may be normal for early-stage visitors, while a small drop between form start and form submit often points to friction you can remove: too many fields, an unclear next step, or a form error on mobile devices.
 
+One real example of what can change at that step: after we rebuilt Bambi Health's site, its Chief Marketing Officer said, "Mobile form completion went from 68% to 83%, and our contact page now converts nearly a third of its visitors into leads." On the forms, the rebuild cut fields, fixed mobile issues, and gave them a clearer design. It changed the rest of the site too, so treat the numbers as one site's result, not a benchmark.
+
 Break each step down by device and traffic source. A form that converts well on desktop and poorly on mobile is a usability issue, not a messaging issue. User intent matters too: a visitor from a comparison query needs different things than one from a brand query.
 
 ## How do you find out why users drop off when you can't run tests?
@@ -136,10 +153,26 @@ With qualitative research. Analytics shows where users drop; it can't tell you w
 - **User testing with real users.** Ask five people who match your target audience to complete a task, such as finding the price for their team size and requesting a demo, while they think aloud. Nielsen Norman Group's research found that five users uncover about 85% of the usability problems in a design, and recommends several small rounds over one large test.
 - **Session recordings and heatmaps.** Watch session recordings of visits that reached the form but didn't submit. This user behavior data shows where users click, which user interactions fail, and how far people scroll. Look for repeated clicks on things that aren't links, rage clicks on form fields, and users scrolling past the call to action.
 - **On-site surveys.** A one-question survey on the pricing page ("What's stopping you from booking a demo today?") collects objections in the visitor's own words.
-- **Sales and support notes.** The questions prospects ask on calls show what the site failed to answer. If every first call starts with "Do you integrate with our CRM?", that answer belongs on the product page.
+- **Sales and support notes.** The questions prospects ask on calls show what the site failed to answer. If every first call starts with "Do you integrate with our CRM?", that answer belongs on the product page. For buyer research on what a site should answer, see [what B2B buyers need from your website](/blog/what-b2b-buyers-need-from-your-website).
 - **Customer feedback.** Ask recent customers what nearly stopped them from buying and what convinced them.
 
 Five sessions are enough to find usability issues, but not to measure anything. Nielsen Norman Group recommends more than 30 participants for quantitative usability studies, and 40 or more for narrow confidence intervals.
+
+## Which tools do you need for a CRO audit?
+
+Three kinds: an analytics tool that shows where users drop, such as GA4, Search Console for queries and field speed data, and one behavior tool for heatmaps, session recordings, and on-page surveys. Microsoft Clarity, Contentsquare (which now includes Hotjar), and PostHog all have free plans that cover a low-traffic B2B site.
+
+Table: Tools for a CRO audit and what their free plans cover (checked November 17, 2026)
+
+| Tool | What it adds to the audit | Free plan |
+| --- | --- | --- |
+| Google Analytics 4 | Key events and funnel explorations: where users drop | Free |
+| Google Search Console | The queries that bring visitors, and Core Web Vitals field data | Free |
+| Microsoft Clarity | Heatmaps, session recordings, and funnels, with a GA4 integration | Free, recording up to 100,000 sessions per project per day |
+| Contentsquare (Hotjar's new home) | Heatmaps, recordings, surveys, user interviews, and funnels | Up to 200,000 sessions a month, 100 survey responses, and 5 user interviews; Hotjar no longer accepts new accounts |
+| PostHog | Product analytics, session replay, surveys, and A/B experiments in one tool | 1 million events, 5,000 recordings, and 1,500 survey responses a month, with no credit card |
+
+Keep the behavior tools to one or two: each one adds a script to every page, and extra scripts slow the templates you're auditing. If you expect to run experiments once a page has the traffic, a tool that combines recordings and tests saves a second install. On client audits we use PostHog and Microsoft Clarity, and we only start A/B tests once a site has roughly 8,000 to 10,000 sessions a month, on pages that get enough of that traffic to reach a result.
 
 ## What does a CRO audit checklist cover at each conversion point?
 
@@ -158,7 +191,7 @@ Table: CRO audit checklist for B2B SaaS landing pages
 | Speed | Load times and loading speed on mobile for the key templates | Field data in Search Console |
 | Next step | The confirmation page says what happens next and when | Recordings, support questions |
 
-This CRO audit checklist covers the usual conversion bottlenecks on a B2B site, where the key performance indicators are demo requests, qualified pipeline, and customer acquisition cost. Pages judged on ecommerce metrics like average order value need a different list.
+This CRO audit checklist covers the usual conversion bottlenecks on a B2B site, where the key performance indicators are demo requests, qualified pipeline, and customer acquisition cost. Pages judged on ecommerce metrics like average order value need a different list. For the speed row, see [how to improve Core Web Vitals](/blog/core-web-vitals-optimization).
 
 ## How do you prioritize fixes when A/B testing isn't an option?
 
@@ -174,4 +207,4 @@ When a page does have the traffic for an A/B test, follow Google's guidance so t
 
 A CRO audit isn't a one-time project. Repeat a thorough CRO audit after a redesign, a pricing change, or a shift in traffic sources, and review the funnel monthly in between to keep tracking the website's performance. Continuous improvement comes from that cycle, and from fixes that enhance user experience and customer satisfaction, more than from any single audit.
 
-We offer growth work that includes conversion rate optimization for B2B and SaaS companies, so we have an interest in this topic. For how that fits with SEO and content, see our [growth](/growth) page.
+We run CRO for B2B and SaaS companies as part of our Growth plan, so we have an interest in this topic. For how it fits with SEO and AEO, see our [B2B SaaS SEO agency](/growth) page.
