@@ -508,7 +508,7 @@ export function analyze(path, ctx = {}) {
   if (!T?.noMeta && type !== 'hub' && ![...links].some((l) => l.href.startsWith('page:') || LIVE_PATHS.has(l.href.split('#')[0]))) add('warn', 'link', 1, 'the page has no internal links');
   if (Array.isArray(data.related)) {
     for (const r of data.related) {
-      if (ctx.known && !ctx.known.has(r) && !LIVE_PATHS.has(r)) add('FAIL', 'link', 1, `related "${r}" is not a known slug`);
+      if (ctx.known && !ctx.known.has(r) && !LIVE_PATHS.has(r) && !releasedBlogPaths().has(r)) add('FAIL', 'link', 1, `related "${r}" is not a known slug`);
       if (r === data.slug) add('FAIL', 'link', 1, 'related lists the page itself');
     }
   }

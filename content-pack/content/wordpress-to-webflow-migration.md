@@ -48,7 +48,7 @@ takeaways:
   - "Rankings can move for a while after any migration. An unplanned move, not the platform, is what costs them."
   - "WordPress plugins do not move to Webflow. Each plugin's job is covered by a Webflow feature, an integration, or custom code, unless that job is dropped."
   - "Check large CMS volumes, store logic, membership content, and heavy custom plugins before you commit to the move."
-related: [webflow-migration, webflow-vs-wordpress, how-to-choose-a-webflow-agency, webflow-pricing, b2b-saas-web-design]
+related: [webflow-migration, webflow-vs-wordpress, how-to-choose-a-webflow-agency, /blog/webflow-price-increase, b2b-saas-web-design]
 inbound:
   - from: /webflow-migration
     anchor: WordPress to Webflow migration guide

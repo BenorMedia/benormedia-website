@@ -35,8 +35,9 @@ Tier,Keyword,Country,Volume,KD,Traffic potential,CPC (USD),Intent,Cluster,Target
 3 Citation assets,framer vs webflow,US,700,5,250,,Compare,Webflow build,Comparison series,
 3 Citation assets,webflow vs squarespace,US,500,3,200,,Compare,Webflow build,Comparison series,
 3 Citation assets,webflow vs wix,US,450,3,300,,Compare,Webflow build,Comparison series,
-3 Citation assets,webflow pricing,US,6300,24,2400,2,Learn,Webflow build,Pricing guide,
-3 Citation assets,webflow plans,US,400,36,9200,4,Learn,Webflow build,Pricing guide,Parent topic of webflow pricing
+3 Citation assets,webflow pricing,US,6300,24,2400,2,Learn,Webflow build,/blog/webflow-price-increase,
+3 Citation assets,webflow plans,US,400,36,9200,4,Learn,Webflow build,/blog/webflow-price-increase,Parent topic of webflow pricing
+3 Citation assets,webflow enterprise pricing,US,150,33,,,Learn,Webflow build,/blog/webflow-price-increase,"Ahrefs US, 2026-11-16"
 3 Citation assets,website redesign cost,US,800,9,250,,Learn,SaaS web design,B2B website cost guide,
 3 Citation assets,saas landing page,US,700,7,2000,,Learn,SaaS web design,Examples roundup from public client work,
 3 Citation assets,saas website examples,US,200,7,1200,,Learn,SaaS web design,Examples roundup from public client work,

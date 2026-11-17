@@ -45,7 +45,7 @@ takeaways:
   - "As of October 2026, Webflow lists single sign-on, custom roles, an audit log API, custom security headers, and contractual SLAs as Enterprise features, so your requirements decide the plan."
   - "Enterprise projects go wrong at points that can be named in advance: unowned approvals, late security review, redirects at scale, and locale mistakes."
   - "Evaluate any agency on evidence you can check: its partner profile, access controls, signed documents, rollback plan, named team, and written response times."
-related: [webflow-enterprise-agency, how-to-choose-a-webflow-agency, webflow-pricing, wordpress-to-webflow-migration]
+related: [webflow-enterprise-agency, how-to-choose-a-webflow-agency, /blog/webflow-price-increase, wordpress-to-webflow-migration]
 inbound:
   - from: /webflow-enterprise-agency
     anchor: Webflow Enterprise guide

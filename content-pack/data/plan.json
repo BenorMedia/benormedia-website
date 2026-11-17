@@ -165,17 +165,6 @@
    "label": "Webflow vs WordPress"
   },
   {
-   "slug": "webflow-pricing",
-   "url": "/guides/webflow-pricing",
-   "pageType": "guide",
-   "wave": 2,
-   "lang": "en-US",
-   "primaryKeyword": "webflow pricing",
-   "role": "Authority",
-   "pillar": "/custom-websites-migrations",
-   "label": "Webflow pricing"
-  },
-  {
    "slug": "generative-engine-optimization",
    "url": "/guides/generative-engine-optimization",
    "pageType": "guide",
