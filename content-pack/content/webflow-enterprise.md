@@ -14,7 +14,7 @@ secondaryKeywords: [webflow enterprise plan, webflow for enterprise]
 targetCountry: US
 author: "Sergio Gancedo, General Manager, BenorMedia"
 publishedAt: 2026-10-07
-updatedAt: 2026-11-09
+updatedAt: 2026-11-17
 reviewEvery: 30
 breadcrumb:
   - name: Home
@@ -29,9 +29,11 @@ faq:
   - q: Is Webflow secure enough for an enterprise website?
     a: "Webflow publishes security evidence your security team can judge against its own requirements. Its security page names ISO 27001 and SOC 2 among its certifications, and its trust center lists reports and self-assessments. Webflow also says it is not HIPAA compliant by default. As of October 2026, Enterprise adds single sign-on, custom roles, and audit logs."
   - q: How is Webflow Enterprise priced?
-    a: "Webflow does not publish an Enterprise price. As of October 2026 its pricing page shows Enterprise as custom, with a button to talk to its sales team. Its help center says Enterprise limits on CMS items, Collections, and API requests can exceed the standard caps on other plans."
+    a: "Webflow quotes Enterprise per customer, and its pricing page shows it as Custom, with no price. The Team plan, launched on May 13, 2026, is listed at $2,500 a month on an annual contract, and the self-serve Site plans start at $15 a month billed yearly. Our [Webflow pricing guide](/blog/webflow-price-increase) lists every plan."
   - q: Do you need Webflow Enterprise for an enterprise website?
-    a: "Only if your requirements call for what Webflow reserves for it. As of October 2026 Webflow lists single sign-on, SCIM provisioning, custom roles, the audit log API, custom security headers, and contractual SLAs for uptime and support reply times as Enterprise features. If your review needs none of them, compare current plan limits before assuming Enterprise."
+    a: "Only if your review needs something Webflow keeps for Enterprise: single sign-on, SCIM provisioning, custom roles, the audit log API, contractual SLAs, or limits above the Team plan's. If approvals, page branching, an activity log, Localization, and security headers for one site are enough, the Team plan covers them."
+  - q: What is the Webflow Team plan?
+    a: "Team is a Webflow plan between the self-serve Site plans and Enterprise, launched on May 13, 2026. It's billed yearly at $2,500 a month and covers one site with publishing workflows, page branching, a site activity log, custom SSL, security headers, Localization with 2 locales, and 10 seats."
   - q: Is Webflow Enterprise the same as an agency's partner status?
     a: "No. Webflow Enterprise is Webflow's plan for larger organizations, and your site and Workspace run on it. An agency's partner status describes its relationship with Webflow and is a separate matter. Ask any agency to state its status in writing, and compare it with the agency's profile in Webflow's partner directory."
   - q: Can Webflow run a multi-language enterprise site?
@@ -57,7 +59,7 @@ sources:
     accessed: 2026-10-07
   - label: "Webflow: Plans and pricing"
     url: https://webflow.com/pricing
-    accessed: 2026-10-06
+    accessed: 2026-11-16
   - label: "Webflow: Security"
     url: https://webflow.com/security
     accessed: 2026-10-06
@@ -66,7 +68,7 @@ sources:
     accessed: 2026-10-06
   - label: "Webflow Help Center: Differences between Enterprise and non-Enterprise plans"
     url: https://help.webflow.com/hc/en-us/articles/46651891357971-Differences-between-Enterprise-and-non-Enterprise-plans
-    accessed: 2026-10-07
+    accessed: 2026-11-16
   - label: "Webflow Help Center: Create and manage custom roles"
     url: https://help.webflow.com/hc/en-us/articles/46651804072467-Create-and-manage-custom-roles
     accessed: 2026-10-06
@@ -90,7 +92,7 @@ sources:
     accessed: 2026-10-06
   - label: "Webflow Help Center: Custom security headers"
     url: https://help.webflow.com/hc/en-us/articles/46651836279059-Custom-security-headers
-    accessed: 2026-10-06
+    accessed: 2026-11-16
   - label: "Webflow Help Center: Localization overview"
     url: https://help.webflow.com/hc/en-us/articles/33961240752147-Localization-overview
     accessed: 2026-10-06
@@ -121,7 +123,25 @@ sources:
   - label: "W3C WAI: WCAG 2 overview"
     url: https://www.w3.org/WAI/standards-guidelines/wcag/
     accessed: 2026-10-07
+  - label: "Webflow: We're updating our pricing and simplifying our plans"
+    url: https://webflow.com/blog/simplified-plans-and-updated-pricing-2026
+    accessed: 2026-11-16
+  - label: "Webflow Help Center: Updated pricing and simplified plans for May 2026"
+    url: https://help.webflow.com/hc/en-us/articles/51059955082387
+    accessed: 2026-11-16
 volatile:
+  - claim: "Team plan: $2,500 a month on an annual contract, launched May 13, 2026"
+    source: https://webflow.com/pricing
+    recheck: confirm the Team price and billing terms on the pricing page
+  - claim: "Team limits: one site, 5 full and 5 limited seats plus up to 100 free seats, 20,000 CMS items, 100 Collections, 500 static pages, 2 locales"
+    source: https://webflow.com/pricing
+    recheck: confirm each Team limit on the pricing page
+  - claim: "Uptime listed: 99.90% application on Team and Enterprise; hosted sites 99.00% on Team, 99.99% on Enterprise"
+    source: https://webflow.com/pricing
+    recheck: confirm the uptime figures on the pricing page
+  - claim: "Self-serve Site plans start at $15 a month billed yearly"
+    source: https://webflow.com/pricing
+    recheck: confirm the Basic yearly price on the pricing page
   - claim: "Webflow shows Enterprise pricing as Custom with a Talk to us button and no price"
     source: https://webflow.com/pricing
     recheck: open the pricing page and confirm Enterprise still shows custom pricing and no number
@@ -158,7 +178,8 @@ volatile:
   - claim: "Restore points are created automatically and by hand; restoring changes the Published on date of Collection items"
     source: https://help.webflow.com/hc/en-us/articles/33961244069395-Save-and-restore-backups
     recheck: confirm the restore point and Published on sentences
-volatileChecked: 2026-10-07
+thirdPartyPrices: true
+volatileChecked: 2026-11-16
 editorNotes:
   - "This is the long, sourced guide. The short commercial page is webflow-enterprise-agency. Check that the two do not repeat each other."
   - "Every Webflow row is dated October 2026 and listed under volatile. Recheck on release day, because Webflow's own pages differ in places."
@@ -186,7 +207,7 @@ A website project is an enterprise project when requirements from outside the ma
 
 ## What does Webflow Enterprise offer?
 
-Webflow Enterprise is Webflow's plan for larger organizations, and Webflow's own pages list security, access control, publishing workflow, and support terms among what it adds to other plans. The plan is separate from an agency's partner status, which describes the agency's relationship with Webflow.
+Webflow Enterprise is Webflow's plan for larger organizations: a custom-priced contract with single sign-on, custom roles, an audit log API, higher limits, and contractual support terms. Since May 13, 2026, some features that used to be Enterprise-only, such as publishing workflows and security headers, are also listed on Webflow's Team plan, so the plan you need depends on which of your requirements Team leaves out. Enterprise is separate from an agency's partner status, which describes the agency's relationship with Webflow.
 
 Plans and limits change, so confirm each row with Webflow first. For the self-serve plans and their prices, see our overview of [Webflow pricing in 2026](/blog/webflow-price-increase).
 
@@ -197,16 +218,37 @@ Table: What Webflow says Enterprise includes, as of October 2026
 | Security and compliance evidence | The security page names ISO 27001 and SOC 2 among Webflow's certifications, and the plan differences article lists SOC 2 Type II compliance for Enterprise. The trust center lists a penetration test report, a service level agreement, and CAIQ and SIG Lite self-assessments, with access on request. | [Security page](https://webflow.com/security), [plan differences](https://help.webflow.com/hc/en-us/articles/46651891357971-Differences-between-Enterprise-and-non-Enterprise-plans), [trust center](https://trust.webflow.com/) |
 | Single sign-on and provisioning | SSO is available on Enterprise Workspace plans through OAuth or SAML, set up with Webflow's team. Provisioning through SCIM lets your identity provider add Webflow users and remove their access, but Webflow does not currently assign roles or groups through it. | [SSO](https://help.webflow.com/hc/en-us/articles/46651862433683-Single-Sign-On-SSO-Login), [SCIM](https://help.webflow.com/hc/en-us/articles/46651868408595-SCIM-provisioning) |
 | Roles and permissions | Workspace owners and admins can create up to 20 custom roles, each built on a Reviewer, Content Editor, Marketer, or Designer role. Enterprise plans can limit editors to specific secondary locales. | [Custom roles](https://help.webflow.com/hc/en-us/articles/46651804072467-Create-and-manage-custom-roles), [locales](https://help.webflow.com/hc/en-us/articles/53682971927571-Manage-your-site-s-locales) |
-| Release and approval flow | A designer or editor works on a page branch and submits it for review, and an approver must approve it before it is merged and published. Permissions set who branches, who approves, and who publishes to staging or production. | [Publishing workflow](https://university.webflow.com/videos/publishing-workflow), [design approvals](https://help.webflow.com/hc/en-us/articles/33961229501971-Design-approvals) |
-| Audit trail | The Site Activity log records changes to components, CMS content, code, and publishes, and its history does not expire. The Workspace audit log API covers logins and role changes, keeps logs for 1 year, and can feed a security monitoring (SIEM) tool. | [Site Activity log](https://help.webflow.com/hc/en-us/articles/46651707969043-Site-Activity-log), [audit log API](https://help.webflow.com/hc/en-us/articles/46651794799891-Workspace-audit-log-API) |
-| Site security settings | Custom security headers, such as Content-Security-Policy and X-Frame-Options, and custom SSL certificates are Enterprise features. You contact Webflow's sales team to switch the headers on for a site, and a republish applies them. | [Custom security headers](https://help.webflow.com/hc/en-us/articles/46651836279059-Custom-security-headers), [security page](https://webflow.com/security) |
-| Uptime, support, and limits | The Enterprise page cites 99.99% uptime SLAs, 24/7 support, and a dedicated customer success manager. The help center says other plans have no contractual SLA for uptime or support reply times and carry standard caps on CMS items, Collections, and API requests. | [Enterprise page](https://webflow.com/enterprise), [plan differences](https://help.webflow.com/hc/en-us/articles/46651891357971-Differences-between-Enterprise-and-non-Enterprise-plans) |
+| Release and approval flow | A designer or editor works on a page branch and submits it for review, and an approver must approve it before it is merged and published. Permissions set who branches, who approves, and who publishes to staging or production. Since May 2026, Webflow also lists publishing workflows, page branching, and single-page publishing on the Team plan. | [Publishing workflow](https://university.webflow.com/videos/publishing-workflow), [design approvals](https://help.webflow.com/hc/en-us/articles/33961229501971-Design-approvals), [plan update](https://webflow.com/blog/simplified-plans-and-updated-pricing-2026) |
+| Audit trail | The Site Activity log records changes to components, CMS content, code, and publishes, and its history does not expire; the Team plan lists it too. The Workspace audit log API covers logins and role changes, keeps logs for 1 year, can feed a security monitoring (SIEM) tool, and stays an Enterprise feature. | [Site Activity log](https://help.webflow.com/hc/en-us/articles/46651707969043-Site-Activity-log), [audit log API](https://help.webflow.com/hc/en-us/articles/46651794799891-Workspace-audit-log-API), [plan update](https://webflow.com/blog/simplified-plans-and-updated-pricing-2026) |
+| Site security settings | Custom security headers, such as Content-Security-Policy and X-Frame-Options, and custom SSL certificates are listed on Enterprise and, since May 2026, on the Team plan. The help center still describes the headers as an Enterprise feature that Webflow's sales team switches on per site, after which a republish applies them. | [Custom security headers](https://help.webflow.com/hc/en-us/articles/46651836279059-Custom-security-headers), [security page](https://webflow.com/security), [pricing page](https://webflow.com/pricing), [plan update](https://webflow.com/blog/simplified-plans-and-updated-pricing-2026) |
+| Uptime, support, and limits | The Enterprise page cites 99.99% uptime SLAs, 24/7 support, and a dedicated customer success manager. Webflow's pricing page lists 99.99% uptime for hosted sites on Enterprise and 99.00% on Team, with 99.90% for the application on both. The help center says non-Enterprise plans have no contractual SLA for uptime or support reply times and carry standard caps on CMS items, Collections, and API requests. | [Enterprise page](https://webflow.com/enterprise), [plan differences](https://help.webflow.com/hc/en-us/articles/46651891357971-Differences-between-Enterprise-and-non-Enterprise-plans), [pricing page](https://webflow.com/pricing) |
 
-If your review requires single sign-on, custom roles, an audit trail, custom security headers, or a contractual SLA, Webflow lists them as Enterprise features, so the requirement decides the plan. Webflow's [pricing page](https://webflow.com/pricing) shows Enterprise as Custom, with no price, and the [Webflow pricing guide](page:webflow-pricing) covers the other plans.
+If your review requires single sign-on, SCIM provisioning, custom roles, the audit log API, or a contractual SLA, Webflow lists those as Enterprise features, so the requirement decides the plan. Publishing workflows, page branching, the site activity log, custom SSL, and security headers no longer decide it on their own, because the Team plan lists them too. Webflow's [pricing page](https://webflow.com/pricing) shows Enterprise as Custom, with no price, and our [Webflow pricing guide](/blog/webflow-price-increase) covers the other plans.
+
+## Is the Webflow Team plan enough, or do you need Enterprise?
+
+The Team plan is enough when one site needs approvals, page branching, an activity log, security headers, and a couple of locales. Enterprise is the step up when your review asks for single sign-on, SCIM provisioning, custom roles, the audit log API, contractual SLAs, several sites under one contract, or limits above Team's. Webflow added Team on May 13, 2026.
+
+Table: Webflow Team plan vs Enterprise (checked November 16, 2026)
+
+| Area | Team plan | Enterprise |
+| --- | --- | --- |
+| Price | $2,500 a month on an annual contract | Custom quote |
+| Sites | One site; more by arrangement with Webflow | Set in the contract |
+| Seats | 5 full and 5 limited, plus up to 100 free seats | Set in the contract |
+| CMS and pages | 20,000 CMS items, 100 Collections, 500 static pages | Custom limits |
+| Localization | 2 locales included, more for a fee | A custom number of locales |
+| Releases | Publishing workflows, page branching, single-page publishing | Configurable workflows and advanced governance |
+| Security | Custom SSL certificates, security headers, and the site activity log | Adds SSO, SCIM, custom roles, and the audit log API |
+| Uptime listed | 99.90% for the application, 99.00% for hosted sites | 99.90% for the application, 99.99% for hosted sites |
+
+Enterprise also brings what Webflow calls a dedicated partner, a priority support queue, and SLAs written into the contract. Below Team, the self-serve Site plans (Basic and Premium) and Workspace plans cover smaller sites without any of these review features.
+
+Check one thing before a security review relies on Team. Webflow's help center articles on plan differences and on custom security headers still describe headers, custom SSL, publishing workflows, and branching as Enterprise features, while the pricing page lists them on Team. Ask Webflow to confirm your plan's features in writing, and keep that answer in the review file.
 
 ## How long does an enterprise website project take?
 
-There is no fixed length: an enterprise website project runs as long as its templates, locales, content, integrations, reviews, and approvals require.
+Moving a large site to Webflow takes us 8 to 10 weeks, and a full redesign adds design time on top of that. JOOR's rebuild, 100+ pages in 8+ languages on one design system, landed in the 10 to 14 week range from kickoff to launch. Enterprise projects land at the long end, or past it, when locales, integrations, and security, legal, and privacy reviews multiply, so the drivers below decide the real date.
 
 Table: What adds time to an enterprise website project and what shortens it
 
@@ -238,7 +280,7 @@ Table: What goes wrong on an enterprise Webflow project, why it matters, and how
 
 ## How do you evaluate an agency for an enterprise Webflow site?
 
-Evaluate an agency for an enterprise Webflow site on evidence you can check, and get each answer in writing. These eight questions work for any agency, BenorMedia included, and the [guide to choosing a Webflow agency](page:how-to-choose-a-webflow-agency) covers the wider decision.
+Evaluate an agency for an enterprise Webflow site on evidence you can check, and get each answer in writing. These eight questions work for any agency, BenorMedia included.
 
 1. **Partner status.** Open the agency's profile in Webflow's partner directory, check that it matches what you were told, and ask the agency to state its partner status in writing.
 2. **Access and security.** Ask how the agency controls access to your Workspace and hosting account, how that access ends, and whether it will complete your security questionnaire.
@@ -259,10 +301,10 @@ Webflow suits an enterprise team whose website is a marketing and content system
 - **The site must handle protected health information.** Webflow says it is not HIPAA compliant by default and is not designed to store or process such information.
 - **Procurement requires a certification the platform does not hold.** Compare the requirement with the evidence on Webflow's security page and trust center before you shortlist the platform.
 - **Your editors need an approval flow Webflow does not offer.** Map each approval step to the release flow described above before you commit.
-- **You only need a refreshed marketing site for one team of editors.** A smaller plan or a simpler build may be enough, and the [Webflow pricing guide](page:webflow-pricing) covers the other plans.
+- **You only need a refreshed marketing site for one team of editors.** A smaller plan or a simpler build may be enough, and our [Webflow pricing guide](/blog/webflow-price-increase) covers the other plans.
 
 Weighing a move to code? See [Webflow vs custom code](page:webflow-vs-custom-code).
 
 ## How was this guide written and checked?
 
-Every Webflow row in this guide was read on Webflow's own pages, listed at the end, on 6 or 7 October 2026, and each is marked as of October 2026 because plans and limits change. The guide is rechecked every 30 days. We build Webflow sites for B2B companies, including large ones, so we have an interest in the topic.
+Every Webflow row in this guide was first read on Webflow's own pages, listed at the end, on 6 or 7 October 2026. The plan rows and the Team plan comparison were rechecked on November 16, 2026, and the guide is rechecked every 30 days because plans and limits change. We build Webflow sites for B2B companies, including large ones: for JOOR, the wholesale platform for global fashion, we rebuilt 100+ pages in 8+ languages on one design system. So we have an interest in the topic.
