@@ -186,6 +186,8 @@ A redesign that only an agency can update starts aging on launch day. We build a
 
 For [JOOR](/work), the wholesale platform for global fashion, we rebuilt 100+ pages in 8+ languages on one design system, and we've kept working with their team for more than three years.
 
+If you're starting from a blank page instead of an existing site, our [Webflow design and development](/custom-websites-migrations) page covers new builds.
+
 ## Protect your rankings through launch.
 
 Google treats a redesign that changes URLs as a site move, and its [guidance on site moves](https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes) is specific. We follow it to protect your search visibility, and we add checks for what a redesign changes even when the URLs stay put.
