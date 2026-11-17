@@ -546,8 +546,7 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
     h1: String(d.h1 ?? ""),
     eyebrowHtml: text(d.eyebrow),
     lead: rendered.lead.slice(0, heroLead),
-    intro: rendered.lead
-      .slice(heroLead)
+    intro: (heroLead === undefined ? [] : rendered.lead.slice(heroLead))
       .map((h) => h.replace(`class="${classes.lead}"`, `class="${classes.p}"`).replace('data-np-src="lead"', 'data-np-src="p"')),
     sections,
     faqHeading,
