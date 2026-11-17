@@ -42,7 +42,7 @@ export const PAGE_META = {
   guides: {
     title: "Webflow, SEO & Migration Guides for B2B SaaS",
     description:
-      "In-depth BenorMedia guides for B2B SaaS teams: WordPress to Webflow migration, Webflow Enterprise, the pages a SaaS site needs, and Webflow vs custom code.",
+      "Guides on Webflow and B2B websites: Webflow Enterprise, WordPress migration, Webflow vs WordPress, Webflow vs custom code, redesign cost, and SaaS pages.",
   },
   notFound: {
     title: "Page Not Found",
