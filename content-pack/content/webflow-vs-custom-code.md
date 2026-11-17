@@ -15,7 +15,7 @@ secondaryKeywords: [webflow export code, webflow code export, webflow to react, 
 targetCountry: US
 author: "Sergio Gancedo, General Manager, BenorMedia"
 publishedAt: 2026-10-12
-updatedAt: 2026-10-12
+updatedAt: 2026-11-17
 reviewEvery: 30
 breadcrumb:
   - name: Home
@@ -108,9 +108,9 @@ sources:
   - label: "Anita Kirkovska, Vellum, How I migrated off of Webflow in one week with coding agents, May 12, 2026"
     url: https://www.vellum.ai/blog/how-i-migrated-off-webflow-with-coding-agents
     accessed: 2026-10-09
-  - label: "Stack Overflow, 2025 Developer Survey: AI"
-    url: https://survey.stackoverflow.co/2025/ai
-    accessed: 2026-10-09
+  - label: "Stack Overflow: The results of the 2026 Developer Survey are here (October 6, 2026)"
+    url: https://stackoverflow.blog/2026/10/06/the-results-of-the-2026-developer-survey-are-here/
+    accessed: 2026-11-17
   - label: "Next.js, Security Advisory: CVE-2025-66478, December 3, 2025"
     url: https://nextjs.org/blog/CVE-2025-66478
     accessed: 2026-10-09
@@ -207,9 +207,9 @@ If WordPress is the other option on your list, read [Webflow vs WordPress](page:
 
 Most Webflow sites aren't going anywhere, but the movement that exists runs mostly one way. In its July 2026 crawl, [TechnologyChecker](https://technologychecker.io/blog/webflow-to-nextjs) counted 988 domains that had dropped Webflow for Next.js in about five weeks, and 95 that went the other way. That's a small share of the 249,194 domains it found on Webflow, but it's roughly ten to one. Software, IT services and technology or internet companies made up 32.8% of the movers. Four reasons stand out.
 
-- **AI tools made code cheaper to change.** In [Stack Overflow's 2025 survey](https://survey.stackoverflow.co/2025/ai), 84% of respondents used or planned to use AI tools in development, and 51% of professional developers used them every day. The AI startup Vellum [moved its site off Webflow](https://www.vellum.ai/blog/how-i-migrated-off-webflow-with-coding-agents) in about a week with coding agents. A showcase page that used to take its team a week now takes half a day.
+- **AI tools made code cheaper to change.** In Stack Overflow's 2026 Developer Survey, with results published October 6, 2026, 73% of respondents who use AI coding assistants or agents used them daily. The AI startup Vellum [moved its site off Webflow](https://www.vellum.ai/blog/how-i-migrated-off-webflow-with-coding-agents) in about a week with coding agents. A showcase page that used to take its team a week now takes half a day.
 - **The website became part of the product.** Integration directories, template galleries, docs and calculators all run on product data. Engineers would rather build them in the codebase they already maintain.
-- **Webflow changed its plans.** [New Site plans](https://help.webflow.com/hc/en-us/articles/51059955082387) applied to new purchases from May 13, 2026, and to most existing sites at renewal from June 29. Basic costs more, CMS and Business merged into one Premium plan, and former Business sites pay less but get 50 GB of bandwidth instead of 100 GB. Sites in Freelancer and Agency Workspaces, and sites on legacy discounts from 2022 or earlier, switch from November 16, 2026.
+- **Webflow changed its plans.** [New Site plans](https://help.webflow.com/hc/en-us/articles/51059955082387) applied to new purchases from May 13, 2026, and to most existing sites at renewal from June 29. Basic costs more, CMS and Business merged into one Premium plan, and former Business sites pay less but get 50 GB of bandwidth instead of 100 GB. Sites in Freelancer and Agency Workspaces, and sites on legacy discounts from 2022 or earlier, move to the new plans at their first renewal or billable change on or after November 16, 2026.
 - **Ownership.** Code in your own repository runs on any host you choose. A Webflow site leaves as a static export plus CSV files, as the export section below shows.
 
 None of this makes Webflow the wrong choice for most marketing sites. It keeps adding ways to work with code and AI: its [MCP server](https://developers.webflow.com/mcp/reference/overview) lets tools such as Claude Code, ChatGPT and Cursor create pages and work with CMS content inside a Webflow project.
