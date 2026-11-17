@@ -12,7 +12,7 @@ h1: "Webflow MCP on a live marketing site: what AI tools can change, and what we
 lang: en-US
 author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-23
-updatedAt: 2026-10-23
+updatedAt: 2026-11-17
 reviewEvery: none
 primaryKeyword: "webflow mcp"
 secondaryKeywords: []
@@ -47,7 +47,7 @@ sources:
     accessed: 2026-10-23
   - label: "Webflow Developers: MCP FAQs"
     url: https://developers.webflow.com/mcp/faqs
-    accessed: 2026-10-23
+    accessed: 2026-11-17
   - label: "Webflow Developers: MCP data tools"
     url: https://developers.webflow.com/mcp/tools/data-tools
     accessed: 2026-10-23
@@ -62,7 +62,7 @@ sources:
     accessed: 2026-10-23
   - label: "Webflow Help Center: Connect your AI tools to the Webflow MCP server"
     url: https://help.webflow.com/hc/en-us/articles/52536616701971-Connect-your-AI-tools-to-the-Webflow-MCP-server
-    accessed: 2026-10-23
+    accessed: 2026-11-17
   - label: "Webflow Help Center: Connect Claude to Webflow"
     url: https://help.webflow.com/hc/en-us/articles/52637346869779-Connect-Claude-to-Webflow
     accessed: 2026-10-23
@@ -129,6 +129,9 @@ sources:
   - label: "BenorMedia: Webflow Enterprise: What to Check"
     url: https://www.benormedia.com/guides/webflow-enterprise
     accessed: 2026-10-23
+  - label: "Webflow Developers changelog: MCP v2.1: Interactions with GSAP, Webflow Cloud, and Campaigns"
+    url: https://developers.webflow.com/home/changelog/2026/9/21
+    accessed: 2026-11-17
 volatile:
   - "MCP server plans, credits, roles, and capabilities (sources: Help Center MCP overview and Connect your AI tools, both updated 2026-10-22; developer docs, no date shown)"
   - "MCP 2.0 launched 2026-07-21; agent presence 2026-10-21; Releases announced at Webflow Conf 2026-09-02 for a beta later in 2026"
@@ -136,7 +139,7 @@ volatile:
   - "Page branching on Team and Enterprise Platform plans (updated 2026-09-18); Site Activity log MCP filter since early June 2026, Enterprise only (updated 2026-10-22)"
   - "AI credit limits since 2026-06-29; AI Assistant in beta (updated 2026-10-14); App Gen being deprecated (updated 2026-05-21)"
   - "MCP specification version 2026-07-28"
-volatileChecked: 2026-10-23
+volatileChecked: 2026-11-17
 inbound:
   - page: /blog/webflow-security-php2shell
     anchor: "what to allow when AI tools connect through Webflow MCP"
@@ -152,7 +155,9 @@ editorNotes:
   - "Published 2026-10-23 (lead)."
 ---
 
-The Webflow MCP server lets AI tools such as Claude, ChatGPT, and Cursor read and change your site, up to publishing it. It works within your Webflow role, and some of its actions can't be undone. This guide covers what it can change and what a marketing team should allow, for B2B SaaS marketing leads, as of October 2026.
+The Webflow MCP server lets AI tools such as Claude, ChatGPT, and Cursor read and change your site, up to publishing it. It works within your Webflow role, and some of its actions can't be undone. This guide covers what it can change and what a marketing team should allow, for B2B SaaS marketing leads, as of November 2026.
+
+Our short answer: allow reads and draft CMS edits, ask each time before style, interaction, and single-page or item publishes, and block whole-site publishes, deletes, custom code and robots.txt edits, access changes, and Webflow Cloud deploys. Version 2.1 of the server, released September 21, 2026, added tools for GSAP interactions, Webflow Cloud, and Campaigns, so those rows are new in our table below.
 
 ## What is the Webflow MCP server?
 
@@ -160,8 +165,8 @@ It's how outside AI tools connect to Webflow. MCP, the Model Context Protocol, i
 
 - **Where it runs.** Remotely, at mcp.webflow.com/mcp. You connect with OAuth and "authorize the sites and Workspaces you want your AI tool to access." Each authorization covers one Webflow Workspace.
 - **Which AI tools.** Webflow documents setup for Claude, Claude Code, ChatGPT, Codex, Cursor, Gemini, and others, through a built-in connector or a manual setup.
-- **Cost.** It's "available on all Site plans, including the free Starter plan," and using it "doesn't consume Webflow AI credits." Usage counts toward your AI tool's own plan. MCP 2.0 launched on July 21, 2026, at no additional cost.
-- **Who can connect.** Webflow's Help Center says any site role except Reviewer can connect, but its developer FAQ says only site owners and admins can authorize the server. Check which applies in your Workspace before you plan access.
+- **Cost.** It's "available on all Site plans, including the free Starter plan," and using it "doesn't consume Webflow AI credits." Usage counts toward your AI tool's own plan. MCP 2.0 launched on July 21, 2026, at no additional cost, and version 2.1 followed on September 21, 2026. Its changes are additive, so tool names from version 2.0.1 still work.
+- **Who can connect.** Webflow's Help Center says users with any site role except Reviewer can connect, and that the server respects each user's role permissions. Its developer FAQ says only site owners and admins can authorize the server for a site. Read together, an owner or admin authorizes it once, and teammates then connect within their own role.
 
 ### When do you need the Bridge App?
 
@@ -182,10 +187,13 @@ Table: What the Webflow MCP server can do, by area (as of October 2026)
 | Assets | Upload images and other assets, or delete them with a "soft delete" that can't be restored through the API | Check where an image is used before deleting it |
 | Forms and comments | Work with form submissions, including deleting them; read comments and reply, but not delete them | This text comes from people outside the session |
 | Analytics | Ask questions about your Webflow Analyze data, query traffic and engagement, and read Optimize test data and AEO analytics, such as "which pages LLM crawlers request most" | Read-only; needs the Analyze or Optimize add-on |
-| Webflow Cloud | Build and troubleshoot Webflow Cloud apps | Usually a developer's job, not a marketing edit |
+| Webflow Cloud | Manage apps and environments, deploy and redeploy, check deployment status, and read build and runtime logs | Webflow says the logs are unsanitized and may contain secrets; environment variable values can't be set through MCP |
+| Interactions (GSAP) | Create, update, remove, and list GSAP interactions, with their triggers and timelines | Classic interactions are invisible to these tools and can't be edited through them |
+| Campaigns (Early Access) | Create a campaign and its landing page from a markdown brief, with up to 30 page variations per call, and read its results | Launching stays in the Campaigns interface; deleting a campaign removes its landing page and assets |
+| Branches (Enterprise) | Update, merge, and publish a page branch, and read merge conflicts | Merging or publishing a branch changes the live page |
 | Access (Enterprise) | Manage Workspace and site access, including removing a member from a Workspace and all its sites | Needs a Workspace owner or admin |
 
-Webflow's developer docs list no action that deletes a page or a whole CMS collection.
+Webflow's developer docs list no action that deletes a regular page or a whole CMS collection. Campaigns are the exception: deleting a campaign also removes its landing page and assets.
 
 ## Which controls does Webflow give you over AI agents?
 
@@ -193,7 +201,7 @@ Four, and the role you connect the MCP server with matters most.
 
 1. **Your role.** "The MCP server enforces your Webflow permissions and roles, including custom roles." An agent "can do through the MCP server only what you can do in the Webflow Designer, and nothing more." Connect as a Content editor without "Can publish," and the agent gets the same limits.
 2. **Approvals in your MCP client.** "By default, Claude will ask you to approve any actions it wants to take in Webflow," and ChatGPT asks too. In Claude, you can also "block or always allow specific actions" under Customize > Connectors > Webflow.
-3. **AI agent instructions.** Site managers and Designers can create and manage instructions in the Instructions panel, which give agents context on your design system, voice, CMS, and policies; Marketers and Content editors can only read them. Webflow notes that "AI can make mistakes" and suggests having agents read your site's instructions at the start of a session.
+3. **AI agent instructions.** Site managers and Designers can create and manage instructions in the Instructions panel, which give agents context on your design system, voice, CMS, and policies; Marketers and Content editors can only read them. Webflow notes that "AI can make mistakes" and suggests having agents read your site's instructions at the start of a session. Since version 2.1, agents can also draft these instructions themselves (brand guidelines, design system, asset and CMS guidelines); they're saved as drafts for a person to review, and generating them uses Webflow AI credits.
 4. **The Site Activity log (Enterprise).** It records changes made by agents, and since early June 2026 you can filter it to changes made through Webflow MCP. Its history doesn't expire, and anyone with the Content editor role or above can see it.
 
 Enterprise adds more. Your AI tool can build and edit in an isolated page branch before changes are merged, and Webflow lists "granular access per site, CMS collection, page, and locale" among its MCP features for Enterprise. Our [Webflow Enterprise guide](/guides/webflow-enterprise) covers custom roles, approvals, and the activity log in more depth.
@@ -216,6 +224,12 @@ Table: Our default policy for Webflow MCP actions on a live marketing site
 | Publish the whole site | Block; a person ships it after a staging check | It pushes every pending change live |
 | Delete CMS items, assets, scripts, or form submissions | Block | Some deletes can't be reversed |
 | Replace custom code or robots.txt | Block | It can break tracking and [Consent Mode](/blog/consent-mode-v2-webflow), or block [AI crawlers](/blog/ai-crawlers-robots-txt) and search engines |
+| Create or update GSAP interactions | Ask each time | They change how live pages move and respond |
+| Create a campaign and its landing pages (Early Access) | Allow, with review | Launching stays a manual step in the Campaigns interface |
+| Delete a campaign | Block | It removes the campaign's landing page and assets |
+| Merge or publish a page branch (Enterprise) | Block; a person merges after review | Branch changes reach the live page |
+| Deploy or redeploy a Webflow Cloud app | Block; a developer deploys | It changes production code |
+| Read Webflow Cloud build and runtime logs | Ask each time | Webflow says the logs are unsanitized and may contain secrets |
 | Manage members and access (Enterprise) | Block | Access changes belong with an admin |
 
 If your AI tool can't block a single action, the role does the work: an agent connected through a role without "Can publish" can't push changes live, however the request is worded.
