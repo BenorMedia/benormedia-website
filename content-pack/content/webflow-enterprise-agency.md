@@ -14,7 +14,7 @@ primaryKeyword: webflow enterprise agency
 secondaryKeywords: [enterprise webflow agency, enterprise website design agency, enterprise web development agency]
 targetCountry: US
 publishedAt: 2026-10-07
-updatedAt: 2026-11-09
+updatedAt: 2026-11-17
 reviewEvery: 90
 breadcrumb:
   - name: Home
@@ -39,9 +39,9 @@ faq:
   - q: Is Webflow secure enough for an enterprise website?
     a: "Webflow publishes security evidence for your security team to judge. As of October 2026 its security page names ISO 27001 and SOC 2 among its certifications, and its trust center lists reports and self-assessments. Webflow also says it is not HIPAA compliant by default."
   - q: Do you need Webflow Enterprise for an enterprise website?
-    a: "Only if your requirements call for what Webflow reserves for it. As of October 2026 that includes single sign-on, custom roles, an audit log API, custom security headers, and contractual SLAs. If your review needs none of them, compare current plan limits first, using our [Webflow pricing](/blog/webflow-price-increase) overview."
+    a: "Only if your review needs what Webflow keeps for Enterprise: single sign-on, SCIM provisioning, custom roles, the audit log API, contractual SLAs, or limits above the Team plan's. Since May 2026, Webflow's Team plan covers publishing workflows, page branching, a site activity log, custom SSL, security headers, and Localization for one site, so many teams can start there. Our [Webflow pricing](/blog/webflow-price-increase) overview lists every plan, and we match each of your requirements to a plan before you sign anything with Webflow."
   - q: Can Webflow run a multi-language enterprise site?
-    a: "Yes, through Webflow's Localize add-on, which as of October 2026 translates pages and CMS content and adds hreflang tags to the generated sitemap. The build process includes a multi-language CMS and localization workflows."
+    a: "Yes. Webflow's Localization runs several locales on one site, with locale-specific URLs and hreflang tags in the generated sitemap. Site plans add it as a paid add-on with up to 10 locales, the Team plan includes 2, and Enterprise sets a custom number, so count your locales before you pick a plan. On Enterprise, editors can also be limited to specific locales, so each regional team edits only its own content."
   - q: What response times do you offer after launch?
     a: "Ongoing support includes SLA-backed response times, from a 48-hour standard response to 6-hour critical bug fixes, and a priority SLA is available for mission-critical sites. Confirm the exact times and the hours they cover in your contract."
   - q: Is a Webflow Premium Partner the same as Webflow Enterprise?
@@ -69,6 +69,12 @@ sources:
   - label: "Webflow: Localization features"
     url: https://webflow.com/feature/localize
     accessed: 2026-10-06
+  - label: "Webflow: Plans and pricing"
+    url: https://webflow.com/pricing
+    accessed: 2026-11-16
+  - label: "Webflow: We're updating our pricing and simplifying our plans"
+    url: https://webflow.com/blog/simplified-plans-and-updated-pricing-2026
+    accessed: 2026-11-16
 volatile:
   - claim: "The security page names ISO 27001 and SOC 2; the trust center lists reports and self-assessments; Webflow is not HIPAA compliant by default"
     source: https://webflow.com/security
@@ -126,7 +132,7 @@ Enterprise reviews ask about access, data handling, and who can publish, and the
 
 We have completed vendor security questionnaires and security reviews for enterprise clients, and we share our security practices with your security team on request.
 
-Webflow publishes its own security evidence for your team to review. Our [Webflow Enterprise guide](page:webflow-enterprise) lists what Webflow says its Enterprise plan includes, with sources and dates.
+Webflow publishes its own security evidence for your team to review. Our [Webflow Enterprise guide](/guides/webflow-enterprise) lists what Webflow says its Enterprise plan includes, how it compares with the Team plan Webflow added in May 2026, and the source and date behind each row.
 
 ## Global sites in more than one language
 
@@ -136,7 +142,7 @@ A multi-language CMS and regional content workflows let regional teams own their
 - Localization workflows for regional teams.
 - Regional content workflows that fit your approval steps.
 
-Webflow supports several locales through its [Localize add-on](https://webflow.com/feature/localize), and the number of locales depends on your plan, as of October 2026.
+Webflow runs languages through [Localization](https://webflow.com/feature/localize): an add-on on Site plans with up to 3 or up to 10 locales depending on the tier, 2 locales included on the Team plan, and a custom number on Enterprise, as of November 2026.
 
 ## Strategy first, then a component system
 
@@ -168,7 +174,7 @@ Enterprise sites connect to more systems, so each integration is wired in during
 
 ## Larger companies on our work page
 
-JOOR, tagged Fashion with $107.5M raised as shown on our [work page](/work), has been a direct client for more than 3 years. Other larger names listed there include:
+For JOOR, the wholesale platform for global fashion, we rebuilt 100+ pages in 8+ languages on one design system, and we've kept working with their team for more than three years. Our [work page](/work) lists JOOR with $107.5M raised, and other larger names there include:
 
 - **Novo**, finance, has raised $295.5M.
 - **Sublime Security**, cybersecurity, has raised $150.0M.
