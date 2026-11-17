@@ -12,7 +12,7 @@ h1: "How to rank in ChatGPT: how its search picks sources, and what B2B SaaS tea
 lang: en-US
 author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-26
-updatedAt: 2026-10-26
+updatedAt: 2026-11-17
 reviewEvery: 30 days
 primaryKeyword: "how to rank in chatgpt"
 secondaryKeywords: ["chatgpt seo", "seo for chatgpt", "chatgpt search optimization", "how to show up in chatgpt"]
@@ -43,7 +43,7 @@ related:
 sources:
   - label: "OpenAI: Overview of OpenAI crawlers"
     url: https://developers.openai.com/api/docs/bots
-    accessed: 2026-10-26
+    accessed: 2026-11-16
   - label: "OpenAI Help Center: Publishers and developers FAQ"
     url: https://help.openai.com/en/articles/12627856-publishers-and-developers-faq
     accessed: 2026-10-26
@@ -68,6 +68,9 @@ sources:
   - label: "Vercel: The rise of the AI crawler"
     url: https://vercel.com/blog/the-rise-of-the-ai-crawler
     accessed: 2026-10-26
+  - label: "Hisashi Space, DEV Community: Traffic from ChatGPT jumped! Is it because its crawlers now run JavaScript?"
+    url: https://dev.to/hisashispace/traffic-from-chatgpt-jumped-is-it-because-its-crawlers-now-run-javascript-5961
+    accessed: 2026-11-16
 volatile:
   - "OAI-SearchBot, GPTBot, and ChatGPT-User roles, and the ~24 hour robots.txt delay (source: OpenAI crawler overview, no date shown, checked 2026-10-26)"
   - "Publisher FAQ statements on eligibility, noindex, and utm_source=chatgpt.com (source: OpenAI Help Center, updated about 2026-10-17)"
@@ -98,7 +101,7 @@ editorNotes:
   - "Body is about 2,450 words with four tables, above the 1,800 guideline, because the query's top results run about 2,500 words and the crawler, prompt, and metrics tables carry the how-to (rule change of 2026-10-26)."
 ---
 
-To rank in ChatGPT, let OpenAI's search crawler reach your pages, publish answers specific enough to quote, and earn mentions on the third-party pages ChatGPT already cites. There is no fixed position to win, only a larger share of answers. This guide is for B2B SaaS marketing leads, as of October 2026.
+To rank in ChatGPT, let OpenAI's search crawler reach your pages, publish answers specific enough to quote, and earn mentions on the third-party pages ChatGPT already cites. There is no fixed position to win, only a larger share of answers. This guide is for B2B SaaS marketing leads, as of November 2026.
 
 ## What does it mean to rank in ChatGPT?
 
@@ -146,14 +149,15 @@ Table: OpenAI's crawlers and what blocking each one does
 | OAI-SearchBot | Surfaces websites in ChatGPT's search features | Your pages are not shown in ChatGPT search answers |
 | GPTBot | Crawls content that may be used to train OpenAI's foundation models | Your content should not be used for training; search is a separate setting |
 | ChatGPT-User | Visits pages for actions a user starts in ChatGPT; it does not crawl automatically | robots.txt rules may not apply, and it does not decide what appears in search |
+| OAI-AdsBot | Visits only pages submitted as ads in ChatGPT, to check them; OpenAI says its data isn't used to train foundation models | Only matters if you advertise in ChatGPT |
 
 A technical SEO check for ChatGPT access:
 
 1. Read your robots.txt for OAI-SearchBot, and for broad rules, such as a disallow under "User-agent: *", that catch it. Our guide to [AI crawlers in robots.txt](/blog/ai-crawlers-robots-txt) covers the rules line by line.
 2. Check the firewall or content delivery network (CDN) in front of your site. Some offer one-click rules that block AI bots, and an open robots.txt does not help if the firewall turns the crawler away. OpenAI publishes OAI-SearchBot's IP ranges at openai.com/searchbot.json for allowlisting.
 3. Remove noindex from pages you want cited. OpenAI's publisher FAQ, updated in October 2026, says "Any public website can appear in ChatGPT search," and that a page blocked in robots.txt may still surface as a bare link and title. To keep a page out, use the noindex meta tag and let the crawler read it.
-4. Serve important content as HTML. In Vercel's December 2024 analysis of crawler traffic, "none of the major AI crawlers currently render JavaScript," OpenAI's included. On a Webflow site, text from the Designer and CMS fields ships in the page HTML. Check anything a script adds after load, such as review widgets, pricing calculators, or "load more" lists. To test, open the page source and search for a sentence from your key answer.
-5. Fix 404 errors and redirect chains. The same analysis found ChatGPT spent 34.82% of its fetches on 404 pages, so keep your XML sitemap current and redirect retired URLs.
+4. Serve important content as HTML. OpenAI's crawler documentation says nothing about JavaScript rendering (checked November 16, 2026). The largest public test, Vercel and MERJ's December 2024 analysis of AI crawler traffic, found that ChatGPT's crawlers fetched JavaScript files but didn't run them. In late September 2026, [one developer's server logs](https://dev.to/hisashispace/traffic-from-chatgpt-jumped-is-it-because-its-crawlers-now-run-javascript-5961) suggested GPTBot and OAI-SearchBot had started rendering some Next.js pages. OpenAI hasn't confirmed it, and the developer thinks it's switched on for only some sites. Until OpenAI says more, put every answer you want quoted in the HTML your server sends. On a Webflow site, text from the Designer and CMS fields ships in the page HTML. Check anything a script adds after load, such as review widgets, pricing calculators, or "load more" lists. To test, open the page source and search for a sentence from your key answer.
+5. Fix 404 errors and redirect chains. In Vercel's December 2024 analysis, ChatGPT spent 34.82% of its fetches on 404 pages, so keep your XML sitemap current and redirect retired URLs.
 
 ## What content gets ChatGPT citations?
 
@@ -187,7 +191,7 @@ Two popular tactics have no support in OpenAI's documentation. Its publisher FAQ
 
 For buying prompts, ChatGPT draws heavily on what other sites say about you: comparison lists, review sites, community threads, and industry publications. A brand placed high in several trusted third-party lists is more likely to appear in the answer than one that only describes itself on its own website.
 
-In our own tracking for the web agency category, roundups were 25 of the 40 pages AI assistants cited most. The Ahrefs study found the pattern in software prompts too, along with a warning sign. In 169 of the 250 "best X software" searches it checked in Google (67.6%), the results included a list in which the company writing it ranked itself first.
+Google's AI Mode shows the same pull in our own category. On November 9, 2026, we ran 10 buyer prompts in Google AI Mode (US, English, logged out). BenorMedia was named in 1 of the 10 answers, the branded question; the other nine leaned on "best agencies" roundups and Reddit threads. In our own tracking for the web agency category, roundups were 25 of the 40 pages AI assistants cited most. The Ahrefs study found the pattern in software prompts too, along with a warning sign. In 169 of the 250 "best X software" searches it checked in Google (67.6%), the results included a list in which the company writing it ranked itself first.
 
 Our view: publish honest comparison pages on your own site, and spend more of your effort on accurate placement on independent ones. To earn more brand mentions:
 
