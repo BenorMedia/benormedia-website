@@ -6,13 +6,13 @@ draft: false
 blockedBy: []
 topicId: "2.1"
 wave: 1
-title: "Webflow Pricing 2026: New Plans and What Changed | BenorMedia"
-description: "Webflow Basic costs 15 dollars a month and Premium 25, billed yearly (25 and 39 monthly). Every 2026 plan, add-on and the November 16 change."
-h1: "Webflow pricing 2026: plans, prices and the November 16 change"
+title: "Webflow Pricing 2026: Every Plan, Price, and Change"
+description: "Webflow pricing in 2026: Basic costs 15 dollars a month and Premium 25, billed yearly. Every Site, Workspace, Team, and Enterprise plan, and which to pick."
+h1: "Webflow pricing in 2026: every plan, what it costs, and what changed."
 lang: en-US
 author: "David Garay, Web Developer and Designer"
 publishedAt: 2026-10-15
-updatedAt: 2026-11-09
+updatedAt: 2026-11-17
 reviewEvery: none
 primaryKeyword: "webflow pricing 2026"
 secondaryKeywords:
@@ -30,12 +30,18 @@ faqHeading: "Questions about Webflow pricing in 2026"
 faq:
   - q: "How much does Webflow cost per month in 2026?"
     a: "As of November 2026, a Basic Site plan costs 15 dollars a month billed yearly or 25 dollars billed monthly, and Premium costs 25 or 39 dollars. Ecommerce plans run from 29 to 212 dollars a month billed yearly. The free Starter plan publishes only to a webflow.io domain."
+  - q: "Is Webflow free?"
+    a: "For building and testing, yes. The Starter Site plan and the Starter Workspace cost nothing, but a Starter site publishes only to a webflow.io address, with 2 static pages, 50 CMS items, and 1 GB of bandwidth a month. A custom domain needs a paid Site plan, from 15 dollars a month billed yearly."
+  - q: "Which Webflow plan do I need for a business website?"
+    a: "Premium, if the site has a blog, case studies, or a resource library, because those run on the CMS and Basic has none. Premium costs 25 dollars a month billed yearly and includes 20,000 CMS items and 40 Collections. Team and Enterprise come in when you need approvals, more seats, or single sign-on."
+  - q: "How much did Webflow cost before the 2026 change?"
+    a: "Billed yearly, Basic was 14 dollars a month, CMS 23, and Business 39, or 49 billed monthly. Basic now costs 15, and CMS and Business sites move to Premium at 25 dollars a month billed yearly, or 39 monthly."
   - q: "How much is the Webflow Team plan?"
     a: "Webflow's pricing page lists the Team plan at 2,500 dollars a month, with an annual contract required, as of November 2026. It bundles a Workspace and one site with 20,000 CMS items, 100 CMS Collections, 10 seats, and Webflow Localize."
   - q: "When does the Webflow price increase apply to my site?"
-    a: "If your site is in a Freelancer or Agency Workspace, or on a legacy discount from 2022 or earlier, the new Site plan terms apply at your first renewal or billable change on or after November 16, 2026. Most other existing sites moved at renewal from June 29, 2026."
+    a: "At your site's first renewal or billable change after its change date: May 13, 2026 for new purchases, June 29, 2026 for most existing sites, and November 16, 2026 for sites in Freelancer or Agency Workspaces or on legacy discounts from 2022 or earlier. Ecommerce plans didn't change."
   - q: "Can I keep my current Webflow plan for longer?"
-    a: "Webflow says that switching from monthly to yearly billing before the changes take effect for your account keeps your current plan for one more year. After that year, the new terms apply."
+    a: "Only if you switched to yearly billing before the change reached your site: by June 29, 2026 for most sites, or by November 16, 2026 for sites in Freelancer or Agency Workspaces or on legacy discounts. That switch kept the current Site plan for one more year. Since those dates, a billing switch is a billable change and moves the site to the new terms."
   - q: "What counts as a billable change on Webflow?"
     a: "Upgrading or downgrading your base Site plan, or switching between monthly and yearly billing. On or after your effective date, either one moves the site to the new terms."
   - q: "Does the change affect Webflow Ecommerce plans?"
@@ -51,10 +57,10 @@ related:
 sources:
   - label: "Webflow: Plans and pricing"
     url: https://webflow.com/pricing
-    accessed: 2026-11-09
+    accessed: 2026-11-16
   - label: "Webflow Help Center: Updated pricing and simplified plans for May 2026"
     url: https://help.webflow.com/hc/en-us/articles/51059955082387-Updated-pricing-and-simplified-plans-for-May-2026
-    accessed: 2026-11-09
+    accessed: 2026-11-16
   - label: "Webflow: Pricing Change Calculator"
     url: https://webflow.com/pricing/calculator
     accessed: 2026-11-09
@@ -76,7 +82,18 @@ sources:
   - label: "BenorMedia: Webflow vs Custom Code: When to Leave Webflow"
     url: https://www.benormedia.com/guides/webflow-vs-custom-code
     accessed: 2026-10-15
+  - label: "Webflow: We're updating our pricing and simplifying our plans"
+    url: https://webflow.com/blog/simplified-plans-and-updated-pricing-2026
+    accessed: 2026-11-16
+  - label: "Webflow Help Center: Differences between Enterprise and non-Enterprise plans"
+    url: https://help.webflow.com/hc/en-us/articles/46651891357971-Differences-between-Enterprise-and-non-Enterprise-plans
+    accessed: 2026-11-16
+  - label: "PricingSaaS: Webflow pricing changes, Q2 2026 (snapshots of March 30 and June 29, 2026)"
+    url: https://pricingsaas.com/companies/webflow/diffs/2026Q2
+    accessed: 2026-11-16
 volatile:
+  - "Every price and limit on the page, including the Team and Enterprise comparison, the plan picker, and the Starter limits (source: Webflow pricing page, checked November 16, 2026)"
+  - "Old Basic (14 dollars) and CMS (23 dollars) yearly prices (source: PricingSaaS snapshot of March 30, 2026)"
   - "Site plan, Ecommerce plan, Workspace plan, seat, and Team plan prices, and the Premium bandwidth add-on price list (source: Webflow pricing page, checked November 9, 2026)"
   - "Effective dates (May 13, June 29, and November 16, 2026) and the groups each one covers (source: Webflow Help Center, Updated pricing and simplified plans for May 2026, updated August 31, 2026)"
   - "Site plan prices and limits for Basic, CMS, Business, Premium, and Ecommerce, and the Team plan details (same source, unchanged on November 9, 2026)"
@@ -89,7 +106,8 @@ volatile:
   - "Surge protection rules (source: Surge protection for overages, updated August 10, 2026)"
   - "Client payments availability and terms (source: Client payments, updated July 2, 2026)"
   - "Transfer rules, including the Enterprise Workspace exclusion (source: How do I transfer a site or plan to another workspace?, updated August 1, 2026)"
-volatileChecked: 2026-11-09
+thirdPartyPrices: true
+volatileChecked: 2026-11-16
 inbound:
   - page: /guides/webflow-enterprise
     anchor: "Webflow pricing in 2026"
@@ -115,7 +133,7 @@ editorNotes:
   - "The advice paragraph in the agency section was written at Sergio's request as BenorMedia's recommendation. It states no facts about past client work."
 ---
 
-Webflow's price increase reaches sites in Freelancer and Agency Workspaces, and sites on legacy discounts from 2022 or earlier, at their first renewal or billable change from November 16, 2026. For B2B marketing leads and founders, that renewal can change what the site costs. Here is what each plan costs, what changed, and what to check, as of November 2026.
+Webflow pricing in 2026 starts at 15 dollars a month for a Basic Site plan billed yearly and 25 dollars for Premium, the plan a marketing site with a blog or other CMS content needs. The Team plan is listed at 2,500 dollars a month on an annual contract, and Enterprise is quoted per customer. This page lists every plan and add-on for B2B marketing leads and founders, helps you pick one, and explains the 2026 price change, whose last step reached sites in Freelancer and Agency Workspaces on November 16, 2026.
 
 ## How much does Webflow cost in 2026?
 
@@ -149,7 +167,7 @@ Table: Premium add-ons for bandwidth and CMS items
 | Plus 2.45 TB bandwidth | 974 dollars a month | 1,460 dollars a month |
 | CMS items | Removed | Removed |
 
-Webflow sells eleven bandwidth steps in all, from 50 GB extra up to a 2.5 TB total. CMS item add-ons no longer exist, because Premium's 20,000 items cover what they used to unlock.
+Bandwidth add-ons run from 50 GB extra up to a 2.5 TB total; the table shows the main steps. CMS item add-ons no longer exist, because Premium's 20,000 items cover what they used to unlock.
 
 Table: Webflow Workspace and Team plan prices in 2026
 
@@ -163,13 +181,50 @@ Table: Webflow Workspace and Team plan prices in 2026
 
 Freelancer and Agency are for teams that build sites for clients, and Core and Growth for in-house teams. Extra seats cost 39 dollars a month for a full seat and 15 for a limited seat, billed yearly. Enterprise has no public price.
 
-Sources: [Webflow pricing page](https://webflow.com/pricing) and Webflow's help center notice [Updated pricing and simplified plans for May 2026](https://help.webflow.com/hc/en-us/articles/51059955082387-Updated-pricing-and-simplified-plans-for-May-2026), both checked on November 9, 2026.
+Sources: [Webflow pricing page](https://webflow.com/pricing) and Webflow's help center notice [Updated pricing and simplified plans for May 2026](https://help.webflow.com/hc/en-us/articles/51059955082387-Updated-pricing-and-simplified-plans-for-May-2026), checked on November 9, 2026; yearly Site plan, Team, Workspace, and seat prices rechecked on November 16, 2026.
 
-## Which Webflow sites change on November 16, 2026?
+## Which Webflow plan do you need?
 
-Two groups are on the November 16, 2026 timeline: existing sites in Freelancer or Agency Workspaces, and sites on legacy discounts from 2022 or earlier. From that date, each site moves to the new terms at its next renewal, or earlier if you make a billable change. Webflow told existing customers that nothing changes before then.
+Premium, if your site has a blog, case studies, or any other content in the CMS, because Basic has no CMS at all. Basic fits a small site of static pages, Starter is only for building and testing, and Team or Enterprise come in when a larger team needs approvals, more seats, or single sign-on.
 
-Webflow rolled the change out in three steps. New Site plan purchases got the new terms on May 13, 2026, and other existing sites moved at renewal from June 29, except Freelancer and Agency Workspace sites and sites on legacy pricing from 2022 or earlier. Webflow says it notified the customers who will see new prices in November about this timeline.
+Table: Which Webflow plan fits which site
+
+| Your site | Plan | Why |
+| --- | --- | --- |
+| A test or practice site with no custom domain | Starter, free | Publishes only to a webflow.io address, with 2 static pages and 1 GB of bandwidth a month |
+| A few static pages and a contact form | Basic | Up to 300 static pages, a custom domain, and unlimited form submissions, but no CMS |
+| A B2B marketing site with a blog, resources, or case studies | Premium | 20,000 CMS items, 40 Collections, site search, and form file uploads |
+| An online store | Ecommerce Standard, Plus, or Advanced | Priced by the number of ecommerce items, from 500 to 15,000 |
+| One large site that needs approvals, page branching, and Localization | Team | Publishing workflows, 10 seats, and 2 locales on one site |
+| Single sign-on, custom roles, several sites, or contractual SLAs | Enterprise | A custom contract with a priority support queue |
+
+Workspace plans are a separate decision about seats and staging, not about the live site. Core and Growth are for in-house teams, Freelancer and Agency for people who build sites for clients, and the free Starter Workspace covers 2 staging sites and 1 full seat.
+
+## What do the Team and Enterprise plans include?
+
+Team and Enterprise are Webflow's platform plans for larger teams. Team costs 2,500 dollars a month on an annual contract and covers one site; Enterprise has no public price and is set per contract. Both raise the limits of the self-serve plans, and Enterprise adds single sign-on, custom roles, and contractual SLAs.
+
+Table: Webflow Team plan vs Enterprise plan (checked November 16, 2026)
+
+| Area | Team | Enterprise |
+| --- | --- | --- |
+| Price | 2,500 dollars a month, annual contract only | Custom, quoted by Webflow |
+| Sites | One site; more by arrangement with Webflow | Set in the contract |
+| Seats | 5 full and 5 limited, plus up to 100 free seats | Set in the contract |
+| Limits | 20,000 CMS items, 100 Collections, 500 static pages, up to 30 TB of bandwidth a year | Custom |
+| Localization | 2 locales included, more for a fee | Custom |
+| Publishing | Publishing workflows, page branching, single-page publishing | Configurable workflows |
+| Security | Custom SSL certificates, security headers, a site activity log | Adds single sign-on, SCIM, custom roles, and an audit log API |
+| Uptime listed | 99.90% for the application, 99.00% for hosted sites | 99.90% for the application, 99.99% for hosted sites |
+| Support | Not stated on the pricing page | Contractual SLAs and a priority support queue |
+
+Webflow's older help center articles still describe security headers, custom SSL, and publishing workflows as Enterprise features, so if a security review depends on them, ask Webflow to confirm what your plan includes. Our [Webflow Enterprise guide](/guides/webflow-enterprise) compares the two plans for teams with security and governance reviews.
+
+## Which Webflow sites changed on November 16, 2026?
+
+Two groups moved to the new terms from November 16, 2026: existing sites in Freelancer or Agency Workspaces, and sites on legacy discounts from 2022 or earlier. Each site switches at its first renewal or billable change on or after that date, so a site whose renewal is months away runs on its old plan until then.
+
+Webflow rolled the change out on three dates. New Site plan purchases got the new terms on May 13, 2026; other existing sites followed at renewal from June 29; and Freelancer and Agency Workspace sites and sites on legacy pricing from 2022 or earlier came last, from November 16. Webflow says it notified the customers on the November timeline in advance.
 
 Table: When Webflow's new Site plan terms apply
 
@@ -191,14 +246,14 @@ Table: What changes for each Site plan at your effective date
 
 | Old plan | New plan | Plan price | Main limit changes |
 | --- | --- | --- | --- |
-| Basic | Basic | Rises to 15 dollars a month billed yearly, or 25 billed monthly | Static pages from 150 to 300 |
-| CMS | Premium | Rises to 25 dollars a month billed yearly, or 39 billed monthly | Static pages from 150 to 300, CMS items from 2,000 to 20,000, Collections from 20 to 40 |
-| Business | Premium | Falls to 25 dollars a month billed yearly, or 39 billed monthly | CMS items from 10,000 to 20,000, bandwidth from 100 GB to 50 GB |
+| Basic | Basic | From 14 to 15 dollars a month billed yearly; 25 billed monthly | Static pages from 150 to 300 |
+| CMS | Premium | From 23 to 25 dollars a month billed yearly; 39 billed monthly | Static pages from 150 to 300, CMS items from 2,000 to 20,000, Collections from 20 to 40 |
+| Business | Premium | From 39 to 25 dollars a month billed yearly, and from 49 to 39 billed monthly | CMS items from 10,000 to 20,000, bandwidth from 100 GB to 50 GB |
 | Ecommerce | Ecommerce | No change | No change |
 
 Webflow moves CMS and Business Site plans to the new Premium Site plan automatically when the Site plan changes reach them. Former CMS sites also gain form file uploads, well-known files, and faster search indexing, and their Webflow Cloud limits rise, while Business sites' Webflow Cloud limits fall. CMS item add-ons are gone: Premium includes 20,000 CMS items, and a Business plan's CMS items add-on is removed at no extra cost.
 
-Webflow also launched a new Team plan, which bundles a Workspace, one site with 100 CMS Collections, 10 seats, and Webflow Localize, on annual billing only. Its pricing page lists it at 2,500 dollars a month with an annual contract, as of November 2026. If your in-house team is weighing it, price it as a separate decision from the Site plan change.
+Webflow also launched the Team plan on May 13, 2026; the section on Team and Enterprise above covers what it includes.
 
 ## Will a former Business site pay more or less?
 
@@ -216,13 +271,13 @@ Premium bandwidth add-ons come in increments starting at 50 GB, up to 2.5 TB in 
 
 Overages don't bill straight away. Under Webflow's surge protection, the first month over the bandwidth limit isn't charged. If a site goes over for two billing months in a row, Webflow upgrades its Site plan or bandwidth add-on automatically, and the new tier's price applies.
 
-## Can you keep your current Webflow plan for another year?
+## Can you still keep your old Webflow plan for another year?
 
-Only by switching to yearly billing before the changes take effect for your account, and only if the new terms would cost you more. Webflow says that switch keeps your current Site plan for one more year.
+No, unless you switched in time. Webflow let a site keep its current Site plan for one more year if the owner moved it to yearly billing before the change reached it, and that window has now closed for every group.
 
-For a site in a Freelancer or Agency Workspace, that means switching before November 16, 2026. From November 16, 2026, a switch between billing cycles is itself a billable change, so it moves the site to the new terms instead of protecting the old ones. A site that already switched in time keeps its old plan until the end of that extra year.
+For most existing sites the window closed on June 29, 2026, and for sites in Freelancer or Agency Workspaces or on legacy discounts it closed on November 16, 2026. Since those dates, a switch between billing cycles is itself a billable change, so it moves a site to the new terms instead of protecting the old ones. A site that switched in time keeps its old plan until the end of that extra year, then moves at its next renewal.
 
-The lock-in suits sites that will pay more: Basic sites, CMS sites that don't need the Premium plan's higher CMS limits, and Business sites with heavy bandwidth. A Business site on monthly billing with modest traffic may pay less on Premium, as Webflow's first example shows, so run the calculator before you commit.
+If one of your sites is in that extra year, note when it ends and run Webflow's pricing change calculator a month before, so the new price doesn't arrive as a surprise. A Business site on monthly billing with modest traffic may even pay less on Premium, as the example table above shows.
 
 To switch a Site plan, open Site settings, then Plans, turn on Billed yearly, and select Switch to yearly under the plan name. Check the details and select Pay now. Webflow charges the card on file at once, shows the prorated amount at checkout, and blocks the switch while the subscription is past due.
 
@@ -253,7 +308,7 @@ Ask your agency for:
 4. whether any of your plans moved to yearly billing before November 16, 2026, and when that extra year ends;
 5. the add-ons you pay for.
 
-Our advice to clients follows the checklist above, in that order: compare the calculator's result with your current price, switch to yearly billing while your change date is still ahead only where the new terms cost more, and agree who pays the Site plan from then on. If you'd rather hold the bill yourself, client payments lets you do that without moving the site.
+Our advice to clients follows the checklist above, in that order: compare the calculator's result with your current price, move to yearly billing where it now saves money, and agree who pays the Site plan from then on. If you'd rather hold the bill yourself, client payments lets you do that without moving the site.
 
 We build and support Webflow sites for B2B companies, so we have an interest in the topic.
 

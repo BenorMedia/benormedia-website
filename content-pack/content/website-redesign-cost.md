@@ -150,7 +150,7 @@ On our own B2B redesigns, the line that grows most often after kickoff is conten
 
 ## What should you budget for after launch?
 
-Plan for four recurring costs: the platform or hosting, the domain, maintenance, and the changes your team will keep asking for. Webflow site plans cost $15 or $25 a month billed yearly. Forbes Advisor estimates hosting and apps at $15 to $150 a month for other setups, and a domain at $10 to $35 a year.
+Plan for four recurring costs: the platform or hosting, the domain, maintenance, and the changes your team will keep asking for. Webflow site plans cost $15 or $25 a month billed yearly. Forbes Advisor estimates hosting and apps at $15 to $150 a month for other setups, and a domain at $10 to $35 a year. Our [Webflow pricing guide](/blog/webflow-price-increase) lists every Site, Workspace, and Team plan.
 
 Maintenance is the line people forget. Forbes Advisor notes that a dedicated website management service can cost several hundred dollars a month. Whoever does the work, the checks are the same: forms, analytics, broken links, scripts, access, backups. Our [website maintenance checklist](/blog/website-maintenance-checklist) lists them by month, quarter, and year, and our [ongoing website support](/ongoing-website-support) page explains how we handle them for clients.
 
