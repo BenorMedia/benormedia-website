@@ -10,7 +10,7 @@ title: "Headless CMS Comparison: 6 Platforms for Marketing Sites"
 description: "Contentful, Payload, Prismic, Sanity, Storyblok, and Strapi compared on visual editing, roles, localization, hosting, and pricing. Checked October 2026."
 h1: "Headless CMS comparison for B2B marketing sites: the criteria that matter, not a ranking"
 lang: en-US
-author: "Sergio Gancedo, General Manager"
+author: "Sergio Gancedo, Managing Director"
 publishedAt: 2026-10-23
 updatedAt: 2026-11-09
 reviewEvery: none

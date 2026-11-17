@@ -10,7 +10,7 @@ title: "How to Optimize for AI Overviews and AI Mode | BenorMedia"
 description: "How to optimize for AI Overviews and AI Mode: what Google requires, the new Search Console AI control and report, and what B2B SaaS pages need."
 h1: "How to optimize for AI Overviews and AI Mode: what Google requires and what B2B SaaS pages need"
 lang: en-US
-author: "Sergio Gancedo, General Manager"
+author: "Sergio Gancedo, Managing Director"
 publishedAt: 2026-10-26
 updatedAt: 2026-11-17
 reviewEvery: 30 days

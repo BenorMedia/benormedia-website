@@ -10,7 +10,7 @@ title: "Astro CMS: How to Choose and Connect One | BenorMedia"
 description: "Astro has no built-in CMS. How to choose one in 2026: content collections, Git-based and headless options, connecting Sanity, and what Astro 7 changed."
 h1: "Astro CMS: how to choose a CMS for an Astro site, and how to connect it"
 lang: en-US
-author: "Sergio Gancedo, General Manager"
+author: "Sergio Gancedo, Managing Director"
 publishedAt: 2026-10-26
 updatedAt: 2026-11-09
 reviewEvery: 60 days

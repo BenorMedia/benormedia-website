@@ -10,7 +10,7 @@ title: "How to Track Brand Mentions in ChatGPT for Free"
 description: "Track brand mentions in ChatGPT and other AI chats for free: a 30-prompt method, a scoring sheet, and what our own first reading showed. November 2026."
 h1: "How to track brand mentions in ChatGPT by hand: a 30-prompt method"
 lang: en-US
-author: "Sergio Gancedo, General Manager"
+author: "Sergio Gancedo, Managing Director"
 publishedAt: 2026-10-18
 updatedAt: 2026-11-09
 reviewEvery: none

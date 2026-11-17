@@ -25,11 +25,11 @@ export const AUTHORS: readonly Author[] = [
   {
     slug: "sergio-gancedo",
     name: "Sergio Gancedo",
-    jobTitle: "General Manager, BenorMedia", // lead 2026-11-03 (was Managing Director)
+    jobTitle: "Managing Director, BenorMedia", // Sergio 2026-11-17: Managing Director
     photo: { src: "/images/new-pages/authors/sergio-gancedo.png", w: 129, h: 129 }, // lead 2026-10-17
-    description: "Sergio Gancedo is the General Manager of BenorMedia, a Webflow agency for B2B SaaS. Read his guides on Webflow, migrations and SaaS web design.",
+    description: "Sergio Gancedo is the Managing Director of BenorMedia, a Webflow agency for B2B SaaS. Read his guides on Webflow, migrations and SaaS web design.",
     bio: [
-      "Sergio Gancedo is the General Manager of BenorMedia, a Webflow agency based in Barcelona that designs, builds and grows websites for B2B SaaS and tech companies.",
+      "Sergio Gancedo is the Managing Director of BenorMedia, a Webflow agency based in Barcelona that designs, builds and grows websites for B2B SaaS and tech companies.",
       "He leads the agency's website projects from strategy to launch: Webflow builds, migrations from WordPress and other platforms, and the technical SEO that keeps rankings intact through a move. His focus is on websites that marketing teams can run on their own after launch.",
       "On the BenorMedia guides he writes about Webflow, website migrations, B2B SaaS web design and search, drawing on the agency's client work.",
     ],

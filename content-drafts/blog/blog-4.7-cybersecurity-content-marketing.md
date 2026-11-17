@@ -10,7 +10,7 @@ title: "Cybersecurity Marketing: Strategy for CISOs and Engineers"
 description: "Cybersecurity marketing for CISOs and security engineers: strategy, channels, content formats, and proof, with 2026 research on how buyers choose vendors."
 h1: "Cybersecurity marketing: how to reach CISOs and security engineers on the same site."
 lang: en-US
-author: "Sergio Gancedo, General Manager"
+author: "Sergio Gancedo, Managing Director"
 publishedAt: 2026-10-27
 updatedAt: 2026-11-10
 reviewEvery: 90 days

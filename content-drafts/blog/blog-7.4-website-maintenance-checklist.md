@@ -10,7 +10,7 @@ title: "Website Maintenance Checklist: Monthly, Quarterly, Yearly"
 description: "A website maintenance checklist for B2B SaaS sites: what to check monthly, quarterly, and yearly, who owns each task, and a template you can copy."
 h1: "Website maintenance checklist for a B2B SaaS site: monthly, quarterly, and yearly"
 lang: en-US
-author: "Sergio Gancedo, General Manager"
+author: "Sergio Gancedo, Managing Director"
 publishedAt: 2026-10-19
 updatedAt: 2026-11-09
 reviewEvery: 30 days

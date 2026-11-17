@@ -10,7 +10,7 @@ title: "Website Architecture SEO for B2B SaaS Sites | BenorMedia"
 description: "Website architecture SEO for B2B SaaS: which pages to build, how to plan URLs and internal links, how to fix a messy structure, and a real example."
 h1: "Website architecture SEO for B2B SaaS: how to structure pages, URLs, and links"
 lang: en-US
-author: "Sergio Gancedo, General Manager"
+author: "Sergio Gancedo, Managing Director"
 publishedAt: 2026-10-20
 updatedAt: 2026-10-20
 reviewEvery: 30 days
