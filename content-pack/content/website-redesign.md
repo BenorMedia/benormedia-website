@@ -14,7 +14,7 @@ primaryKeyword: website redesign services
 secondaryKeywords: [website redesign agency, b2b website redesign, saas website redesign, website redesign company]
 targetCountry: US
 publishedAt: 2026-10-10
-updatedAt: 2026-10-12
+updatedAt: 2026-11-17
 reviewEvery: 90
 breadcrumb:
   - name: Home
@@ -35,7 +35,7 @@ faq:
   - q: How much do website redesign services cost?
     a: "Five things set the cost: the number of page templates, how much content moves, the integrations, whether the platform changes, and how much new copy you need. The [pricing page](/pricing) lists a Design + Development plan billed monthly and a One Off plan for fixed-scope projects. Send your URL and page count, and we'll come back with a number."
   - q: How long does a B2B website redesign take?
-    a: "Templates, content volume, the redirect map and the number of review rounds set the timeline, and we fix it in the website strategy plan once the audit is done. For reference, a WordPress to Webflow migration typically takes 3 to 4 weeks for about 20 pages and 6 to 8 weeks for a mid-size site with a blog. A large site takes 10 to 14 weeks, and a full redesign adds design time on top."
+    a: "Templates, content volume, the redirect map and the number of review rounds set the timeline, and we fix it in the website strategy plan once the audit is done. For reference, a WordPress to Webflow migration typically takes 2 to 4 weeks for about 20 pages, and a large site takes 8 to 10 weeks. A full redesign adds design time on top."
   - q: Will a website redesign hurt our SEO?
     a: "It can, if URLs change without redirects, top pages lose their content, or the new templates load slowly. Planned properly, rankings may move for a few weeks and then settle; Google says to expect temporary fluctuation during a site move. We map every URL, keep top-page content stable at launch, and check Search Console daily after the switch."
   - q: What should we check before hiring a website redesign agency?
