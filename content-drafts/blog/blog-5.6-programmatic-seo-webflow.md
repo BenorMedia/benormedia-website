@@ -12,7 +12,7 @@ h1: "Webflow programmatic SEO: CMS limits, setup, and how to avoid thin pages"
 lang: en-US
 author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-26
-updatedAt: 2026-10-26
+updatedAt: 2026-11-17
 reviewEvery: 30 days
 primaryKeyword: "programmatic seo webflow"
 secondaryKeywords: ["webflow programmatic seo", "webflow cms api", "webflow cms item limit", "webflow cms limits"]
@@ -184,7 +184,7 @@ A sheet like this is also your review queue: anyone can see which rows are thin,
 
 On the Premium Site plan, Webflow allows 20,000 CMS items and 40 Collections per site, and each Collection can have up to 60 fields. Enterprise sites on Webflow's next-gen CMS can scale past one million items. Check these limits before you plan a page set, because they cap how far a template can go.
 
-Premium replaced the CMS plan and the Business plan. New purchases moved to it on May 13, 2026; most existing sites move at their next renewal from June 29, 2026, and sites in agency or freelancer workspaces, or on pricing from 2022 or earlier, from November 16, 2026. Our guide to the [Webflow price increase](/blog/webflow-price-increase) covers what changes at renewal. If you see a lower item limit quoted elsewhere, it likely predates this change.
+Premium replaced the CMS plan and the Business plan. New purchases moved to it on May 13, 2026; most existing sites move at their next renewal from June 29, 2026, and sites in agency or freelancer workspaces, or on pricing from 2022 or earlier, at their first renewal or billable change on or after November 16, 2026. Our guide to the [Webflow price increase](/blog/webflow-price-increase) covers what changes at renewal. If you see a lower item limit quoted elsewhere, it likely predates this change.
 
 Table: Webflow limits that shape a programmatic page set, as of October 2026
 
