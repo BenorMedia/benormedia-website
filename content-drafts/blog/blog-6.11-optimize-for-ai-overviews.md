@@ -12,7 +12,7 @@ h1: "How to optimize for AI Overviews and AI Mode: what Google requires and what
 lang: en-US
 author: "Sergio Gancedo, General Manager"
 publishedAt: 2026-10-26
-updatedAt: 2026-10-26
+updatedAt: 2026-11-17
 reviewEvery: 30 days
 primaryKeyword: "optimize for ai overviews"
 secondaryKeywords: ["ai overviews seo", "how to rank in ai mode", "ai mode seo", "how to appear in ai overviews"]
@@ -65,6 +65,18 @@ sources:
   - label: "Ahrefs: Update: AI Overviews Reduce Clicks by 58%"
     url: https://ahrefs.com/blog/ai-overviews-reduce-clicks-update/
     accessed: 2026-10-26
+  - label: "Google: Q3 2026 earnings call: Remarks from our CEO"
+    url: https://blog.google/company-news/inside-google/message-ceo/alphabet-earnings-q3-2026/
+    accessed: 2026-11-17
+  - label: "Google: Gemini 4 Hydrogen in Search (Robby Stein, November 12, 2026)"
+    url: https://blog.google/products-and-platforms/products/search/gemini-4-hydrogen-search-upgrade/
+    accessed: 2026-11-17
+  - label: "Google Search Status Dashboard: November 2026 core update"
+    url: https://status.search.google.com/incidents/WLxcJyC6jMWMfryxsKMc
+    accessed: 2026-11-17
+  - label: "Search Console Help: Data anomalies in Search Console"
+    url: https://support.google.com/webmasters/answer/6211453?hl=en
+    accessed: 2026-11-17
 volatile:
   - "Requirements for AI features, query fan-out, preview controls, and click quality statement (source: Google Search Central, updated 2025-12-10)"
   - "No special files, markup, chunking, or page length needed; scaled content abuse warning; eligibility requires inclusion in the Search generative AI control (source: Google guide, updated 2026-07-10)"
@@ -74,7 +86,7 @@ volatile:
   - "8% vs 15% click rate, 1% clicks inside summaries, 26% vs 16% session ends, 18% of searches with a summary (source: Pew Research Center, July 22, 2025, March 2025 data)"
   - "37.9% of AI Overview URLs in the top 10, 31.0% outside the top 100, down from about 76% in July 2025 (source: Ahrefs, March 2, 2026)"
   - "AI Overviews linked to a 58% lower desktop CTR for position one as of December 2025 (source: Ahrefs, February 4, 2026, updated October 15, 2026)"
-volatileChecked: 2026-10-26
+volatileChecked: 2026-11-17
 inbound:
   - page: /blog/ai-seo-myths
     anchor: "how to optimize for AI Overviews and AI Mode"
@@ -97,7 +109,7 @@ editorNotes:
   - "Body is about 2,500 words with four tables, above the 1,800 guideline, because it covers AI Overviews and AI Mode together, plus the new Search Console control and report (rule change of 2026-10-26)."
 ---
 
-To optimize for Google's AI Overviews and AI Mode, make your pages eligible for a snippet in Google search results, answer the sub-questions Google's AI searches for, and check the results in Search Console's Generative AI performance report. Google says no special files, markup, or schema are needed. This guide is for B2B SaaS marketing teams, as of October 2026.
+To optimize for Google's AI Overviews and AI Mode, make your pages eligible for a snippet in Google search results, answer the sub-questions Google's AI searches for, and check the results in Search Console's Generative AI performance report. Google says no special files, markup, or schema are needed. This guide is for B2B SaaS marketing teams, as of November 2026.
 
 ## How do Google's AI Overviews and AI Mode choose which pages to show?
 
@@ -106,6 +118,8 @@ Both features build answers from Google's own search index. For a query, they ma
 Google describes the two differently. AI Overviews "help people get to the gist of a complicated topic or question more quickly." Google AI Mode "is particularly helpful for queries where further exploration, reasoning, or complex comparisons are needed," which fits the comparison questions B2B buyers ask. Fan-out works in both, "issuing multiple related searches across subtopics and data sources," which lets them "display a wider and more diverse set of helpful links."
 
 The audience is large. In its July 22, 2026 earnings remarks, Google said AI Mode had "surpassed 1 billion monthly active users" since expanding globally in October 2025, and that it had "brought together AI Overviews and AI Mode" in one Search experience. It also said Search is "sending billions of clicks to websites every week through AI features."
+
+Two changes since then point the same way. On November 12, 2026, Google said its Gemini 4 Hydrogen model "is now available globally in Google Search for all users," called it "the biggest model upgrade to Search yet," and said it "supercharges our query fan-out technique," connecting people "to a broader range of helpful links than before." On its October 28, 2026 earnings call, Google added that queries in AI Mode are on average three times longer than traditional searches, and one in five AI Mode searches globally use voice, images, or documents. More fan-out and longer questions both reward pages that answer the sub-questions around a query.
 
 Table: AI Overviews and AI Mode at a glance
 
@@ -206,7 +220,11 @@ Clicks are not the whole picture. A summary that names your product still puts y
 
 Use the Generative AI performance report in Google Search Console, rolled out to all sites by August 31, 2026. It shows impressions from AI Overviews and AI Mode by page, country, device, and date. Pair it with the Performance report and GA4 for clicks and conversions.
 
-How Google counts it: "Impressions are how many times links to your site were shown to a user in a generative AI feature on Google Search." Two results from your site in the same AI feature count as one impression in the chart total, while the page table counts each page. A search type filter splits "Web: text-based" from "Web: multimodal." The report may not appear until a site has enough AI impressions, and Discover has its own report. Search Console won't show whether an AI Mode answer names your brand without linking to you; that's what [AI Mode tracking](/blog/ai-mode-tracking) is for.
+How Google counts it: "Impressions are how many times links to your site were shown to a user in a generative AI feature on Google Search." Two results from your site in the same AI feature count as one impression in the chart total, while the page table counts each page. A search type filter splits "Web: text-based" from "Web: multimodal." The report may not appear until a site has enough AI impressions, and Discover has its own report. Search Console won't show whether an AI Mode answer names your brand without linking to you; that's what [AI Mode tracking](/blog/ai-mode-tracking) is for. When we ran 10 buyer prompts in Google AI Mode on November 9, 2026 (US, English, logged out), BenorMedia was named in 1 of the 10 answers, the branded question; the other nine leaned on "best agencies" roundups and Reddit threads. None of those mentions appears in Search Console.
+
+Longer questions also change your query data. Because AI Mode queries run about three times longer than classic searches, expect more question-style and long-tail queries in the Performance report, and check what they are before you plan content around them.
+
+Our own site shows why. In the 28 days to November 9, 2026, queries phrased as questions or seven or more words long drew about 1,380 impressions and 1 click on benormedia.com, at an average position of 21.9. Many read like prompts typed into AI Mode, and some come from prompt-tracking tools, so we read them as visibility rather than buyer demand.
 
 Table: Where to measure Google's AI features
 
@@ -218,6 +236,8 @@ Table: Where to measure Google's AI features
 | Do visits turn into pipeline? | GA4 landing pages and key events, then your CRM | Compare with the same period before the change |
 
 The report's help page describes impressions only. For clicks, Search Console counts AI feature traffic inside the Web search type of the Performance report, and in GA4 those visits arrive as Google organic traffic. Our guide to [AI traffic in GA4](/blog/ai-traffic-in-ga4) covers the referrers you can separate, such as ChatGPT and Perplexity.
+
+Two November 2026 events affect any before-and-after comparison. Google began rolling out its November 2026 core update on November 10 (it said the rollout may take up to two weeks), and a logging error lowered impressions in the Generative AI performance report for November 9 to 11, 2026; Google's data anomalies page says it "affects data logging only." Mark both on your baseline before you compare periods.
 
 ## Should a B2B SaaS site ever opt out of AI Overviews?
 
@@ -235,7 +255,7 @@ Google says the control "isn't used as a ranking or inclusion signal affecting o
 
 Start with eligibility and a baseline, then rebuild the pages behind your highest-value queries, then measure monthly. Most of the work is classic SEO done more thoroughly, with more attention to the questions around each query.
 
-1. Day 1: confirm the Search generative AI setting, and export a baseline from the Generative AI performance report and the Performance report.
+1. Day 1: confirm the Search generative AI control is set to include, and export a baseline from the Generative AI performance report and the Performance report. Note any core update or data anomaly dates inside the baseline period.
 2. Week 1: list 10 to 20 queries tied to pipeline. Search each one, and note whether an AI Overview appears, which pages it cites, and whether yours is among them.
 3. Week 1: write down 4 to 6 sub-questions a buyer would ask next for each query.
 4. Week 2: fix eligibility issues: indexing, snippet controls, robots.txt and CDN rules, and internal links.
