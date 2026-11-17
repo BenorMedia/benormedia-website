@@ -359,6 +359,7 @@ export function loadPages(): NpPage[] {
     }),
   );
   const plan = readPlan();
+  linkTargets = { pack, plan, includeDrafts: mode.includeDrafts };
 
   const pages = built.map(({ file }) => {
     let source = file;
@@ -403,6 +404,40 @@ export function loadPages(): NpPage[] {
 }
 
 export const pagesOf = (family: Family): NpPage[] => loadPages().filter((p) => p.family === family);
+
+/** The link targets of the last `loadPages()` run, for `faqEntries`. */
+let linkTargets: { pack: LinkContext["pack"]; plan: Map<string, PlanPage>; includeDrafts: boolean } | null = null;
+
+/**
+ * FAQ items for a page outside the pack (opt-in; /pricing, lead 2026-11-17):
+ * the same entries `buildPage` makes, so `NpFaq` and `faqPageLd` render them
+ * like a service page's FAQ (links in the visible answer, anchor words in
+ * FAQPage). `currentPath` is the page's own URL.
+ */
+export function faqEntries(currentPath: string, items: readonly { q: string; a: string }[]): FaqEntry[] {
+  loadPages();
+  if (!linkTargets) throw new Error("[new-pages] faqEntries: no link targets");
+  const gaps = new GapTable();
+  const slugger = new Slugger();
+  const links: LinkContext = {
+    currentSlug: currentPath,
+    includeDrafts: linkTargets.includeDrafts,
+    pack: linkTargets.pack,
+    plan: linkTargets.plan,
+    warn: (m) => warn(`${currentPath}: ${m}`),
+  };
+  return items.map((item) => {
+    const qTok = gaps.tokenize(item.q);
+    const aTok = gaps.tokenize(item.a);
+    return {
+      q: stripTokens(qTok),
+      qHtml: gaps.toHtml(escapeHtml(qTok)),
+      a: plainInline(stripTokens(aTok)),
+      aHtml: inline(aTok, { links, slugger, finish: (h) => gaps.toHtml(h) }),
+      hasGap: hasToken(qTok) || hasToken(aTok),
+    };
+  });
+}
 
 interface BuildContext {
   view: View;

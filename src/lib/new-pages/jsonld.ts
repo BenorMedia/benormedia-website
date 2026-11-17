@@ -13,7 +13,7 @@
  * released and live levels (`links.ts`), renumbered from 1.
  */
 import { AREA_SERVED_LD, ENTITY, ORG_ID, PROVIDER_LD, SITE, WEBSITE_ID } from "../content/entity";
-import type { NpPage } from "./loader";
+import type { FaqEntry, NpPage } from "./loader";
 import { authorId, authorPath, findAuthor, type Author } from "./authors";
 
 type Ld = Record<string, unknown>;
@@ -215,18 +215,8 @@ export function pageJsonLd(page: NpPage): Ld[] {
     });
   }
 
-  const faq = page.faq.filter((item) => !item.hasGap && item.q && item.a);
-  if (faq.length > 0) {
-    out.push({
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      mainEntity: faq.map((item) => ({
-        "@type": "Question",
-        name: item.q,
-        acceptedAnswer: { "@type": "Answer", text: item.a },
-      })),
-    });
-  }
+  const faq = faqPageLd(page.faq);
+  if (faq) out.push(faq);
 
   if (page.breadcrumbLd.length > 0) {
     out.push({
@@ -241,4 +231,20 @@ export function pageJsonLd(page: NpPage): Ld[] {
     });
   }
   return out;
+}
+
+/** FAQPage from FAQ entries (gap items and empty answers left out); `null`
+ *  when none is left. Used by `pageJsonLd` and by /pricing. */
+export function faqPageLd(items: readonly FaqEntry[]): Record<string, unknown> | null {
+  const faq = items.filter((item) => !item.hasGap && item.q && item.a);
+  if (faq.length === 0) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faq.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
 }

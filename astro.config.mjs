@@ -121,7 +121,7 @@ const LASTMOD = {
   '/custom-websites-migrations': '2026-10-06',
   '/growth': '2026-10-06',
   '/ongoing-website-support': '2026-11-10',
-  '/pricing': '2026-10-06',
+  '/pricing': '2026-11-17',
   '/work': '2026-10-06',
   '/testimonials': '2026-11-05',
   '/privacy-policy': '2026-10-05',

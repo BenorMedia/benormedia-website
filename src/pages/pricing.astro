@@ -19,13 +19,16 @@ import {
 } from "../lib/sanity/queries";
 import { OUR_WORK_GRID_IDS, OUR_WORK_LIST_IDS } from "../lib/content/our-work";
 import { PRICING_PLANS } from "../lib/content/pricing";
-import { PRICING_FAQ_GROUPS, faqPageLd } from "../lib/content/faqs";
+import { PRICING_FAQ, PRICING_FAQ_HEADING } from "../lib/content/faqs";
+import { faqEntries } from "../lib/new-pages/loader";
+import { faqPageLd } from "../lib/new-pages/jsonld";
+import { escapeHtml, withPeriod } from "../lib/new-pages/html";
 import JsonLd from "../components/layout/JsonLd.astro";
 import { PAGE_META } from "../lib/content/seo";
 import PageHero from "../components/sections/PageHero.astro";
 import PricingPlans from "../components/sections/PricingPlans.astro";
 import LogoStrip from "../components/sections/LogoStrip.astro";
-import FaqSection from "../components/sections/FaqSection.astro";
+import NpFaq from "../components/new-pages/NpFaq.astro";
 import Testimonials from "../components/sections/Testimonials.astro";
 import OurWork from "../components/sections/OurWork.astro";
 
@@ -37,7 +40,11 @@ const [pricingPage, logoClients, testimonials, workClients, workListClients] = a
   getClientsByIds(OUR_WORK_LIST_IDS),
 ]);
 
-const pricingFaqLd = faqPageLd(PRICING_FAQ_GROUPS);
+// Plan FAQ (brief 2026-11-16 task 4B, Sergio 2026-11-17): the service pages'
+// FAQ block and FAQPage helper, so answer links work and the schema matches
+// the visible FAQ. Replaces the hidden placeholder FAQ (lead 2026-09-30).
+const pricingFaq = faqEntries("/pricing", PRICING_FAQ);
+const pricingFaqLd = faqPageLd(pricingFaq);
 ---
 
 <BaseLayout pageSeo={pricingPage?.seo ?? null} title={PAGE_META.pricing.title} description={PAGE_META.pricing.description}>
@@ -50,9 +57,7 @@ const pricingFaqLd = faqPageLd(PRICING_FAQ_GROUPS);
     <PricingPlans plans={PRICING_PLANS} />
   </div>
   {logoClients.length > 0 && <LogoStrip clients={logoClients} />}
-  {/* FAQs hidden for now (lead 2026-09-30). FAQPage JSON-LD from the same
-      array (lead 2026-10-06); FaqSection drops its own while hidden. */}
-  <FaqSection title="Frequently asked questions." groups={PRICING_FAQ_GROUPS} scrollTabs hidden />
+  <NpFaq id="pricing-and-plan-faqs" headingHtml={withPeriod(escapeHtml(PRICING_FAQ_HEADING))} items={pricingFaq} />
   {pricingFaqLd && <JsonLd data={pricingFaqLd} />}
   <Testimonials testimonials={testimonials} />
   {(workClients.length > 0 || workListClients.length > 0) && (
