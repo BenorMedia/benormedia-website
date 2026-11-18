@@ -783,13 +783,8 @@ export const THUMBS: Record<string, ThumbEntry> = {
     icon: "person",
     labels: ["Content editor", "Marketer", "Reviewer", "Designer", "Site manager"],
   }),
-  // The CMSs compared, by the criteria the post uses.
-  "headless-cms-comparison": t(ThLogos, {
-    groups: [
-      { tag: "Editing and preview", logos: ["sanity", "storyblok"] },
-      { tag: "Localization", logos: ["contentful"] },
-    ],
-  }),
+  // The lead's image (2026-11-18), replacing the logos layout.
+  "headless-cms-comparison": t(ThImage, { src: `${IMG}/headless-cms-comparison.webp`, w: 1084, h: 720 }),
   // AI tools around the site, under the post's allow, ask and block policy.
   "webflow-mcp": t(ThDome, {
     outer: [
