@@ -29,8 +29,8 @@ export const PRICING_PLANS: readonly PricingPlan[] = [
     name: "Design + Development",
     description:
       "Unlimited marketing design, web design, and web development support for growing B2B companies.",
-    price: "€2,000",
-    priceUsd: "$2,250",
+    price: "€3,000",
+    priceUsd: "$3,400",
     period: "/mo",
     features: [
       "Unlimited development requests",
@@ -49,8 +49,8 @@ export const PRICING_PLANS: readonly PricingPlan[] = [
     name: "Growth (SEO/GEO + CRO)",
     description:
       "Technical AEO, AI search analytics, content creation, and ongoing optimization to improve your LLMs visibility and web conversion rate.",
-    price: "€2,500",
-    priceUsd: "$2,800",
+    price: "€3,500",
+    priceUsd: "$3,950",
     period: "/mo",
     features: [
       "Content creation",
