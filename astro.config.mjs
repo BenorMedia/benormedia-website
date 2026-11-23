@@ -118,8 +118,8 @@ const benorSanityAliasFix = {
 /** @type {Record<string, string>} */
 const LASTMOD = {
   '/': '2026-11-09',
-  '/custom-websites-migrations': '2026-10-06',
-  '/growth': '2026-10-06',
+  '/custom-websites-migrations': '2026-11-23',
+  '/growth': '2026-11-23',
   '/ongoing-website-support': '2026-11-10',
   '/pricing': '2026-11-18',
   '/work': '2026-10-06',
