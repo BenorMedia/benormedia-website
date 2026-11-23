@@ -6,13 +6,13 @@ draft: false
 blockedBy: []
 topicId: "4.3"
 wave: 2
-title: "SaaS Pricing Page Decisions for B2B Teams | BenorMedia"
-description: "How to choose what a B2B SaaS pricing page shows: published prices, a starting price, usage rates, or cost drivers, with public examples and a checklist."
-h1: "SaaS pricing page decisions: publish prices, show a starting price, or explain cost drivers"
+title: "SaaS Pricing Page Examples: 10 B2B Pages | BenorMedia"
+description: "Ten SaaS pricing page examples from B2B companies, checked in November 2026, and how to choose published prices, a starting price, or cost drivers."
+h1: "SaaS pricing page examples: 10 B2B pages, and how to decide what yours shows."
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
 publishedAt: 2026-10-19
-updatedAt: 2026-10-19
+updatedAt: 2026-11-23
 reviewEvery: none
 primaryKeyword: "saas pricing page"
 secondaryKeywords: []
@@ -24,6 +24,8 @@ takeaways:
   - "Keep pricing in the page's HTML. Buyers increasingly ask AI assistants about cost, and an answer can only use what's published somewhere."
 faqHeading: "Questions about SaaS pricing pages"
 faq:
+  - q: "What are good SaaS pricing page examples?"
+    a: "Linear and Webflow for published tiers; HubSpot and Salesforce for starting prices; Datadog, Vercel, and PostHog for usage-based pricing; Intercom for a seat and usage hybrid; and Gong for a quote-only page that still explains pricing. Pick the ones that match how you sell."
   - q: "Should a B2B SaaS company publish its prices?"
     a: "Publish them when most customers buy a standard plan at a standard price. When deals vary widely, show a starting price or explain how pricing works and what drives cost, so buyers can still judge budget before a call."
   - q: "What should a SaaS pricing page include?"
@@ -39,24 +41,36 @@ related:
   - /b2b-saas-web-design
   - /growth
 sources:
-  - label: "Slack: Pricing"
-    url: https://slack.com/pricing
-    accessed: 2026-10-18
+  - label: "Linear: Pricing"
+    url: https://linear.app/pricing
+    accessed: 2026-11-23
   - label: "HubSpot: Marketing Hub pricing"
     url: https://www.hubspot.com/pricing/marketing
-    accessed: 2026-10-18
+    accessed: 2026-11-23
   - label: "Datadog: Pricing"
     url: https://www.datadoghq.com/pricing/
-    accessed: 2026-10-18
+    accessed: 2026-11-23
   - label: "Vercel: Pricing"
     url: https://vercel.com/pricing
-    accessed: 2026-10-18
+    accessed: 2026-11-23
   - label: "Gong: Pricing"
     url: https://www.gong.io/pricing/
-    accessed: 2026-10-18
+    accessed: 2026-11-23
   - label: "CrowdStrike: Pricing"
     url: https://www.crowdstrike.com/en-us/pricing/
-    accessed: 2026-10-18
+    accessed: 2026-11-23
+  - label: "Webflow: Plans and pricing"
+    url: https://webflow.com/pricing
+    accessed: 2026-11-23
+  - label: "Intercom: Pricing"
+    url: https://www.intercom.com/pricing
+    accessed: 2026-11-23
+  - label: "PostHog: Pricing"
+    url: https://posthog.com/pricing
+    accessed: 2026-11-23
+  - label: "Salesforce: Sales Cloud pricing"
+    url: https://www.salesforce.com/sales/pricing/
+    accessed: 2026-11-23
   - label: "Gartner: Gartner Sales Survey Finds 67% of B2B Buyers Prefer a Rep-Free Experience"
     url: https://www.gartner.com/en/newsroom/press-releases/2026-03-09-gartner-sales-survey-finds-67-percent-of-b2b-buyers-prefer-a-rep-free-experience
     accessed: 2026-10-18
@@ -81,7 +95,7 @@ volatile:
   - "Forrester: 13 internal stakeholders and nine external influencers (press release 2026-01-21)"
   - "SoftwareApplication rich results require offers.price and aggregateRating or review (source: updated 2026-09-08)"
   - "FTC negative option rule: 2024 rule vacated 2025-07-08; ANPRM published 2026-03-13; no final replacement as of 2026-10-18"
-volatileChecked: 2026-10-18
+volatileChecked: 2026-11-23
 inbound:
   - page: /guides/b2b-saas-website-pages
     anchor: "how to decide what your pricing page shows"
@@ -95,22 +109,66 @@ editorNotes:
   - "Legal section is factual status only, with a counsel line; recheck the FTC rulemaking before publishing."
 ---
 
-Publish prices when most deals land on a standard plan, show a starting price when deals vary but have a floor, and explain cost drivers when every deal is custom. Whichever you choose, a B2B buyer should be able to judge fit and budget without a call. This guide covers the decision for B2B SaaS teams, as of October 2026.
+These ten SaaS pricing page examples, checked on November 23, 2026, show how B2B SaaS companies handle published tiers, starting prices, usage-based rates, and quote-only plans. The short rule for your own page: publish prices when most deals land on a standard plan, show a starting price when deals vary, and explain cost drivers when every deal is custom.
 
 ## What are the main ways to handle a B2B SaaS pricing page?
 
-There are four common models, and many SaaS companies mix two of them. The table shows each with a public pricing page that used it on October 18, 2026.
+There are four common models, and many SaaS companies mix two of them. The table shows each with a public pricing page that used it on November 23, 2026.
 
-Table: Four SaaS pricing page models with public examples (checked October 18, 2026)
+Table: Four SaaS pricing page models with public examples (checked November 23, 2026)
 
 | Model | What the page shows | Public example | Fits when |
 | --- | --- | --- | --- |
-| Published tiers | Plan names, per-user prices, a free plan (a freemium model), and a contact-sales top tier | Slack: Free, Pro, and Business+ with prices; Enterprise+ says "Contact sales for pricing" | Most customers buy a standard plan |
+| Published tiers | Plan names, per-user prices, a free plan (a freemium model), and a contact-sales top tier | Linear: Free, Basic, Business, and Enterprise; Basic priced per user per month, billed yearly; Enterprise is "Custom" with annual billing only | Most customers buy a standard plan |
 | Starting price | "Starts at" prices per tier, a monthly or annual toggle, and talk-to-sales buttons | HubSpot Marketing Hub: "Starts at" prices, plus cost drivers such as contacts and seats, and a disclosed onboarding fee | Deals vary, but every deal has a floor |
 | Usage-based pricing | Unit rates, included usage, overages, and spend controls | Datadog: per-host and per-GB rates, annual or on-demand; Vercel: a base fee with included usage credit and spend limits | Cost scales with consumption |
 | Quote with cost drivers | No numbers, but how pricing works and what moves it | Gong: "Licenses are priced per user" and a platform fee "based on the number of users supported" | Every deal is configured |
 
-Two details from those pages are worth copying whatever model you choose. HubSpot states the extra fee that isn't in the headline price: the cost shown "does not include the required, one-time Professional Onboarding". Vercel explains spend controls in its FAQ, so a buyer knows a usage bill can be capped. And security vendors don't always hide prices: CrowdStrike publishes per-device prices for its small-business bundles and keeps "Contact sales" for the managed tier.
+Below, ten real pages show what each model looks like in practice.
+
+## Which SaaS pricing page examples are worth studying?
+
+Start with the pages that sell the way you do. We checked these ten on November 23, 2026, and they cover published tiers, starting prices, usage-based pricing, a hybrid, and quote-only pricing. Prices are left out on purpose. They change often, while the structure, the units, and the explanations are what you can reuse.
+
+### Linear: published tiers that build on each other
+
+Four plans sit side by side: Free, Basic, Business, and Enterprise. The useful detail is in the lists. Basic starts with "All Free features +" and Enterprise with "All Business features +," so each column shows only what's new. The free plan gives hard numbers for teams and issues. Enterprise says "Annual billing only" and lists invoice or PO billing, SAML, and SCIM, which answers procurement before anyone asks.
+
+### Webflow: plan families with the unit spelled out
+
+Webflow sells several kinds of plans, and the page keeps them apart: site plans, platform plans, ecommerce plans, and workspace plans, with add-ons like Analyze and Localize in a section of their own. One small line does a lot of work. Prices are in USD, "per site, plus applicable taxes," which settles the unit question for teams running several sites. There's a free Starter plan, comparison links, and an FAQ.
+
+### HubSpot: starting prices with every fee disclosed
+
+Marketing Hub shows "Starts at" prices and names what pushes the bill up, such as contacts and seats. Then it does something many pages skip. It states that the cost shown "does not include the required, one-time Professional Onboarding." If your product has a required fee, put it next to the price, where finance will look for it.
+
+### Salesforce Sales Cloud: editions, add-ons, and changes explained
+
+Sales Cloud is priced per user per month, from the Starter and Pro suites up to the Core, Advanced, and Max editions, and most of them are billed annually. You get a comparison table by edition, a currency converter, and separate sections for add-ons and support plans. The FAQ goes further than most: it tells current customers what's changing with the editions and how the new ones compare. A 30-day trial needs no credit card.
+
+### Datadog: usage rates with a choice of commitment
+
+Datadog's page is closer to a rate card. Each product shows its unit, such as per host or per GB, and there are separate rates for annual and on-demand billing. An engineer can price their own setup without a call, which is the point.
+
+### Vercel: a base fee, included usage, and spend limits
+
+Usage pricing worries finance teams, and Vercel answers the worry directly. Its paid plan combines a base fee with included usage credit, and the FAQ explains spend controls, so a buyer knows the bill can be capped. If you bill on usage, that one answer may matter more than your whole feature list.
+
+### PostHog: a free tier per product and a calculator
+
+The headline reads "97% of companies use PostHog for free." Behind it is a monthly free allowance for each product, no credit card, and pay-as-you-go pricing after that, with volume discounts for heavy users. Two features make the model safe to try: a calculator that totals every product, and billing limits that most products can have on their own. The FAQ runs to dozens of questions, from data retention to purchase orders.
+
+### Intercom: seats plus a price per AI outcome
+
+Intercom charges per seat for its helpdesk plans and per outcome for Fin, its AI agent. "Outcome" isn't a unit buyers know, so the page explains it in plain terms: you never pay if Fin can't answer, and a conversation counts as one outcome at most. Spending limits, alerts, and a quick cost estimate sit nearby, and the FAQ explains Full and Lite seats.
+
+### Gong: no prices, but a clear price structure
+
+No numbers here, but no mystery either. Gong says "Licenses are priced per user" and adds a platform fee "based on the number of users supported." A buyer still can't see a total. They can, though, count their users before the first call, and the conversation starts further along.
+
+### CrowdStrike: published bundles next to a sales-led tier
+
+Security software is often quote-only. CrowdStrike publishes per-device prices for its small-business bundles anyway, and saves "Contact sales" for the managed tier. Small teams can buy without a meeting, and large deals still get a rep.
 
 ## How do you decide whether to publish prices?
 
@@ -143,6 +201,10 @@ One value metric, plans a buyer can compare side by side, and answers to billing
 - **State trial terms.** If the trial needs no card, say "no credit card required"; if it does, say that too.
 - **Put real proof near the plans.** Customer logos, a short testimonial, or security certifications are useful social proof at the point of decision, as long as they're real and current.
 - **Answer objections in an FAQ.** Billing, refunds, data privacy, cancellation, and what happens when a team outgrows its plan.
+- **Add a calculator when usage drives the bill.** Intercom and PostHog both have one.
+- **Show the cap.** Intercom, PostHog, and Vercel all explain how to limit spend, which makes a usage bill easier to approve.
+
+How many pricing tiers should you show? There's no right number. PostHog gets by with two plans, Intercom shows three plus its AI agent, and Linear shows four. One plan per distinct type of buyer is a sensible limit, with the usual starting plan highlighted.
 
 ## What should a pricing page include if you don't publish prices?
 
