@@ -6,13 +6,13 @@ draft: false
 blockedBy: []
 topicId: "1.4"
 wave: 2
-title: "Website Launch Checklist for B2B Sites | BenorMedia"
-description: "A website launch checklist for B2B teams: redirects, forms, analytics, consent, accessibility, and indexing checks for the week before and after launch."
-h1: "Website launch checklist: the launch-week checks for a B2B website"
+title: "Website Launch Checklist: Free B2B Template | BenorMedia"
+description: "A website launch checklist for B2B teams, with a free go-live template: redirects, forms, analytics, consent, Webflow settings, and first-week checks."
+h1: "Website launch checklist: a free go-live template for B2B websites."
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
 publishedAt: 2026-10-17
-updatedAt: 2026-10-17
+updatedAt: 2026-11-23
 reviewEvery: none
 primaryKeyword: "website launch checklist"
 secondaryKeywords: []
@@ -34,14 +34,16 @@ faq:
     a: "Most teams aim for WCAG 2.2 level AA. WCAG 2.2 became a W3C Recommendation on October 5, 2023, and added nine success criteria to WCAG 2.1."
   - q: "What should you check in the first week after a website launch?"
     a: "Search Console indexing and 404 errors, redirects, form submissions against the old site's average, key events in analytics, and any errors reported by sales or support."
+  - q: "Does Webflow have its own launch checklist?"
+    a: "Yes. Webflow University's Build & launch checklist has 139 items in six stages, from workspace setup to launch, and downloads as a CSV or Markdown file. Its last stage covers domains, DNS, publishing, and checking the live site."
 related:
   - /website-redesign
   - /webflow-migration
   - /guides/wordpress-to-webflow-migration
 sources:
-  - label: "Webflow University: Pre-launch checklist"
-    url: https://university.webflow.com/resources/checklists/pre-launch-checklist
-    accessed: 2026-10-17
+  - label: "Webflow University: Build & launch checklist"
+    url: https://university.webflow.com/resources/checklists/build-and-launch-checklist
+    accessed: 2026-11-23
   - label: "Google Tag Platform: Consent mode overview"
     url: https://developers.google.com/tag-platform/security/concepts/consent-mode
     accessed: 2026-10-17
@@ -72,7 +74,7 @@ volatile:
   - "GA4 key events: up to 30, not retroactive, up to 24 hours (source: Key events, checked 2026-10-15)"
   - "Rich Results Test: URL or code, smartphone default, no guarantee of appearance (source: Rich Results Test, checked 2026-10-17)"
   - "Webflow DNS: lower TTL at least one TTL period ahead; SSL usually within minutes (source: updated 2026-02-02)"
-volatileChecked: 2026-10-17
+volatileChecked: 2026-11-23
 inbound:
   - page: /website-redesign
     anchor: "website launch checklist"
@@ -87,11 +89,11 @@ editorNotes:
   - "No 30-day recheck and no AI note, per Sergio's answers of 2026-10-15."
 ---
 
-A website launch checklist for a B2B site should cover more than design QA. The problems that cost leads in launch week tend to sit in redirects, forms, analytics, consent, and indexing. This checklist covers the week before launch, launch day, and the first week after, in the order you'd run the checks.
+A website launch checklist for a B2B site should cover more than design QA. The problems that cost leads in launch week tend to sit in redirects, forms, analytics, consent, and indexing. This checklist covers the week before launch, launch day, and the first week after, and ends with a go-live template you can copy.
 
 ## What should a website launch checklist cover?
 
-Webflow's own pre-launch checklist is a good base. It covers design and content review, forms and links, headings and alt text, page titles and meta descriptions, a final accessibility and SEO check, Google Search Console, analytics, custom domain, SSL, and indexing preferences.
+A website launch checklist should cover content, functionality, forms and tracking, consent, SEO and indexing, and the first week of monitoring. [Webflow's Build & launch checklist](https://university.webflow.com/resources/checklists/build-and-launch-checklist) is a good base: it lists 139 items in six stages, from workspace setup to launch day, and you can download it as a CSV or Markdown file.
 
 For a B2B website, add the checks that protect pipeline and search traffic:
 
@@ -177,6 +179,19 @@ Work through the launch steps in order, and test on the live site, not on stagin
 
 If the launch includes URL changes, Google treats it as a site move. Google advises keeping redirects in place generally for at least 1 year and making changes one after the other, not all at the same time.
 
+## What's different when you launch a Webflow site?
+
+Fewer server tasks, more settings. Webflow hosts the site and issues the SSL certificate, so launch day comes down to the seven launch items in Webflow's checklist: review reverse proxy needs if you use one, add your custom domains, verify domain ownership, set the default domain, update DNS records, publish to production, and verify the live site.
+
+Most of the risk sits in earlier stages of the same checklist. These items matter most in launch week:
+
+- Disable staging domain indexing, so search engines don't index the webflow.io subdomain as a copy of your live site.
+- Create a named pre-launch backup, so you can restore the site quickly if something breaks at launch.
+- Clean up the Designer: remove unused styles, components, and assets, and keep unfinished pages unpublished.
+- Verify form configuration and notifications, then test forms and submissions on staging.
+- Check for broken links and [configure 301 redirects](/blog/webflow-redirects) as part of SEO and AEO QA.
+- Verify site ownership in Google Search Console and connect Google Analytics in the integrations step, which is also where Webflow's checklist tells you to set up consent management.
+
 ## Which post-launch tasks matter most in the first week?
 
 Check a short list every day, so a broken form or a stray noindex tag costs a day of leads, not a month. These post-launch tasks also show how website traffic and user behavior on the new site compare with the old site.
@@ -193,5 +208,36 @@ Table: First-week monitoring after a website launch
 | Feedback | Sales and support | Prospects reporting errors or missing pages |
 
 We check Search Console coverage, 404 errors, and the main pages daily for the first weeks after a launch, and we agree before launch on how much search fluctuation counts as normal. After the first week, move to a weekly review until rankings and leads settle.
+
+## Is there a website launch checklist template you can copy?
+
+Yes. This go-live checklist puts every check from this article in one table, with when it happens, who owns it, and what done looks like. Copy it into a spreadsheet or your project tool, swap in your team's names, and add rows for integrations your site has that this list doesn't cover.
+
+Table: Website launch checklist template for a B2B site
+
+| Task | When | Owner | Done when |
+| --- | --- | --- | --- |
+| Content freeze and proofread | Week before | Marketing | Final copy approved; no edits on the old site |
+| Redirect map | Week before | SEO | Every changed URL maps to one new URL with a 301 |
+| Staging indexing | Week before | Development | Staging subdomain stays out of search until launch |
+| Pre-launch backup | Week before | Development | A named backup or snapshot exists |
+| Browsers and devices | Week before | Design and development | Key pages work in major browsers, on an iPhone, and on an Android phone |
+| Calls to action and links | Week before | Marketing | Every button goes where its label says; a crawl finds no broken links |
+| Images | Week before | Design | Compressed, sized for placement, with alt text on meaningful images |
+| Forms | Week before | Marketing ops | Each form reaches inbox, CRM, and analytics, and shows a confirmation |
+| Key events | Week before | Marketing ops | Demo requests, sign-ups, and contact forms marked as key events |
+| Tag installs | Week before | Marketing ops | Each tag loads from one place only |
+| Consent | Week before | Marketing ops and legal | With everything rejected, analytics and ad tags set no cookies |
+| Legal pages | Week before | Legal | Privacy policy, cookie policy, and terms live and linked in the footer |
+| Accessibility | Week before | Design and development | Keyboard-only pass through main pages and forms, with visible focus and labels |
+| SEO and structured data | Week before | SEO | Titles, meta descriptions, and canonicals set; Rich Results Test clean |
+| DNS TTL | One TTL period before | Development | TTL lowered at least one full TTL period ahead |
+| Publish and https | Launch day | Development | Home page and sample pages load over https, with and without www |
+| Robots and noindex | Launch day | SEO | No leftover development blocks or noindex tags |
+| Redirects on production | Launch day | SEO | Each old URL returns a single 301 to its new URL |
+| Search Console and sitemap | Launch day | SEO | Domain verified and XML sitemap submitted |
+| Live form test | Launch day | Marketing ops | One real submission per main form, seen in CRM and analytics |
+| Daily checks | Days 1 to 7 | SEO and marketing ops | Indexing, 404s, redirects, leads, key events, speed, and feedback reviewed |
+| Weekly review | From week 2 | SEO and marketing | Rankings and leads have settled |
 
 We design, build, and launch websites for B2B and SaaS companies, so we have an interest in this topic. For how a launch fits into a full project, see our [website redesign](/website-redesign) page.
