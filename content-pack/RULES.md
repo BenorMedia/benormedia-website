@@ -180,6 +180,7 @@ Required on every page (a `section` is exempt from `title`, `description`, `h1`,
 | `visuals` | List of `{after, side, type, brief, alt}`: one picture for a designer to make, placed after the H2 named in `after` (quote the value when it holds a colon). `side` is `right` or `left` and alternates on commercial pages. |
 | `eyebrow` | Commercial pages: the short label above the H1 (for example "B2B SaaS websites"). |
 | `testimonial`, `testimonialAfter` | Commercial pages: `surfe`, `puzzle` or `both` (the two live testimonials, quoted word for word by the template), and the H2 after which the block sits (default: just before the FAQ). |
+| `workIntro` | Commercial pages: `true` prints the first paragraph of the work section (the last section that links to /work) under its heading, before the project cards. Default `false`: the cards replace the section's body. |
 | `closing` | Commercial pages: `heading` and `text` for the closing call to action. End the text with the 24-hour contact promise (CLAIMS-REGISTER A1). |
 | `hreflang` | Regional pages only: list of `{lang, url}` alternates. |
 

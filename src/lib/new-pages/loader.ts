@@ -62,6 +62,9 @@ interface FrontMatter {
   heroLead?: number;
   visuals?: { after?: string; side?: string; place?: string; type?: string; brief?: string; alt?: string }[];
   process?: { section?: string; imagesFrom?: string };
+  /** Commercial pages: print the work section's first paragraph under its
+   *  heading, before the project cards (release brief 2026-11-23 F7). */
+  workIntro?: boolean;
 }
 
 export interface FaqEntry {
@@ -129,6 +132,8 @@ export interface NpPage {
   gaps: Gap[];
   /** A section rendered with the live service `ServiceProcess` tabs (front matter `process`). */
   process: PageProcess | undefined;
+  /** Front matter `workIntro`: the work section keeps its first paragraph. */
+  workIntro: boolean;
 }
 
 /** A card in the Resources grid (articles' related pages, /blog, /guides,
@@ -561,6 +566,7 @@ function buildPage(d: FrontMatter, body: string, ctx: BuildContext): NpPage {
     process: d.process?.section
       ? processFromBody(body, String(d.process.section), d.process.imagesFrom ? String(d.process.imagesFrom) : undefined)
       : undefined,
+    workIntro: d.workIntro === true,
     service: {
       name: String(d.service?.name ?? ""),
       serviceType: String(d.service?.serviceType ?? ""),

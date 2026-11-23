@@ -22,6 +22,10 @@
  * `description` may contain `\n` for a forced line break (`<br />`) and a
  * blank line (`\n\n`) between paragraphs: each paragraph renders as its own
  * `<p>` (Sanity service descriptions, lead 2026-09-30).
+ *
+ * `descriptionHtml` (optional, opt-in): one more description paragraph as
+ * trusted inner HTML (links allowed), after `description`. Used by the new
+ * pages' work section (front matter `workIntro`, release brief 2026-11-23 F7).
  */
 import Eyebrow from "./Eyebrow.astro";
 
@@ -35,6 +39,7 @@ interface Props {
   accent?: string;
   titleSegments?: readonly { text: string; accent?: boolean }[];
   description?: string;
+  descriptionHtml?: string | undefined;
   titleClass?: string;
   as?: HeadingTag;
   class?: string;
@@ -47,6 +52,7 @@ const {
   accent,
   titleSegments,
   description,
+  descriptionHtml,
   titleClass = "c-text_xl",
   as = "h2",
   class: className,
@@ -122,6 +128,7 @@ const titleClassList = ["c-section-header__title", titleClass]
         ))}
       </p>
     ))}
+    {descriptionHtml && <p class="c-section-header__description c-paragraph_m" set:html={descriptionHtml} />}
   </div>
 </header>
 

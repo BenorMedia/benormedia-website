@@ -92,6 +92,10 @@ const processSteps: ProcessStep[] = (page.process?.steps ?? []).map((step, i) =>
 const leadInner = page.lead
   .map((html) => /^<p[^>]*>([\s\S]*)<\/p>$/.exec(html)?.[1])
   .filter((html): html is string => html !== undefined);
+// Front matter `workIntro` (opt-in, release brief 2026-11-23 F7): the work
+// section's first paragraph prints under its heading, before the cards.
+const workIntroHtml =
+  page.workIntro && workIndex >= 0 ? /<p\b[^>]*>([\s\S]*?)<\/p>/.exec(page.sections[workIndex]?.html ?? "")?.[1] : undefined;
 const plain = (html: string): string => html.replace(/<[^>]*>/g, "").replace(/&amp;/g, "&");
 ---
 
@@ -115,7 +119,12 @@ const plain = (html: string): string => html.replace(/<[^>]*>/g, "").replace(/&a
       </div>
     ) : i === workIndex ? (
       <div data-np-live="our-work" data-np-section={section.title} class="c-np-live">
-        <OurWork clients={workClients} listClients={workListClients} title={withPeriod(plain(section.titleHtml))} />
+        <OurWork
+          clients={workClients}
+          listClients={workListClients}
+          title={withPeriod(plain(section.titleHtml))}
+          descriptionHtml={workIntroHtml}
+        />
       </div>
     ) : i === lastIndex ? (
       <>
