@@ -174,7 +174,7 @@ visuals:
 
 An AEO agency, or GEO agency, works toward one outcome: your company named and cited when buyers ask AI assistants what to buy. We track the prompts your buyers use in ChatGPT, Perplexity, Gemini, Claude and Google's AI answers. Then we fix the pages, technical gaps and third-party mentions that decide if you show up.
 
-AI visibility tracking and reporting are part of every Growth engagement, on Webflow and custom-coded sites.
+AI visibility tracking and reporting are part of every Growth engagement, on Webflow and custom-coded sites. Our [SaaS SEO agency](/growth) page covers the whole Growth plan, including the SEO and CRO work.
 
 ## Why AI search now shapes B2B software shortlists.
 

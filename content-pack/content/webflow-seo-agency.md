@@ -273,7 +273,7 @@ Links still matter for Google, and mentions matter for AI answers, which lean on
 
 Monthly reports lead with pipeline, the number sales and finance care about. Then they show the SEO performance behind it: organic traffic, rankings and AI visibility.
 
-- **Pipeline from search and AI.** Demo requests and sign-ups from organic search and AI referrals. ChatGPT tags its links with utm_source=chatgpt.com, so those visits are easy to separate. When visits grow but demos don't, the fix is CRO on those pages, which Growth includes.
+- **Pipeline from search and AI.** Demo requests and sign-ups from organic search and AI referrals. ChatGPT tags its links with utm_source=chatgpt.com, so those visits are easy to separate. When visits grow but demos don't, the fix is CRO on those pages, which Growth includes. Our [B2B SaaS SEO agency](/growth) page shows how SEO, AEO, and CRO run together in that plan.
 - **Search Console.** Clicks, impressions and positions for the pages in the plan, plus the AI feature reports Google added in 2026.
 - **AI visibility.** Mention rate across the tracked prompts by platform, and the citations Bing Webmaster Tools reports.
 - **Next quarter's roadmap.** What ships next and why, reviewed with you every quarter.
