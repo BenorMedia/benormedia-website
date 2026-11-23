@@ -6,13 +6,13 @@ draft: false
 blockedBy: []
 topicId: "7.1"
 wave: 2
-title: "Consent Mode v2 on Webflow: Setup and Testing | BenorMedia"
-description: "How to set up Google Consent Mode v2 on a Webflow site, test it with Tag Assistant, and avoid the mistakes that lose data, including the June 2026 change."
-h1: "Consent Mode v2 on a Webflow site: setup, testing, and the mistakes that lose data"
+title: "Webflow Cookie Consent: Banner Setup and Consent Mode v2"
+description: "How to set up cookie consent on a Webflow site: cookie banner options, Google Consent Mode v2, Webflow Analyze settings, testing, and common mistakes."
+h1: "Webflow cookie consent: how to add a cookie banner and set up Consent Mode v2."
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
 publishedAt: 2026-10-18
-updatedAt: 2026-10-18
+updatedAt: 2026-11-23
 reviewEvery: none
 primaryKeyword: "consent mode v2"
 secondaryKeywords: []
@@ -22,8 +22,10 @@ takeaways:
   - "The consent default must load before any Google tag. On Webflow, that means the default goes at the top of the site's head code, or in a consent tool that sets it first."
   - "Behavioral modeling needs advanced consent mode and at least 1,000 events a day with analytics_storage denied for 7 days, which many B2B sites never reach."
   - "Test every region you show a banner in with Tag Assistant, then check the consent settings in Google Analytics after 48 to 72 hours."
-faqHeading: "Questions about Consent Mode v2"
+faqHeading: "Questions about Webflow cookie consent"
 faq:
+  - q: "Does Webflow have a built-in cookie banner?"
+    a: "No. Webflow doesn't include a cookie banner or consent management platform. You add one with a marketplace app, a consent platform's script, or your own code, then connect it to Google tags through consent mode and to Webflow Analyze and Optimize through Webflow's tracking consent settings."
   - q: "What is Consent Mode v2?"
     a: "It's the current version of Google's consent mode. It adds two parameters, ad_user_data and ad_personalization, to the original ad_storage and analytics_storage, so Google tags know whether a visitor allowed data to be used for advertising and personalized ads."
   - q: "Is Consent Mode v2 required?"
@@ -69,9 +71,24 @@ sources:
   - label: "Webflow Help Center: Google Analytics integration"
     url: https://help.webflow.com/hc/en-us/articles/33961293143059
     accessed: 2026-10-18
-  - label: "Webflow Help Center: Webflow Analyze overview"
-    url: https://help.webflow.com/hc/en-us/articles/34200153798163
-    accessed: 2026-10-15
+  - label: "Webflow Help Center: Manage site tracking consent"
+    url: https://help.webflow.com/hc/en-us/articles/34272466616083-Manage-site-tracking-consent
+    accessed: 2026-11-23
+  - label: "Webflow Developers: Site tracking and consent management"
+    url: https://developers.webflow.com/browser/reference/consent-management
+    accessed: 2026-11-23
+  - label: "Webflow Help Center: Integrate Consent Pro for consent management"
+    url: https://help.webflow.com/hc/en-us/articles/34394790067859-Integrate-Consent-Pro-for-consent-management
+    accessed: 2026-11-23
+  - label: "Webflow Apps: Cookie Consent by FlowAppz"
+    url: https://webflow.com/apps/detail/cookie-consent
+    accessed: 2026-11-23
+  - label: "Webflow: Cookie Consent integration"
+    url: https://webflow.com/integrations/cookie-consent
+    accessed: 2026-11-23
+  - label: "Google: CMP Partner Program"
+    url: https://cmppartnerprogram.withgoogle.com/
+    accessed: 2026-11-23
 volatile:
   - "June 15, 2026: consent mode in Google Ads becomes the single control for Google Ads cookies and IDs; ad_personalization and IP changes later in 2026 (source: Updates to Google Analytics Data Controls, checked 2026-10-18)"
   - "Consent mode setup: default before measurement, wait_for_update, region, update, url_passthrough, ads_data_redaction (source: updated 2026-10-13)"
@@ -79,7 +96,7 @@ volatile:
   - "Behavioral modeling thresholds: advanced mode, 1,000 denied events a day for 7 days, 1,000 granted daily users on 7 of 28 days (source: checked 2026-10-18)"
   - "EEA consent requirements and 48 to 72 hour refresh in GA4 consent settings (source: checked 2026-10-18)"
   - "Webflow custom code: Site settings, Custom code, Head code, 50,000 characters, paid plan, live on publish (source: updated 2026-09-02)"
-volatileChecked: 2026-10-18
+volatileChecked: 2026-11-23
 inbound:
   - page: /ongoing-website-support
     anchor: "Consent Mode v2 on Webflow"
@@ -94,7 +111,23 @@ editorNotes:
   - "Once post 5.1 (Webflow analytics) is live, link it from the setup section."
 ---
 
-Google Consent Mode v2 tells Google tags what each visitor agreed to, so analytics and ads respect the cookie banner. On Webflow it isn't built in: you set the default consent before any Google tag loads. This guide, for marketing leads running a B2B site on Webflow, covers setup, testing, and common mistakes. It isn't legal advice.
+Webflow has no built-in cookie banner, so cookie consent on a Webflow site comes from a consent app, a consent management platform, or your own code. Google Consent Mode v2 then tells Google tags what each visitor chose. This guide, for marketing leads running a B2B site on Webflow, covers the options, setup, and testing. It isn't legal advice.
+
+## How do you add cookie consent to a Webflow site?
+
+Pick one of three routes: install a consent app from the Webflow Apps marketplace, load a consent management platform's script in the site's head code, or build your own banner and consent code. Whichever you choose, it needs to control which tags load and pass each visitor's choice to Google tags and to Webflow's own tracking.
+
+Table: Three ways to add cookie consent to a Webflow site (checked November 23, 2026)
+
+| Route | How it works on Webflow | What to check |
+| --- | --- | --- |
+| Consent app from the Webflow marketplace | Install it from the Apps panel; the app adds the banner and blocks scripts until the visitor chooses | Google Consent Mode v2 support and what the free plan covers. Consent Pro by Finsweet is free on the webflow.io staging domain but needs a Finsweet plan on a custom domain. Cookie Consent by FlowAppz has a free plan, lists Google Consent Mode v2 signals, and needs a license key for full features. |
+| A consent management platform's script | Add the platform's script to the head code in Site settings, above any Google tag. Webflow's docs name OneTrust and TrustArc as examples of platforms connected through its APIs. | Whether it's a Google-certified CMP partner. Google awards its partner badge to platforms integrated with Consent Mode and Google Tag Manager, in Bronze, Silver, and Gold tiers. |
+| Your own banner and code | Design the banner in Webflow, then write the consent default, update, and storage yourself, as in Route 2 below | Who maintains it. You take on what an app or platform handles for you, such as recording consent and updating the banner when your tags change. |
+
+Webflow reviews the apps in its marketplace but says it doesn't "endorse or certify these apps," so confirm consent mode support in each app's own documentation.
+
+Connect the banner to Webflow's own tracking as well. Webflow Analyze and Optimize follow a separate site tracking consent setting, with the options "Let visitors opt out" and "Don't track by default." Webflow's Browser API gives your banner `wf.allowUserTracking()` and `wf.denyUserTracking()` to call when a visitor chooses. Those calls apply only to Analyze and Optimize, not to Google tags.
 
 ## What is Consent Mode v2, and what are its consent parameters?
 
@@ -142,7 +175,7 @@ Many B2B SaaS sites don't reach those numbers. If yours doesn't, advanced mode w
 
 Webflow doesn't set default consent states for you. Its Google Analytics help article covers where to add the Google tag, but doesn't mention consent. You have two routes.
 
-**Route 1: a consent management app.** Several consent tools in Webflow's marketplace support Google consent mode. The tool shows the banner, sets the default, and sends the update when the visitor chooses. Check in its documentation that it sets all four parameters, records each visitor's consent preferences, and loads before your Google tag.
+**Route 1: a consent app or platform.** If you chose one of the first two options above, the tool shows the banner, sets the default, and sends the update when the visitor chooses. Check in its documentation that it sets all four parameters, records each visitor's consent preferences, and loads before your Google tag.
 
 **Route 2: your own default snippet.** Google's setup guide says to call the consent default on every page before any command that sends measurement data. On Webflow:
 
@@ -157,7 +190,7 @@ Then add the Google tag in one place only. Webflow's help says to put the GA4 ta
 
 **If you use Google Tag Manager,** let the consent tool's tag, or your default consent tag, fire on the Consent Initialization trigger. Google says that trigger always fires before all other tags. Google tags have built-in consent checks; for other tags in the Google Tag Manager container, such as ad pixels, set "Require additional consent for tag to fire" in each tag's consent settings, so the tag fires only when the visitor grants consent. The container's Consent Overview shows which tags still have consent not configured.
 
-If you use Webflow Analyze, set its own consent option too. Analyze can run always on, opt-in, or opt-out, and the last two need a consent solution connected to it.
+If you use Webflow Analyze or Optimize, set the site tracking consent option and connect your banner to it, as described at the top of this guide.
 
 ## How do you test consent mode before and after launch?
 
