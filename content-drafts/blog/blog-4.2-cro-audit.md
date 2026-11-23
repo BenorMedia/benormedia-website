@@ -61,13 +61,13 @@ sources:
     accessed: 2026-10-17
   - label: "Microsoft Learn: Clarity frequently asked questions"
     url: https://learn.microsoft.com/en-us/clarity/faq
-    accessed: 2026-11-17
+    accessed: 2026-11-23
   - label: "Contentsquare: Hotjar is now part of Contentsquare"
     url: https://contentsquare.com/hotjar/
-    accessed: 2026-11-17
+    accessed: 2026-11-23
   - label: "PostHog: Pricing"
     url: https://posthog.com/pricing
-    accessed: 2026-11-17
+    accessed: 2026-11-23
   - label: "BenorMedia: Testimonials"
     url: https://www.benormedia.com/testimonials
     accessed: 2026-11-16
@@ -76,7 +76,7 @@ volatile:
   - "Google's testing guidance: no cloaking, rel=canonical on variant URLs, 302 for redirect tests, don't run tests longer than needed (source: Minimize A/B testing impact, updated 2025-12-10)"
   - "GA4 funnel exploration: up to 10 steps, open and closed funnels (source: Funnel exploration, checked 2026-10-17)"
   - "GA4 key events: up to 30, not retroactive, up to 24 hours to appear (source: Key events, checked 2026-10-15)"
-volatileChecked: 2026-11-17
+volatileChecked: 2026-11-23
 inbound:
   - page: /growth
     anchor: "CRO audit"
