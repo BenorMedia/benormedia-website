@@ -6,13 +6,13 @@ draft: false
 blockedBy: []
 topicId: "6.2"
 wave: 1
-title: "Do You Need an llms.txt File? | BenorMedia"
-description: "What llms.txt is, whether Google, ChatGPT, Claude, or Perplexity use it, what a 137,000-domain study found, and how to add one in Webflow or on any site."
-h1: "Do you need an llms.txt file? What the documentation and the studies say"
+title: "llms.txt Examples: 6 Real Files and the Format | BenorMedia"
+description: "Six real llms.txt examples, from Stripe and Cloudflare to a B2B marketing site, plus the format, what Google says, and how to add the file in Webflow."
+h1: "llms.txt examples: six real files, the format, and whether you need one."
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
 publishedAt: 2026-10-17
-updatedAt: 2026-10-17
+updatedAt: 2026-11-24
 reviewEvery: none
 primaryKeyword: "llms.txt"
 secondaryKeywords: []
@@ -27,6 +27,8 @@ faq:
     a: "A proposed Markdown file, served at /llms.txt, that gives AI agents a short summary of a site and links to its most useful pages. It was proposed in September 2024 and isn't a formal standard."
   - q: "Does Google use llms.txt?"
     a: "Google's documentation says you don't need to create new machine-readable files, AI text files, or markup to appear in AI Overviews or AI Mode. A page has to be indexed and eligible to show with a snippet."
+  - q: "Does llms.txt help SEO?"
+    a: "No evidence says it does. Google says you don't need AI text files to show up in AI Overviews or AI Mode. A study of 137,210 domains also found that 97% of llms.txt files got no requests at all in a month. Add one if it's quick, but don't count it as SEO work."
   - q: "Does ChatGPT read llms.txt?"
     a: "OpenAI's crawler documentation doesn't say that GPTBot, OAI-SearchBot, or ChatGPT-User read llms.txt. OpenAI does publish an llms.txt for its own developer documentation."
   - q: "Is llms.txt the same as robots.txt?"
@@ -40,10 +42,25 @@ related:
 sources:
   - label: "llms.txt: The /llms.txt file"
     url: https://llmstxt.org/
-    accessed: 2026-10-15
+    accessed: 2026-11-24
+  - label: "Stripe: llms.txt"
+    url: https://docs.stripe.com/llms.txt
+    accessed: 2026-11-24
+  - label: "Cloudflare: Developer documentation llms.txt"
+    url: https://developers.cloudflare.com/llms.txt
+    accessed: 2026-11-24
+  - label: "Anthropic: Developer documentation llms.txt"
+    url: https://platform.claude.com/llms.txt
+    accessed: 2026-11-24
+  - label: "Mintlify: llms.txt"
+    url: https://mintlify.com/docs/llms.txt
+    accessed: 2026-11-24
+  - label: "Vercel: llms-full.txt"
+    url: https://vercel.com/docs/llms-full.txt
+    accessed: 2026-11-24
   - label: "Google Search Central: AI features and your website"
     url: https://developers.google.com/search/docs/appearance/ai-features
-    accessed: 2026-10-15
+    accessed: 2026-11-24
   - label: "Google Search Central: How Google interprets the robots.txt specification"
     url: https://developers.google.com/search/docs/crawling-indexing/robots/robots_txt
     accessed: 2026-10-15
@@ -64,21 +81,21 @@ sources:
     accessed: 2026-10-15
   - label: "Webflow Help Center: Upload an llms.txt file to your site"
     url: https://help.webflow.com/hc/en-us/articles/43240104183315-Upload-an-llms-txt-file-to-your-site
-    accessed: 2026-10-15
+    accessed: 2026-11-24
   - label: "Ahrefs: We Analyzed 137K Sites: 97% of llms.txt Files Never Get Read"
     url: https://ahrefs.com/blog/llmstxt-study/
     accessed: 2026-10-15
   - label: "BenorMedia: llms.txt"
     url: https://www.benormedia.com/llms.txt
-    accessed: 2026-10-15
+    accessed: 2026-11-24
 volatile:
   - "The proposal's author, date, purpose, and format, including Markdown page copies (source: llmstxt.org, published 2024-09-03, modified 2026-08-10)"
   - "No AI text files, markup, or special schema needed for AI Overviews and AI Mode (source: AI features and your website, updated 2025-12-10)"
   - "No statement that OpenAI's, Anthropic's, or Perplexity's crawlers read llms.txt; OpenAI and Perplexity publish llms.txt files for their own docs (sources: crawler documentation, checked 2026-10-15; Anthropic's article updated 2026-04-07)"
   - "Webflow's menu path, file limits, no staging publish, and 'experimental' wording (source: Upload an llms.txt file, updated 2025-08-25)"
   - "137,210 domains, 28% with a file, 97% of files with no requests in May 2026, AI bots 19.5% of requests, humans 4%, no AI bot requests for missing files (source: Ahrefs study, 2026-06-15)"
-  - "benormedia.com's file: H1, summary, Services, Guides, Company, and Optional sections, about 19 links (checked 2026-10-15)"
-volatileChecked: 2026-10-15
+  - "benormedia.com's file: H1, summary, Services, Guides, Blog, Company, and Optional sections, 77 links (checked 2026-11-24)"
+volatileChecked: 2026-11-24
 inbound:
   - page: /aeo-agency
     anchor: "what the evidence on llms.txt shows"
@@ -94,9 +111,9 @@ editorNotes:
   - "No 30-day recheck and no AI note, per Sergio's answers of 2026-10-15."
 ---
 
-Most B2B SaaS sites don't need an llms.txt file to appear in AI answers: Google says no special AI files are needed, and the crawler documentation of OpenAI, Anthropic, and Perplexity doesn't mention reading one. It's cheap to add, though. This guide for marketing leads and founders explains what it is and when it helps, as of October 2026.
+These llms.txt examples are six files we checked on November 24, 2026, from Stripe's sprawling docs index to our own marketing site, and they explain the format better than any spec does. Whether your B2B SaaS site needs one is a separate question: Google says no special AI files are required, and the major AI crawlers don't document reading them.
 
-## What is an llms.txt file?
+## What is an llms.txt file, and what format does it use?
 
 A plain text file in Markdown format, in the root directory of a website at /llms.txt, that gives AI models and agents a short summary of the site and links to its most important pages. The name comes from LLMs, or large language models. Jeremy Howard proposed it on September 3, 2024, as "a proposal to standardise on using an /llms.txt file to provide information to help agents use a website." It's a proposal, not a formal standard.
 
@@ -116,6 +133,49 @@ Table: robots.txt, sitemap.xml, and llms.txt compared
 | robots.txt | Tells search engines and AI crawlers which URLs they may request | Google, OpenAI, Anthropic, and Perplexity, for their crawlers |
 | sitemap.xml | Lists the URLs you want search engines to find | Google, which documents how it reads sitemaps |
 | llms.txt | Summarizes the site and links key pages for AI agents | No major AI crawler; Webflow calls the format experimental |
+
+## What do real llms.txt examples look like?
+
+Less uniform than the proposal suggests. All six open with an H1, the only required part, and then they split. Stripe adds rules for AI agents. Cloudflare's file is mostly links to more llms.txt files. Vercel's llms-full.txt skips the index and exports the full text, and ours is a plain list of pages and notes.
+
+Table: Six llms.txt files compared (checked November 24, 2026)
+
+| File | What it is | Detail worth copying |
+| --- | --- | --- |
+| Stripe, [docs.stripe.com/llms.txt](https://docs.stripe.com/llms.txt) | A very long index of Stripe's docs, with links to Markdown copies of its pages | A section of instructions for AI agents, such as "never recommend the Charges API" |
+| Cloudflare, [developers.cloudflare.com/llms.txt](https://developers.cloudflare.com/llms.txt) | A hub that links to one llms.txt per product | A one-line summary that tells agents how the file is organized |
+| Anthropic, [platform.claude.com/llms.txt](https://platform.claude.com/llms.txt) | A long index of the developer docs in several languages, with Markdown links | A section that points agents to its documentation MCP server |
+| Mintlify, [mintlify.com/docs/llms.txt](https://mintlify.com/docs/llms.txt) | A medium-length index with an "Optional" section | An "Agent Instructions" section on how to work through its index files |
+| Vercel, [vercel.com/docs/llms-full.txt](https://vercel.com/docs/llms-full.txt) | A full-text export of the docs instead of an index | A header on every page with its title, description, last update, and source |
+| BenorMedia, [benormedia.com/llms.txt](https://www.benormedia.com/llms.txt) | A marketing site's index: five sections and 77 links | A one-line note after almost every link, and legal pages under "Optional" |
+
+If you want llms.txt best practices, these files are the nearest thing to them. Write a short note after each link, because the link text alone rarely says what a page answers. Park pages an agent can skip under "Optional," which Mintlify and we both do. Once docs run to hundreds of pages, split them by product like Cloudflare. And if agents will act on your product, tell them how, the way Stripe and Mintlify do.
+
+## What does an llms.txt file look like on a B2B marketing site?
+
+Shorter and less technical. Ours lists services, guides, blog posts, and company pages, with a one-line note on each, and keeps the privacy policy and terms under "Optional." Below are the start and end of the file, trimmed. The live version has 77 links in five sections.
+
+```
+# BenorMedia
+
+> BenorMedia is a Webflow agency for B2B SaaS and tech companies. We design and build high-converting Webflow websites, then grow them with SEO, AEO/GEO and CRO.
+
+## Services
+
+- [Custom Websites & Migrations](https://www.benormedia.com/custom-websites-migrations): Custom Webflow design, development and migrations for B2B SaaS and tech companies.
+- [Growth (SEO/GEO + CRO)](https://www.benormedia.com/growth): Technical SEO, AEO/GEO, content and CRO that turn more website traffic into pipeline.
+
+## Guides
+
+- [How to Migrate WordPress to Webflow](https://www.benormedia.com/guides/wordpress-to-webflow-migration): How to migrate from WordPress to Webflow without losing SEO: map URLs, move content, set 301 redirects, test, and monitor. Sourced from Google and Webflow.
+
+## Optional
+
+- [Privacy Policy](https://www.benormedia.com/privacy-policy)
+- [Terms & Conditions](https://www.benormedia.com/terms-conditions)
+```
+
+The notes matter most. A link called "Growth (SEO/GEO + CRO)" tells an agent little on its own; the note after it says the page covers technical SEO, AEO/GEO, content, and CRO.
 
 ## Do Google, ChatGPT, Claude, or Perplexity use llms.txt?
 
@@ -187,7 +247,7 @@ Keep the list to the pages with the key information you'd want an AI assistant t
 
 On Webflow, go to Site settings, then SEO, then LLMs.txt, upload the file, save your changes, and publish. The file must be UTF-8 encoded and under 100 KB. Webflow publishes only the llms.txt file itself, not Markdown files for each page, and doesn't publish it to the Webflow staging domain. Webflow's help article calls the format "experimental" and says its current impact is not proven.
 
-On a custom site, serve it as a static file at the root, as you would robots.txt. On our own website, the file at benormedia.com/llms.txt has an H1, a one-line summary, and sections for services, guides, company pages, and optional links, with about 19 links in total.
+On a custom site, serve it as a static file at the root, as you would robots.txt. On our own website, benormedia.com/llms.txt now has 77 links in five sections, because we add a line for each new guide and blog post (see the example above).
 
 ## How can you tell whether anything reads your llms.txt file?
 
