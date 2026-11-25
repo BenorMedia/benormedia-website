@@ -14,7 +14,7 @@ secondaryKeywords: [webflow enterprise plan, webflow for enterprise]
 targetCountry: US
 author: "Sergio Gancedo, Managing Director, BenorMedia"
 publishedAt: 2026-10-07
-updatedAt: 2026-11-17
+updatedAt: 2026-11-25
 reviewEvery: 30
 breadcrumb:
   - name: Home
@@ -38,6 +38,8 @@ faq:
     a: "No. Webflow Enterprise is Webflow's plan for larger organizations, and your site and Workspace run on it. An agency's partner status describes its relationship with Webflow and is a separate matter. Ask any agency to state its status in writing, and compare it with the agency's profile in Webflow's partner directory."
   - q: Can Webflow run a multi-language enterprise site?
     a: "Yes, through Webflow's Localize add-on. As of October 2026 Webflow says it translates pages and CMS content, customizes styles, assets, and page settings per locale, and includes hreflang tags in its generated sitemap. Enterprise plans can limit editors to specific secondary locales. The number of locales depends on your plan."
+  - q: Can Webflow manage multiple sites for one company?
+    a: "Yes. One Workspace can hold many sites, each on its own Site plan, and Shared Libraries, available on all paid Workspace plans, let those sites share components, variables, fonts, and assets. Update the Library once, and each site can accept the change. On an Enterprise Workspace, owners and admins can also have a Library installed automatically on every new site."
   - q: What should an agency be able to sign and provide for enterprise procurement?
     a: "Ask for the list of documents it signs, such as a master services agreement, a data processing agreement and an NDA, which legal entity signs them, and how long each takes. Send your security questionnaire early so that the answers arrive before design is final."
 takeaways:
@@ -129,6 +131,12 @@ sources:
   - label: "Webflow Help Center: Updated pricing and simplified plans for May 2026"
     url: https://help.webflow.com/hc/en-us/articles/51059955082387
     accessed: 2026-11-16
+  - label: "Webflow Help Center: Libraries"
+    url: https://help.webflow.com/hc/en-us/articles/33961343551763
+    accessed: 2026-11-25
+  - label: "Webflow: Centrally manage your Shared Libraries"
+    url: https://webflow.com/updates/centrally-manage-your-shared-libraries
+    accessed: 2026-11-25
 volatile:
   - claim: "Team plan: $2,500 a month on an annual contract, launched May 13, 2026"
     source: https://webflow.com/pricing
@@ -224,6 +232,14 @@ Table: What Webflow says Enterprise includes, as of October 2026
 | Uptime, support, and limits | The Enterprise page cites 99.99% uptime SLAs, 24/7 support, and a dedicated customer success manager. Webflow's pricing page lists 99.99% uptime for hosted sites on Enterprise and 99.00% on Team, with 99.90% for the application on both. The help center says non-Enterprise plans have no contractual SLA for uptime or support reply times and carry standard caps on CMS items, Collections, and API requests. | [Enterprise page](https://webflow.com/enterprise), [plan differences](https://help.webflow.com/hc/en-us/articles/46651891357971-Differences-between-Enterprise-and-non-Enterprise-plans), [pricing page](https://webflow.com/pricing) |
 
 If your review requires single sign-on, SCIM provisioning, custom roles, the audit log API, or a contractual SLA, Webflow lists those as Enterprise features, so the requirement decides the plan. Publishing workflows, page branching, the site activity log, custom SSL, and security headers no longer decide it on their own, because the Team plan lists them too. Webflow's [pricing page](https://webflow.com/pricing) shows Enterprise as Custom, with no price, and our [Webflow pricing guide](/blog/webflow-price-increase) covers the other plans.
+
+## Is Webflow a good fit for enterprise governance and permissions?
+
+For most marketing sites, yes, as long as the controls your security team asks for are on your plan. A governance review usually wants to know who can change the site, who signs off before a change goes live, and where that history is kept.
+
+On Enterprise, Workspace owners and admins can create up to 20 custom roles, each built on the Reviewer, Content Editor, Marketer, or Designer role, and they can limit an editor to specific secondary locales. Sign-off runs through page branching: a change sits on a branch until an approver accepts it, and permissions decide who can publish to staging and who can publish to production. Since May 2026, Webflow has listed publishing workflows and page branching on the Team plan as well. The Site Activity log keeps a history of changes and publishes that doesn't expire, and the Enterprise audit log API adds a year of logins and role changes that can feed your SIEM.
+
+Two limits are worth knowing before the review starts. Single sign-on and SCIM provisioning are Enterprise only, and SCIM doesn't assign roles or groups yet, so someone still sets roles inside Webflow. And Webflow says it isn't HIPAA compliant by default.
 
 ## Is the Webflow Team plan enough, or do you need Enterprise?
 
