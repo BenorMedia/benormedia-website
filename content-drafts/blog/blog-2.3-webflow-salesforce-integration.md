@@ -12,7 +12,7 @@ h1: "Webflow Salesforce integration: connecting Webflow forms to Salesforce or H
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
 publishedAt: 2026-10-20
-updatedAt: 2026-10-20
+updatedAt: 2026-11-25
 reviewEvery: 30 days
 primaryKeyword: "webflow salesforce integration"
 secondaryKeywords: ["webflow forms", "webflow to salesforce", "form submissions", "capture leads"]
@@ -25,7 +25,9 @@ takeaways:
 faqHeading: "Questions about Webflow Salesforce integration"
 faq:
   - q: "Does Salesforce have a native Webflow integration?"
-    a: "No. Webflow and Salesforce have no official connector: Webflow's Salesforce page says Salesforce doesn't offer an official Webflow app. The usual routes are Web-to-Lead, a third-party app, middleware such as Zapier, or a custom build on the Salesforce API. Webflow Optimize also has a Salesforce integration, but it is limited to the Enterprise plan and Webflow's help article describes targeting and reporting, not form submissions."
+    a: "No. Webflow and Salesforce have no official connector: Webflow's Salesforce page says Salesforce doesn't offer an official Webflow app. That holds on every Salesforce edition, Enterprise Edition included. The usual routes are Web-to-Lead, a third-party app, middleware such as Zapier, or a custom build on the Salesforce API. Webflow Optimize also has a Salesforce integration, but it is limited to the Enterprise plan and Webflow's help article describes targeting and reporting, not form submissions."
+  - q: "Can Webflow forms write to custom Salesforce objects and fields?"
+    a: "Custom fields, yes; custom objects, not through Web-to-Lead. Web-to-Lead only creates Lead records, though it can fill custom fields you add to the Lead object. To create a record in a custom object, send the submission through middleware such as Zapier, whose Salesforce Create Record action works on the object you select, or through a custom build on the Salesforce API."
   - q: "Does Webflow integrate with HubSpot natively?"
     a: "Webflow maintains a HubSpot app that connects native Webflow forms to HubSpot. As of October 19, 2026, its help article says the app supports text input fields only: dropdown menus, radio buttons, checkboxes, and text areas are not supported, so those forms need an iframe, a developer embed, or the Forms API."
   - q: "Can you send leads from Webflow to Salesforce without Zapier?"
@@ -115,6 +117,12 @@ sources:
   - label: "Make Help: Incomplete executions"
     url: https://help.make.com/incomplete-executions
     accessed: 2026-10-19
+  - label: "Salesforce: Tips for Lead Administrators (PDF)"
+    url: https://resources.docs.salesforce.com/224/latest/en-us/sfdc/pdf/salesforce_leads_cheatsheet.pdf
+    accessed: 2026-11-25
+  - label: "Zapier Help Center: How to get started with Salesforce on Zapier"
+    url: https://help.zapier.com/hc/en-us/articles/8496020790925
+    accessed: 2026-11-25
 volatile:
   - "Webflow's Salesforce page: the statement that Salesforce offers no official Webflow app and the routes it lists (source: webflow.com/integrations/salesforce on 2026-10-19); re-read on publish day"
   - "Webflow form rules: Starter site plan limit of 50 total submissions, notification defaults, custom action behavior, role-address warning (source: Webflow Help, updated 2026-08-01); spam inbox (Webflow update of 2025-10-14)"
