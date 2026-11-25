@@ -12,7 +12,7 @@ h1: "Webflow Editor shutdown: how marketing teams edit a Webflow site now"
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
 publishedAt: 2026-10-23
-updatedAt: 2026-10-23
+updatedAt: 2026-11-25
 reviewEvery: none
 primaryKeyword: "webflow editor"
 secondaryKeywords: []
@@ -28,6 +28,8 @@ faq:
     a: "No. Webflow says the legacy Editor and whitelabeling are no longer available starting August 4, 2026. Content editing now happens in Webflow's core platform, using roles such as Content editor."
   - q: "What replaced the Webflow Editor?"
     a: "Seats, roles, and permissions inside Webflow. Members with the Content editor role can edit site content and manage assets directly in Webflow, and the Marketer role can also create and edit pages using components."
+  - q: "Can content teams edit pages in Webflow without a developer?"
+    a: "Yes. Content editors change copy, images, links, and CMS items right on the canvas, and with 'Can publish' turned on they can publish to staging or the live domain. Marketers can also build new pages from existing components. Layout, styles, custom code, and CMS structure stay with designers, who choose which elements editors can touch. Each content editor needs a limited seat."
   - q: "Does a content editor need a paid seat?"
     a: "A limited seat is required to assign the Content editor role. Legacy Editor users were migrated to a free limited seat or client seat with no end date currently planned, and additional limited seats can be purchased."
   - q: "Can content editors publish a Webflow site?"
