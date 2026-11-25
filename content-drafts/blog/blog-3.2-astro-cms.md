@@ -12,7 +12,7 @@ h1: "Astro CMS: how to choose a CMS for an Astro site, and how to connect it"
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
 publishedAt: 2026-10-26
-updatedAt: 2026-11-09
+updatedAt: 2026-11-25
 reviewEvery: 60 days
 primaryKeyword: "astro cms"
 secondaryKeywords: ["astro headless cms", "best cms for astro", "sanity astro"]
@@ -28,6 +28,10 @@ faq:
     a: "There is no single best one. A Git-based CMS suits small, developer-led sites; a hosted headless CMS suits marketing teams that need previews, roles, and scheduling. Pick two candidates that fit how your team works and build one real page template in each before you decide."
   - q: "What is the best free CMS for Astro?"
     a: "Markdown files in Astro's content collections cost nothing and need no extra service. Open-source CMSs such as Decap CMS, Keystatic, Strapi, Payload, and StudioCMS have free open-source editions, but you still run and update them, and the self-hosted ones need a server and backups."
+  - q: "Which Git-based CMSs work with Astro?"
+    a: "CloudCannon, Decap CMS, Keystatic, TinaCMS, and Pages CMS all edit content stored as files in your repository. CloudCannon is the only featured CMS partner in Astro's docs, and Astro has full setup guides for Decap CMS, Keystatic, and TinaCMS. With any of them, every edit is a commit and often a rebuild, which suits a developer-led site better than a marketing team publishing every day."
+  - q: "Which Astro CMSs support MDX?"
+    a: "TinaCMS edits Markdown and MDX files, and Keystatic has an MDX field that reads and writes MDX but leaves the rendering to your site. In Astro, that rendering comes from the @astrojs/mdx integration. Keep MDX content in build-time collections, because Astro's live collections can't render MDX at runtime."
   - q: "What are Astro content collections?"
     a: "Content collections are Astro's way to manage sets of structurally identical entries, such as blog posts, from local files or remote sources. Build-time collections load data when the site builds; live collections fetch it on each request and need an adapter for on-demand rendering."
   - q: "Is Sanity a good CMS for Astro?"
@@ -84,6 +88,12 @@ sources:
   - label: "Astro Docs: Headless WordPress & Astro"
     url: https://docs.astro.build/en/guides/cms/wordpress/
     accessed: 2026-10-26
+  - label: "Keystatic: MDX field"
+    url: https://keystatic.com/docs/fields/mdx
+    accessed: 2026-11-25
+  - label: "Astro Docs: @astrojs/mdx"
+    url: https://docs.astro.build/en/guides/integrations-guide/mdx/
+    accessed: 2026-11-25
 volatile:
   - "Astro 7.0 released June 22, 2026: stable route caching with Astro.cache and cache tags, experimental CDN cache providers for Netlify, Vercel, and Cloudflare, Rust compiler, Sätteri as the default Markdown processor (source: Astro blog)"
   - "The Astro Technology Company joined Cloudflare on January 16, 2026; Astro stays MIT-licensed and platform-agnostic (source: Astro blog)"
