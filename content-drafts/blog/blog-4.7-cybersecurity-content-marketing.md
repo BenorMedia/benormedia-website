@@ -12,7 +12,7 @@ h1: "Cybersecurity marketing: how to reach CISOs and security engineers on the s
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
 publishedAt: 2026-10-27
-updatedAt: 2026-11-10
+updatedAt: 2026-11-25
 reviewEvery: 90 days
 primaryKeyword: "cybersecurity content marketing"
 secondaryKeywords: ["cybersecurity marketing", "cybersecurity marketing strategy", "cybersecurity content marketing best practices"]
@@ -195,3 +195,11 @@ For search, the usual work applies: one page per question or use case, headings 
 To see whether it works, ask the assistants yourself. Run the questions a security buyer would ask about your category every month, and note whether you're mentioned and which pages get cited; our [30-prompt method for tracking brand mentions](/blog/track-brand-mentions-in-chatgpt) shows how to do it by hand. Pair that with Search Console queries and a "How did you hear about us?" field on the demo form, since peer referrals rarely show up in click data.
 
 We design and build websites for cybersecurity companies, so we have an interest in the topic.
+
+## How do you choose an agency that understands CISOs and security buyers?
+
+Look for an agency that has shipped work for security companies and can show it, then test it on what your own buyers test: technical accuracy, procurement, and tone.
+
+For accuracy, hand the agency one claim from your product page and ask how it would back it up. A good answer involves interviews with your engineers and a practitioner who reviews every technical claim and puts their name on the piece. For procurement, ask whether it has signed master services and data processing agreements and filled in vendor security questionnaires for enterprise clients, because a security vendor's website has to pass a security review of its own. It should also know what belongs on a trust page: certifications, policies, subprocessors, and a way to request your SOC 2 report.
+
+Tone is the quickest check. If the pitch is full of padlocks, hooded hackers, and glowing globes, expect the same hype that skeptical buyers have learned to skip. [Our cybersecurity web design page](/cybersecurity-web-design) explains how we handle each of these for security companies.
