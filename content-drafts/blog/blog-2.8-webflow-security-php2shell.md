@@ -12,7 +12,7 @@ h1: "Webflow security after PHP2Shell: what a hosted site takes off your patch l
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
 publishedAt: 2026-10-21
-updatedAt: 2026-10-21
+updatedAt: 2026-11-25
 reviewEvery: 14 days
 primaryKeyword: "webflow security"
 secondaryKeywords: ["is webflow secure", "php vulnerabilities", "is wordpress secure", "wordpress security issues"]
@@ -26,8 +26,12 @@ faqHeading: "Questions about Webflow security and PHP2Shell"
 faq:
   - q: "Is Webflow affected by PHP2Shell?"
     a: "A site hosted on Webflow has no PHP installation that your team manages, so there is nothing for you to patch on the site itself. Webflow says it monitors for vulnerabilities and deploys updates automatically. Code or services you connect to the site, such as a separate WordPress blog, are outside that coverage."
+  - q: "Does Webflow use PHP?"
+    a: "Not in any way your team touches. A Webflow site has no PHP version, plugins, or server configuration for you to update, and WordPress plugins can't run on it; features come from built-in settings, integrations, or custom code that runs in the browser. Webflow doesn't publish which server software runs its platform, so patching that layer is Webflow's job."
   - q: "Is Webflow secure enough for a B2B SaaS company?"
     a: "Webflow lists SOC 2 Type II, ISO 27001, ISO 27017, and ISO 27018 among its certifications, enforces HTTPS with TLS 1.2 or later, and includes DDoS protection on all hosted sites. Enterprise plans add custom security headers and a 99.99% uptime SLA. Webflow is not HIPAA compliant by default."
+  - q: "How does Webflow's managed security compare with self-hosting behind Cloudflare?"
+    a: "At the edge they can look alike. Webflow already serves sites through Cloudflare's CDN on AWS infrastructure, with DDoS protection, rate limiting, TLS, automatic patching, and SOC 2 Type II and ISO 27001 certifications included. Self-host a headless CMS behind Cloudflare and your team patches the origin server, the CMS, and its dependencies, then has to show that work in every security review."
   - q: "What security features does Webflow Enterprise add?"
     a: "Webflow Enterprise adds SSO over SAML or OAuth that can be required, SCIM or JIT provisioning, custom roles and approval workflows, an audit log API with 1 year of retention, custom security headers and SSL certificates, and SLAs for uptime and incident response. Confirm SLA terms in your contract."
   - q: "Do I need to update WordPress plugins to fix PHP2Shell?"
