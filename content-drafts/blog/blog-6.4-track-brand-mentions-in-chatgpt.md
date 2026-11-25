@@ -12,7 +12,7 @@ h1: "How to track brand mentions in ChatGPT by hand: a 30-prompt method"
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
 publishedAt: 2026-10-18
-updatedAt: 2026-11-09
+updatedAt: 2026-11-25
 reviewEvery: none
 primaryKeyword: "how to track brand mentions in chatgpt"
 secondaryKeywords: []
@@ -32,6 +32,8 @@ faq:
     a: "Answers can vary from run to run, and ChatGPT search may use your approximate location and saved memories when it rewrites your query. That's why a single result proves little and a repeated prompt set is more reliable."
   - q: "How often should you check AI brand mentions?"
     a: "Monthly is enough for most B2B SaaS companies. Run the same prompts in the same week each month, so changes reflect the answers and not the timing."
+  - q: "Which tools track ChatGPT brand mentions and sentiment over time?"
+    a: "Paid AI visibility trackers do the manual sheet's job on a schedule: they rerun a fixed prompt set in ChatGPT and other assistants and chart your mention rate, the competitors named, the pages cited, and, in many tools, sentiment. Before paying, check that you can load your own prompts and export the raw answers, so the numbers can be audited. Switching makes sense once the sheet takes more than an afternoon or you need daily data."
   - q: "How do you see traffic from ChatGPT in Google Analytics?"
     a: "Look at the AI Assistant channel in GA4's default channel group, and at sessions with the source chatgpt.com, which ChatGPT adds to the links it sends."
   - q: "How do you track brand mentions in other AI chats?"
