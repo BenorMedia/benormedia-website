@@ -12,7 +12,7 @@ h1: "AEO specialist or in-house team: what the role covers and who should own AE
 lang: en-US
 author: "Sergio Gancedo, Managing Director"
 publishedAt: 2026-10-27
-updatedAt: 2026-10-27
+updatedAt: 2026-11-25
 reviewEvery: 90 days
 primaryKeyword: "aeo specialist"
 secondaryKeywords: ["aeo consultant", "geo specialist", "geo consultant"]
@@ -131,6 +131,14 @@ Usually on time and tracking rather than skills. The monthly prompt rerun stops 
 Another 24% said their analytics tools couldn't handle AI attribution, and 16% had no referral data from AI platforms at all. Branch gives a simple example: a buyer sees a brand in an AI Overview, converts three days later, and the AI touch never shows up in the attribution model. A "How did you hear about us?" field on the demo form recovers some of those.
 
 Some teams also lose their first month to the wrong fix. Google's guide says you don't need "new machine readable files, AI text files, markup, or Markdown" to appear in Google Search, and that no special schema is required. Time spent on an llms.txt file or AI-only markup in month one is time not spent on the prompts you're losing; our post on [AI SEO myths](/blog/ai-seo-myths) lists the usual detours.
+
+## Should you hire an AEO agency or build AEO in-house?
+
+Start with a list of names. In-house AEO needs an SEO lead with a few hours a week for the prompt rerun, a developer who can get crawler fixes into the next sprint, and someone who already pitches the publications and lists that AI assistants cite. If you can fill all three, keep it inside. If a name is missing, or the March rerun got skipped because of a launch, that's usually the sign to bring in an agency.
+
+Large companies mostly keep the work inside. In Branch's January 2026 survey of 300 US enterprise marketing and growth leaders, 25% used outside agencies or vendors for AI search. A 40-person SaaS company rarely has spare hours in all three roles, so a split often makes sense: the agency runs tracking, technical fixes, and outreach, while your team owns product facts, approvals, and the pages only your experts can write.
+
+A tool plus one specialist can work too, if that specialist has developer time and the authority to publish. A tool on its own only measures. It will show the prompts where you're missing, but it won't fix a blocked crawler or earn a mention. If you're weighing the agency route, [our AEO agency page](/aeo-agency) shows how we run the program and what you get every month.
 
 ## When should you hire an AEO specialist or consultant?
 
