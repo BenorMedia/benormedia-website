@@ -12,7 +12,7 @@ h1: "Webflow pricing in 2026: every plan, what it costs, and what changed."
 lang: en-US
 author: "David Garay, Web Developer and Designer"
 publishedAt: 2026-10-15
-updatedAt: 2026-11-17
+updatedAt: 2026-11-25
 reviewEvery: none
 primaryKeyword: "webflow pricing 2026"
 secondaryKeywords:
@@ -30,6 +30,8 @@ faqHeading: "Questions about Webflow pricing in 2026"
 faq:
   - q: "How much does Webflow cost per month in 2026?"
     a: "As of November 2026, a Basic Site plan costs 15 dollars a month billed yearly or 25 dollars billed monthly, and Premium costs 25 or 39 dollars. Ecommerce plans run from 29 to 212 dollars a month billed yearly. The free Starter plan publishes only to a webflow.io domain."
+  - q: "Does Webflow publish its prices?"
+    a: "Yes, for every plan except Enterprise. Webflow's pricing page lists the Site, Ecommerce, and Workspace plans, plus the Team plan at 2,500 dollars a month on an annual contract. Enterprise shows as Custom, because Webflow quotes it per customer."
   - q: "Is Webflow free?"
     a: "For building and testing, yes. The Starter Site plan and the Starter Workspace cost nothing, but a Starter site publishes only to a webflow.io address, with 2 static pages, 50 CMS items, and 1 GB of bandwidth a month. A custom domain needs a paid Site plan, from 15 dollars a month billed yearly."
   - q: "Which Webflow plan do I need for a business website?"
